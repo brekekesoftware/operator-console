@@ -1,0 +1,250 @@
+:root {
+    --defaultBorderRadius: 5px;
+    --defaultBorderColor:#E0E0E0;
+    --headerHeight:48px;
+    --defaultOutsideBgColor:#F5F5F5;
+    --defaultInsideBgColor:#FFFFFF;
+    --defaultOutsideSpace:20px;
+    --defaultItemVSpace: 6px;
+    --defaultItemHSpace:10px;
+}
+
+button{
+    border-radius: var(--defaultBorderRadius);
+}
+
+
+/*.brOC .brOCReset .defaultOutsidePaddingTop th,*/
+/*.brOC .brOCReset .defaultOutsidePaddingTop td {*/
+/*    padding-top:var(--defaultOutsideSpace);*/
+/*}*/
+
+.brOC .brOCReset .defaultItemPaddingForTr td,
+.brOC .brOCReset .defaultItemPaddingForTr th{
+    padding-top: var(--defaultItemVSpace) !important;
+}
+
+.brOC .brOCReset .noBorderTopForFirstRowzCell tr:first-child td{
+    border-top:0;
+}
+
+.brOC .brOCReset {
+    background-color:#F5F5F5;
+    transition: initial;
+}
+
+.brOC .brOCReset table {
+    display:table;
+    flex-flow:initial;
+    table-layout:initial;
+    background-color:initial;
+    border:0;
+    border-collapse: collapse;
+    width: initial;
+    padding:0;
+    margin:0;
+    border-spacing: 0;
+    overflow:hidden;    /* for corner radius */
+}
+
+/*.brOC .brOCReset .defaultTranparentTable > tbody > tr > td,*/
+/*.brOC .brOCReset .defaultTranparentTable > thead > tr > th {*/
+/*    padding: var(--defaultOutsideSpace);*/
+/*}*/
+
+.brOC .brOCReset table > tbody {
+    display:table-row-group;
+}
+
+.brOC .brOCReset .defaultItemMarginTop {
+    margin-top:var(--defaultItemVSpace);
+}
+
+.brOC .brOCReset table .defaultInsideTable{
+    background-color:var(--defaultInsideBgColor);
+}
+
+.brOC .brOCReset table .defaultInsideTable td:first-child,
+.brOC .brOCReset table .defaultInsideTable th:first-child{
+    padding-left:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset table .defaultInsideTable td:last-child,
+.brOC .brOCReset table .defaultInsideTable th:last-child{
+    padding-right:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset table .defaultInsideTable td:last-child,
+.brOC .brOCReset table .defaultInsideTable th:last-child{
+    padding-right:var(--defaultOutsideSpace);
+}
+
+
+.brOC .brOCReset table .defaultInsideTable td,
+.brOC .brOCReset table .defaultInsideTable th{
+    padding:var(--defaultItemVSpace) var(--defaultItemHSpace);
+}
+
+.brOC .brOCReset table .defaultContentTable td:first-child,
+.brOC .brOCReset table .defaultContentTable th:first-child{
+    padding-left:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset table .defaultContentTable tr:first-child th {
+    padding-top:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset table .defaultContentTable td:last-child,
+.brOC .brOCReset table .defaultContentTable th:last-child{
+    padding-right:var(--defaultOutsideSpace);
+}
+
+
+
+
+
+.brOC .brOCReset td,
+.brOC .brOCReset th{
+    white-space: nowrap;
+    padding:0;
+    width:initial;
+    text-align:initial;
+    border:0;
+}
+
+.brOC .brOCReset th {
+    color:#757575;
+}
+
+.brOC .brOCReset td {
+    color:#584937;
+}
+
+
+.brOC .brOCReset table tr {
+    border-collapse: initial;
+    width:initial;
+    display:table-row;
+    border:0;
+    background-color:initial;
+}
+
+.brOC .brOCReset .kbc-button-fill-parent{
+    width:initial;
+    height:initial;
+}
+
+.brOC button.kbc-button-fill-parent{
+	color:unset;
+}
+
+.brOCCallInfo {
+	color:unset;
+}
+
+
+.brOC .brOCReset .defaultBorderRadiusBottom{
+    border-radius: 0px 0px var(--defaultBorderRadius) var(--defaultBorderRadius);
+}
+
+.brOC .brOCReset .defaultBorderRadius {
+    border-radius: var(--defaultBorderRadius);
+    border-collapse: separate;
+}
+
+.brOC .brOCReset .defaultBorderWithRadius{
+    border:1px solid var(--defaultBorderColor);
+    border-radius: var(--defaultBorderRadius);
+    border-collapse: separate;
+}
+
+.brOC .brOCReset .outsideMarginWithoutBorderRadius{
+    margin: calc( var(--defaultOutsideSpace ) - var(--defaultBorderRadius) );
+}
+
+.brOC .brOCReset .outsidePaddingWithoutBorderRadius{
+    padding: calc( var(--defaultOutsideSpace ) - var(--defaultBorderRadius) );
+}
+
+.brOC .brOCReset .outsideMarginTop{
+    margin-top:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset .outsidePaddingTop{
+    padding-top:var(--defaultOutsideSpace);
+}
+
+.brOC .brOCReset .defaultFrameTable,
+.brOC .brOCReset .defaultContentTable {
+    border:1px solid var(--defaultBorderColor);
+    background-color:var(--defaultInsideBgColor);
+    border-radius:var(--defaultBorderRadius);
+    border-collapse:separate;
+    border-spacing: initial;
+}
+
+.brOC .brOCReset .defaultFrameTable > tbody > tr > td,
+.brOC .brOCReset .defaultFrameTable > thead > tr > th{
+    padding: calc(var(--defaultOutsideSpace) - var(--defaultBorderRadius));
+}
+
+.brOC .brOCReset .defaultContentTable > tbody > tr > td {
+    border-top: 1px solid var(--defaultBorderColor);
+}
+
+/* !commentOut for thead's cell */
+/*.brOC .brOCReset .defaultContentTable > tbody > tr:first-child > td {*/
+/*    border-top:0;*/
+/*}*/
+
+
+.brOC .brOCReset .defaultContentTable > tbody > tr:hover {
+    background-color:#F5F5F5;
+}
+
+.brOC .brOCReset .defaultContentTable > tbody > tr:hover > td:last-child {
+    background-color:#F5F5F5;
+}
+
+
+
+.brOC .brOCReset .defaultContentTable > thead > tr > th,
+.brOC .brOCReset .defaultContentTable > tbody > tr > td {
+    padding:var(--defaultItemVSpace) var(--defaultItemHSpace);
+}
+
+.brOC .brOCReset .legacyButtonPadding{
+    padding:2px;
+}
+
+/* .brOC .brOCReset a{ */
+.brOCReset a{
+    color:#584937;
+}
+
+/* .brOC .brOCReset a:hover { */
+.brOCReset a:hover {
+    color:#4BC5DE;
+    text-decoration:underline;
+    /* text-decoration-color:#4BC5DE; */
+    cursor:pointer;
+}
+
+.brOC .brOCReset .linkDeco:hover {
+    text-decoration:underline;
+    text-decoration-color:#4BC5DE;
+    cursor:pointer;
+}
+
+.brOC .brOCReset .linkDeco:hover td {
+    color:#4BC5DE;
+}
+
+/*
+.brOC .brOCReset .borderRadiusLeftTop{
+    border-radius: var(--defaultBorderRadius) 0px 0px 0px;
+}
+.brOC .brOCReset .borderRadiusRightTop{
+    border-radius: 0px var(--defaultBorderRadius) 0px 0px;
+}
+*/

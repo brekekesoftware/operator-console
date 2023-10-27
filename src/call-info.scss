@@ -1,0 +1,57 @@
+.brOCCallInfo {
+  //background-color: #A8C64E;
+  border-radius: 8px;
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem;
+  border: none;
+  color: #304701;
+  background-color: #A8C64E;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px;
+
+  .brOCCallInfoRow {
+    display: flex;
+    min-height: 3rem;
+  }
+
+  .brOCCallInfoDialing {
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    font-variant-numeric: tabular-nums;
+    white-space: pre-wrap;
+    word-break: break-all;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .brOCCallInfoLeft {
+    width: 24px;
+    display: flex;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .brOCCallInfoMain {
+    flex-grow: 1;
+    margin-left: 0.25rem;
+  }
+
+  .brOCCallInfoPartyName {
+    font-size: 1.2rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .brOCCallInfoPartyNumber {
+    font-size: 1.2rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .brOCCallInfoDuration {
+    font-size: 1.2rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-variant-numeric: tabular-nums;
+  }
+}

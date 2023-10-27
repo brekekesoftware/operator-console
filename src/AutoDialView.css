@@ -1,0 +1,87 @@
+.brOC .autoDialView {
+    position:absolute;
+    right:0;
+    border-radius: var(--defaultBorderRadius);
+    margin-top: var(--headerHeight);
+    background-color:initial;
+}
+
+.brOC .autoDialView > table {
+    background-color: var(--defaultOutsideBgColor);
+    animation-duration: 0.5s;
+    animation-name: AutoDialViewTableSlideIn;
+}
+
+@keyframes AutoDialViewTableSlideIn {
+    0% {
+        margin-left:100%;
+        opacity: 0;
+    }
+    100% {
+        margin-left:0%;
+        opacity: 1;
+    }
+}
+
+
+
+/*.brOC .autoDialView{*/
+/*    --scroll-bar: unset;*/
+/*}*/
+
+/*.brOC .autoDialView::-webkit-scrollbar {*/
+/*    display: unset;*/
+/*}*/
+
+.brOC .autoDialView li.tab{
+    padding:var(--defaultItemVSpace) var(--defaultOutsideSpace);
+}
+
+.brOC .autoDialView ul li:first-child{
+    border-radius:var(--defaultBorderRadius) 0px 0px 0px;
+}
+
+.brOC .autoDialView ul li:last-child{
+    border-radius: 0px var(--defaultBorderRadius) 0px 0px;
+}
+
+.brOC .autoDialView li {
+    background-color:var(--defaultInsideBgColor);
+}
+
+
+.brOC .tab-panel{
+    height:100%;
+}
+
+.brOC .tab-group{
+    display: flex;
+    justify-content: center;
+    padding:0;
+    margin:0;
+}
+.brOC .tab{
+    flex-grow: 1;
+    padding: var(--defaultItemVSpace) var(--defaultItemHSpace);
+    list-style:none;
+    border:solid 1px var(--defaultBorderColor);
+    text-align:center;
+    cursor:pointer;
+}
+.brOC .panel-group{
+    height:100%;
+    border:solid 1px #CCC;
+    border-top:none;
+    /* background:#eee; */
+}
+.brOC .panel{
+    display:none;
+}
+.brOC .tab.is-active{
+    background:#5C9842;
+    color:#FFF;
+    transition: all 0.2s ease-out;
+}
+.brOC .panel.is-show{
+    display:block;
+}

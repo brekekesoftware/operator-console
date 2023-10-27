@@ -1,0 +1,37 @@
+import Dropdown from "antd/lib/dropdown";
+import Menu from "antd/lib/menu";
+import i18n from "./i18n";
+import Popconfirm from "antd/lib/popconfirm";
+import Button from "antd/lib/button";
+import MoreOutlined from "@ant-design/icons/MoreOutlined";
+import React from "react";
+import Notification from "antd/lib/notification";
+
+export default function DropDownMenu( { operatorConsole } ){
+    return (
+        <Dropdown trigger="click" onClick={(e) => {
+            operatorConsole.onClickDropDownMenu(e);
+        }} overlay={(
+            <Menu style={{ width: 'max-content' }}>
+                <Menu.SubMenu key="-1" title={`${operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : '' }${operatorConsole.state.loginUser.pbxUsername}`}>
+                    <Menu.Item key="0" onClick={operatorConsole.logout}>{i18n.t("logout")}</Menu.Item>
+                </Menu.SubMenu>
+                <Menu.Divider />
+                <Menu.Item key="1" onClick={operatorConsole.startShowScreen}>{i18n.t("show_screen")}</Menu.Item>
+                <Menu.Item key="2"  onClick={operatorConsole.startEditingScreen}>{i18n.t("edit_screen")}</Menu.Item>
+                <Menu.Item key="3"  onClick={operatorConsole.duplicateScreen}>{i18n.t("duplicate_screen")}</Menu.Item>
+                <Menu.Item key="4"  onClick={operatorConsole.addNextScreen}>{i18n.t("add_next_screen")}</Menu.Item>
+                <Menu.Item key="5"  onClick={operatorConsole.addPreviousScreen}>{i18n.t("add_previous_screen")}</Menu.Item>
+                <Menu.Item  key="6" >
+                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={operatorConsole.removeCurrentScreen} placement="left">
+                        {i18n.t("remove_screen")}
+                    </Popconfirm>
+                </Menu.Item>
+                <Menu.Item  key="7"  onClick={operatorConsole.startSettingsScreen}>{i18n.t("settings_screen")}</Menu.Item>
+            </Menu>
+        )}>
+            <Button style={{position: 'absolute', top:4,right:4, zIndex: 1}} shape="circle" icon={<MoreOutlined/>}></Button>
+        </Dropdown>
+    );
+
+}

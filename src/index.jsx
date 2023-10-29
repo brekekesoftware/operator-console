@@ -3994,7 +3994,12 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.phone = window.Brekeke.Phone.render( eBrOcPhone , args );
         this._onUnloadFunc = (event) => { this._onUnload( event )};
         window.addEventListener("unload", this._onUnloadFunc );
-        this.phone.promptBrowserPermission()
+
+        // prompt for permission if needed
+        //this.phone.promptBrowserPermission();
+
+        // or if we manually show the prompt, we can accept the permission on user click
+        this.phone.acceptBrowserPermission();
 
         this.phone.on('call', c => {
             console.log('call', c);

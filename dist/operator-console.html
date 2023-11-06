@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brekeke Operator Console</title>
+    <style>
+      @font-face {
+        font-family: "WorkSans";
+        src: url("./WorkSans-Regular.ttf");
+      }
+
+      @font-face {
+        font-family: "WorkSans";
+        src: url("./WorkSans-SemiBold.ttf");
+        font-weight: bold;
+      }
+    </style>
+    <link rel="stylesheet" href="./operator-console.css">
+  </head>
+  <body>
+    <div class="brOC"></div>
+  </body>
+  <script src="./DragDropTouch.js"></script>
+  <script type="text/javascript" src="./operator-console.js"></script>
+  <script>window.__DEV__ = 'production';</script>
+  <script type="text/javascript" src="./webphone.js"></script>
+  <script type="text/javascript">
+    new Brekeke.OperatorConsole(document.getElementsByClassName('brOC')[0]);
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('kbc-button')) {
+        e.target.blur();
+      }
+    })
+  </script>
+</html>

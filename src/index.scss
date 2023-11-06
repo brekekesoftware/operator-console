@@ -1,0 +1,504 @@
+html,body {
+  width: 100%;
+  height: 100%;
+}
+
+.brOC {
+  font-family: WorkSans, Meiryo, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  background-color: #fff;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#brOCPhone {
+  display: none;
+}
+
+.brOCLoginPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.brOCKeyRow {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.brOCKeyColumn {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.brOCInfoRow {
+  display: flex;
+}
+
+.brOCCallInfo {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.brOCExtsStatus {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+////////////////////////////////////////////////////////////////
+// keyboard-css
+////////////////////////////////////////////////////////////////
+
+// add size in $kbc-btn-size-map
+$kbc-btn-size-map: (
+  "fill-parent": (
+    "padding-y": 0,
+    "padding-x": 0,
+    "font-size": 1rem,
+    "line-height": 1,
+    "depth": 6,
+    "after-border-width": 0.125rem,
+    "after-adjust-x": -0.125rem,
+    "after-adjust-y": -5,
+    "after-border-radius": 0.5rem,
+  ),
+);
+
+// and then import
+@import "keyboard-css/dist/scss/main";
+
+.kbc-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: normal;
+  user-select: none;
+  flex-shrink: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.kbc-button-fill-parent {
+  width: calc(100% - 0.7rem);
+  height: calc(100% - 1rem);
+}
+
+@keyframes kbc-button-danger-flash-keyframes {
+  50% {
+    background-color: #dc3545;
+    border-color: #e4606d;
+    color: #f8f9fa;
+  }
+}
+.kbc-button-danger-flash {
+  -webkit-animation: kbc-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-button-danger-flash-keyframes .5s infinite;
+}
+.kbc-button-danger-flash-slow {
+  -webkit-animation: kbc-button-danger-flash-keyframes 3s infinite;
+  -moz-animation: kbc-button-danger-flash-keyframes 3s infinite;
+  animation: kbc-button-danger-flash-keyframes 3s infinite;
+}
+
+.kbc-button-success {
+	color:unset;
+	box-shadow:unset;
+}
+
+@keyframes kbc-button-success-flash-keyframes {
+  50% {
+    background-color: #28a745;
+    border-color: #34ce57;
+    color: #f8f9fa;
+  }
+}
+.kbc-button-success-flash {
+  -webkit-animation: kbc-button-success-flash-keyframes .5s infinite;
+  -moz-animation: kbc-button-success-flash-keyframes .5s infinite;
+  animation: kbc-button-success-flash-keyframes .5s infinite;
+}
+.kbc-button-success-flash-slow {
+  -webkit-animation: kbc-button-success-flash-keyframes 3s infinite;
+  -moz-animation: kbc-button-success-flash-keyframes 3s infinite;
+  animation: kbc-button-success-flash-keyframes 3s infinite;
+}
+
+////////////////////////////////////////////////////////////////
+// led
+////////////////////////////////////////////////////////////////
+
+.led-box {
+  height: 4rem;
+  width: 4rem;
+  margin: 10px 0;
+  float: left;
+}
+
+.led-box p {
+  font-size: 12px;
+  text-align: center;
+  margin-top: 1em;
+  /* max-height: 2rem; */
+  /* overflow: hidden; */
+}
+
+.led-red {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #F00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 12px;
+}
+
+.led-yellow {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #FF0;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 12px;
+}
+
+.led-green {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #ABFF00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+}
+
+.led-blue {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #24E0FF;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #006 0 -1px 9px, #3F8CFF 0 2px 14px;
+}
+
+.led-grey {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #d9d9d9;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #8e8e8e 0 -1px 9px, #d9d9d9 0 2px 14px;
+}
+
+.ant-carousel {
+  height: 100%;
+
+  .slick-dots {
+    top: 0;
+    padding-top: 12px;
+  }
+  .slick-dots li button {
+    background: #adadad;
+  }
+  .slick-dots li.slick-active button {
+    background: #74bf53;
+  }
+  .slick-slider {
+    height: 100%;
+    .slick-list {
+      height: 100%;
+      .slick-track {
+        height: 100%;
+        .slick-slide {
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  box-shadow: none !important;
+}
+.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused,
+.ant-input:focus, .ant-input-focused,
+.ant-input-number:focus, .ant-input-number-focused {
+  box-shadow: none !important;
+}
+
+.brOCEditingWidget {
+  /* overflow: hidden; */
+  /* border: solid 1px transparent; */
+  .kbc-button {
+    pointer-events: none;
+  }
+}
+.brOCSelectingWidget {
+  border: solid 1px #4cc5de;
+}
+.brOCWidgetBox {
+  .kbc-button {
+    pointer-events: none;
+  }
+}
+
+
+.brOCEditingGridLines {
+  height: 100%;
+}
+
+table {
+  border: 1px solid #e0e0e0;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+  background-color: #f8f8f8;
+}
+
+table caption {
+  font-size: 1.5em;
+  margin: .5em 0 .75em;
+}
+
+table tr {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+  border-collapse: collapse;
+  padding: .35em;
+}
+
+table th,
+table td {
+  padding: .625em;
+  text-align: center;
+}
+
+table th {
+  font-size: .85em;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+/* make table tbody scrollable with always on top thead */
+table {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  height: 100%;
+}
+
+thead {
+  flex: 0 0 auto;
+}
+
+tbody {
+  flex: 1 1 auto;
+  display: block;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+tr {
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+  overflow-wrap: anywhere;
+}
+
+tbody::-webkit-scrollbar {
+  width: 8px;
+  display: initial;
+}
+tbody::-webkit-scrollbar-track {
+  background-color: initial;
+}
+tbody::-webkit-scrollbar-thumb {
+  background-color: #adadad;
+}
+tbody::-webkit-scrollbar-button {
+  background-color: initial;
+}
+tbody::-webkit-scrollbar-corner {
+  background-color: initial;
+}
+
+// @media screen and (max-width: 600px) {
+//   table {
+//     border: 0;
+//   }
+//
+//   table caption {
+//     font-size: 1.3em;
+//   }
+//   
+//   table thead {
+//     border: none;
+//     clip: rect(0 0 0 0);
+//     height: 1px;
+//     margin: -1px;
+//     overflow: hidden;
+//     padding: 0;
+//     position: absolute;
+//     width: 1px;
+//   }
+//   
+//   table tr {
+//     border-bottom: 3px solid #ddd;
+//     display: block;
+//     margin-bottom: .625em;
+//   }
+//   
+//   table td {
+//     border-bottom: 1px solid #ddd;
+//     display: block;
+//     font-size: .8em;
+//     text-align: right;
+//   }
+//   
+//   table td::before {
+//     /*
+//     * aria-label has no advantage, it won't be read inside a table
+//     content: attr(aria-label);
+//     */
+//     content: attr(data-label);
+//     float: left;
+//     font-weight: bold;
+//     text-transform: uppercase;
+//   }
+//   
+//   table td:last-child {
+//     border-bottom: 0;
+//   }
+// }
+
+
+.brOCStickyNote {
+  border:0;
+  border-radius:3px;
+  background: linear-gradient(#F9EFAF, #F7E98D);
+  box-shadow:0 4px 6px rgba(0,0,0,0.1);
+  transition:box-shadow 0.5s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.brOCStickyNoteName {
+  line-height:1.5;
+  font-weight: bold;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background-color: #f2dc50;
+  padding: 4px;
+}
+.brOCStickyNote textarea {
+  line-height:1.5;
+  border:0;
+  background: transparent;
+  flex-grow: 1;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 4px;
+  resize:none;
+}
+.brOCStickyNote textarea::-webkit-scrollbar {
+  width: 8px;
+  display: initial;
+}
+.brOCStickyNote textarea::-webkit-scrollbar-track {
+  background-color: initial;
+}
+.brOCStickyNote textarea::-webkit-scrollbar-thumb {
+  background-color: #f2dc50;
+  border-top: 2px solid #F9EFAF;
+  border-bottom: 2px solid #F9EFAF;
+}
+.brOCStickyNote textarea::-webkit-scrollbar-button {
+  background-color: initial;
+}
+.brOCStickyNote textarea::-webkit-scrollbar-corner {
+  background-color: initial;
+}
+.brOCStickyNote:hover { box-shadow:0 5px 8px rgba(0,0,0,0.15); }
+.brOCStickyNote:focus { box-shadow:0 5px 12px rgba(0,0,0,0.2); outline:none; }
+
+table.brOCCalltable{
+  /* display:table; */
+  border-collapse:separate;
+  border-spacing:0;
+}
+table.brOCCalltable tr,
+table.brOCCalltable thread,
+table.brOCCalltable tbody,
+table.brOCCalltable thread tr,
+table.brOCCalltable tbody tr,
+table.brOCCalltable thread tr th,
+table.brOCCalltable tbody tr td
+{
+  background: unset;
+  background-color:unset;
+}
+
+table.brOCExtensiontable{
+  /* display:table; */
+  border-collapse:separate;
+  border-spacing:0;
+}
+table.brOCExtensiontable tr,
+table.brOCExtensiontable thread,
+table.brOCExtensiontable tbody,
+table.brOCExtensiontable thread tr,
+table.brOCExtensiontable tbody tr,
+table.brOCExtensiontable thread tr th,
+table.brOCExtensiontable tbody tr td
+{
+  background: unset;
+  background-color:unset;
+}
+
+table.brOCLinetable{
+  /* display:table; */
+  border-collapse:separate;
+  border-spacing:0;
+}
+table.brOCLinetable tr,
+table.brOCLinetable thread,
+table.brOCLinetable tbody,
+table.brOCLinetable thread tr,
+table.brOCLinetable tbody tr,
+table.brOCLinetable thread tr th,
+table.brOCLinetable tbody tr td
+{
+  background: unset;
+  background-color:unset;
+}
+table.brOCLinetable tbody tr td
+{
+	display:table-cell;
+}
+
+
+/*
+	table.brOCBorderRadiusTable{
+		border-collapse: separate;
+		border-spacing: 0;
+		table-layout:fixed;
+	}
+
+	table.brOCBorderRadiusTable thead tr,
+	table.brOCBorderRadiusTable tbody tr{
+		border-collapse: separate;
+	}
+*/

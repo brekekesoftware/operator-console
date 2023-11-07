@@ -2874,9 +2874,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                             )}
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                 </div>
-            ) : (
+            ) :  (
                 <div className='brOCLoginPage'>
-                    <Login initialValues={this._getLastLoginAccount()} onSubmit={this.login}/>
+                    <Login initialValues={this._getLastLoginAccount()} onSubmit={this.login} isSigningin={ this.state.isSigningin === true ? true : false }/>
                 </div>
             )}
 
@@ -2895,7 +2895,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 console.error(err);
             }
         }
-        const lastLoginAccount = this.state.lastLoginAccount;
+        //const lastLoginAccount = this.state.lastLoginAccount;
+        const lastLoginAccount = {hostname:location.hostname, port:location.port };
+        console.log("set lastLoginAccount from location info.");
         return lastLoginAccount;
     }
 
@@ -3117,7 +3119,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
     removeCurrentScreen = () => {
         if (this.state.screens.length <= 1) {
-            Notification.warn({message: "You can not delete last screen."});  //!lang
+            Notification.warn({message: i18n.t("YouCanNotDeleteLastScreen")});
             return;
         }
 
@@ -3991,17 +3993,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             'webphone.pal.param.line': '*',
             'webphone.pal.param.park': '*',
         };
-        this.phone = window.Brekeke.Phone.render( eBrOcPhone , args );
-        this._onUnloadFunc = (event) => { this._onUnload( event )};
-        window.addEventListener("unload", this._onUnloadFunc );
 
-        // prompt for permission if needed
-        //this.phone.promptBrowserPermission();
+       this.phone = window.Brekeke.Phone.render(eBrOcPhone, args);
 
-        // or if we manually show the prompt, we can accept the permission on user click
-        this.phone.acceptBrowserPermission();
-
-        this.phone.on('call', c => {
+       this.phone.on('call', c => {
             console.log('call', c);
             this._onPhoneCall( this.phone, c );
         })
@@ -4164,6 +4159,15 @@ export default class BrekekeOperatorConsole extends React.Component {
             console.log("Skip initialize.");
             return;
         }
+        this._onUnloadFunc = (event) => { this._onUnload( event )};
+        window.addEventListener("unload", this._onUnloadFunc );
+
+        // prompt for permission if needed
+        //this.phone.promptBrowserPermission();
+
+        // or if we manually show the prompt, we can accept the permission on user click
+        this.phone.acceptBrowserPermission();
+
         BREKEKE_OPERATOR_CONSOLE = this;
         DEFAULT_SYSTEM_SETTINGS_DATA = new SystemSettingsData( BREKEKE_OPERATOR_CONSOLE );
         this._DefaultSystemSettingsData = new SystemSettingsData(this);

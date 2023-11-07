@@ -47,8 +47,8 @@
 	"resourceName_is_required@suffix": ") is required.",	
 	"is_input_required": "Required.",
     "password": "Password",
-    "login": "Login",
-    "logout": "Logout",
+    "signin": "Sign in",
+    "signout": "Sign out",
 
     "failed_to_save_data_to_pbx": "Failed to save data to PBX.",
     "saved_data_to_pbx_successfully": "Saved data to PBX successfully.",
@@ -146,6 +146,7 @@
 
 	"ConfirmDeleteWidgetTitle" : "Remove widget",
 	"ConfirmDeleteWidgetText" : "Are you sure you want to remove the widget?",
+	  "YouCanNotDeleteLastScreen" :  "You can not delete last screen.",
 
 	"borderRadius" : "Border radius",
 	"borderRadius_is_not_valid": "Boarder radius is not valid.",

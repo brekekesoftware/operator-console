@@ -45,7 +45,7 @@ export default function DropDownMenu( { operatorConsole } ){
                             key: "101",
                             label: (
                                 <div onClick={operatorConsole.logout}>
-                                    {i18n.t("logout")}
+                                    {i18n.t("signout")}
                                 </div>
                             )
                         }
@@ -144,7 +144,7 @@ export default function DropDownMenu( { operatorConsole } ){
                             key: "101",
                             label: (
                                 <div onClick={operatorConsole.logout}>
-                                    {i18n.t("logout")}
+                                    {i18n.t("signout")}
                                 </div>
                             )
                         }
@@ -279,7 +279,7 @@ export default function DropDownMenu( { operatorConsole } ){
     //     }} overlay={(
     //         <Menu style={{ width: 'max-content' }}>
     //             <Menu.SubMenu key="-1" title={`${operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : '' }${operatorConsole.state.loginUser.pbxUsername}`}>
-    //                 <Menu.Item key="0" onClick={operatorConsole.logout}>{i18n.t("logout")}</Menu.Item>
+    //                 <Menu.Item key="0" onClick={operatorConsole.logout}>{i18n.t("signout")}</Menu.Item>
     //             </Menu.SubMenu>
     //             <Menu.Divider />
     //             <Menu.Item key="1" onClick={operatorConsole.startShowScreen}>{i18n.t("show_screen")}</Menu.Item>

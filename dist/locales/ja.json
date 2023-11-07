@@ -47,8 +47,8 @@
 	"resourceName_is_required@suffix": ")は必須項目です",
 	"is_input_required": "必須項目です。",
     "password": "パスワード",
-    "login": "ログイン",
-    "logout": "ログアウト",
+    "signin": "サインイン",
+    "signout": "サインアウト",
 
     "failed_to_save_data_to_pbx": "データをPBXに保存できませんでした。",
     "saved_data_to_pbx_successfully": "データをPBXに保存しました。",
@@ -146,8 +146,9 @@
 	
 	"ConfirmDeleteWidgetTitle" : "ウィジェットの削除",
 	"ConfirmDeleteWidgetText" : "ウィジェットを削除してよろしいですか?",
-	
-	"borderRadius" : "角の丸み",
+	  "YouCanNotDeleteLastScreen" :  "最後のスクリーンを削除することはできません。",
+
+	  "borderRadius" : "角の丸み",
 	"borderRadius_is_not_valid": "角の丸みが正しくありません。",
 	"fgColor" : "前景色",
 	"fgColor_is_not_valid" : "前景色が正しくありません。",

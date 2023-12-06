@@ -32,8 +32,8 @@ export default class LegacyCallInfoSettings extends React.Component {
     }
 
     static _copyFromValuesFrom( src, dst ){
-        dst.callinfoFgColor = src.callinfoFgColor;
-        dst.callinfoBgColor = src.callinfoBgColor;
+        dst.callpanelFgColor = src.callpanelFgColor;
+        dst.callpanelBgColor = src.callpanelBgColor;
         dst.borderRadius = src.borderRadius;
         dst.outsideShadow_horizontalOffset = src.outsideShadow_horizontalOffset;
         dst.outsideShadow_verticalOffset = src.outsideShadow_verticalOffset;
@@ -49,67 +49,67 @@ export default class LegacyCallInfoSettings extends React.Component {
         //!modify
     }
 
-    static validateAndFormatWidget( callinfoWidget ) {
+    static validateAndFormatWidget( callpanelWidget ) {
 
-        if( callinfoWidget.callinfoFgColor && Util.isAntdRgbaProperty( callinfoWidget.callinfoFgColor ) !== true ) {
+        if( callpanelWidget.callpanelFgColor && Util.isAntdRgbaProperty( callpanelWidget.callpanelFgColor ) !== true ) {
             //!for old version
-            if (Util.isHex6(callinfoWidget.callinfoFgColor)) {
-                callinfoWidget.callinfoFgColor = Util.getAntdRgbColorFromHex6( callinfoWidget.callinfoFgColor );
+            if (Util.isHex6(callpanelWidget.callpanelFgColor)) {
+                callpanelWidget.callpanelFgColor = Util.getAntdRgbColorFromHex6( callpanelWidget.callpanelFgColor );
             } else {
                 return i18n.t("fgColor_is_not_valid");
             }
         }
 
-        if( callinfoWidget.callinfoBgColor && Util.isAntdRgbaProperty( callinfoWidget.callinfoBgColor ) !== true  ){
+        if( callpanelWidget.callpanelBgColor && Util.isAntdRgbaProperty( callpanelWidget.callpanelBgColor ) !== true  ){
             //!for old version
-            if (Util.isHex6(callinfoWidget.callinfoBgColor)) {
-                callinfoWidget.callinfoBgColor = Util.getAntdRgbColorFromHex6( callinfoWidget.callinfoBgColor );
+            if (Util.isHex6(callpanelWidget.callpanelBgColor)) {
+                callpanelWidget.callpanelBgColor = Util.getAntdRgbColorFromHex6( callpanelWidget.callpanelBgColor );
             } else {
                 return i18n.t("bgColor_is_not_valid");
             }
         }
 
-        if ( callinfoWidget.borderRadius && Util.isNumber( callinfoWidget.borderRadius ) !== true  ) {
+        if ( callpanelWidget.borderRadius && Util.isNumber( callpanelWidget.borderRadius ) !== true  ) {
             return i18n.t("borderRadius_is_not_valid");
         }
 
-        if( callinfoWidget.insideShadow_horizontalOffset && Util.isNumber( callinfoWidget.insideShadow_horizontalOffset) !== true ){
+        if( callpanelWidget.insideShadow_horizontalOffset && Util.isNumber( callpanelWidget.insideShadow_horizontalOffset) !== true ){
             return i18n.t("insideShadow_horizontalOffset_is_not_valid");
         }
 
-        if( callinfoWidget.insideShadow_verticalOffset && Util.isNumber( callinfoWidget.insideShadow_verticalOffset) !== true ){
+        if( callpanelWidget.insideShadow_verticalOffset && Util.isNumber( callpanelWidget.insideShadow_verticalOffset) !== true ){
             return i18n.t("insideShadow_verticalOffset_is_not_valid");
         }
 
-        if( callinfoWidget.insideShadow_blur && Util.isNumber( callinfoWidget.insideShadow_blur) !== true ){
+        if( callpanelWidget.insideShadow_blur && Util.isNumber( callpanelWidget.insideShadow_blur) !== true ){
             return i18n.t("insideShadow_blur_is_not_valid");
         }
 
-        if( callinfoWidget.insideShadow_spread && Util.isNumber( callinfoWidget.insideShadow_spread ) !== true ){
+        if( callpanelWidget.insideShadow_spread && Util.isNumber( callpanelWidget.insideShadow_spread ) !== true ){
             return i18n.t("insideShadow_spread_is_not_valid");
         }
 
-        if( callinfoWidget.insideShadow_color && Util.isAntdRgbaProperty( callinfoWidget.insideShadow_color ) !== true  ) {
+        if( callpanelWidget.insideShadow_color && Util.isAntdRgbaProperty( callpanelWidget.insideShadow_color ) !== true  ) {
             return i18n.t("insideShadow_color_is_not_valid");
         }
 
-        if( callinfoWidget.outsideShadow_horizontalOffset && Util.isNumber( callinfoWidget.outsideShadow_horizontalOffset) !== true ){
+        if( callpanelWidget.outsideShadow_horizontalOffset && Util.isNumber( callpanelWidget.outsideShadow_horizontalOffset) !== true ){
             return i18n.t("outsideShadow_horizontalOffset_is_not_valid");
         }
 
-        if( callinfoWidget.outsideShadow_verticalOffset && Util.isNumber( callinfoWidget.outsideShadow_verticalOffset) !== true ){
+        if( callpanelWidget.outsideShadow_verticalOffset && Util.isNumber( callpanelWidget.outsideShadow_verticalOffset) !== true ){
             return i18n.t("outsideShadow_verticalOffset_is_not_valid");
         }
 
-        if( callinfoWidget.outsideShadow_blur && Util.isNumber( callinfoWidget.outsideShadow_blur) !== true ){
+        if( callpanelWidget.outsideShadow_blur && Util.isNumber( callpanelWidget.outsideShadow_blur) !== true ){
             return i18n.t("outsideShadow_blur_is_not_valid");
         }
 
-        if( callinfoWidget.outsideShadow_spread && Util.isNumber( callinfoWidget.outsideShadow_spread ) !== true ){
+        if( callpanelWidget.outsideShadow_spread && Util.isNumber( callpanelWidget.outsideShadow_spread ) !== true ){
             return i18n.t("outsideShadow_spread_is_not_valid");
         }
 
-        if( callinfoWidget.outsideShadow_color && Util.isAntdRgbaProperty( callinfoWidget.outsideShadow_color ) !== true  ){
+        if( callpanelWidget.outsideShadow_color && Util.isAntdRgbaProperty( callpanelWidget.outsideShadow_color ) !== true  ){
             return i18n.t("outsideShadow_color_is_not_valid");
         }
 
@@ -224,14 +224,14 @@ export default class LegacyCallInfoSettings extends React.Component {
 
         return (
             <Form ref={this.formRef} layout="vertical" initialValues={this.props.widget} onValuesChange={this.onChangeDebounced}>
-                <Form.Item label={i18n.t("fgColor")} name={`callinfoFgColor`} rules={[
+                <Form.Item label={i18n.t("fgColor")} name={`callpanelFgColor`} rules={[
                     {
                         required: false,
                     }
                 ]}>
                     <Colorpicker format="rgb" />
                 </Form.Item>
-                <Form.Item label={i18n.t("bgColor")} name={`callinfoBgColor`} rules={[
+                <Form.Item label={i18n.t("bgColor")} name={`callpanelBgColor`} rules={[
                     {
                         required: false,
                     }

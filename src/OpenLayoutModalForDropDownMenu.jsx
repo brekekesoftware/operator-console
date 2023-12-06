@@ -7,7 +7,7 @@ import BrekekeOperatorConsole from "./index";
 import Notification from "antd/lib/notification";
 
 
-export default function OpenLayoutModal2( props  ) {
+export default function OpenLayoutModalForDropDownMenu(props  ) {
     const operatorConsole = props.operatorConsole
     const open = props.useStateOpen;
     const setOpen = props.useStateSetOpen;

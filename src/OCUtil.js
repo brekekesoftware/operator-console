@@ -51,6 +51,22 @@ export default class OCUtil{
         return -1;
     }
 
+    static getCallStatusFromBrOCCallObject( brOCCallObject ){
+        let status = null;
+        if( brOCCallObject.holding === true ){
+            status = BROC_BROCCALLOBJECT_CALL_STATUSES.holding;
+        }
+        else if( brOCCallObject.answered === true ){
+            status = BROC_BROCCALLOBJECT_CALL_STATUSES.talking;
+        }
+        else if( brOCCallObject.incoming === true ){
+            status = BROC_BROCCALLOBJECT_CALL_STATUSES.incoming;
+        }
+        else{
+            status = BROC_BROCCALLOBJECT_CALL_STATUSES.calling;
+        }
+        return status;
+    }
 
 }
 export const NOTIFY_STATUS_CODES = Object.freeze({
@@ -66,3 +82,10 @@ export const NOTIFY_STATUS_CODES = Object.freeze({
     UNHOLD: 36,
     DISCONNECT: -1
 });
+export const BROC_BROCCALLOBJECT_CALL_STATUSES = {
+    //unknown : 0,
+    talking: 1,
+    holding: 2,
+    calling: 3,
+    incoming : 4
+}

@@ -9,7 +9,7 @@ import {icons} from "antd/es/image/PreviewGroup";
 import antd, {Form, Input, message, Modal, Switch} from "antd";
 import { Dropdown, Button, Space, Menu } from 'antd';
 import BrekekeOperatorConsole from "./index";
-import OpenLayoutModal2, {refreshNoteNamesContent} from "./OpenLayoutModal2";
+import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLayoutModalForDropDownMenu";
 import Spin from "antd/lib/spin";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
@@ -185,7 +185,7 @@ export default function DropDownMenu( { operatorConsole } ){
     return (
         <>
             <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={newLayoutModalOpen} setNewLayoutModalOpen={setNewLayoutModalOpen} />
-            <OpenLayoutModal2 noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
+            <OpenLayoutModalForDropdownMenu noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
 
         <Dropdown
             menu={{
@@ -343,7 +343,7 @@ export default function DropDownMenu( { operatorConsole } ){
 
                     }
                     else {
-                        const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
+                        const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
                         const systemSettingsDataData = systemSettingsData.getData();
 
                         const  layoutsAndSettingsData =  {
@@ -395,7 +395,7 @@ export default function DropDownMenu( { operatorConsole } ){
         const confirmNewLayout = (  ) => {
             const layoutName = newLayoutName;
 
-            const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
+            const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
             const systemSettingsDataData = systemSettingsData.getData();
 
             const  layoutsAndSettingsData =  {

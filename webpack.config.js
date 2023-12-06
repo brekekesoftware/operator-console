@@ -123,7 +123,8 @@ const modules = (env, argv) => ({
     library: ['Brekeke'],
     libraryTarget: 'window',
   },
-  devtool: argv.mode === 'production' ? false : "#cheap-eval-source-map",
+  //devtool: argv.mode === 'production' ? false : "#cheap-eval-source-map",
+  devtool: argv.mode === 'production' ? false : "source-map",
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     modules: ["src", "node_modules"],

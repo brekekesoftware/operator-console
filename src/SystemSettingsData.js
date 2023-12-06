@@ -23,13 +23,21 @@ export default class SystemSettingsData{
     }
 
     setData( appData ){
+        appData = this._formatSystemSettingsAppData(appData);
+
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
         this._Data.shortDials = appData.shortDials;
         this._Data.quickBusyClickToCall = appData.quickBusyClickToCall;
+        this._Data.ucUrl = appData.ucUrl;
+        this._Data.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled;
+        this._Data.extensionScript = appData.extensionScript;
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
+    }
 
+    getExtensionScript(){
+        return this._Data.extensionScript;
     }
 
     getData(){
@@ -45,7 +53,9 @@ export default class SystemSettingsData{
        this._Data.camponTimeoutSeconds =  this._camponTimeoutMillis / 1000;
        this._Data.quickBusyClickToCall = true;
         this._Data.shortDials = null;
-
+        this._Data.ucUrl = "";
+        this._Data.ucChatAgentComponentEnabled = false;
+        this._Data.extensionScript = "";
     }
 
     getShortDials(){
@@ -54,6 +64,14 @@ export default class SystemSettingsData{
 
     getCamponTimeoutMillis(){
         return this._camponTimeoutMillis;
+    }
+
+    getUcUrl(){
+        return this._Data.ucUrl;
+    }
+
+    getUcChatAgentComponentEnabled(){
+        return this._Data.ucChatAgentComponentEnabled;
     }
 
     _formatSystemSettingsAppData(appData){
@@ -65,8 +83,10 @@ export default class SystemSettingsData{
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
         appData.shortDials = appData.shortDials ? appData.shortDials : null;
         appData.quickBusyClickToCall = appData.quickBusyClickToCall ? appData.quickBusyClickToCall : QuickBusy.getDefaultQuickBusyClickToCall();
-
-        this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
+        appData.ucUrl = appData.ucUrl ? appData.ucUrl : "";
+        appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;
+        appData.extensionScript = appData.extensionScript ? appData.extensionScript : "";
+        return appData;
     }
 
 }

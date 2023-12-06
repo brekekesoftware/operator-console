@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useRef} from "react";
 import Form from "antd/lib/form";
 import Button from 'antd/lib/button';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -37,6 +37,7 @@ export default class SystemSettingsView extends React.Component {
         this.operatorConsoleAsParent = this.props.operatorConsole;
         this.setSystemSettingsUseFormBindedFunction = this.setSystemSettingsUseForm.bind(this);
         this.operatorConsoleAsParent.setSystemSettingsView( this );
+
     }
 
     // componentDidUpdate(prevProps, prevState, snapshot) {
@@ -62,6 +63,30 @@ export default class SystemSettingsView extends React.Component {
                //     height: this.state.editingScreenHeight,
                //     grid: this.state.editingScreenGrid,
                // }
+
+               //check ucUrl
+               if( values.ucUrl !== undefined && values.ucUrl !== null ) {
+                   values.ucUrl = values.ucUrl.trim();
+                   if (values.ucUrl.length !== 0) {
+                       try {
+                           const url = new URL(values.ucUrl);
+                       } catch (err) {
+                           Notification.error({message: i18n.t('inputContentIsInvalidWithColon') + i18n.t("ucUrl")});
+                           return;
+                       }
+                   }
+               }
+               //!later validation
+               //values.ucChatAgentComponentEnabled
+
+               // try {
+               //     eval(values.extensionScript);
+               // }
+               // catch(err){
+               //     Notification.error({message: i18n.t('aScriptErrorHasOccurred') + "\r\n" +  err });
+               //      return;
+               // }
+
                console.log('saving systemSettings...', values );
                this.operatorConsoleAsParent.getSystemSettingsData().setData( values );
                this.operatorConsoleAsParent.onSavingSystemSettings(this);
@@ -160,12 +185,25 @@ export default class SystemSettingsView extends React.Component {
         this._systemSettingsUseForm = systemSettingsUseForm;
     }
 
+    // _onChangeUcChatAgentComponentEnabled(ev){
+    //     const operatorConsole = this.operatorConsoleAsParent;
+    //     const uccac = operatorConsole.getUccac();
+    //     const ucChatAgentComponentEnabled = ev.target.value;
+    //
+    //     //!later init/deinit uccac
+    //     if( ucChatAgentComponentEnabled === true ){
+    //         uccac.init();
+    //     }
+    //     else{
+    //         uccac.deinit();
+    //     }
+    // }
+
     render(){
-            return  <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column', paddingLeft:20}} >
-                    <div style={{display: 'flex', padding: 4, borderBottom: 'solid 1px #e0e0e0'}}>
-                        <Space>
-                        </Space>
-                        <div style={{marginLeft: 'auto'}}>
+        const this_ = this;
+            return  <>
+                    <div style={{display: 'flex', justifyContent:"flex-end",padding: 4, borderBottom: 'solid 1px #e0e0e0'}}>
+                        <div>
                             <Space>
                                 <Popconfirm title={i18n.t("are_you_sure")} onConfirm={this.operatorConsoleAsParent.abortSystemSettings}
                                             okText={i18n.t("yes")}
@@ -180,12 +218,18 @@ export default class SystemSettingsView extends React.Component {
                             </Space>
                         </div>
                     </div>
-                    <div style={{display: 'flex', flexGrow: 1}}>
-                        <div style={{position: 'relative', flexGrow: 1, overflow: 'hidden'}}>
-                            <SystemSettingsForm setSystemSettingsUseFormBindedFunction={this.setSystemSettingsUseFormBindedFunction} systemSettingsData={ this.operatorConsoleAsParent.getSystemSettingsData() } />
+                    {/*<div style={{position:"absolute",top:40,margin:"0px 20px 0px 20px",paddingBottom:"20px",height:"calc(100% - 40px)",overflow:"scroll",width:"calc(100% - 20px)"}}>*/}
+                <div style={{position:"absolute",left:20,top:40,paddingRight:20,paddingBottom:20,width:"calc(100% - 40px)",height:"calc(100% - 60px)",overflow:"scroll"}}>
+                        <div>
+                            <SystemSettingsForm
+                                setSystemSettingsUseFormBindedFunction={this.setSystemSettingsUseFormBindedFunction}
+                                systemSettingsData={ this.operatorConsoleAsParent.getSystemSettingsData() }
+                                // onChangeUcChatAgentComponentEnabledFunction ={this._onChangeUcChatAgentComponentEnabled}
+                                //setAceEditorFunction={ function( aceEditor ){ this_.setAceEditor( aceEditor ) }}
+                            />
                         </div>
                     </div>
-                </div>
+                </>
     }
 
 }

@@ -49,7 +49,7 @@ html,body {
   display: flex;
 }
 
-.brOCCallInfo {
+.brOCCallPanel {
   flex-shrink: 0;
   align-self: flex-start;
 }
@@ -230,13 +230,9 @@ $kbc-btn-size-map: (
     }
   }
 }
-.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
-  box-shadow: none !important;
-}
-.ant-input-affix-wrapper:focus, .ant-input-affix-wrapper-focused,
-.ant-input:focus, .ant-input-focused,
-.ant-input-number:focus, .ant-input-number-focused {
-  box-shadow: none !important;
+
+:where(.css-dev-only-do-not-override-htwhyh).ant-input-number .ant-input-number-input {
+  vertical-align: unset;
 }
 
 .brOCEditingWidget {
@@ -517,6 +513,7 @@ table.brOCLinetable tbody tr td
   height: 32px;
   border: none;
   outline: 1px solid #e0e0e0;
+  margin-left:1px;
   background-color: #fafafa;
   padding: 0 11px;
   border-radius: 4px;
@@ -525,5 +522,7 @@ table.brOCLinetable tbody tr td
 
 .brOC .ant-input:focus {
   outline: 2px solid #4CC5DE;
+  margin-left:2px;
+  padding: 0 10px;
   border: none;
 }

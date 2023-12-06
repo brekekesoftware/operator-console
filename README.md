@@ -22,8 +22,8 @@ Then open http://localhost:8080/operator-console.html in your browser.
 
 ```
 src
-├── call-info.jsx  # the LCD display component
-├── call-info.scss #
+├── callPanel.jsx  # the LCD display component
+├── callPanel.scss #
 ├── i18n.js        # internalization library
 ├── icons.js       # some SVG icons from webphone
 ├── index.jsx      # entry component

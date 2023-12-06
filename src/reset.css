@@ -134,11 +134,13 @@ button{
     height:initial;
 }
 
+/*
 .brOC button.kbc-button-fill-parent{
-	color:unset;
+     color:unset;
 }
+*/
 
-.brOCCallInfo {
+.brOCCallPanel {
 	color:unset;
 }
 

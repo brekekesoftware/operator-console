@@ -1,8 +1,10 @@
 import React from 'react'
 import { IconKeyboard, IconPhoneIncoming, IconPhoneOutgoing } from './icons'
-import "./call-info.scss"
+import "./callPanel.scss"
 import {Colorpicker} from "antd-colorpicker";
 import Util from "./Util"
+import {OperatorConsole} from "./index";
+import BrekekeOperatorConsole from "./index";
 
 function formatSecondsToHHMMSS (seconds) {
   const second = parseInt(seconds % 60);
@@ -14,7 +16,7 @@ function formatSecondsToHHMMSS (seconds) {
     + second.toString().padStart(2, '0');
 }
 
-export default class CallInfo extends React.Component {
+export default class CallPanel extends React.Component {
   durationTimeout = null;
 
   constructor(props) {
@@ -41,8 +43,8 @@ export default class CallInfo extends React.Component {
   render() {
     const call = this.props.call;
 
-    const callinfoFgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callinfoFgColor , "" );
-    const callinfoBgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callinfoBgColor, "" );
+    const callpanelFgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callpanelFgColor , "" );
+    const callpanelBgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callpanelBgColor, "" );
     const borderRadius = this.props.borderRadius ? this.props.borderRadius : "";
     const outsideShadow_horizontalOffset =  this.props.outsideShadow_horizontalOffset ? this.props.outsideShadow_horizontalOffset : "";
     const outsideShadow_verticalOffset = this.props.outsideShadow_verticalOffset ? this.props.outsideShadow_verticalOffset : "";
@@ -60,28 +62,35 @@ export default class CallInfo extends React.Component {
     const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
     const sBoxShadow = sBoxshadowOutside + ( sBoxshadowOutside && sBoxshadowInside ? "," : "" ) + sBoxshadowInside;
 
+    function onPaste(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData("text");
+      const oc = BrekekeOperatorConsole.getStaticInstance();
+      oc.setDialing( paste );
+    }
+
     return (
-      <div className="brOCCallInfo" style={{
+      <div className="brOCCallPanel" style={{
         borderRadius:borderRadius,
-        backgroundColor:callinfoBgColor,
+        backgroundColor:callpanelBgColor,
         boxShadow:sBoxShadow,
-        color:callinfoFgColor
-      }}>
-        <div className="brOCCallInfoRow">
-          <div className="brOCCallInfoLeft">
+        color:callpanelFgColor
+      }} onPaste={onPaste}>
+        <div className="brOCCallPanelRow">
+          <div className="brOCCallPanelLeft">
             {!!call && (call.incoming ? IconPhoneIncoming : IconPhoneOutgoing)}
           </div>
-          <div className="brOCCallInfoMain">
-            <div className="brOCCallInfoPartyNumber">{call?.partyNumber}</div>
-            <div className="brOCCallInfoDuration">{this.state.duration}</div>
+          <div className="brOCCallPanelMain">
+            <div className="brOCCallPanelPartyNumber">{call?.partyNumber}</div>
+            <div className="brOCCallPanelDuration">{this.state.duration}</div>
           </div>
         </div>
-        <div className="brOCCallInfoRow">
+        <div className="brOCCallPanelRow">
           {!!this.props.dialing && (
-            <div className="brOCCallInfoLeft">{IconKeyboard}</div>
+            <div className="brOCCallPanelLeft">{IconKeyboard}</div>
           )}
-          <div className="brOCCallInfoMain">
-            <div className="brOCCallInfoDialing">{this.props.dialing}</div>
+          <div className="brOCCallPanelMain">
+            <div className="brOCCallPanelDialing">{this.props.dialing}</div>
           </div>
         </div>
       </div>

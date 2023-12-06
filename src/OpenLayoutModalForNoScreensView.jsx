@@ -4,7 +4,7 @@ import {useState} from "react";
 import Spin from "antd/lib/spin";
 import i18n from "./i18n";
 
-export default function OpenLayoutModal( props ) {
+export default function OpenLayoutModalForNoScreensView(props ) {
     //const operatorConsoleAsParent = props.operatorConsoleAsParent;
     const open = props.useStateOpen;
     const setOpen = props.useStateSetOpen;

@@ -5,7 +5,7 @@ import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
 import Notification from "antd/lib/notification";
 import BrekekeOperatorConsole from "./index";
-import OpenLayoutModal from "./OpenLayoutModal";
+import OpenLayoutModalForNoScreensView from "./OpenLayoutModalForNoScreensView";
 import Spin from "antd/lib/spin";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
@@ -67,7 +67,7 @@ export default function NoScreensView( props ){
 
                 }
                 else {
-                    const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
+                    const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
                     const systemSettingsDataData = systemSettingsData.getData();
 
                     const  layoutsAndSettingsData =  {
@@ -121,7 +121,7 @@ export default function NoScreensView( props ){
     const confirmNewLayout = (  ) => {
         const layoutName = newLayoutName;
 
-        const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
+        const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
 
         const  layoutsAndSettingsData =  {
@@ -252,7 +252,7 @@ export default function NoScreensView( props ){
 
     return (
         <>
-            <OpenLayoutModal
+            <OpenLayoutModalForNoScreensView
                 operatorConsoleAsParent={operatorConsoleAsParent}
                 useStateOpen={openLayoutOpen} useStateSetOpen={ setOpenLayoutOpen} useStateSetNewOrOpenLayoutOpen={ setOpen }
                 useStateNoteNamesContent = { noteNamesContent }

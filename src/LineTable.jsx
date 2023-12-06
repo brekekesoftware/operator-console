@@ -558,7 +558,7 @@ export default function LineTable( props ) {
     const lineButtonHeight = props.lineButtonHeight ? props.lineButtonHeight : 40;  //!default
 
     return (
-        <table class="brOCLinetable" style={{
+        <table className="brOCLinetable" style={{
             borderRadius:outerBorderRadius,
             border: outerBorderThickness + "px solid " + outerBorderColor,
             backgroundColor:backgroundColor,

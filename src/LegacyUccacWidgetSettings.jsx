@@ -8,7 +8,7 @@ import { Colorpicker  } from 'antd-colorpicker';
 import {Divider} from "antd";
 import Util from "./Util";
 
-export default class LegacyCallPanelSettings extends React.Component {
+export default class LegacyUccacWidgetSettings extends React.Component {
     constructor(props) {
         super(props);
         //this._setDefaultValues( this.props.widget );
@@ -20,20 +20,20 @@ export default class LegacyCallPanelSettings extends React.Component {
         this.onChangeDebounced = () => {
             //debounce(props.onChange, 250);
             const values = this.formRef.current.getFieldsValue();
-            LegacyCallPanelSettings._copyFromValuesFrom( values, this.props.widget  );    //!bad
+            LegacyUccacWidgetSettings._copyFromValuesFrom( values, this.props.widget  );    //!bad
             this._operatorConsoleAsParent.updateSelectingWidgetSettings( this.props.widget );
             //this._checkInput( this.formRef.current.getFieldsValue() );
         };
         //this._operatorConsoleAsParent.setState( {isSaveEditingScreenButtonDisabled : true } );
-        const added = this._operatorConsoleAsParent.addOnBeginSaveEditingScreenFunctionIfNotExists( LegacyCallPanelSettings._OnBeginSaveEditingScreenFunction );
+        const added = this._operatorConsoleAsParent.addOnBeginSaveEditingScreenFunctionIfNotExists( LegacyUccacWidgetSettings._OnBeginSaveEditingScreenFunction );
         //const thisEditingWidget = this._operatorConsoleAsParent.getEditingWidget();
         //thisEditingWidget.OnDeselectEditingWidget = this.OnDeselectEditingWidget.bind(this);
         //thisEditingWidget.OnRemovingWidget = this.OnRemovingWidget.bind(this);
     }
 
     static _copyFromValuesFrom( src, dst ){
-        dst.callpanelFgColor = src.callpanelFgColor;
-        dst.callpanelBgColor = src.callpanelBgColor;
+        dst.uccacwidgetFgColor = src.uccacwidgetFgColor;
+        dst.uccacwidgetBgColor = src.uccacwidgetBgColor;
         dst.borderRadius = src.borderRadius;
         dst.outsideShadow_horizontalOffset = src.outsideShadow_horizontalOffset;
         dst.outsideShadow_verticalOffset = src.outsideShadow_verticalOffset;
@@ -49,67 +49,67 @@ export default class LegacyCallPanelSettings extends React.Component {
         //!modify
     }
 
-    static validateAndFormatWidget( callpanelWidget ) {
+    static validateAndFormatWidget( uccacwidgetWidget ) {
 
-        if( callpanelWidget.callpanelFgColor && Util.isAntdRgbaProperty( callpanelWidget.callpanelFgColor ) !== true ) {
+        if( uccacwidgetWidget.uccacwidgetFgColor && Util.isAntdRgbaProperty( uccacwidgetWidget.uccacwidgetFgColor ) !== true ) {
             //!for old version
-            if (Util.isHex6(callpanelWidget.callpanelFgColor)) {
-                callpanelWidget.callpanelFgColor = Util.getAntdRgbColorFromHex6( callpanelWidget.callpanelFgColor );
+            if (Util.isHex6(uccacwidgetWidget.uccacwidgetFgColor)) {
+                uccacwidgetWidget.uccacwidgetFgColor = Util.getAntdRgbColorFromHex6( uccacwidgetWidget.uccacwidgetFgColor );
             } else {
                 return i18n.t("fgColor_is_not_valid");
             }
         }
 
-        if( callpanelWidget.callpanelBgColor && Util.isAntdRgbaProperty( callpanelWidget.callpanelBgColor ) !== true  ){
+        if( uccacwidgetWidget.uccacwidgetBgColor && Util.isAntdRgbaProperty( uccacwidgetWidget.uccacwidgetBgColor ) !== true  ){
             //!for old version
-            if (Util.isHex6(callpanelWidget.callpanelBgColor)) {
-                callpanelWidget.callpanelBgColor = Util.getAntdRgbColorFromHex6( callpanelWidget.callpanelBgColor );
+            if (Util.isHex6(uccacwidgetWidget.uccacwidgetBgColor)) {
+                uccacwidgetWidget.uccacwidgetBgColor = Util.getAntdRgbColorFromHex6( uccacwidgetWidget.uccacwidgetBgColor );
             } else {
                 return i18n.t("bgColor_is_not_valid");
             }
         }
 
-        if ( callpanelWidget.borderRadius && Util.isNumber( callpanelWidget.borderRadius ) !== true  ) {
+        if ( uccacwidgetWidget.borderRadius && Util.isNumber( uccacwidgetWidget.borderRadius ) !== true  ) {
             return i18n.t("borderRadius_is_not_valid");
         }
 
-        if( callpanelWidget.insideShadow_horizontalOffset && Util.isNumber( callpanelWidget.insideShadow_horizontalOffset) !== true ){
+        if( uccacwidgetWidget.insideShadow_horizontalOffset && Util.isNumber( uccacwidgetWidget.insideShadow_horizontalOffset) !== true ){
             return i18n.t("insideShadow_horizontalOffset_is_not_valid");
         }
 
-        if( callpanelWidget.insideShadow_verticalOffset && Util.isNumber( callpanelWidget.insideShadow_verticalOffset) !== true ){
+        if( uccacwidgetWidget.insideShadow_verticalOffset && Util.isNumber( uccacwidgetWidget.insideShadow_verticalOffset) !== true ){
             return i18n.t("insideShadow_verticalOffset_is_not_valid");
         }
 
-        if( callpanelWidget.insideShadow_blur && Util.isNumber( callpanelWidget.insideShadow_blur) !== true ){
+        if( uccacwidgetWidget.insideShadow_blur && Util.isNumber( uccacwidgetWidget.insideShadow_blur) !== true ){
             return i18n.t("insideShadow_blur_is_not_valid");
         }
 
-        if( callpanelWidget.insideShadow_spread && Util.isNumber( callpanelWidget.insideShadow_spread ) !== true ){
+        if( uccacwidgetWidget.insideShadow_spread && Util.isNumber( uccacwidgetWidget.insideShadow_spread ) !== true ){
             return i18n.t("insideShadow_spread_is_not_valid");
         }
 
-        if( callpanelWidget.insideShadow_color && Util.isAntdRgbaProperty( callpanelWidget.insideShadow_color ) !== true  ) {
+        if( uccacwidgetWidget.insideShadow_color && Util.isAntdRgbaProperty( uccacwidgetWidget.insideShadow_color ) !== true  ) {
             return i18n.t("insideShadow_color_is_not_valid");
         }
 
-        if( callpanelWidget.outsideShadow_horizontalOffset && Util.isNumber( callpanelWidget.outsideShadow_horizontalOffset) !== true ){
+        if( uccacwidgetWidget.outsideShadow_horizontalOffset && Util.isNumber( uccacwidgetWidget.outsideShadow_horizontalOffset) !== true ){
             return i18n.t("outsideShadow_horizontalOffset_is_not_valid");
         }
 
-        if( callpanelWidget.outsideShadow_verticalOffset && Util.isNumber( callpanelWidget.outsideShadow_verticalOffset) !== true ){
+        if( uccacwidgetWidget.outsideShadow_verticalOffset && Util.isNumber( uccacwidgetWidget.outsideShadow_verticalOffset) !== true ){
             return i18n.t("outsideShadow_verticalOffset_is_not_valid");
         }
 
-        if( callpanelWidget.outsideShadow_blur && Util.isNumber( callpanelWidget.outsideShadow_blur) !== true ){
+        if( uccacwidgetWidget.outsideShadow_blur && Util.isNumber( uccacwidgetWidget.outsideShadow_blur) !== true ){
             return i18n.t("outsideShadow_blur_is_not_valid");
         }
 
-        if( callpanelWidget.outsideShadow_spread && Util.isNumber( callpanelWidget.outsideShadow_spread ) !== true ){
+        if( uccacwidgetWidget.outsideShadow_spread && Util.isNumber( uccacwidgetWidget.outsideShadow_spread ) !== true ){
             return i18n.t("outsideShadow_spread_is_not_valid");
         }
 
-        if( callpanelWidget.outsideShadow_color && Util.isAntdRgbaProperty( callpanelWidget.outsideShadow_color ) !== true  ){
+        if( uccacwidgetWidget.outsideShadow_color && Util.isAntdRgbaProperty( uccacwidgetWidget.outsideShadow_color ) !== true  ){
             return i18n.t("outsideShadow_color_is_not_valid");
         }
 
@@ -120,10 +120,10 @@ export default class LegacyCallPanelSettings extends React.Component {
         const widgets = operatorConsoleAsCaller.getEditingWidgets();
         for( let i = 0; i < widgets.length; i++ ) {
             const w = widgets[i];
-            if (w.type !== "LegacyCallPanel") {
+            if (w.type !== "LegacyUccacWidget") {
                 continue;
             }
-            const msg = LegacyCallPanelSettings.validateAndFormatWidget( w );
+            const msg = LegacyUccacWidgetSettings.validateAndFormatWidget( w );
             if( msg ){
                 operatorConsoleAsCaller.selectWidget(i);
                 return msg;
@@ -224,14 +224,14 @@ export default class LegacyCallPanelSettings extends React.Component {
 
         return (
             <Form ref={this.formRef} layout="vertical" initialValues={this.props.widget} onValuesChange={this.onChangeDebounced}>
-                <Form.Item label={i18n.t("fgColor")} name={`callpanelFgColor`} rules={[
+                <Form.Item label={i18n.t("fgColor")} name={`uccacwidgetFgColor`} rules={[
                     {
                         required: false,
                     }
                 ]}>
                     <Colorpicker format="rgb" />
                 </Form.Item>
-                <Form.Item label={i18n.t("bgColor")} name={`callpanelBgColor`} rules={[
+                <Form.Item label={i18n.t("bgColor")} name={`uccacwidgetBgColor`} rules={[
                     {
                         required: false,
                     }

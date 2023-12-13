@@ -1,3 +1,5 @@
+import Util from "./Util";
+
 export default class OCUtil{
 
     // static removeElementFromArray( array, element ){
@@ -66,6 +68,24 @@ export default class OCUtil{
             status = BROC_BROCCALLOBJECT_CALL_STATUSES.calling;
         }
         return status;
+    }
+
+    static getUrlStringFromPathOrUrl( pathOrUrl, rootUrl ){
+        let sUrl = null;
+        try {
+            new URL(pathOrUrl);
+            sUrl = pathOrUrl;
+        }
+        catch(err) {
+        }
+        if( sUrl === null  ){
+            //Generate url from path.
+            if( rootUrl[ rootUrl.length - 1] !== '/' && pathOrUrl[0] !== '/' ){
+                rootUrl += '/';
+            }
+            sUrl =  rootUrl + pathOrUrl;
+        }
+        return sUrl;
     }
 
 }

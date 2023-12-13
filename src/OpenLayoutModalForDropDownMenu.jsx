@@ -49,22 +49,22 @@ export default function OpenLayoutModalForDropDownMenu(props  ) {
 export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFunc, setOpenLayoutModalOpenFunc   ) {
     const selectOCNoteByShortname = ( operatorConsole, shortname ) =>{
         const promise = operatorConsole.getOCNote(  shortname );
-        promise.then( (noteInfo) =>{
+        promise.then( (noteInfo) => {
             const sNote = noteInfo.note;
             const oNote = JSON.parse(sNote);
-            const dataErrorMessage = operatorConsole.setOCNote( shortname, oNote );
-            if( dataErrorMessage ){
-                console.error("Failed to setOCNote.", dataErrorMessage );
-                throw new Error( dataErrorMessage );
-            }
-            else{
-                //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
-                setOpenLayoutModalOpenFunc( false );
-            }
-        }).catch( (err) =>{
-            console.error(err);
-            Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + err });
+            operatorConsole.setOCNote(shortname, oNote, function () {
+                    //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
+                    setOpenLayoutModalOpenFunc(false);
+                },
+                function (eventArg) {
+                    const message = eventArg.message;
+                    console.error("Failed to setOCNote.", message);
+                    Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message});
+                    setOpenLayoutModalOpenFunc(false);
+                });
         });
+        // }).catch( (err) =>{
+        // });
     };
 
     setNoteNamesContentFunc(<Spin />);

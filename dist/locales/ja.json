@@ -61,7 +61,8 @@
     "failed_to_monitor_extension": "内線のモニタに失敗しました。",
 	"failed_to_transfer_call": "通話の転送に失敗しました。",
     "talking_monitored_extension_required": "通話中の内線番号をダイヤルする必要があります。",
-	  "aExtensionScriptErrorHasOccurred" :  "拡張スクリプトでエラーが発生しました。",
+	  "anExtensionScriptExecutingErrorHasOccurred" :  "拡張スクリプトの実行でエラーが発生しました。",
+	  "anExtensionScriptUnloadingErrorHasOccurred" : "拡張スクリプトのアンロードでエラーが発生しました。",
     "label": "ラベル",
     "icon": "アイコン",
     "text": "テキスト",
@@ -69,6 +70,8 @@
     "number": "番号",
 	"extensionScript" : "拡張スクリプト",
 	  "otherSettings" : "その他の設定",
+	  "ucSettings" :  "UCの設定",
+	  "ringtoneSetting" : "着信音の設定",
 	  "reconnecting_pbx": "PBXから切断されました。 再度接続をしています...",
 
     "retry": "リトライ",
@@ -112,11 +115,20 @@
 	  "ucUrl" : "UC URL",
 	  "inputContentIsInvalidWithColon":"入力内容が不正です。 : ",
 	  "ucChatAgentComponent" : "UC Chat agent component",
+	  "ucChatAgentComponentIsDisabled" : "UC Chat agent componentは無効になっています。",
+	  "ucChatAgentComponentIsInEditMode" : "UC Chat agent componentは編集中です。",
+	  "confirmRestartUccac" : "UC Chat agent componentを再起動しますか?",
+	  "restart" : "再起動",
 	"addField" : "項目を追加",
 	"shortDial" : "短縮ダイヤル",
 	"dial" : "電話番号",
 	"missingShortDial" : "短縮ダイヤルが入力されていません。",
 	"missingDial" : "電話番号が入力されていません。",
+	  "ringtoneSettings" : "着信音設定",
+	  "ringtoneCaller" : "発信番号(正規表現可)",
+	  "missingRingtoneCaller" : "発信番号が入力されていません。",
+	  "ringtoneFilepathOrFileurl" : "ファイルパスまたはファイルURL",
+	  "missingRingtoneFilepathOrFileurl" : "ファイルパスまたはファイルURLが入力されていません。",
 	"CouldNotSavePleaseCheckYourEntries" : "保存できません。入力内容を確認して下さい。",
 	"newLayout" : "新規レイアウト",
 	"layoutName" : "レイアウト名",
@@ -204,10 +216,12 @@
 	"header_rowUnderlineThickness_is_not_valid" : "ボディ部の行の下線の色が正しくありません。",
 	"body_rowUnderlineColor_is_not_valid" : "ヘッダ部の行の下線の太さが正しくありません。",
 	"header_rowUnderlineColor_is_not_valid" : "ヘッダ部の行の下線の色が正しくありません。",
-
+	"FailedToLoadRingtoneAudioFile" : "着信音のオーディオファイルの読み込みに失敗しました。",
 	"lineButtonSettings" : "ラインボタンの設定",
 	"transferButtonSettings" : "転送ボタンの設定",
 	"transferCancelButtonSettings" : "転送キャンセルボタンの設定",
+	  "FailedToUCCACInitialization" : "UC chat agent componentの初期化に失敗しました。",
+	  "CouldNotDownloadLayoutAndSystemSettings" :  "レイアウトとシステム設定のダウンロードができませんでした。",
 
     "legacy_button_label": {
       "LegacyDummyButton": " ",
@@ -287,7 +301,8 @@
       "CallTable": "このコンポーネントは、アクティブな通話のテーブルが表示されます。",
       "ExtensionTable": "このコンポーネントには、アクティブな通話のテーブルが表示されます。",
       "Note": "このコンポーネントは付箋を表示します。",
-	  "LineTable": "このコンポーネントはラインの表を表示します。"
+	  "LineTable": "このコンポーネントはラインの表を表示します。",
+		"LegacyUccacWidget": "このコンポーネントはUC Chat Agent Componentを表示します。"
     }
   }
 }

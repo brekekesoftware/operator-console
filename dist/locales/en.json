@@ -61,7 +61,8 @@
     "failed_to_monitor_extension": "Failed to monitor extension",
 	"failed_to_transfer_call": "Failed to transfer the call",
     "talking_monitored_extension_required": "You need to dial a talking extension",
-	"aExtensionScriptErrorHasOccurred" :  "A extension script error has occurred.",
+	"anExtensionScriptExecutingErrorHasOccurred" :  "An error occurred while executing the extension script.",
+	"anExtensionScriptUnloadingErrorHasOccurred" : "An error occurred while unloading the extension script.",
     "label": "Label",
     "icon": "Icon",
     "text": "Text",
@@ -69,6 +70,8 @@
     "number": "Number",
 	"extensionScript" : "Extension script",
 	  "otherSettings" : "Other settings",
+	  "ucSettings" :  "UC settings",
+	  "ringtoneSetting" : "Ringtone setting",
     "reconnecting_pbx": "Disconnected from PBX. Trying to reconnect...",
 
     "retry": "Retry",
@@ -112,11 +115,20 @@
 	  "ucUrl" : "UC URL",
 	  "inputContentIsInvalidWithColon":"Input content is invalid. : ",
 	  "ucChatAgentComponent" : "UC Chat agent component",
+	  "ucChatAgentComponentIsDisabled" : "UC Chat agent component is disabled.",
+	  "ucChatAgentComponentIsInEditMode" : "UC Chat agent component is in edit mode.",
+	  "confirmRestartUccac" : "Do you want to restart UC Chat agent component?",
+	  "restart" : "Restart",
 	"addField" : "Add field",
 	"shortDial" : "Short dial",
 	"dial" : "Dial",
 	"missingShortDial" : "Missing short dial.",
 	"missingDial" : "Missing dial.",
+	  "ringtoneSettings" : "Ringtone settings",
+	  "ringtoneCaller" : "Caller(Regular expressions possible)",
+	  "missingRingtoneCaller" : "Missing ringtone caller",
+	  "ringtoneFilepathOrFileurl" : "File path or file url",
+	  "missingRingtoneFilepathOrFileurl" : "Missing file path or file url",
 	"CouldNotSavePleaseCheckYourEntries" : "Could not save. Please check your entries.",
 	"newLayout" : "New layout",
 	"layoutName" : "Layout name",
@@ -204,12 +216,15 @@
 	"header_rowUnderlineThickness_is_not_valid" : "Body row underline thickness is not valid.",
 	"body_rowUnderlineColor_is_not_valid" : "Body row underline color is not valid.",
 	"header_rowUnderlineColor_is_not_valid" : "Body row underline color is not valid.",
+	  "FailedToLoadRingtoneAudioFile" : "Failed to load ringtone audio file",
 
 	"lineButtonSettings" : "Line button settings",
 	"transferButtonSettings" : "Transfer button settings",
 	"transferCancelButtonSettings" : "Cancel transfer button settings",
-	
-    "legacy_button_label": {
+	  "FailedToUCCACInitialization" : "Failed to UC chat agent component initialization.",
+	  "CouldNotDownloadLayoutAndSystemSettings" :  "Could not download layout and system settings.",
+
+	  "legacy_button_label": {
       "LegacyDummyButton": " ",
       "LegacyCallTalkingButton": "Talking",
       "LegacyNoAnswerButton": "No answer",
@@ -287,7 +302,8 @@
       "CallTable": "This widget shows a table of active calls.",
       "ExtensionTable": "This widget shows a table of extensions.",
       "Note": "This widget shows a sticky note.",
-  	  "LineTable": "This widget shows a table of lines."
+  	  "LineTable": "This widget shows a table of lines.",
+		"LegacyUccacWidget": "This widget shows a UC Chat Agent Component."
     }
   }
 }

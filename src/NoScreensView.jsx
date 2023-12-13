@@ -79,19 +79,18 @@ export default function NoScreensView( props ){
                     const noteContent = JSON.stringify( layoutsAndSettingsData );
                     const setNotePromise = operatorConsoleAsParent.setOCNoteByPal(layoutName, noteContent);
                     setNotePromise.then(() => {
-                        const sErr = operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData );
-                        if( sErr ){
-                            console.error("Failed to setOCNote.", sErr );
-                            throw new Error( sErr );
-                        }
-                        operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData  );
-                        Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                    })
-                        .catch((err) => {
-                            console.error("Failed to save data to PBX.", err);
-                            const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                            Notification.error({message: msg, duration: 0});
-                        });
+                        operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                                operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData  );
+                                Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                        },
+                            function( eventArg){
+                                const message = eventArg.message;
+                                //console.error("Failed to setOCNote.", message  );
+                                console.error("Failed to save data to PBX.", message );
+                                const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                Notification.error({message: msg, duration: 0});
+                            });
+                    });
                 }
 
             })
@@ -133,21 +132,20 @@ export default function NoScreensView( props ){
         const noteContent = JSON.stringify( layoutsAndSettingsData );
         const setNotePromise = operatorConsoleAsParent.setOCNoteByPal(layoutName, noteContent);
         setNotePromise.then(() => {
-            const sErr = operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData );
-            if( sErr ){
-                console.error("Failed to setOCNote.", sErr );
-                throw new Error( sErr );
-            }
-            operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData );
-            Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+            operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                    operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData );
+                    Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                    setNewLayoutConfirmOpen(false);
+            },
+                function( eventArg ){
+                    const message = eventArg.message;
+                    console.error("Failed to save data to PBX.", message);
+                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                    Notification.error({message: msg, duration: 0});
+                    setNewLayoutConfirmOpen(false);
+                });
         })
-            .catch((err) => {
-                console.error("Failed to save data to PBX.", err);
-                const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                Notification.error({message: msg, duration: 0});
-            });
 
-        setNewLayoutConfirmOpen(false);
     };
     const cancelConfirmNewLayout = () => {
         setNewLayoutConfirmOpen(false);
@@ -168,17 +166,16 @@ export default function NoScreensView( props ){
         promise.then( (noteInfo) =>{
             const sNote = noteInfo.note;
             const oNote = JSON.parse(sNote);
-            const dataErrorMessage = operatorConsoleAsParent.setOCNote( shortname, oNote );
-            if( dataErrorMessage ){
-                console.error("Failed to setOCNote.", dataErrorMessage );
-                throw new Error( dataErrorMessage );
-            }
-            else{
+            const dataErrorMessage = operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
                 operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(  this );
-            }
-        }).catch( (err) =>{
-            console.error(err);
-            Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + err });
+            },
+                function(eventArg){
+                    const message = eventArg.message;
+                    console.error("Failed to setOCNote.", message );
+                    //throw new Error( dataErrorMessage );
+                    Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + message  });
+                });
+
         });
     };
 

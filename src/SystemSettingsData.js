@@ -2,6 +2,10 @@ import {CallHistory} from "./CallHistory";
 import Campon from "./Campon";
 import SystemSettingsForm from "./SystemSettingsForm";
 import QuickBusy from "./QuickBusy";
+import OCUtil from "./OCUtil";
+import Util from "./Util";
+import i18n from "./i18n";
+import Notification from "antd/lib/notification";
 
 export default class SystemSettingsData{
     constructor( operatorConsoleAsParent ) {
@@ -22,18 +26,103 @@ export default class SystemSettingsData{
         return this._Data.quickBusyClickToCall;
     }
 
-    setData( appData ){
-        appData = this._formatSystemSettingsAppData(appData);
+    _onBeginSetSystemSettingsDataSuccess(){
+
+    }
+
+    /**
+     *
+     * @param eventArgs     const arg ={
+     *             errorCode : UCCAC_UCCAC_INIT_ERRORS.loadResourceFailed,
+     *             errorResourcePath : resourcePath,
+     *             errorEvent:ev
+     *         }
+     * @private
+     */
+    _onBeginSetSystemSettingsDataFail( eventArgs, initFailFunction ){
+        for( let i = 0; i < eventArgs.length; i++ ){
+            const ea = eventArgs[i];
+            console.error("Failed to UC chat agent component initialization. errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" , ea.errorEvent );
+            const message = i18n.t("FailedToUCCACInitialization") + " errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" + ea.errorEvent;
+            Notification.error({message: message });
+        }
+        initFailFunction();
+    }
+
+    _onBeginSetSystemSettingsDataSuccess( appData, initSuccessFunction ){
+        //cache ringtone files
+        const ringtoneInfos = appData.ringtoneInfos;
+        SystemSettingsData.cacheRingtones( ringtoneInfos );
 
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
         this._Data.shortDials = appData.shortDials;
+        this._Data.ringtoneInfos = appData.ringtoneInfos;
         this._Data.quickBusyClickToCall = appData.quickBusyClickToCall;
         this._Data.ucUrl = appData.ucUrl;
         this._Data.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled;
         this._Data.extensionScript = appData.extensionScript;
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
+
+        initSuccessFunction();
+    }
+
+    _onBeginSetSystemSettingsData( appData, initSuccessFunction , initFailFunction ){
+        const this_ = this;
+        const startInit = this._OperatorConsoleAsParent.onBeginSetSystemSettingsData( appData, this,
+            function(){
+                this_._onBeginSetSystemSettingsDataSuccess( appData, initSuccessFunction  );
+            },
+            function( eventArgs ) {
+                this_._onBeginSetSystemSettingsDataFail( eventArgs, initFailFunction );
+            }
+            );
+        return startInit;
+    }
+
+    static cacheRingtones( ringtoneInfos ){
+        //cache ringtone files
+        if( !ringtoneInfos || Array.isArray( ringtoneInfos ) !== true ) {
+            return -1;
+        }
+        if( ringtoneInfos.length === 0 ){
+            return 0;
+        }
+
+        const rootUrl = Util.getRootUrlString();
+        const xhr = new XMLHttpRequest();
+        let successCount = 0;
+        for( let i = 0; i < ringtoneInfos.length; i++ ){
+            const ringtoneInfo = ringtoneInfos[i];
+            //const caller = ringtoneInfo.ringtoneCaller;
+            const fileOrUrl = ringtoneInfo.ringtoneFilepathOrFileurl;
+            let fileUrl = OCUtil.getUrlStringFromPathOrUrl( fileOrUrl, rootUrl );
+            try {
+                const httpStatus = Util.getHeadResposneCodeByUrl( fileUrl , xhr );
+                if( httpStatus !== 200 ){
+                    console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",httpStatusCode=" + httpStatus  );
+                    Notification.error( {message: i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",httpStatusCode="  + httpStatus } );
+                }
+                else {
+                    new Audio(fileUrl);   //cache audio file
+                    successCount++;
+                }
+            }
+            catch(err){
+                console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",error=" , err );
+                Notification.error( i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",error="  + err  );
+                continue;
+            }
+        }
+        return successCount;
+    }
+
+    setSystemSettingsDataData( appData, initSuccessFunction, initFailFunction  ){
+        appData = this._formatSystemSettingsAppData(appData);
+
+        const startInit = this._onBeginSetSystemSettingsData( appData, initSuccessFunction, initFailFunction  );
+        return startInit;
     }
 
     getExtensionScript(){
@@ -53,6 +142,7 @@ export default class SystemSettingsData{
        this._Data.camponTimeoutSeconds =  this._camponTimeoutMillis / 1000;
        this._Data.quickBusyClickToCall = true;
         this._Data.shortDials = null;
+        this._Data.ringtoneInfos = null;
         this._Data.ucUrl = "";
         this._Data.ucChatAgentComponentEnabled = false;
         this._Data.extensionScript = "";
@@ -60,6 +150,10 @@ export default class SystemSettingsData{
 
     getShortDials(){
         return this._Data.shortDials;
+    }
+
+    getRingtoneInfos(){
+        return this._Data.ringtoneInfos;
     }
 
     getCamponTimeoutMillis(){
@@ -82,6 +176,7 @@ export default class SystemSettingsData{
         appData.autoDialMaxSaveCount = appData.autoDialMaxSaveCount ? appData.autoDialMaxSaveCount : CallHistory.getDefaultMaxSaveCount();
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
         appData.shortDials = appData.shortDials ? appData.shortDials : null;
+        appData.ringtoneInfos = appData.ringtoneInfos ? appData.ringtoneInfos : null;
         appData.quickBusyClickToCall = appData.quickBusyClickToCall ? appData.quickBusyClickToCall : QuickBusy.getDefaultQuickBusyClickToCall();
         appData.ucUrl = appData.ucUrl ? appData.ucUrl : "";
         appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;

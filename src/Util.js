@@ -112,4 +112,38 @@ export default class Util{
         return index;
     }
 
+    static removeString( s , tgt ){
+        if( !tgt ){
+            return s;
+        }
+        const index = s.indexOf( tgt );
+        if( index === -1 ){
+            return s;
+        }
+        const str = s.substring( index, tgt.length );
+        return str;
+    }
+
+    //Does not end with a slash
+    static getRootUrlString(){
+        let  sRootUrl = location.href;
+        sRootUrl = Util.removeString( sRootUrl,  location.search );
+        const indexOfSlash = sRootUrl.lastIndexOf('/');
+        if( indexOfSlash !== -1 ) {
+            const indexOfDot = sRootUrl.lastIndexOf(".", indexOfSlash);
+            if (indexOfDot !== -1) {
+                sRootUrl = sRootUrl.substring(0, indexOfSlash  );
+            }
+        }
+        return sRootUrl;
+    }
+
+    static getHeadResposneCodeByUrl(url, xhr ) {
+        if( !xhr ) {
+            xhr = new XMLHttpRequest();
+        }
+        xhr.open('HEAD', url, false);
+        xhr.send();
+        return xhr.status;
+    }
 }

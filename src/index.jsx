@@ -95,6 +95,7 @@ import SystemSettingsData from "./SystemSettingsData";
 import NoScreensView from "./NoScreensView";
 import {Modal} from "antd";
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";
+import LegacyUccacWidgetSettings from "./LegacyUccacWidgetSettings";
 import CallTableSettings from "./CallTableSettings";
 import {Colorpicker} from "antd-colorpicker";
 import Util from "./Util";
@@ -103,6 +104,7 @@ import UccacWrapper from "./UccacWrapper";
 import BrekekeOperatorConsoleEx from "./BrekekeOperatorConsoleEx";
 //import BusylightStatusChanger from "./BusylightStatusChanger";
 import OCUtil, {BROC_BROCCALLOBJECT_CALL_STATUSES} from "./OCUtil";
+import UccacWidget from "./UccacWidget";
 
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
@@ -136,6 +138,31 @@ function LegacyCallPanel({ borderRadius, callpanelBgColor, callpanelFgColor,
             insideShadow_blur={insideShadow_blur}
             insideShadow_spread={insideShadow_spread}
             insideShadow_color={insideShadow_color}
+        />
+    );
+}
+function LegacyUccacWidget({ operatorConsoleAsParent, uccacWrapper, borderRadius, uccacwidgetBgColor, uccacwidgetFgColor,
+                             outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
+                             insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
+                             context  }) {
+    return (
+        <UccacWidget
+            operatorConsoleAsParent={operatorConsoleAsParent}
+            uccacWrapper={uccacWrapper}
+            borderRadius={borderRadius}
+            uccacwidgetBgColor={uccacwidgetBgColor}
+            uccacwidgetFgColor={uccacwidgetFgColor}
+            outsideShadow_horizontalOffset={outsideShadow_horizontalOffset}
+            outsideShadow_verticalOffset={outsideShadow_verticalOffset}
+            outsideShadow_blur={outsideShadow_blur}
+            outsideShadow_spread={outsideShadow_spread}
+            outsideShadow_color={outsideShadow_color}
+            insideShadow_horizontalOffset={insideShadow_horizontalOffset}
+            insideShadow_verticalOffset={insideShadow_verticalOffset}
+            insideShadow_blur={insideShadow_blur}
+            insideShadow_spread={insideShadow_spread}
+            insideShadow_color={insideShadow_color}
+            context={context}
         />
     );
 }
@@ -1175,6 +1202,17 @@ function LineTablePreview() {
     );
 }
 
+function UccacWidgetPreview() {
+    return (
+        <table>
+            <thead>
+            <tr>
+                <th>{i18n.t("ucChatAgentComponent")}</th>
+            </tr>
+            </thead>
+        </table>
+    );
+}
 
 class Note extends React.Component {
     constructor(props) {
@@ -1675,13 +1713,15 @@ const WidgetMap = {
     [CallTable.name]: CallTable,
     [ExtensionTable.name]: ExtensionTable,
     ['Note']: Note,
-    [LineTable.name]: LineTable
+    [LineTable.name]: LineTable,
+    [LegacyUccacWidget.name]: LegacyUccacWidget
 }
 const WidgetPreviewMap = {
     [CallTablePreview.name]: CallTablePreview,
     [ExtensionTablePreview.name]: ExtensionTablePreview,
     [NotePreview.name]: NotePreview,
-    [LineTablePreview.name]: LineTablePreview
+    [LineTablePreview.name]: LineTablePreview,
+    [UccacWidgetPreview.name]:UccacWidgetPreview
 }
 const WidgetSettingsMap = {
     [LegacyButton.name]: LegacyButtonSettings,
@@ -1692,6 +1732,7 @@ const WidgetSettingsMap = {
     [LegacyCallPanel.name]:LegacyCallPanelSettings,
     [CallTable.name]: CallTableSettings,
     [ExtensionTable.name]: ExtensionTableSettings,
+    [LegacyUccacWidget.name]:LegacyUccacWidgetSettings,
 }
 
 const ToolboxWidgets = [
@@ -1714,6 +1755,19 @@ const ToolboxWidgets = [
     {type: ExtensionTable.name, width: 640, height: 128, preview: ExtensionTablePreview.name, previewWidth: 128, previewHeight: 64 },
     {type: 'Note', previewWidth: 64, previewHeight: 64, width: 320, height: 320, preview: NotePreview.name },
     {type: LineTable.name, width: 640, height: 128, preview: LineTablePreview.name, previewWidth: 128, previewHeight: 64 },
+    {type: LegacyUccacWidget.name,
+        width: 470, height: 300,
+        preview:UccacWidgetPreview.name
+        //borderRadius:8,
+        //uccacWidgetBgColor:"#A8C64E",
+        ////uccacWidgetFgColor:"",
+        //outsideShadow_horizontalOffset:0, outsideShadow_verticalOffset:-1,
+        //outsideShadow_blur:7,outsideShadow_spread:1,
+        //outsideShadow_color:{"r":0,"g":0,"b":0,"a":0.2},
+        //insideShadow_horizontalOffset:0,insideShadow_verticalOffset:-1,
+        //insideShadow_blur:9,insideShadow_spread:0,
+        //insideShadow_color:{"r":48,"g":71,"b":1,"a":1} //"#304701"
+    },
 ];
 
 const DEFAULT_WIDGETS = [
@@ -2235,7 +2289,7 @@ const INIT_STATE = {
     loginUser: null,
     syncDownedScreens: false,
     syncDownedSystemSettings: false,
-    _syncDownedLayoutAndSystemSettings: false,
+    _downedLayoutAndSystemSettings: false,
     syncLoadedCallHistory: false,
     //currentCallIndex: 0,
     currentCallIndex: -1,
@@ -2301,21 +2355,47 @@ export default class BrekekeOperatorConsole extends React.Component {
         //this._BusylightStatusChanger = new BusylightStatusChanger(this); //!dev
     }
 
-    getUccacWrapper(){
-        return this._UccacWrapper;
+    onDeinitUccacWrapperByUccacWrapper( uccacWrapperAsCaller ){
+        // const screen = this._getCurrentScreen();
+        // const widgets = screen.widgets;
+        // for( let i = 0; i < widgets.length; i++ ){
+        //     const widget = widgets[i];
+        //     const widgetType = widget.type;
+        //     if( widgetType === "LegacyUccacWidget") {
+        //         widget.onDeinitUccacWrapperByOperatorConsole(this, uccacWrapperAsCaller );
+        //     }
+        // }
     }
 
+    onInitUccacWrapperSuccessByUccacWrapper( uccacWrapperAsCaller ){
+        // const screen = this._getCurrentScreen();
+        // const widgets = screen.widgets;
+        // for( let i = 0; i < widgets.length; i++ ){
+        //     const widget = widgets[i];
+        //     const widgetType = widget.type;
+        //     if( widgetType === "LegacyUccacWidget") {
+        //         widget.onInitUccacWrapperSuccessByOperatorConsole(this, uccacWrapperAsCaller );
+        //     }
+        // }
+    }
 
     onSelectOCNoteByShortnameFromNoScreensView( noScreensViewAsCaller ){
         //this.reloadSystemSettingsExtensionScript();
-        this.setState( { _syncDownedLayoutAndSystemSettings:true } );
+        this.setState( { _downedLayoutAndSystemSettings:true } );
     }
 
     onSavedNewLayoutFromNoScreensView( noScreensViewAsCaller, layoutName, layoutsAndSettingsData  ){
         const systemSettingsData = this.getSystemSettingsData();
-        systemSettingsData.setData( layoutsAndSettingsData.systemSettings );
-        this.setLastLayoutShortname( layoutName );
-        this.setState( { _syncDownedLayoutAndSystemSettings:true, screens: layoutsAndSettingsData.screens, systemSettingsData:systemSettingsData } );
+        const this_ = this;
+        systemSettingsData.setSystemSettingsDataData( layoutsAndSettingsData.systemSettings,
+            function(){
+                this_.setLastLayoutShortname( layoutName );
+                this_.setState( { _downedLayoutAndSystemSettings:true, screens: layoutsAndSettingsData.screens, systemSettingsData:systemSettingsData } );
+            },
+            function(){ //initFail
+
+            }
+            );
     }
 
 
@@ -2355,6 +2435,12 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     onSavingSystemSettings(systemSettingsAsCaller) {
         this.getCallHistory().onSavingSystemSettings(this);
+    }
+
+    onBeginSetSystemSettingsData( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction  ){
+        const isUCMinScript = false;    //!dev
+        const initAsync = this._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript );
+        return initAsync;
     }
 
     getCallHistory() {
@@ -2432,8 +2518,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.lastLayoutShortname;
     }
 
-
-
     getDisplayState() {
         return this.state.displayState;
     }
@@ -2442,6 +2526,12 @@ export default class BrekekeOperatorConsole extends React.Component {
         const states = {displayState, ...otherSetStates};
         this.setState(states, callback);
     }
+
+    _getCurrentScreen(){
+        const screen = this.state.screens[this.state.currentScreenIndex];
+        return screen;
+    }
+
 
     onClickDropDownMenu(e) {
         this.setState({showAutoDialWidgets: [], currentScreenQuickCallWidget: null});
@@ -2469,7 +2559,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             {!!this.state.palReady ? (
                 <div style={{flexGrow:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
-                    {this.state._syncDownedLayoutAndSystemSettings ? (
+                    {this.state._downedLayoutAndSystemSettings ? (
                             this.state.displayState === brOcDisplayStates.editingScreen ? (
                                 <div style={{display: 'flex', flexGrow: 1, overflow: 'hidden'}}>
                                     <div className="brOCWidgetBox" style={{
@@ -2500,7 +2590,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             }
                                             return (<div key={i} style={{width: widget.width, height: widget.height}} draggable
                                                          onDragStart={ev => this.onDragStart(ev, i)}>
-                                                <Widget {...widget} />
+                                                <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper} />
                                             </div>)
                                         })}
                                     </div>
@@ -2629,7 +2719,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                         this.onWidgetResized(i, pos.x, pos.y, parseInt(style.width), parseInt(style.height))
                                                                     }}
                                                                 >
-                                                                    <Widget {...widget} />
+                                                                    <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper}  />
                                                                 </Rnd>
                                                             )
                                                         })}
@@ -2637,7 +2727,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                 </Rnd>
                                             </div>
                                             <div style={{
-                                                width: 240,
+                                                width: 262,
                                                 borderLeft: 'solid 1px #e0e0e0',
                                                 display: 'flex',
                                                 flexDirection: 'column',
@@ -2712,6 +2802,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                         }} onMouseMove={(e) => e.stopPropagation()}>
                                                             <Widget
                                                                 {...widget}
+                                                                operatorConsoleAsParent={this}
+                                                                uccacWrapper={this._UccacWrapper}
                                                                 context={{
                                                                     loginUser: this.state.loginUser,
                                                                     currentCallIndex: this.state.currentCallIndex,
@@ -2806,6 +2898,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                             }} onMouseMove={(e) => e.stopPropagation()}>
                                                                 <Widget
                                                                     {...widget}
+                                                                    operatorConsoleAsParent={this}
+                                                                    uccacWrapper={this._UccacWrapper}
                                                                     context={{
                                                                         loginUser: this.state.loginUser,
                                                                         currentCallIndex: this.state.currentCallIndex,
@@ -3561,7 +3655,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const callIds = [...this.state.callIds, call.id];
         const callById = {...this.callById};
-        setProperty(callById, call.id,  {
+        const brOCCallObject = {
             ...(this.callById[call.id] || {}),
             id: call.id,
             pbxTenant: call.pbxTenant,
@@ -3580,8 +3674,52 @@ export default class BrekekeOperatorConsole extends React.Component {
             toggleRecording: call.toggleRecording,
             toggleMuted: call.toggleMuted,
             _isExtension: !!this.state.extensions.find((ext) => ext.id == call.partyNumber),
-            callByWebphone : call
-        } );
+            callByWebphone: call
+        };
+        //set custom incoming sound.
+        const ringtoneInfos = this.getSystemSettingsData().getRingtoneInfos();
+
+        const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
+        if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
+            let incomingRingtone = "";
+             //set custom incoming sound.
+            if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
+                for (let i = 0; i < ringtoneInfos.length; i++) {
+                    const ringtoneInfo = ringtoneInfos[i];
+                    const caller = ringtoneInfo.ringtoneCaller;
+                    const matches = brOCCallObject.partyNumber.match( caller );
+                    if( matches ){
+                        const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
+                        incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( ringtoneFilepathOrFileurl, this._RootURLString  );
+                        break;
+                    }
+
+                }
+            }
+            this.phone.setIncomingRingtone( incomingRingtone );
+        }
+
+
+        ////!temp
+        // //set custom incoming sound.
+        // const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
+        // if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
+        //     let  ringtoneUrl = location.href;
+        //     ringtoneUrl = Util.removeString( ringtoneUrl,  location.search );
+        //     const indexOfSlash = ringtoneUrl.lastIndexOf('/');
+        //     if( indexOfSlash !== -1 ) {
+        //         const indexOfDot = ringtoneUrl.lastIndexOf(".", indexOfSlash);
+        //         if (indexOfDot !== -1) {
+        //             ringtoneUrl = ringtoneUrl.substring(0, indexOfSlash );
+        //         }
+        //     }
+        //     ringtoneUrl += "/sounds/fx-lumu-cellphone-ringtone-huawei-y6-fx-old-phone-68532.wav";
+        //     console.log("ringtoneUrl=" + ringtoneUrl );
+        //     this.phone.setIncomingRingtone(ringtoneUrl);
+        // }
+
+
+        setProperty(callById, call.id,  brOCCallObject  );
         this.callById = callById;
         this.setState({callIds, callById}, () => {
             //if( this.state.isCalling === true && !call.pbxRoomId && !call.pbxTalkerId ){
@@ -3615,18 +3753,18 @@ export default class BrekekeOperatorConsole extends React.Component {
                     this.callById = callById;
                     this.setState({callById});
 
-                    // //When a call turns into a talk, if the call is not active, place the call on hold.
-                    // if( field === "answered" && val === true ) {
-                    //     const brOCCallObject = callById[ call.id ];
-                    //     const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject(brOCCallObject);
-                    //     if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.talking) {
-                    //         const brOCCallObject = callById[call.id];
-                    //         const bActive = this._isCurrentCallByCallId(brOCCallObject.id);
-                    //         if (!bActive) {
-                    //             brOCCallObject.toggleHoldWithCheck();
-                    //         }
-                    //     }
-                    // }
+                    //When a call turns into a talk, if the call is not active, place the call on hold.
+                    if( field === "answered" && val === true ) {
+                        const brOCCallObject = callById[ call.id ];
+                        const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject(brOCCallObject);
+                        if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.talking) {
+                            const brOCCallObject = callById[call.id];
+                            const bActive = this._isCurrentCallByCallId(brOCCallObject.id);
+                            if (!bActive) {
+                                brOCCallObject.toggleHoldWithCheck();
+                            }
+                        }
+                    }
 
                 }
                 const options = {
@@ -3755,8 +3893,8 @@ export default class BrekekeOperatorConsole extends React.Component {
             eval(script);
         }
         catch(err){
-            console.error( i18n.t('aExtensionScriptErrorHasOccurred') + ". error=" ,  err);
-            Notification.error({message: i18n.t('aExtensionScriptErrorHasOccurred') + "\r\n" +  err });
+            console.error( i18n.t('anExtensionScriptExecutingErrorHasOccurred') + ". error=" ,  err);
+            Notification.error({message: i18n.t('anExtensionScriptExecutingErrorHasOccurred') + "\r\n" +  err });
             return;
         }
 
@@ -3767,7 +3905,13 @@ export default class BrekekeOperatorConsole extends React.Component {
     _onUnloadExtensionScript(){
         for(let i = 0; i < this._OnUnloadExtensionScriptEventListeners.length; i++ ){
             const event = this._OnUnloadExtensionScriptEventListeners[i];
-            event();   //!forBug need tryCatch?
+            try {
+                event();
+            }
+            catch( err ){
+                console.error( i18n.t('anExtensionScriptUnloadingErrorHasOccurred') + ". error=" ,  err);
+                Notification.error({message: i18n.t('anExtensionScriptUnloadingErrorHasOccurred') + "\r\n" +  err });
+            }
         }
         this._clearAllEventListenersForEx();
     }
@@ -4332,6 +4476,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             port: params.port,
             tenant: params.tenant,
             username: params.username,
+            password: params.password
         };
         this.setState({lastLoginAccount: lastLoginAccount});
         window.localStorage.setItem('lastLoginAccount', JSON.stringify( lastLoginAccount));
@@ -4500,11 +4645,32 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnPalNotifyStatusEventListeners.splice(0);
     }
 
-    _syncDownLayoutAndSystemSettings(){
-        if( !this.pal || this.state._syncDownedLayoutAndSystemSettings ){
-            return;
+    _setOCNoteFailAtDownLayoutAndSystemSettings( eventArg, downLayoutAndSystemSettingsFailFunction  ) {
+        let message = eventArg ? eventArg.message : "";
+        if (!message) {
+            message = "";
+        }
+        console.error("Failed to setOCNote.", message);
+        if (message) {
+            Notification.error({message: message});
+        }
+        //throw new Error(message);
+
+        //console.warn("Failed to getNote." , err );
+        //this.setState({ error: true })
+        //this.setState( { error:true, _downedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
+        this._removeLastLayoutShortname();  //!reset
+        this.setState({displayState: brOcDisplayStates.noScreens}, () => downLayoutAndSystemSettingsFailFunction() );
+        //throw err;
+    }
+
+    _downLayoutAndSystemSettings( downLayoutAndSystemSettingsSuccessFunction, downLayoutAndSystemSettingsFailFunction ){
+        if( !this.pal || this.state._downedLayoutAndSystemSettings ){
+            downLayoutAndSystemSettingsFailFunction({message:i18n.t("CouldNotDownloadLayoutAndSystemSettings")});
+            return false;
         }
 
+        const this_ = this;
         const layoutShortname = this._getLastLayoutShortname();
         if( layoutShortname ) {
             const layoutFullname = this._getLayoutFullname( layoutShortname );
@@ -4512,25 +4678,25 @@ export default class BrekekeOperatorConsole extends React.Component {
                 .then(( noteInfo ) => {
                     const sNote = noteInfo.note;
                     const oNote = JSON.parse( sNote );
-                    const sErr = this.setOCNote( layoutShortname, oNote );
-                    if( sErr ){
-                        console.error("Failed to setOCNote.", sErr );
-                        throw new Error(sErr);
-                    }
-                    this.setState( { _syncDownedLayoutAndSystemSettings:true } );
+                    this.setOCNote( layoutShortname, oNote, function(){
+                            this_.setState( { _downedLayoutAndSystemSettings:true }, ()=> downLayoutAndSystemSettingsSuccessFunction() );
+                    },
+                        function(eventArg){
+                            this_._setOCNoteFailAtDownLayoutAndSystemSettings( eventArg, downLayoutAndSystemSettingsFailFunction  );
+                        });
                 })
-                .catch((err) => {
-                    console.warn("Failed to getNote." , err );
-                    //this.setState({ error: true })
-                    //this.setState( { error:true, _syncDownedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
-                    this._removeLastLayoutShortname();  //!reset
-                    this.setState( {  displayState:brOcDisplayStates.noScreens } );
-                    //throw err;
-                });
+                // .catch((err) => {
+                //     console.warn("Failed to getNote." , err );
+                //     //this.setState({ error: true })
+                //     //this.setState( { error:true, _downedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
+                //     this._removeLastLayoutShortname();  //!reset
+                //     this.setState( {  displayState:brOcDisplayStates.noScreens } );
+                //     //throw err;
+                // });
         }
         else{
             this.setState( {  displayState:brOcDisplayStates.noScreens } );
-//            this.setState( { _syncDownedLayoutAndSystemSettings:true, displayState:brOcDisplayStates.noScreens } );
+//            this.setState( { _downedLayoutAndSystemSettings:true, displayState:brOcDisplayStates.noScreens } );
         }
 
     }
@@ -4550,6 +4716,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             console.log("Skip initialize.");
             return;
         }
+        this._RootURLString = Util.getRootUrlString();
         this._onUnloadFunc = (event) => { this._onUnload( event )};
         window.addEventListener("unload", this._onUnloadFunc );
 
@@ -4609,6 +4776,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 return;
             }
             clearInterval( setIntervalId );
+            const this_ = this;
             this.setState({
                 loginUser: account,
                 palReady: true,
@@ -4616,7 +4784,14 @@ export default class BrekekeOperatorConsole extends React.Component {
             }, () => {
 //            this.syncDownScreens();
 //            this._syncDownLayout();
-                this._syncDownLayoutAndSystemSettings();
+                this._downLayoutAndSystemSettings(
+                    function(){
+
+                    },
+                    function(){
+
+                    }
+                );
             });
         }, 500  );
 
@@ -4663,6 +4838,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     getPal = () => this.pal;
 
     logout = () => {
+        this._Campon.onBeginLogout(this);
+
         // remove listener individually
         this.phone.removeListener('pal.notify_status', this.notify_status )
         // remove all listeners for this event
@@ -4678,9 +4855,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             window.removeEventListener("unload", this._onUnloadFunc);
         }
         this.phone.cleanup();
-        this._Campon.onBeginLogout(this);
+        //this._Campon.onBeginLogout(this); //!old location
         //this._BusylightStatusChanger.deinit();  //!dev
         this._onUnloadExtensionScript();
+        this._UccacWrapper.deinitUccacWrapper();
         this.setState({
             ...window.structuredClone(INIT_STATE),
             i18nReady: true,
@@ -4923,18 +5101,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return shortname;
     }
 
-    setOCNote( shortName,  oContent, setLastLayoutShortName=true  ){
-        const version = oContent.version;
-        if( version !== PBX_APP_DATA_VERSION ){
-            //!TODO versioning    //!later
-            return i18n.t("DataVersionMismatch");
-        }
-
-        const screens = oContent.screens;
-        const systemSettingsDataData = oContent.systemSettings;
-        const systemSettingsData = this.state.systemSettingsData;
-        systemSettingsData.setData( systemSettingsDataData );
-
+    _onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction){
         this.setState( {screens:screens, systemSettingsData:systemSettingsData }, () =>{
             //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
             this.reloadSystemSettingsExtensionScript();
@@ -4942,8 +5109,53 @@ export default class BrekekeOperatorConsole extends React.Component {
             if( setLastLayoutShortName ) {
                 this.setLastLayoutShortname(shortName);
             }
+            setOCNoteSuccessFunction();
         } );
-        return null;
+    }
+
+    /**
+     *
+     * @param shortName
+     * @param oContent
+     * @param setOCNoteSuccessFunction
+     * @param setOCNoteFailFunction
+     * @param setLastLayoutShortName
+     * @param skipSetSystemSettingsDataData
+     * @returns {*|boolean} is async or sync
+     */
+    setOCNote( shortName,  oContent, setOCNoteSuccessFunction, setOCNoteFailFunction, setLastLayoutShortName=true, skipSetSystemSettingsDataData = false  ){
+        const version = oContent.version;
+        if( version !== PBX_APP_DATA_VERSION ){
+            //!TODO versioning    //!later
+            //return i18n.t("DataVersionMismatch");
+            setOCNoteFailFunction({message:i18n.t("DataVersionMismatch")});
+            return false;
+        }
+
+        const screens = oContent.screens;
+        const systemSettingsDataData = oContent.systemSettings;
+        const systemSettingsData = this.state.systemSettingsData;
+        if( skipSetSystemSettingsDataData === false ) {
+            const this_ = this;
+            const bStartInit = systemSettingsData.setSystemSettingsDataData(systemSettingsDataData,
+                function(){
+                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction );
+                },
+                function(){
+                    setOCNoteFailFunction();
+                });
+            return bStartInit;
+        }
+        else{
+            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
+            return false;
+        }
+
+    }
+
+    getLoginPassword(){
+        const password = this._getLastLoginAccount().password;
+        return password;
     }
 
     getLoginUsername(){

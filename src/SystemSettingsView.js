@@ -67,7 +67,9 @@ export default class SystemSettingsView extends React.Component {
                //check ucUrl
                if( values.ucUrl !== undefined && values.ucUrl !== null ) {
                    values.ucUrl = values.ucUrl.trim();
-                   if (values.ucUrl.length !== 0) {
+                   if( values.ucUrl.length === 0 &&  values.ucChatAgentComponentEnabled === false){
+                   }
+                   else {
                        try {
                            const url = new URL(values.ucUrl);
                        } catch (err) {
@@ -75,6 +77,7 @@ export default class SystemSettingsView extends React.Component {
                            return;
                        }
                    }
+
                }
                //!later validation
                //values.ucChatAgentComponentEnabled
@@ -88,15 +91,39 @@ export default class SystemSettingsView extends React.Component {
                // }
 
                console.log('saving systemSettings...', values );
-               this.operatorConsoleAsParent.getSystemSettingsData().setData( values );
-               this.operatorConsoleAsParent.onSavingSystemSettings(this);
-               this._syncUp();
+               const systemSettings = this.operatorConsoleAsParent.getSystemSettingsData();
+               const this_ = this;
 
+               this.setState( {isSystemSettingsSaving:true}, ()=> {
+                       systemSettings.setSystemSettingsDataData(values,
+                           function () {
+                               this_._onSetSystemSettingsDataSuccess(systemSettings)
+                           },
+                           function () {
+                               this_._onSetSystemSettingsDataFail()
+                           }
+                       );
+                   }
+                );
            })
            .catch( (errorInfo) => {
-               //alert("errorInfo=" + errorInfo);
+               console.error( i18n.t("CouldNotSavePleaseCheckYourEntries") + " error=" ,  errorInfo);
                Notification.error( { message: i18n.t("CouldNotSavePleaseCheckYourEntries"),duration:15} );　//!todo show error message.
            } );
+    }
+
+    _onEndSetSystemSettings(){
+            this.setState({isSystemSettingsSaving: false});
+    }
+
+    _onSetSystemSettingsDataFail(){
+        this._onEndSetSystemSettings();
+    }
+
+    _onSetSystemSettingsDataSuccess( systemSettings ){
+        this.operatorConsoleAsParent.onSavingSystemSettings(this, systemSettings);
+        this._syncUp();
+        this._onEndSetSystemSettings();
     }
 
     // //old version
@@ -131,6 +158,29 @@ export default class SystemSettingsView extends React.Component {
     //         return;
     //     }
 
+    _onSetOCNoteFailAtSyncUp( eventArg ){
+        const message = eventArg.message;
+        console.error("Failed to setOCNote.", message  );
+        Notification.error({
+            key: 'sync',
+            message: i18n.t("failed_to_save_data_to_pbx"),
+            btn: (
+                <Button type="primary" size="small" onClick={() => {
+                    //Notification.close('sync');
+                    this._syncUp();
+                }}>
+                    {i18n.t('retry')}
+                </Button>
+            ),
+            duration: 0,
+        });
+     }
+
+     _onSetOCNoteSuccessAtSyncUp(){
+         Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+         this.operatorConsoleAsParent.abortSystemSettings();
+     }
+
     _syncUp = async () => {
         const pal = this.operatorConsoleAsParent.getPal();
         //if (!pal) return;
@@ -146,39 +196,26 @@ export default class SystemSettingsView extends React.Component {
         const shortname = this.operatorConsoleAsParent.getLastLayoutShortname();
         const noteContent = JSON.stringify( layoutsAndSettingsData );
         let error;
+        const this_ = this;
         await this.operatorConsoleAsParent.setOCNoteByPal( shortname, noteContent ).
         then( () => {
             //this.operatorConsoleAsParent.setLastSystemSettingsDataData( systemSettingsDataData );
-            const sErr = this.operatorConsoleAsParent.setOCNote( shortname, layoutsAndSettingsData, false );
-            if( sErr ){
-                console.error("Failed to setOCNote.", sErr );
-                throw new Error(sErr);
-            }
-        }).catch( (err) => {
-            console.error(err);
-            error =err;
-        });
+            this.operatorConsoleAsParent.setOCNote(shortname, layoutsAndSettingsData, function(){
+                this_._onSetOCNoteSuccessAtSyncUp();
+            }, function( eventArg){
+                    this_._onSetOCNoteFailAtSyncUp(eventArg);
+                },
+                false, true);
+            // if( sErr ){
+            //     console.error("Failed to setOCNote.", sErr );
+            //     throw new Error(sErr);
+            // }
+        }  );
+        // }).catch( (err) => {
+        //     console.error(err);
+        //     error =err;
+        // });
 
-        if (error) {
-            Notification.error({
-                key: 'sync',
-                message: i18n.t("failed_to_save_data_to_pbx"),
-                btn: (
-                    <Button type="primary" size="small" onClick={() => {
-                        //Notification.close('sync');
-                        this._syncUp();
-                    }}>
-                        {i18n.t('retry')}
-                    </Button>
-                ),
-                duration: 0,
-            });
-            return;
-        }
-
-
-        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
-        this.operatorConsoleAsParent.abortSystemSettings();
     }
 
     setSystemSettingsUseForm = ( systemSettingsUseForm ) => {
@@ -201,6 +238,7 @@ export default class SystemSettingsView extends React.Component {
 
     render(){
         const this_ = this;
+        const  isButtonsEnabled = this.state.isSystemSettingsSaving === true;
             return  <>
                     <div style={{display: 'flex', justifyContent:"flex-end",padding: 4, borderBottom: 'solid 1px #e0e0e0'}}>
                         <div>
@@ -209,10 +247,10 @@ export default class SystemSettingsView extends React.Component {
                                             okText={i18n.t("yes")}
                                             cancelText={i18n.t("no")}
                                 >
-                                    <Button type="secondary">{i18n.t("discard")}</Button>
+                                    <Button type="secondary" disabled={isButtonsEnabled}>{i18n.t("discard")}</Button>
                                 </Popconfirm>
                                 <Space/>
-                                <Button type="success" htmlType="cancel" onClick={this.saveSystemSettings}>
+                                <Button type="success" htmlType="cancel" onClick={this.saveSystemSettings} disabled={isButtonsEnabled}>
                                     {i18n.t("save")}
                                 </Button>
                             </Space>

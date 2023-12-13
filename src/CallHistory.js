@@ -21,9 +21,9 @@ export class CallHistory {
     }
 
     onSavingSystemSettings( operatorConsoleAsCaller ){
-        const settings = operatorConsoleAsCaller.getSystemSettingsData();
-        const callNoCount = settings.getAutoDialMaxSaveCount();
-        this._sortedCallNos = CallHistory._createSortedScoreCallNos( this._callNos, callNoCount, settings.getAutoDialMaxDisplayCount() );
+        const newSettings = operatorConsoleAsCaller.getSystemSettingsData();
+        const callNoCount = newSettings.getAutoDialMaxSaveCount();
+        this._sortedCallNos = CallHistory._createSortedScoreCallNos( this._callNos, callNoCount, newSettings.getAutoDialMaxDisplayCount() );
     }
 
     load(){

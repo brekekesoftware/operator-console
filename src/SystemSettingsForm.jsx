@@ -9,6 +9,7 @@ import {Radio} from "antd";
 import {CallHistory} from "./CallHistory";
 import Campon from "./Campon";
 import TextArea from "antd/es/input/TextArea";
+import RingtoneSettings from "./RingtoneSettings";
 
 //const [ systemSettingsUseForm ] = Form.useForm();
 let systemSettingsUseForm = null;
@@ -31,7 +32,7 @@ const SystemSettingsForm = ( props ) => {
                 <Checkbox>{i18n.t("clickToCall")}</Checkbox>
             </Form.Item>
             <h1>{i18n.t("shortDialSettings")}</h1>
-            <ShortDialSettings text="initialText"/>
+            <ShortDialSettings />
             <h1>{i18n.t("autoDialSettings")}</h1>
             <Form.Item label={i18n.t("maxSaveCount")} name="autoDialMaxSaveCount">
                 <InputNumber style={{width:100}} />
@@ -39,21 +40,23 @@ const SystemSettingsForm = ( props ) => {
             <Form.Item label={i18n.t("maxDisplayCount")} name="autoDialMaxDisplayCount">
                 <InputNumber style={{width:100}} />
             </Form.Item>
+            <h1>{i18n.t("ringtoneSettings")}</h1>
+            <RingtoneSettings />
+            <h1>{i18n.t("ucSettings")}</h1>
+            <Form.Item label={i18n.t("ucUrl")} name="ucUrl">
+                <Input style={{width:500}} maxLength={300} />
+            </Form.Item>
+            <Form.Item label={i18n.t("ucChatAgentComponent")} name="ucChatAgentComponentEnabled">
+                {/*<Radio.Group onChange={props.onChangeUcChatAgentComponentEnabledFunction}>*/}
+                <Radio.Group>
+                    <Radio value={false}>{i18n.t("off")}</Radio>
+                    <Radio value={true}>{i18n.t("on")}</Radio>
+                </Radio.Group>
+            </Form.Item>
             <h1>{i18n.t("otherSettings")}</h1>
             <Form.Item label={i18n.t("extensionScript")} name="extensionScript" >
                 <TextArea rows={30} maxLength={1000000}  style={{minHeight:600,minWidth:800,marginRight:30}} />
             </Form.Item>
-
-            {/*<Form.Item label={i18n.t("ucUrl")} name="ucUrl">*/}
-            {/*    <Input style={{width:500}} maxLength={10} />*/}
-            {/*</Form.Item>*/}
-            {/*<Form.Item label={i18n.t("ucChatAgentComponent")} name="ucChatAgentComponentEnabled">*/}
-            {/*    /!*<Radio.Group onChange={props.onChangeUcChatAgentComponentEnabledFunction}>*!/*/}
-            {/*    <Radio.Group>*/}
-            {/*        <Radio value={false}>{i18n.t("off")}</Radio>*/}
-            {/*        <Radio value={true}>{i18n.t("on")}</Radio>*/}
-            {/*    </Radio.Group>*/}
-            {/*</Form.Item>*/}
         </section>
     </Form>
 };

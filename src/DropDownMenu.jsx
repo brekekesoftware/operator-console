@@ -355,19 +355,19 @@ export default function DropDownMenu( { operatorConsole } ){
                         const noteContent = JSON.stringify( layoutsAndSettingsData );
                         const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
                         setNotePromise.then(() => {
-                            const sErr = operatorConsole.setOCNote( layoutName, layoutsAndSettingsData );
-                            if( sErr ){
-                                console.error("Failed to setOCNote.", sErr );
-                                throw new Error(sErr);
-                            }
-                            Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                        })
-                            .catch((err) => {
-                                console.error("Failed to save data to PBX.", err);
-                                const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                                Notification.error({message: msg, duration: 0});
-                            });
-                        setNewLayoutModalOpen(false);
+                            operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                                    setNewLayoutModalOpen(false);
+                            },
+                                function(eventArg){
+                                    const message = eventArg.message;
+                                    //console.error("Failed to setOCNote.", sErr );
+                                    console.error("Failed to save data to PBX.", message);
+                                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                    Notification.error({message: msg, duration: 0});
+                                    setNewLayoutModalOpen(false);
+                                });
+                        });
                     }
 
                 })
@@ -407,21 +407,19 @@ export default function DropDownMenu( { operatorConsole } ){
             const noteContent = JSON.stringify( layoutsAndSettingsData );
             const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
             setNotePromise.then(() => {
-                const sErr = operatorConsole.setOCNote( layoutName, layoutsAndSettingsData );
-                if( sErr ){
-                    console.error("Failed to setOCNote.", sErr );
-                    throw new Error(sErr);
-                }
-                setNewLayoutModalOpen(false);
-                Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
-            })
-                .catch((err) => {
-                    console.error("Failed to save data to PBX.", err);
-                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                    Notification.error({message: msg, duration: 0});
-                });
-
-            setNewLayoutConfirmOpen(false);
+                operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                        Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                        setNewLayoutModalOpen(false);
+                },
+                    function( eventArg){
+                        const message = eventArg.message;
+                        //console.error("Failed to setOCNote.", sErr );
+                        console.error("Failed to save data to PBX.", message);
+                        const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                        Notification.error({message: msg, duration: 0});
+                        setNewLayoutModalOpen(false);
+                    });
+            });
         };
         const cancelNewLayout = () => {
             setNewLayoutConfirmOpen(false);

@@ -10,24 +10,24 @@ export default class ShortDialSettings extends React.Component {
 
     render(){
         //return <div>Hello {this.text}</div>
-        return <Form.List name="shortDials">
+        return <Form.List name="ringtoneInfos">
             {(fields, { add, remove }) => (
                 <>
                     {fields.map(({ key, name, ...restField }) => (
                         <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                             <Form.Item
                                 {...restField}
-                                name={[name, 'shortDial']}
-                                rules={[{ required: true, message: i18n.t("missingShortDial") }]}
+                                name={[name, 'ringtoneCaller']}
+                                rules={[{ required: true, message: i18n.t("missingRingtoneCaller") }]}
                             >
-                                <Input placeholder={i18n.t("shortDial")} />
+                                <Input placeholder={i18n.t("ringtoneCaller")} style={{width:400}} />
                             </Form.Item>
                             <Form.Item
                                 {...restField}
-                                name={[name, 'dial']}
-                                rules={[{ required: true, message: i18n.t("missingDial") }]}
+                                name={[name, 'ringtoneFilepathOrFileurl']}
+                                rules={[{ required: true, message: i18n.t("missingRingtoneFilepathOrFileurl") }]}
                             >
-                                <Input placeholder={i18n.t("dial")} />
+                                <Input placeholder={i18n.t("ringtoneFilepathOrFileurl")} style={{width:600}} />
                             </Form.Item>
                             <MinusCircleOutlined onClick={() => remove(name)} />
                         </Space>

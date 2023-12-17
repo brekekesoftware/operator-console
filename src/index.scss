@@ -4,14 +4,14 @@ html,body {
 }
 
 .brOC * {
-	font-family: WorkSans, Meiryo, -apple-system, BlinkMacSystemFont, "Segoe UI",
-		Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-		"Segoe UI Symbol";
+	/* font-family: WorkSans, Meiryo, -apple-system, BlinkMacSystemFont, "Segoe UI", */
+		/* Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", */
+		/* "Segoe UI Symbol"; */
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
 	font-size:14px;
 }
 
 .brOC {
-
   background-color: #fff;
   width: 100%;
   height: 100%;
@@ -22,14 +22,6 @@ html,body {
 
 #brOCPhone {
   display: none;
-}
-
-.brOCLoginPage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
 }
 
 .brOCKeyRow {
@@ -505,8 +497,8 @@ table.brOCLinetable tbody tr td
 */
 
 .brOC .ant-form-item {
-  margin-bottom: 11px;
-  margin-top:11px;
+  margin-bottom: 13px;
+  margin-top:13px;
 }
 
 .brOC .ant-input  {
@@ -514,7 +506,6 @@ table.brOCLinetable tbody tr td
   border: none;
   outline: 1px solid #e0e0e0;
   margin-left:1px;
-  background-color: #fafafa;
   padding: 0 11px;
   border-radius: 4px;
   color:#000000;
@@ -525,4 +516,16 @@ table.brOCLinetable tbody tr td
   margin-left:2px;
   padding: 0 10px;
   border: none;
+}
+
+.brOC .ant-btn-success {
+	color:#ffffff;
+	background-color:#5fac3f;
+	border-color:unset;
+}
+
+.brOC .ant-btn-success:hover {
+	color:#ffffff;
+	background-color:#40742a;
+	border-color:unset;
 }

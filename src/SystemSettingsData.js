@@ -44,7 +44,7 @@ export default class SystemSettingsData{
             const ea = eventArgs[i];
             console.error("Failed to UC chat agent component initialization. errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" , ea.errorEvent );
             const message = i18n.t("FailedToUCCACInitialization") + " errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" + ea.errorEvent;
-            Notification.error({message: message });
+            Notification.error({message: message, duration:0 });
         }
         initFailFunction();
     }
@@ -102,7 +102,7 @@ export default class SystemSettingsData{
                 const httpStatus = Util.getHeadResposneCodeByUrl( fileUrl , xhr );
                 if( httpStatus !== 200 ){
                     console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",httpStatusCode=" + httpStatus  );
-                    Notification.error( {message: i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",httpStatusCode="  + httpStatus } );
+                    Notification.error( {message: i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",httpStatusCode="  + httpStatus , duration:0 } );
                 }
                 else {
                     new Audio(fileUrl);   //cache audio file
@@ -111,7 +111,7 @@ export default class SystemSettingsData{
             }
             catch(err){
                 console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",error=" , err );
-                Notification.error( i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",error="  + err  );
+                Notification.error( { message:i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",error="  + err , duration:0}  );
                 continue;
             }
         }

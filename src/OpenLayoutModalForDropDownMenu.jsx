@@ -59,7 +59,7 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                 function (eventArg) {
                     const message = eventArg.message;
                     console.error("Failed to setOCNote.", message);
-                    Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message});
+                    Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message,duration:0});
                     setOpenLayoutModalOpenFunc(false);
                 });
         });

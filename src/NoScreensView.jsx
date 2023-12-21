@@ -173,7 +173,7 @@ export default function NoScreensView( props ){
                     const message = eventArg.message;
                     console.error("Failed to setOCNote.", message );
                     //throw new Error( dataErrorMessage );
-                    Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + message  });
+                    Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + message, duration:0 });
                 });
 
         });

@@ -657,7 +657,7 @@ function LegacyBackspaceButton({ subtype, icon, label, buttonFgColor, buttonBgCo
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!!currentCall) ? undefined : context.backspaceKeypadValue}>
+                onClick={context.backspaceKeypadValue}>
             {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
         </button>
     );
@@ -2329,6 +2329,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     constructor(props) {
         super(props);
         this.callById = {};
+        this._callIds = new Array();
         this._OnBackspaceKeypadValueCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
         this._OnClearDialingCallbacks = [];
@@ -2431,6 +2432,11 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     getState() {
         return this.state;
+    }
+
+    getCallByRoomId( roomId ) {
+        const call = Object.values( this.callById).find((call) => call.pbxRoomId === roomId );
+        return call;
     }
 
     onSavingSystemSettings(systemSettingsAsCaller) {
@@ -2807,7 +2813,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                 context={{
                                                                     loginUser: this.state.loginUser,
                                                                     currentCallIndex: this.state.currentCallIndex,
-                                                                    callIds: this.state.callIds,
+                                                                    callIds: this._callIds,
                                                                     callById: this.callById,
                                                                     dialing: this.state.dialing,
                                                                     extensions: this.state.extensions,
@@ -2903,7 +2909,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                     context={{
                                                                         loginUser: this.state.loginUser,
                                                                         currentCallIndex: this.state.currentCallIndex,
-                                                                        callIds: this.state.callIds,
+                                                                        callIds: this._callIds,
                                                                         callById: this.callById,
                                                                         dialing: this.state.dialing,
                                                                         extensions: this.state.extensions,
@@ -2960,7 +2966,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             operatorConsoleAsParent={this}
                                             sortedCallNos={this._CallHistory.getSortedCallNos()}
                                             currentCallIndex={this.state.currentCallIndex}
-                                            callIds={this.state.callIds}
+                                            callIds={this._callIds}
                                             callById={this.callById}
                                             isVisible={this.state.showAutoDialWidgets && this.state.showAutoDialWidgets.length !== 0}
                                         />
@@ -3444,7 +3450,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         if( currentCallIndex === -1  ){
             return null;
         }
-        const id = this.state.callIds[ currentCallIndex ];
+        const id = this._callIds[ currentCallIndex ];
         return id;
     }
 
@@ -3462,7 +3468,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _getCallIndexByCallId(){
-        const calls = this.state.callById;
+        const calls = this.callById;
     }
 
     _setCurrentCallIndex( index ){
@@ -3479,7 +3485,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     _onChangeCurrentCallIndex(index, prevIndex ){
         let currentCallId;
         if( index !== -1 ) {
-            currentCallId = this.state.callIds[index];
+            currentCallId = this._callIds[index];
         }
         else{
             currentCallId = null;
@@ -3487,7 +3493,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         let prevCallId;
         if( prevIndex !== -1 ){
-            prevCallId = this.state.callIds[prevIndex];
+            prevCallId = this._callIds[prevIndex];
         }
         else{
             prevCallId = null;
@@ -3506,14 +3512,14 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     switchCallDown = () => {
         const currentCallIndex = this._getCurrentCallIndex();
-        if ( currentCallIndex < this.state.callIds.length - 1) {
+        if ( currentCallIndex < this._callIds.length - 1) {
             this.holdCall();
             this._setCurrentCallIndex( currentCallIndex + 1);
         }
     }
 
     getCallIndexByCallId = (callId ) =>{
-        const index = this.state.callIds.indexOf( callId );
+        const index = this._callIds.indexOf( callId );
         return index;
     }
 
@@ -3595,7 +3601,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     setDialingAndMakeCallWithState = (sDialing) => {
         const currentCallIndex = this._getCurrentCallIndex();
-        this.setState({dialing: sDialing}, () => this.makeCall2( currentCallIndex, this.state.callIds, this.callById));
+        this.setState({dialing: sDialing}, () => this.makeCall2( currentCallIndex, this._callIds, this.callById));
     }
 
     setDialingAndMakeCall2 = (sDialing, currentCallIndex, callIds = [], callById = {}) => {
@@ -3623,22 +3629,29 @@ export default class BrekekeOperatorConsole extends React.Component {
         if (!call) return;
         if (!this.callById[call.id]) return;
 
-        const removeCallIndex = this.state.callIds.indexOf(call.id);
+        const removeCallIndex = this._callIds.indexOf(call.id);
+
         let currentCallIndex = this._getCurrentCallIndex();
-        if (removeCallIndex <= currentCallIndex ) {
+        if (removeCallIndex === currentCallIndex ) {
+            if( this._callIds.length > 1 ) {
+                currentCallIndex=0;
+            }
+            else{
+                currentCallIndex = -1;
+            }
+        }
+        else if(removeCallIndex < currentCallIndex ){
             currentCallIndex--;
         }
 
         const callById = {...this.callById};
         deleteProperty(callById, call.id);
-        const callIds = [...this.state.callIds].filter(id => id !== call.id);
+        this._callIds = [...this._callIds].filter(id => id !== call.id);
         this.callById = callById;
-        this.setState({callIds, callById});
+        //this.setState({this._callIds, this.callById});
+        this.setState({refresh:true});
         this._setCurrentCallIndex( currentCallIndex );
-
-        this._onRemovetCall( call );
-
-
+        this._onRemoveCall( call );
     }
 
     _onPhoneCall = (phoneAsCaller, call) => {
@@ -3653,8 +3666,8 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
 
-        const callIds = [...this.state.callIds, call.id];
-        const callById = {...this.callById};
+        this._callIds = [...this._callIds, call.id];
+        this.callById = {...this.callById};
         const brOCCallObject = {
             ...(this.callById[call.id] || {}),
             id: call.id,
@@ -3679,23 +3692,23 @@ export default class BrekekeOperatorConsole extends React.Component {
         //set custom incoming sound.
         const ringtoneInfos = this.getSystemSettingsData().getRingtoneInfos();
 
-        const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
-        if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
-            let incomingRingtone = "";
-             //set custom incoming sound.
-            if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
-                for (let i = 0; i < ringtoneInfos.length; i++) {
-                    const ringtoneInfo = ringtoneInfos[i];
-                    const caller = ringtoneInfo.ringtoneCaller;
-                    const matches = brOCCallObject.partyNumber.match( caller );
-                    if( matches ){
-                        const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
-                        incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( ringtoneFilepathOrFileurl, this._RootURLString  );
-                        break;
-                    }
+            const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
+            if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
+                let incomingRingtone = "";
+                 //set custom incoming sound.
+                if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
+                    for (let i = 0; i < ringtoneInfos.length; i++) {
+                        const ringtoneInfo = ringtoneInfos[i];
+                        const caller = ringtoneInfo.ringtoneCaller;
+                        const matches = brOCCallObject.partyNumber.match( caller );
+                        if( matches ){
+                            const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
+                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( ringtoneFilepathOrFileurl, this._RootURLString  );
+                            break;
+                        }
 
+                    }
                 }
-            }
             this.phone.setIncomingRingtone( incomingRingtone );
         }
 
@@ -3719,18 +3732,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         // }
 
 
-        setProperty(callById, call.id,  brOCCallObject  );
-        this.callById = callById;
-        this.setState({callIds, callById}, () => {
-            //if( this.state.isCalling === true && !call.pbxRoomId && !call.pbxTalkerId ){
-            const brOCCallObject = this._getBrOCCallObjectByCallId( call.id );
-            const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
-            if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.calling  ){
-                const newCurrentCallIndex = this.state.callIds.indexOf(call.id);
-                this._setCurrentCallIndex(newCurrentCallIndex);
-                //this.setState({isCalling:false});
-            }
-        });
+        setProperty(this.callById, call.id,  brOCCallObject  );
+        this.setState({refresh:true} );
+
+        //if( this.state.isCalling === true && !call.pbxRoomId && !call.pbxTalkerId ){
+        if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.calling) {
+            const newCurrentCallIndex = this._callIds.indexOf(call.id);
+            this._setCurrentCallIndex(newCurrentCallIndex);
+            //this.setState({isCalling:false});
+        }
+
         const currentCallIndex = this._getCurrentCallIndex();
         if( currentCallIndex === -1 ){
             this._setCurrentCallIndex(0);
@@ -3748,17 +3759,16 @@ export default class BrekekeOperatorConsole extends React.Component {
             reaction(() => call[field], async (val) => {
                 console.log('call changed', field, val);
                 if (this.callById[call.id]) {
-                    const callById = {...this.callById};
-                    setProperty(callById, `${call.id}.${field}`, val);
-                    this.callById = callById;
-                    this.setState({callById});
+                    //this.callById = {...this.callById};
+                    setProperty(this.callById, `${call.id}.${field}`, val);
+                    this.setState({refresh:true});
 
                     //When a call turns into a talk, if the call is not active, place the call on hold.
                     if( field === "answered" && val === true ) {
-                        const brOCCallObject = callById[ call.id ];
+                        const brOCCallObject = this.callById[ call.id ];
                         const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject(brOCCallObject);
                         if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.talking) {
-                            const brOCCallObject = callById[call.id];
+                            const brOCCallObject = this.callById[call.id];
                             const bActive = this._isCurrentCallByCallId(brOCCallObject.id);
                             if (!bActive) {
                                 brOCCallObject.toggleHoldWithCheck();
@@ -3780,7 +3790,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _getBrOCCallObjectByCallId( callId ){
-        const brOCCallObject = this.state.callById[ callId ];
+        const brOCCallObject = this.callById[ callId ];
         return brOCCallObject;
     }
 
@@ -3828,7 +3838,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnInsertCallEventListeners.splice(0);
     }
 
-    _onRemovetCall( call  ){
+    _onRemoveCall( call  ){
         const options = {
             call : call
         };
@@ -3894,7 +3904,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
         catch(err){
             console.error( i18n.t('anExtensionScriptExecutingErrorHasOccurred') + ". error=" ,  err);
-            Notification.error({message: i18n.t('anExtensionScriptExecutingErrorHasOccurred') + "\r\n" +  err });
+            Notification.error({message: i18n.t('anExtensionScriptExecutingErrorHasOccurred') + "\r\n" +  err, duration:0 });
             return;
         }
 
@@ -3910,7 +3920,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
             catch( err ){
                 console.error( i18n.t('anExtensionScriptUnloadingErrorHasOccurred') + ". error=" ,  err);
-                Notification.error({message: i18n.t('anExtensionScriptUnloadingErrorHasOccurred') + "\r\n" +  err });
+                Notification.error({message: i18n.t('anExtensionScriptUnloadingErrorHasOccurred') + "\r\n" +  err, duration:0 });
             }
         }
         this._clearAllEventListenersForEx();
@@ -3963,8 +3973,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     updateCall = (call) => {
         if (!call) return;
 
-        const callById = {...this.callById};
-        setProperty(callById, call.id, {
+        //this.callById = {...this.callById};
+        setProperty(this.callById, call.id, {
             ...(this.callById[call.id] || {}),
             id: call.id,
             pbxTenant: call.pbxTenant,
@@ -3984,8 +3994,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             toggleMuted: call.toggleMuted,
             _isExtension: !!this.state.extensions.find((ext) => ext.id == call.partyNumber),
         });
-        this.callById = callById;
-        this.setState({callById});
+        this.setState({refresh:true});
 
 
         this._onUpdateCall( call );
@@ -4110,7 +4119,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
             }).catch((err) => {
                 console.error("Failed to transfer call.", err );
-                Notification.error({message: i18n.t('failed_to_transfer_call')});
+                Notification.error({message: i18n.t('failed_to_transfer_call'),duration:0});
                 throw err;
             });
         }
@@ -4222,7 +4231,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
 
-        const lineCall = Object.values(this.state.callById).find((call) => call.pbxRoomId === room_id)
+        const lineCall = Object.values(this.callById).find((call) => call.pbxRoomId === room_id)
         if (lineCall) {
             if (lineCall.incoming && !lineCall.answered) {
                 const currentCall = this.getCurrentCall();
@@ -4240,7 +4249,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                     number: line,
                 }).catch((err) => {
                     console.error("Failed to park call.", err );
-                    Notification.error({message: i18n.t('failed_to_park_call')});
+                    Notification.error({message: i18n.t('failed_to_park_call'),duration:0});
                     throw err;
                 });
                 const myParksStatus = {...this.state.myParksStatus, [line]: true};
@@ -4254,7 +4263,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             if (line_talker === this.state.loginUser.pbxUsername) {
                 await this.pal.call_pal('line', {line, status: 'off'}).catch((err) => {
                     console.error("Failed to unhold line.", err );
-                    Notification.error({message: i18n.t('failed_to_unhold_line')});
+                    Notification.error({message: i18n.t('failed_to_unhold_line'),duration:0});
                     throw err;
                 });
                 this.setState({usingLine: ''});
@@ -4263,14 +4272,14 @@ export default class BrekekeOperatorConsole extends React.Component {
             if (this.state.usingLine) {
                 await this.pal.call_pal('line', {line: this.state.usingLine, status: 'off'}).catch((err) => {
                     console.error("Failed to unhold line.", err );
-                    Notification.error({message: i18n.t('failed_to_unhold_line')});
+                    Notification.error({message: i18n.t('failed_to_unhold_line'),duration:0});
                     throw err;
                 });
                 this.setState({usingLine: ''});
             }
             await this.pal.call_pal('line', {line, status: 'on'}).catch((err) => {
                 console.error("Failed to hold line.", err );
-                Notification.error({message: i18n.t('failed_to_hold_line')});
+                Notification.error({message: i18n.t('failed_to_hold_line'),duration:0});
                 throw err;
             });
             this.setState({usingLine: line});
@@ -4294,7 +4303,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 number,
             }).catch((err) => {
                 console.error("Failed to park call.", err );
-                Notification.error({message: i18n.t('failed_to_park_call')});
+                Notification.error({message: i18n.t('failed_to_park_call'),duration:0});
                 throw err;
             });
 
@@ -4447,7 +4456,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _onUnload(event){
-        console.log("OperatorConsole:beforeUnload. this.phone=" + this.phone );
+        console.log("OperatorConsole:onUnload. this.phone=" + this.phone );
 
         // remove listener individually
         this.phone.removeListener('pal.notify_line', this.notify_line);
@@ -4465,11 +4474,29 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.phone.removeAllListeners('pal.notify_serverstatus');
 
         this.phone.cleanup();
+        this._removeWebphoneOtherEventListeners();
     }
 
 
     login = (params) => {
         console.log('login:', params);
+
+        if( this.phone ){
+            this.phone.removeAllListeners("call");
+            this.phone.removeAllListeners("call_update");
+            this.phone.removeAllListeners("call_end");
+            this.phone.removeAllListeners("pal.notify_serverstatus");
+            this.phone.removeAllListeners("pal");
+            this.phone.removeAllListeners("pal.notify_status");
+            this.phone.removeAllListeners("pal.notify_line");
+            this.phone.removeAllListeners("pal.notify_park");
+
+            this.phone.cleanup();
+            this._removeWebphoneOtherEventListeners();
+            this.phone = null;
+        }
+
+
 
         const lastLoginAccount = {
             hostname: params.hostname,
@@ -4501,6 +4528,41 @@ export default class BrekekeOperatorConsole extends React.Component {
         };
 
         this.phone = window.Brekeke.Phone.render(eBrOcPhone, args);
+
+        this._removeWebphoneOtherEventListeners();
+        this._onWebphoneError = e => {
+            console.log("Webphone event:error", e);
+            const temp = 0;
+        };
+        this._onWebphoneOnError = e => {
+            console.log("Webphone event:onError", e);
+            const temp = 0;
+        };
+        this._onWebphoneOnerror = e => {
+            console.log("Webphone event:onerror", e);
+            const temp = 0;
+        };
+
+        this._onWebphoneClose = e => {
+            console.log("Webphone event:close", e);
+            const temp = 0;
+        };
+        this._onWebphoneOnClose = e => {
+            console.log("Webphone event:onClose", e);
+            const temp = 0;
+        };
+        this._onWebphoneOnclose = e => {
+            console.log("Webphone event:onclose", e);
+            const temp = 0;
+        };
+
+        this.phone.on("error", this._onWebphoneError );
+        this.phone.on("onError", this._onWebphoneOnError );
+        this.phone.on("onerror", this._onWebphoneOnerror );
+        this.phone.on("close", this._onWebphoneClose );
+        this.phone.on("onClose", this._onWebphoneOnClose );
+        this.phone.on("onclose", this._onWebphoneOnclose  );
+
 
         this.phone.on('call', c => {
             console.log('call', c);
@@ -4652,7 +4714,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
         console.error("Failed to setOCNote.", message);
         if (message) {
-            Notification.error({message: message});
+            Notification.error({message: message,duration:0});
         }
         //throw new Error(message);
 
@@ -4837,6 +4899,22 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     getPal = () => this.pal;
 
+    _removeWebphoneOtherEventListeners(){
+        // this.phone.removeListener('close', this._onWebphoneClose  );
+        // this.phone.removeListener('onclose', this._onWebphoneOnclose  );
+        // this.phone.removeListener('onClose', this._onWebphoneOnClose  );
+        // this.phone.removeListener('error', this._onWebphoneError  );
+        // this.phone.removeListener('onerror', this._onWebphoneOnerror  );
+        // this.phone.removeListener('onError', this._onWebphoneOnError  );
+
+        this.phone.removeAllListeners('close');
+        this.phone.removeAllListeners('onclose');
+        this.phone.removeAllListeners('onClose');
+        this.phone.removeAllListeners('error');
+        this.phone.removeAllListeners('onerror');
+        this.phone.removeAllListeners('onError');
+    }
+
     logout = () => {
         this._Campon.onBeginLogout(this);
 
@@ -4844,6 +4922,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.phone.removeListener('pal.notify_status', this.notify_status )
         // remove all listeners for this event
         this.phone.removeAllListeners('pal.notify_status');
+
+
 
         // remove listener individually
         this.phone.removeListener('pal.notify_serverstatus', this.notify_serverstatus);
@@ -4855,6 +4935,8 @@ export default class BrekekeOperatorConsole extends React.Component {
             window.removeEventListener("unload", this._onUnloadFunc);
         }
         this.phone.cleanup();
+        this._removeWebphoneOtherEventListeners();
+
         //this._Campon.onBeginLogout(this); //!old location
         //this._BusylightStatusChanger.deinit();  //!dev
         this._onUnloadExtensionScript();

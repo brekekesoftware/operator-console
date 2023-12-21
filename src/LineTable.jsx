@@ -431,7 +431,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
     const lightClassname = _getLightClassname( lineInfo.line, context );
     const title = lineInfo.lineLabel ? lineInfo.lineLabel : lineInfo.line;
     const oc = context.operatorConsole;
-    const call = lineInfo.room_id ? Object.values( oc.state.callById).find((call) => call.pbxRoomId === lineInfo.room_id) : null;
+    const call = lineInfo.room_id ? oc.getCallByRoomId() : null;
 
     const lineButtonColor = Util.isAntdRgbaProperty( lineButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( lineButtonFgColor ) : "";
     const lineButtonBackgroundColor = Util.isAntdRgbaProperty( lineButtonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( lineButtonBgColor ) : "";

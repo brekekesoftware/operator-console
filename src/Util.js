@@ -120,7 +120,7 @@ export default class Util{
         if( index === -1 ){
             return s;
         }
-        const str = s.substring( index, tgt.length );
+        const str = s.substring(0,index) +  s.substring( index + tgt.length );
         return str;
     }
 

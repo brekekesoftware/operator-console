@@ -427,11 +427,35 @@ tbody::-webkit-scrollbar-corner {
 .brOCStickyNote:hover { box-shadow:0 5px 8px rgba(0,0,0,0.15); }
 .brOCStickyNote:focus { box-shadow:0 5px 12px rgba(0,0,0,0.2); outline:none; }
 
+div.brOCCalltableWrapper::-webkit-scrollbar {
+  width: 8px;
+}
+div.brOCCalltableWrapper::-webkit-scrollbar-track {
+  background-color: initial;
+}
+div.brOCCalltableWrapper::-webkit-scrollbar-thumb {
+  background-color: #adadad;
+}
+div.brOCCalltableWrapper::-webkit-scrollbar-button {
+  background-color: initial;
+}
+div.brOCCalltableWrapper::-webkit-scrollbar-corner {
+  background-color: initial;
+}
+
+div.brOCCalltableWrapper{
+	overflow-x: auto;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+}
+
 table.brOCCalltable{
-  /* display:table; */
+  display:table;
   border-collapse:separate;
   border-spacing:0;
 }
+
 table.brOCCalltable tr,
 table.brOCCalltable thread,
 table.brOCCalltable tbody,
@@ -442,6 +466,14 @@ table.brOCCalltable tbody tr td
 {
   background: unset;
   background-color:unset;
+}
+
+table.brOCCalltable thead{
+    position: sticky;
+	top:0;
+	left:0;
+	z-index: 1;
+	background-color:#f8f8f8;
 }
 
 table.brOCExtensiontable{
@@ -528,4 +560,28 @@ table.brOCLinetable tbody tr td
 	color:#ffffff;
 	background-color:#40742a;
 	border-color:unset;
+}
+
+.brOC .ant-btn-success:disabled{
+     background-color: #badfa9;
+}
+
+.brOC div.spinScreen{
+  display:none;
+  width:100%;
+  height:100%;
+  position:absolute;
+  z-Index:100000000;
+  background-color:rgba(0,0,0,0.5);
+}
+
+.brOC div.spinScreen > div{
+  position:absolute;
+  margin:auto;
+  width:1%;
+  height:1%;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
 }

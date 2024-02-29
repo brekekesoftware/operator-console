@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 import Login from './login'
 // import { IconPhone, IconBackspace } from './icons'
@@ -48,7 +48,9 @@ import 'antd/lib/notification/style';
 import Spin from 'antd/lib/spin';
 import 'antd/lib/spin/style';
 import AutoComplete from 'antd/lib/auto-complete';
-
+import APhoneClient from "./APhoneClient";
+import WebphonePhoneClient from "./WebphonePhoneClient";
+import PalPhoneClient from "./PalPhoneClient";
 //import 'antd/lib/auto-complete/style';  //!commentout build error antd ^5.3.1
 
 // import Message from 'antd/lib/message';
@@ -105,7 +107,9 @@ import BrekekeOperatorConsoleEx from "./BrekekeOperatorConsoleEx";
 //import BusylightStatusChanger from "./BusylightStatusChanger";
 import OCUtil, {BROC_BROCCALLOBJECT_CALL_STATUSES} from "./OCUtil";
 import UccacWidget from "./UccacWidget";
-
+import Login from "./Login";
+import ACallInfos from "./ACallInfos";
+import ACallInfo from "./ACallInfo";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -115,15 +119,18 @@ export const brOcDisplayStates = Object.freeze({
     noScreens:5,
 });
 
-function LegacyCallPanel({ borderRadius, callpanelBgColor, callpanelFgColor,
+function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgColor, callpanelFgColor,
                             outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
                             insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
                             context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {}, dialing  } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+    //const { currentCallIndex, callIds = [], callById = {}, dialing  } = context;
+    const dialing = context.dialing;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     return (
         <CallPanel
-            call={currentCall}
+            operatorConsoleAsParent={operatorConsoleAsParent}
+            currentCallInfo = {currentCallInfo}
             dialing={dialing}
             borderRadius={borderRadius}
             callpanelBgColor={callpanelBgColor}
@@ -166,6 +173,7 @@ function LegacyUccacWidget({ operatorConsoleAsParent, uccacWrapper, borderRadius
         />
     );
 }
+//!later
 function LegacyExtensionStatus({ extension, exStatusFgColor, context = {} }) {
     const { extensions = [], extensionsStatus = {} } = context;
     const ext = extensions.find(({id}) => id == extension);
@@ -184,9 +192,11 @@ function LegacyExtensionStatus({ extension, exStatusFgColor, context = {} }) {
         </div>
     );
 }
-function LegacyCallTalkingButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+
+function LegacyCallTalkingButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
 
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -198,7 +208,7 @@ function LegacyCallTalkingButton({ subtype, icon, label, buttonFgColor, buttonBg
             {
                 clsx(
                     "kbc-button kbc-button-fill-parent",
-                    currentCall?.answered && !currentCall?.holding && 'kbc-button-danger'
+                    currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding() && 'kbc-button-danger'
                 )
             }
                 style={{
@@ -224,7 +234,7 @@ function LegacyCallTalkingButton({ subtype, icon, label, buttonFgColor, buttonBg
 //       )}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
 //   );
 // }
-function LegacyNoAnswerButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+function LegacyNoAnswerButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -241,14 +251,14 @@ function LegacyNoAnswerButton({ subtype, icon, label, buttonFgColor, buttonBgCol
                 onClick={context.toggleAutoRejectIncoming}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyCallbackButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacyCallbackButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -258,15 +268,15 @@ function LegacyCallbackButton({ subtype, icon, label, buttonFgColor, buttonBgCol
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyTransferButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context ={} }) {
+function LegacyTransferButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context ={} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => context.operatorConsole._transferDialingCall() } className="kbc-button kbc-button-fill-parent"
-                style={{
+        // <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => context.operatorConsole.transferDialingCall() } className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => operatorConsoleAsParent.transferDialingCall() } className="kbc-button kbc-button-fill-parent"                style={{
                     border:border,
                     borderRadius:borderRadius,
                     color:color,
@@ -276,9 +286,10 @@ function LegacyTransferButton({ subtype, icon, label, buttonFgColor, buttonBgCol
     );
 }
 
-function LegacyToggleRecordingButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyToggleRecordingButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
 
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -286,24 +297,27 @@ function LegacyToggleRecordingButton({ subtype, icon, label, buttonFgColor, butt
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCall?.recording && 'kbc-button-danger')}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallInfo?.getIsRecording() && 'kbc-button-danger')}
                 style={{
                     border:border,
                     borderRadius:borderRadius,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={context.toggleCallRecording}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={ () =>{
+                    context.toggleCallRecording();
+                }}
+                >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyAlarmButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacyAlarmButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -313,8 +327,11 @@ function LegacyAlarmButton({ subtype, icon, label, buttonFgColor, buttonBgColor,
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyPrevCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [] } = context;
+function LegacyPrevCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+    //const { currentCallIndex, callIds = [] } = context;
+    const callInfos = operatorConsoleAsParent.getPhoneClient().getCallInfos();
+    const currentCallIndex = callInfos.getCurrentCallIndex();
+    const callInfoCount = callInfos.getCallInfoCount();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -328,13 +345,13 @@ function LegacyPrevCallButton({ subtype, icon, label, buttonFgColor, buttonBgCol
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!callIds.length || currentCallIndex === 0) ? undefined : context.switchCallUp}
+                onClick={(!callInfoCount || currentCallIndex === 0) ? undefined : context.switchCallUp}
         >
             {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
         </button>
     );
 }
-function LegacyMonitorDialingExtensionButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyMonitorDialingExtensionButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -351,14 +368,14 @@ function LegacyMonitorDialingExtensionButton({ subtype, icon, label, buttonFgCol
                 onClick={context.monitorDialingExtension}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyStationLineDesignationButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacyStationLineDesignationButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -368,7 +385,7 @@ function LegacyStationLineDesignationButton({ subtype, icon, label, buttonFgColo
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyParkCallButton({ subtype, icon, label, number, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyParkCallButton({ operatorConsoleAsParent, subtype, icon, label, number, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const { myParksStatus = {}, parksStatus = {} } = context;
     const light = myParksStatus[number] ? 'kbc-button-success-flash-slow' : parksStatus[number] ? 'kbc-button-danger-flash-slow' : '';
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
@@ -387,14 +404,14 @@ function LegacyParkCallButton({ subtype, icon, label, number, buttonFgColor, but
                 onClick={() => context?.handlePark(number)}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacySeriesSetButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacySeriesSetButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -404,14 +421,14 @@ function LegacySeriesSetButton({ subtype, icon, label, buttonFgColor, buttonBgCo
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyMonitoringCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+function LegacyMonitoringCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", !!context.monitoringExtension && 'kbc-button-danger')}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", !!context.monitoringExtension && 'kbc-button-danger')} //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -421,14 +438,14 @@ function LegacyMonitoringCallButton({ subtype, icon, label, buttonFgColor, butto
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyStartButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacyStartButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -438,33 +455,34 @@ function LegacyStartButton({ subtype, icon, label, buttonFgColor, buttonBgColor,
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyToggleMutedButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyToggleMutedButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCall?.muted && 'kbc-button-danger')}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallInfo?.getIsMuted() && 'kbc-button-danger')}
                 style={{
                     border:border,
                     borderRadius:borderRadius,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCall) ? undefined : context.toggleCallMuted}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo) ? undefined : context.toggleCallMuted}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyLeavingSeatButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
+function LegacyLeavingSeatButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -474,14 +492,14 @@ function LegacyLeavingSeatButton({ subtype, icon, label, buttonFgColor, buttonBg
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyNightTimeButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
+function LegacyNightTimeButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -491,14 +509,14 @@ function LegacyNightTimeButton({ subtype, icon, label, buttonFgColor, buttonBgCo
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyAvailableButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
+function LegacyAvailableButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo impelement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -508,40 +526,44 @@ function LegacyAvailableButton({ subtype, icon, label, buttonFgColor, buttonBgCo
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyNextCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [] } = context;
+function LegacyNextCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
+    //const { currentCallIndex, callIds = [] } = context;
+    const callInfos = operatorConsoleAsParent.getPhoneClient().getCallInfos();
+    const currentCallIndex = callInfos.getCurrentCallIndex();
+    const callInfoCount = callInfos.getCallInfoCount();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (currentCallIndex < callIds.length - 1) && "kbc-button-danger-flash")}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (currentCallIndex < callInfoCount - 1) && "kbc-button-danger-flash")}
                 style={{
                     border:border,
                     borderRadius:borderRadius,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!callIds.length || currentCallIndex === callIds.length - 1) ? undefined : context.switchCallDown}>
+                onClick={(!callInfoCount || currentCallIndex === callInfoCount - 1) ? undefined : context.switchCallDown}>
             {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
         </button>
     );
 }
-function LegacyLineButton({ subtype, icon, label, line, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser, callById } = context;
+function LegacyLineButton({ operatorConsoleAsParent, subtype, icon, label, line, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    const callInfos = operatorConsoleAsParent.getPhoneClient().getCallInfos();
+    const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser } = context;
     const { line_talker, room_id, status } = linesStatus[line] || {};
     let light = '';
     if (status === 'on') {
-        const call = room_id ? Object.values(callById).find((call) => call.pbxRoomId === room_id) : null;
+        const callInfo = room_id ? callInfos.getCallInfoWherePbxRoomIdEqual( room_id )  : null;
         const park = parksStatus[line];
 
         if (line_talker === loginUser?.pbxUsername) {
             light = 'kbc-button-success-flash';
         } else if (park) {
             light = myParksStatus[line] ? 'kbc-button-success-flash-slow' : 'kbc-button-danger-flash-slow';
-        } else if (call) {
-            if (call?.incoming && !call?.answered) {
+        } else if (callInfo) {
+            if (callInfo?.getIsIncoming() && !callInfo?.getIsAnswered() ) {
                 light = 'kbc-button-danger-flash'
             } else {
                 light = 'kbc-button-success'
@@ -570,7 +592,7 @@ function LegacyLineButton({ subtype, icon, label, line, buttonFgColor, buttonBgC
         </button>
     );
 }
-function LegacyKeypadButton({ subtype, icon, symbol, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyKeypadButton({ operatorConsoleAsParent, subtype, icon, symbol, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -617,9 +639,7 @@ function _getQuickCallDialingBySymbol( symbol, quickCallWidget ){
     return null;
 }
 
-function LegacyMakeCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyMakeCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -641,9 +661,9 @@ function LegacyMakeCallButton({ subtype, icon, label, buttonFgColor, buttonBgCol
         </button>
     );
 }
-function LegacyBackspaceButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyBackspaceButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -662,16 +682,17 @@ function LegacyBackspaceButton({ subtype, icon, label, buttonFgColor, buttonBgCo
         </button>
     );
 }
-function LegacyIncomingCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyIncomingCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)} className={clsx("kbc-button kbc-button-fill-parent", (currentCall?.incoming && currentCall?.answered && !currentCall?.holding) && 'kbc-button-danger')}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)} className={clsx("kbc-button kbc-button-fill-parent", (currentCallInfo?.getIsIncoming() && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding() ) && 'kbc-button-danger')}    //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -681,7 +702,7 @@ function LegacyIncomingCallButton({ subtype, icon, label, buttonFgColor, buttonB
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyThreeWayCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -698,16 +719,17 @@ function LegacyThreeWayCallButton({ subtype, icon, label, buttonFgColor, buttonB
                 onClick={(!context.monitoringExtension) ? undefined : context.joinConversation}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyOutgoingCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyOutgoingCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (!!currentCall && currentCall?.answered && !currentCall?.incoming && !currentCall?.holding) && 'kbc-button-danger')}
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (!!currentCallInfo && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsIncoming() && !currentCallInfo?.getIsHolding()) && 'kbc-button-danger')}  //!todo implement
                 style={{
                     border:border,
                     borderRadius:borderRadius,
@@ -717,9 +739,10 @@ function LegacyOutgoingCallButton({ subtype, icon, label, buttonFgColor, buttonB
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyHangUpCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyHangUpCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -733,12 +756,13 @@ function LegacyHangUpCallButton({ subtype, icon, label, buttonFgColor, buttonBgC
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCall) ? undefined : context.hangUpCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo) ? undefined : context.hangUpCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyUnholdCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -752,12 +776,14 @@ function LegacyUnholdCallButton({ subtype, icon, label, buttonFgColor, buttonBgC
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCall || !currentCall.answered || !currentCall.holding) ? undefined : context.resumeCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo || !currentCallInfo.getIsHolding()) ? undefined : context.resumeCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyHoldCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
+
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -771,12 +797,14 @@ function LegacyHoldCallButton({ subtype, icon, label, buttonFgColor, buttonBgCol
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCall || !currentCall.answered || currentCall.holding) ? undefined : context.holdCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo || !currentCallInfo.getIsAnswered() || currentCallInfo.getIsHolding() ) ? undefined : context.holdCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyPickUpCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const { currentCallIndex, callIds = [], callById = {} } = context;
-    const currentCall = callById[callIds[currentCallIndex]];
+function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+    //const { currentCallIndex, callIds = [], callById = {} } = context;
+    //const currentCall = callById[callIds[currentCallIndex]];
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
+
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -790,10 +818,19 @@ function LegacyPickUpCallButton({ subtype, icon, label, buttonFgColor, buttonBgC
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCall || !currentCall.incoming || currentCall.answered) ? undefined : context.answerCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={
+                    () => {
+                        const b = !!currentCallInfo && currentCallInfo.getIsIncoming() && !currentCallInfo.getIsAnswered();
+                        if (b) {
+                            context.answerCall();
+                        }
+                    }
+                }>
+                {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+        </button>
     );
 }
-function LegacyDummyButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
+function LegacyDummyButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -810,7 +847,7 @@ function LegacyDummyButton({ subtype, icon, label, buttonFgColor, buttonBgColor,
         >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
 }
-function LegacyQuickCallButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -829,7 +866,7 @@ function LegacyQuickCallButton({ subtype, icon, label, buttonFgColor, buttonBgCo
     );
 }
 
-function LegacyAutoDialButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyAutoDialButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const isRedColor = context.showAutoDialWidgets && BrekekeOperatorConsole._getIndexFromArray( context.showAutoDialWidgets, context.widget ) !== -1;
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -849,7 +886,7 @@ function LegacyAutoDialButton({ subtype, icon, label, buttonFgColor, buttonBgCol
     );
 }
 
-function LegacyOneTouchDialButton({ subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context }) {
+function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
@@ -857,7 +894,7 @@ function LegacyOneTouchDialButton({ subtype, icon, label, buttonFgColor, buttonB
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     if( !context ){ //edit mode
         return (
-            <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
+            <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"    //!todo implement onClick
                     style={{
                         border:border,
                         borderRadius:borderRadius,
@@ -871,7 +908,7 @@ function LegacyOneTouchDialButton({ subtype, icon, label, buttonFgColor, buttonB
         const {widget, setDialingAndMakeCall} = context;
         const number = widget.number;
         return (
-            <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
+            <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent" //!todo implement onClick
                     style={{
                         border:border,
                         borderRadius:borderRadius,
@@ -884,7 +921,7 @@ function LegacyOneTouchDialButton({ subtype, icon, label, buttonFgColor, buttonB
     }
 }
 
-function Text({ text, textFgColor, textBgColor, textBorderRadius  }) {
+function Text({ operatorConsoleAsParent, text, textFgColor, textBgColor, textBorderRadius  }) {
 
     const color = Util.isAntdRgbaProperty( textFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( textFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( textBgColor ) ? Util.getRgbaCSSStringFromAntdColor( textBgColor ) : '#f5f5f5'; //!default
@@ -909,49 +946,220 @@ function Text({ text, textFgColor, textBgColor, textBorderRadius  }) {
 }
 
 
+// const CALL_TABLE_TH_HEIGHT = 50;
+// const CALL_TABLE_TD_HEIGHT = 45;
+// function CallTable( props ) {
+//     const operatorConsoleAsParent = props.operatorConsoleAsParent;
+//     let context = props.context;
+//     let callIds, callById, currentCallIndex;
+//     let isEditMode;
+//     if( !context ){ //in edit mode
+//         isEditMode = true;
+//         context = {};
+//         const tableHeight = props.height;
+//         const rowCount = Math.ceil( ( tableHeight - CALL_TABLE_TH_HEIGHT ) / CALL_TABLE_TD_HEIGHT  );
+//         callIds = new Array(rowCount);
+//         for( let i = 0; i < callIds.length; i++ ){
+//             callIds[i] = i;
+//         }
+//         callById = {};
+//         currentCallIndex = -1;
+//     }
+//     else{ //Not in edit mode
+//         isEditMode = false;
+//         callIds = context.callIds;
+//         if( !callIds ){
+//             callIds = [];
+//         }
+//         callById = context.callById;
+//         if( !callById ){
+//             callById = {};
+//         }
+//         currentCallIndex = context.currentCallIndex;
+//
+//     }
+//
+//     let idKey = 0;
+//
+//     const CallTableColumns = [  //!overhead
+//         {key: 'partyNumber', title: i18n.t('PartyNumber'),      formatter: (v) => (v + '')},
+//         {key: 'partyName',   title: i18n.t('PartyName'),        formatter: (v) => (v + '')},
+//         {key: 'incoming',    title:  i18n.t('Incoming'),    formatter: (v) => (v ? '✓' : '')},
+//         {key: 'answered',    title: i18n.t('Answered'),    formatter: (v) => (v ? '✓' : '')},
+//         {key: 'holding',     title: i18n.t('Holding'),     formatter: (v) => (v ? '✓' : '')},
+//         {key: 'recording',   title:  i18n.t('Recording'),   formatter: (v) => (v ? '✓' : '')},
+//         {key: 'muted',       title:  i18n.t('Muted'),       formatter: (v) => (v ? '✓' : '')},
+//         {key: 'answeredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
+//     ]
+//
+//     const outerBorderRadius = props.calltableOuterBorderRadius ? props.calltableOuterBorderRadius : 0; //!default
+//     const outerBorderThickness = props.calltableOuterBorderThickness ? props.calltableOuterBorderThickness : 0; //!default
+//     const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  props.calltableOuterBorderColor, "rgba(0,0,0,0)" );
+//     const headerFgColor = Util.getRgbaCSSStringFromAntdColor(  props.calltableHeaderFgColor , "" );
+//     const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  props.calltableBodyFgColor , "" );
+//     const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBodyActiveRowBgColor, "#B9DFA9" );   //!default
+//     const backgroundColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBgColor, "" );
+//     const headerRowUnderlineThickness = props.calltableHeaderRowUnderlineThickness ? props.calltableHeaderRowUnderlineThickness : 1; //!default
+//     const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableHeaderRowUnderlineColor , "#e0e0e0" );   //!default
+//     const bodyRowUnderlineThickness = props.calltableBodyRowUnderlineThickness ? props.calltableBodyRowUnderlineThickness : 1; //!default
+//     const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBodyRowUnderlineColor , "#e0e0e0" );   //!default
+//
+//
+//     return (
+//         <table className="brOCCalltable"  style={{
+//             borderRadius:outerBorderRadius,
+//             border: outerBorderThickness + "px solid " + outerBorderColor,
+//             backgroundColor:backgroundColor,
+//         }}>
+//             <thead>
+//             <tr style={{
+//                 color:headerFgColor,
+//                 borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
+//             }}>
+//                 {CallTableColumns.map((item, i ) => {
+//                     const key = item.key;
+//                     const title = item.title;
+//
+//                     let borderRadiusTH;
+//                     const isFirstTH = i == 0;
+//                     if( isFirstTH === true ){
+//                         borderRadiusTH =  outerBorderRadius +  "px 0 0 0";
+//                     }
+//                     else{
+//                         borderRadiusTH =  "";   //"0"
+//                     }
+//
+//                     return <th key={key}
+//                                style={{
+//                                    height:CALL_TABLE_TH_HEIGHT,
+//                                    paddingTop:0,
+//                                    paddingBottom:0,
+//                                    borderRadius:borderRadiusTH,
+//                                }}>{title}</th>;})
+//                 }
+//                 <th style={{
+//                     height:CALL_TABLE_TH_HEIGHT,
+//                     paddingTop:0,
+//                     paddingBottom:0,
+//                     borderRadius:"0 " + outerBorderRadius + "px 0 0",
+//                 }}></th>
+//             </tr>
+//             </thead>
+//             <tbody style={{
+//                 color:bodyFgColor,
+//             }}>
+//             {callIds.map((id, i) => {
+//                 let tdActive;
+//                 if( isEditMode  ){
+//                     tdActive = "\u00A0";
+//                 }
+//                 else if( i === currentCallIndex ){
+//                     tdActive = "\u00A0";
+//                 }
+//                 else{
+//                     tdActive = <button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" onClick={ () => context.switchCallIndex(i)}>{i18n.t("active")}</button>;
+//                 }
+//
+//                 return (<tr key={idKey++} style={{
+//                     color: bodyFgColor,
+//                     backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
+//                     height:CALL_TABLE_TD_HEIGHT,
+//                     paddingTop:0,
+//                     paddingBottom:0,
+//                     borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
+//                 }}>
+//                     {CallTableColumns.map((column, i) => {
+//                             let borderRadiusTD;
+//                             const isFirstTD = i == 0;
+//                             if( isFirstTD === true ){
+//                                 borderRadiusTD =  "0 " + outerBorderRadius +  "px 0 0";
+//                             }
+//                             else{
+//                                 borderRadiusTD =  "";   //"0"
+//                             }
+//                             borderRadiusTD =  "";   //"0"
+//
+//                             const key = column.key;
+//                             const formatter = column.formatter;
+//                             const v0 = callById[id];
+//                             let v;
+//                             if( !v0 ){
+//                                 v = "\u00A0";   //for edit mode
+//                             }
+//                             else{
+//                                 v =  formatter( v0[key]);
+//                             }
+//                             return <td key={key}
+//                                        style={{
+//                                            height: CALL_TABLE_TD_HEIGHT,
+//                                            paddingTop:0,
+//                                            paddingBottom:0,
+//                                            borderRadius:borderRadiusTD
+//                                        }}>{v}</td>
+//                         }
+//                     )}
+//                     <td style={{
+//                         width:80,height:CALL_TABLE_TD_HEIGHT,paddingTop:0,paddingBottom:0,
+//                         borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
+//                     }}>
+//                         {tdActive}
+//                     </td>
+//                 </tr>);
+//             })}
+//             </tbody>
+//         </table>
+//     );
+// }
+
+
 const CALL_TABLE_TH_HEIGHT = 50;
 const CALL_TABLE_TD_HEIGHT = 45;
 function CallTable( props ) {
+    const operatorConsoleAsParent = props.operatorConsoleAsParent;
     let context = props.context;
-    let callIds, callById, currentCallIndex;
+    let currentCallIndex;
     let isEditMode;
+    let callInfoArray;
     if( !context ){ //in edit mode
         isEditMode = true;
         context = {};
         const tableHeight = props.height;
         const rowCount = Math.ceil( ( tableHeight - CALL_TABLE_TH_HEIGHT ) / CALL_TABLE_TD_HEIGHT  );
-        callIds = new Array(rowCount);
-        for( let i = 0; i < callIds.length; i++ ){
-            callIds[i] = i;
+        callInfoArray = new Array(rowCount);
+        for( let i = 0; i < rowCount; i++ ){
+            callInfoArray[i] = null;
         }
-        callById = {};
+        //callById = {};
         currentCallIndex = -1;
     }
     else{ //Not in edit mode
         isEditMode = false;
-        callIds = context.callIds;
-        if( !callIds ){
-            callIds = [];
-        }
-        callById = context.callById;
-        if( !callById ){
-            callById = {};
-        }
-        currentCallIndex = context.currentCallIndex;
+        //callIds = context.callIds;
+        // if( !callIds ){
+        //     callIds = [];
+        // }
+        //callById = context.callById;
+        // if( !callById ){
+        //     callById = {};
+        // }
+        const callInfos = operatorConsoleAsParent.getPhoneClient().getCallInfos();
+        callInfoArray = callInfos.getCallInfoArray();
+        //currentCallIndex = context.currentCallIndex;
+        currentCallIndex = callInfos.getCurrentCallIndex();
 
     }
 
     let idKey = 0;
 
     const CallTableColumns = [  //!overhead
-        {key: 'partyNumber', title: i18n.t('PartyNumber'),      formatter: (v) => (v + '')},
-        {key: 'partyName',   title: i18n.t('PartyName'),        formatter: (v) => (v + '')},
-        {key: 'incoming',    title:  i18n.t('Incoming'),    formatter: (v) => (v ? '✓' : '')},
-        {key: 'answered',    title: i18n.t('Answered'),    formatter: (v) => (v ? '✓' : '')},
-        {key: 'holding',     title: i18n.t('Holding'),     formatter: (v) => (v ? '✓' : '')},
-        {key: 'recording',   title:  i18n.t('Recording'),   formatter: (v) => (v ? '✓' : '')},
-        {key: 'muted',       title:  i18n.t('Muted'),       formatter: (v) => (v ? '✓' : '')},
-        {key: 'answeredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
+        {key: 'getPartyNumber', title: i18n.t('PartyNumber'),      formatter: (v) => (v + '')},
+        {key: 'getPartyName',   title: i18n.t('PartyName'),        formatter: (v) => (v + '')},
+        {key: 'getIsIncoming',    title:  i18n.t('Incoming'),    formatter: (v) => (v ? '✓' : '')},
+        {key: 'getIsAnswered',    title: i18n.t('Answered'),    formatter: (v) => (v ? '✓' : '')},
+        {key: 'getIsHolding',     title: i18n.t('Holding'),     formatter: (v) => (v ? '✓' : '')},
+        {key: 'getIsRecording',   title:  i18n.t('Recording'),   formatter: (v) => (v ? '✓' : '')},
+        {key: 'getIsMuted',       title:  i18n.t('Muted'),       formatter: (v) => (v ? '✓' : '')},
+        {key: 'getAnsweredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
     ]
 
     const outerBorderRadius = props.calltableOuterBorderRadius ? props.calltableOuterBorderRadius : 0; //!default
@@ -968,6 +1176,7 @@ function CallTable( props ) {
 
 
     return (
+        <div className="brOCCalltableWrapper">
         <table className="brOCCalltable"  style={{
             borderRadius:outerBorderRadius,
             border: outerBorderThickness + "px solid " + outerBorderColor,
@@ -976,7 +1185,9 @@ function CallTable( props ) {
             <thead>
             <tr style={{
                 color:headerFgColor,
-                borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
+                borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
+                display:"table-row",
+                tableLayout:"unset"
             }}>
                 {CallTableColumns.map((item, i ) => {
                     const key = item.key;
@@ -993,24 +1204,23 @@ function CallTable( props ) {
 
                     return <th key={key}
                                style={{
-                                   height:CALL_TABLE_TH_HEIGHT,
                                    paddingTop:0,
                                    paddingBottom:0,
                                    borderRadius:borderRadiusTH,
                                }}>{title}</th>;})
                 }
                 <th style={{
-                    height:CALL_TABLE_TH_HEIGHT,
                     paddingTop:0,
                     paddingBottom:0,
-                    borderRadius:"0 " + outerBorderRadius + "px 0 0",
-                }}></th>
+                    borderRadius:"0 " + outerBorderRadius + "px 0 0"
+                }}>{i18n.t("activeButton")}</th>
             </tr>
             </thead>
             <tbody style={{
                 color:bodyFgColor,
+                display:"table-row-group"
             }}>
-            {callIds.map((id, i) => {
+            {callInfoArray.map((callInfo, i) => {
                 let tdActive;
                 if( isEditMode  ){
                     tdActive = "\u00A0";
@@ -1025,10 +1235,10 @@ function CallTable( props ) {
                 return (<tr key={idKey++} style={{
                     color: bodyFgColor,
                     backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
-                    height:CALL_TABLE_TD_HEIGHT,
                     paddingTop:0,
                     paddingBottom:0,
-                    borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
+                    borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
+                    display:"table-row"
                 }}>
                     {CallTableColumns.map((column, i) => {
                             let borderRadiusTD;
@@ -1043,17 +1253,15 @@ function CallTable( props ) {
 
                             const key = column.key;
                             const formatter = column.formatter;
-                            const v0 = callById[id];
                             let v;
-                            if( !v0 ){
+                            if( !callInfo ){
                                 v = "\u00A0";   //for edit mode
                             }
                             else{
-                                v =  formatter( v0[key]);
+                                v =  formatter( callInfo[key]() );
                             }
                             return <td key={key}
                                        style={{
-                                           height: CALL_TABLE_TD_HEIGHT,
                                            paddingTop:0,
                                            paddingBottom:0,
                                            borderRadius:borderRadiusTD
@@ -1061,7 +1269,7 @@ function CallTable( props ) {
                         }
                     )}
                     <td style={{
-                        width:80,height:CALL_TABLE_TD_HEIGHT,paddingTop:0,paddingBottom:0,
+                        width:80,paddingTop:0,paddingBottom:0,
                         borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
                     }}>
                         {tdActive}
@@ -1070,8 +1278,11 @@ function CallTable( props ) {
             })}
             </tbody>
         </table>
+        </div>
     );
 }
+
+
 function CallTablePreview() {
     return (
         <table>
@@ -2285,16 +2496,14 @@ const EMPTY_SCREENS = [
 const INIT_STATE = {
     i18nReady: false,
 
-    palReady: false,
+    isInitialized: false,
     loginUser: null,
     syncDownedScreens: false,
     syncDownedSystemSettings: false,
     _downedLayoutAndSystemSettings: false,
     syncLoadedCallHistory: false,
-    //currentCallIndex: 0,
-    currentCallIndex: -1,
-    callIds: [],
-    callById: {},
+    //callIds: [],
+    //callById: {},
     dialing: '',
     extensions: [],
     autoRejectIncoming: false,
@@ -2328,8 +2537,9 @@ const INIT_STATE = {
 export default class BrekekeOperatorConsole extends React.Component {
     constructor(props) {
         super(props);
-        this.callById = {};
-        this._callIds = new Array();
+        BREKEKE_OPERATOR_CONSOLE = this;
+        //this.callById = {};
+        //this._callIds = new Array();
         this._OnBackspaceKeypadValueCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
         this._OnClearDialingCallbacks = [];
@@ -2337,7 +2547,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._systemSettingsView = null;
         this.state = window.structuredClone(INIT_STATE);
         //this.state.operatorConsole = this;
-        this.phone = null;
         this._CallHistory = new CallHistory(this);
         this._OnBeginSaveEditingScreenFunctions = [];
         // this._OnSelectWidgetFuncs = [];
@@ -2346,15 +2555,46 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._ExtensionsStatus = new ExtensionsStatus( this );
         this._UccacWrapper = new UccacWrapper( this );
         this._BrekekeOperatorConsoleEx = new BrekekeOperatorConsoleEx(this);
-        this._OnChangeCallEventListeners = new Array();
-        this._OnUpdateCallEventListeners = new Array();
-        this._OnInsertCallEventListeners = new Array();
-        this._OnRemoveCallEventListeners = new Array();
-        this._OnChangeCurrentCallIdEventListeners = new Array();
+        //this._OnChangeCallEventListeners = new Array();
+
+        this._OnAddCallInfoEventListeners = new Array();
+        this._OnUpdateCallInfoEventListeners = new Array();
+        this._OnHoldCallInfoEventListeners = new Array();
+        this._OnUnholdCallInfoEventListeners = new Array();
+        this._OnRemoveCallInfoEventListeners = new Array();
+
+        //this._OnChangeCurrentCallIdEventListeners = new Array();
         this._OnUnloadExtensionScriptEventListeners = new Array();
-        this._OnPalNotifyStatusEventListeners = new Array();
+        //this._OnPalNotifyStatusEventListeners = new Array();
         //this._BusylightStatusChanger = new BusylightStatusChanger(this); //!dev
+        this._aphone = null;
+        this._loggedinPal = null;
+
+        this._LoginPalWrapper = new PalWrapper();
+
+        this._RootURLString = Util.getRootUrlString();
+        this._OnBeforeUnloadFunc = (event) => { this._onBeforeUnload(event)};
+        this._OnUnloadFunc = (event) => { this._onUnload( event )};
+        window.addEventListener("unload", this._OnUnloadFunc );
+        this._defaultSystemSettingsData = new SystemSettingsData( this );
     }
+
+    getPhoneClient(){
+        return this._aphone;
+    }
+
+    onAnswerCalleeByPalCallInfo( palCallInfo ){
+        //If the call is not active when the other party answers, it will be put on hold.
+        const currentCallId = this._aphone.getCallInfos().getCurrentCallId();
+        const callId = palCallInfo.getCallId();
+        const isActive = currentCallId === callId;
+        if( !isActive ){
+            if( !palCallInfo.getIsHolding() ){
+                palCallInfo.toggleHoldWithCheck();
+            }
+        }
+    }
+
 
     onDeinitUccacWrapperByUccacWrapper( uccacWrapperAsCaller ){
         // const screen = this._getCurrentScreen();
@@ -2385,7 +2625,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState( { _downedLayoutAndSystemSettings:true } );
     }
 
-    onSavedNewLayoutFromNoScreensView( noScreensViewAsCaller, layoutName, layoutsAndSettingsData  ){
+    onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData  ){
         const systemSettingsData = this.getSystemSettingsData();
         const this_ = this;
         systemSettingsData.setSystemSettingsDataData( layoutsAndSettingsData.systemSettings,
@@ -2393,10 +2633,33 @@ export default class BrekekeOperatorConsole extends React.Component {
                 this_.setLastLayoutShortname( layoutName );
                 this_.setState( { _downedLayoutAndSystemSettings:true, screens: layoutsAndSettingsData.screens, systemSettingsData:systemSettingsData } );
             },
-            function(){ //initFail
-
+            function(e){ //initFail
+                //!testit
+                if( Array.isArray(e)){
+                    for( let i = 0; i < e.length; i++ ){
+                        const err = e[i];
+                        console.error("setSystemSettingsDataData failed. errors[" + i + "]=" , err );
+                    }
+                }
+                else{
+                    console.error("setSystemSettingsDataData failed. error=" , e );
+                }
+                Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
             }
-            );
+       );
+    }
+
+    _initAphoneClient( aphone, initOptions ){
+        this._aphone = aphone;
+        this._aphone.initPhoneClient( initOptions );
+    }
+
+    _deinitAphoneClient(){
+        if( !this._aphone ){
+            return;
+        }
+        this._aphone.deinitPhoneClient();
+        this._aphone = null;
     }
 
 
@@ -2434,10 +2697,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state;
     }
 
-    getCallByRoomId( roomId ) {
-        const call = Object.values( this.callById).find((call) => call.pbxRoomId === roomId );
-        return call;
-    }
+    // getCallByRoomId( roomId ) {
+    //     const call = Object.values( this.callById).find((call) => call.pbxRoomId === roomId );
+    //     return call;
+    // }
 
     onSavingSystemSettings(systemSettingsAsCaller) {
         this.getCallHistory().onSavingSystemSettings(this);
@@ -2445,8 +2708,56 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     onBeginSetSystemSettingsData( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction  ){
         const isUCMinScript = false;    //!dev
-        const initAsync = this._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript );
-        return initAsync;
+        const this_ = this;
+        const bPhoneTerminalChanged = newData.phoneTerminal  !== systemSettingsDataAsCaller.getPhoneTerminal();
+        if( bPhoneTerminalChanged || this._aphone == null  ){
+            this._deinitAphoneClient();
+            const options = {
+                operatorConsoleAsParent : this
+            };
+            const pt = newData.phoneTerminal;
+            let phoneClient;
+            if( pt === "phoneTerminal_pal"){
+                phoneClient = new PalPhoneClient( options );
+            }
+            else{
+                phoneClient = new WebphonePhoneClient( options );
+            }
+
+            const initOptions = {...this._getLastLoginAccount()}
+
+            initOptions.onInitSuccessFunction = function( oExtensions ){
+                console.log('extensions', oExtensions);
+                this_.setState({ extensions: oExtensions },
+                    () =>{
+                        const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
+                            function() {
+                                onInitSuccessUccacFunction();
+                                this_._deinitPalWrapper();
+                            },
+                            onInitFailUccacFunction, isUCMinScript
+                        );
+                        //return initAsync;
+                    }
+                );
+               };
+            initOptions.onInitFailFunction = function( error ){
+                    onInitFailUccacFunction(error);
+            };
+            this._initAphoneClient(  phoneClient,  initOptions );
+            return false;
+        }
+        else{
+            const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
+                function() {
+                    onInitSuccessUccacFunction();
+                    this_._deinitPalWrapper();
+                },
+                onInitFailUccacFunction, isUCMinScript
+            );
+            return initAsync;
+        }
+
     }
 
     getCallHistory() {
@@ -2489,6 +2800,63 @@ export default class BrekekeOperatorConsole extends React.Component {
         const key = info.hostname + '\t' + info.port + '\t' + info.tenant + '\t' + info.username;
         return key;
     }
+
+    getLoggedinTenant(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const tenant = this.state.loginUser.pbxTenant;
+        return tenant;
+    }
+
+    getLoggedinUsername(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const user = this.state.loginUser.pbxUsername;
+        return user;
+    }
+
+    getLoggedinPbxHost(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const pbxHost = this.state.loginUser.pbxHost;
+        return pbxHost;
+    }
+
+    getLoggedinPbxPort(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const pbxPort = this.state.loginUser.pbxPort;
+        return pbxPort;
+    }
+
+    getLoggedinPbxPort(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const pbxPort = this.state.loginUser.pbxPort;
+        return pbxPort;
+    }
+
+    getLoggedinPassword(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const pbxPassword = this.state.loginUser.pbxPassword;
+        return pbxPassword;
+    }
+
+    getLoggedinLanguage(){
+        if( !this.state.loginUser ){
+            return null;
+        }
+        const language = this.state.loginUser.language;
+        return language;
+    }
+
 
     _getLastLayoutShortname(){
         const key = this._getLastLayoutLocalstorageKeyName();
@@ -2562,7 +2930,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
 
         return (<>
-            {!!this.state.palReady ? (
+            {!!this.state.isInitialized ? (
                 <div style={{flexGrow:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                     {this.state._downedLayoutAndSystemSettings ? (
@@ -2812,9 +3180,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                 uccacWrapper={this._UccacWrapper}
                                                                 context={{
                                                                     loginUser: this.state.loginUser,
-                                                                    currentCallIndex: this.state.currentCallIndex,
-                                                                    callIds: this._callIds,
-                                                                    callById: this.callById,
+                                                                    currentCallIndex: this._getCurrentCallIndex(),
+                                                                    //callIds: this._callIds,
+                                                                    //callById: this.callById,
                                                                     dialing: this.state.dialing,
                                                                     extensions: this.state.extensions,
                                                                     extensionsStatus: this.state.extensionsStatus,
@@ -2845,7 +3213,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                     handleLine: this.handleLine,
                                                                     handlePark: this.handlePark,
                                                                     getNote: this.getNote,
-                                                                    setNote: this.setNoteByPal,
+                                                                    setNote: this.setNote,
                                                                     toggleQuickCallScreen: this.toggleQuickCallScreen,
                                                                     onClickAutoDial: this.onClickAutoDial,
                                                                     currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
@@ -2908,9 +3276,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                     uccacWrapper={this._UccacWrapper}
                                                                     context={{
                                                                         loginUser: this.state.loginUser,
-                                                                        currentCallIndex: this.state.currentCallIndex,
-                                                                        callIds: this._callIds,
-                                                                        callById: this.callById,
+                                                                        currentCallIndex: this._getCurrentCallIndex(),
+                                                                        //callIds: this._callIds,
+                                                                        //callById: this.callById,
                                                                         dialing: this.state.dialing,
                                                                         extensions: this.state.extensions,
                                                                         extensionsStatus: this.state.extensionsStatus,
@@ -2941,7 +3309,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                         handleLine: this.handleLine,
                                                                         handlePark: this.handlePark,
                                                                         getNote: this.getNote,
-                                                                        setNote: this.setNoteByPal,
+                                                                        setNote: this.setNote,
                                                                         toggleQuickCallScreen: this.toggleQuickCallScreen,
                                                                         currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
                                                                         onClickAutoDial: this.onClickAutoDial,
@@ -2965,9 +3333,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                                         <AutoDialView
                                             operatorConsoleAsParent={this}
                                             sortedCallNos={this._CallHistory.getSortedCallNos()}
-                                            currentCallIndex={this.state.currentCallIndex}
-                                            callIds={this._callIds}
-                                            callById={this.callById}
+                                            //currentCallIndex={this._getCurrentCallIndex()}
+                                            //callIds={this._callIds}
+                                            //callById={this.callById}
                                             isVisible={this.state.showAutoDialWidgets && this.state.showAutoDialWidgets.length !== 0}
                                         />
                                         <QuickBusy operatorConsoleAsParent={this}/>
@@ -2982,12 +3350,16 @@ export default class BrekekeOperatorConsole extends React.Component {
                 </div>
             ) :  (
                 <div className='brOCLoginPage'>
-                    <Login initialValues={this._getLastLoginAccount()} onSubmit={this.login} isSigningin={ this.state.isSigningin === true ? true : false }/>
+                    <Login operatorConsoleAsParent={this} initialValues={this._getLastLoginAccount()} />
                 </div>
             )}
 
             <div id="brOCPhone"></div>
         </>);
+    }
+
+    setLastLoginAccount( lastLoginAccount ){
+        this.setState({lastLoginAccount: lastLoginAccount});
     }
 
     _getLastLoginAccount() {
@@ -3117,7 +3489,6 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _syncUp = async () => {
-        const pal = this.getPal();
         //if (!pal) return;
         const systemSettingsData = this.getSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
@@ -3432,115 +3803,125 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({editingWidgets});
     }
 
-    getCurrentCall = () => {
-        const id = this.getCurrentCallId();
-        if( !id ){
-            return null;
-        }
-        const call = this.getCallByCallId(id);
-        return call;
+    // //!obsolute
+    // getCurrentCall = () => {
+    //     const id = this.getCurrentCallIdForWebphoneCallInfos();
+    //     if( !id ){
+    //         return null;
+    //     }
+    //     const call = this._getCallByCallIdForWebphoneCallInfos(id);
+    //     return call;
+    // }
+
+    getCurrentCallInfo(){
+        return this._aphone.getCallInfos().getCurrentCallInfo();
     }
 
     _getCurrentCallIndex(){
-        return this.state.currentCallIndex;
+        return this._aphone.getCallInfos().getCurrentCallIndex();
     }
 
-    getCurrentCallId(){
-        const currentCallIndex = this._getCurrentCallIndex();
-        if( currentCallIndex === -1  ){
-            return null;
-        }
-        const id = this._callIds[ currentCallIndex ];
-        return id;
+    //!obsolute
+    getCurrentCallIdForWebphoneCallInfos(){
+        return this._aphone.getCallInfos().getCurrentCallId();
     }
 
-    getCallByCallId = ( id ) =>{
-        const call = this.callById[id];
-        return call;
-    }
+    // //!obsolute
+    // _getCallByCallIdForWebphoneCallInfos = (id ) =>{
+    //     return this._aphone.getCallInfos().getCallByCallId();
+    // }
 
     switchCallUp = () => {
         const currentCallIndex = this._getCurrentCallIndex();
         if ( currentCallIndex > 0) {
             this.holdCall();
-            this._setCurrentCallIndex( currentCallIndex - 1 );
+            this.setCurrentCallIndex( currentCallIndex - 1 );
         }
     }
 
-    _getCallIndexByCallId(){
-        const calls = this.callById;
-    }
-
-    _setCurrentCallIndex( index ){
+    setCurrentCallIndex( index ){
         const currentCallIndex = this._getCurrentCallIndex();
 
-        this.setState({currentCallIndex: index });
+        this._aphone.getCallInfos().setCurrentCallIndexByOperatorConsole(index);
+        this.setState({refresh:true });
         if( index === currentCallIndex ){
             return false;
         }
-        this._onChangeCurrentCallIndex( index, currentCallIndex  );
+        //this._onChangeCurrentCallIndex( index, currentCallIndex  );
         return true;
     }
 
-    _onChangeCurrentCallIndex(index, prevIndex ){
-        let currentCallId;
-        if( index !== -1 ) {
-            currentCallId = this._callIds[index];
-        }
-        else{
-            currentCallId = null;
-        }
-
-        let prevCallId;
-        if( prevIndex !== -1 ){
-            prevCallId = this._callIds[prevIndex];
-        }
-        else{
-            prevCallId = null;
-        }
-
-        const options = {
-            currentCallId : currentCallId,
-            previousCallId : prevCallId
-        };
-
-        for(let i = 0; i < this._OnChangeCurrentCallIdEventListeners.length; i++ ){
-            const event = this._OnChangeCurrentCallIdEventListeners[i];
-            event( options );   //!forBug need tryCatch?
-        }
-    }
+    // _onChangeCurrentCallIndex(index, prevIndex ){
+    //     // let currentCallId;
+    //     // if( index !== -1 ) {
+    //     //     currentCallId = this._callIds[index];
+    //     // }
+    //     // else{
+    //     //     currentCallId = null;
+    //     // }
+    //     const callInfos = this._aphone.getCallInfos();
+    //     const currentCallId = callInfos.getCallIdByIndex( index );
+    //     const prevCallId = callInfos.getCallIdByIndex( prevIndex );
+    //
+    //     // let prevCallId;
+    //     // if( prevIndex !== -1 ){
+    //     //     prevCallId = this._callIds[prevIndex];
+    //     // }
+    //     // else{
+    //     //     prevCallId = null;
+    //     // }
+    //
+    //     const options = {
+    //         currentCallId : currentCallId,
+    //         previousCallId : prevCallId
+    //     };
+    //
+    //     for(let i = 0; i < this._OnChangeCurrentCallIdEventListeners.length; i++ ){
+    //         const event = this._OnChangeCurrentCallIdEventListeners[i];
+    //         event( options );   //!forBug need tryCatch?
+    //     }
+    // }
 
     switchCallDown = () => {
         const currentCallIndex = this._getCurrentCallIndex();
-        if ( currentCallIndex < this._callIds.length - 1) {
+        const callInfoCount = this._aphone.getCallInfos().getCallInfoCount();
+        if ( currentCallIndex < callInfoCount - 1) {
             this.holdCall();
-            this._setCurrentCallIndex( currentCallIndex + 1);
+            this.setCurrentCallIndex( currentCallIndex + 1);
         }
     }
 
-    getCallIndexByCallId = (callId ) =>{
-        const index = this._callIds.indexOf( callId );
-        return index;
-    }
+    // getCallIndexByCallId = (callId ) =>{
+    //     const index = this._callIds.indexOf( callId );
+    //     return index;
+    // }
 
     switchCallIndex = (index) => {
-        const ok = this.switchCallIndexWithoutHold( index )
-        if( ok ) {
-            this.holdCall();
+        const currentCallIndex = this._getCurrentCallIndex();
+        if( currentCallIndex  === index ) {
+            return false;
         }
+        this.holdCall();
+        this.setCurrentCallIndex(index);
+        return true;
+
+        // const ok = this.switchCallIndexWithoutHold( index )
+        // if( ok ) {
+        //     this.holdCall();
+        // }
     }
 
     switchCallIndexWithoutHold = (index) => {
-        if( this.state.currentCallIndex === index ) {
+        if( this._getCurrentCallIndex() === index ) {
             return false;
         }
-        this._setCurrentCallIndex(index);
+        this.setCurrentCallIndex(index);
         return true;
     }
 
 
     monitorDialingExtension = async () => {
-        if (this.pal) {
+        if (this._aphone.isPalReady()) {
             const extStatus = this.state.extensionsStatus[this.state.dialing];
             if (!extStatus) {
                 Notification.error({message: i18n.t('talking_monitored_extension_required')});
@@ -3553,13 +3934,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 return;
             }
 
-            await this.pal.call_pal('barge', {
-                tenant: this.state.loginUser?.pbxTenant,
-                user: this.state.dialing,
-                talker_id,
-                listen: 'true',
-                speak: 'false',
-            }).catch((err) => {
+            const tenant = this.state.loginUser?.pbxTenant;
+            const user = this.state.dialing;
+            await this._aphone.bargeAsync( tenant, user, talker_id ).catch((err) => {
                 console.error( "Failed to monitor extension.", err );
                 Notification.error({message: i18n.t('failed_to_monitor_extension')});
                 throw err;
@@ -3574,7 +3951,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     appendKeypadValue = (key) => {
         this.setState({dialing: this.state.dialing + key}, () => this._onAppendKeypadValue(key));
-        if (this.getCurrentCall()) {
+        if (this.getCurrentCallInfo()) {
             this.sendDTMF(key);
         }
     }
@@ -3592,20 +3969,17 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     setDialingAndMakeCall = (sDialing, context) => {
-        this.setState({dialing: sDialing}, () => context.makeCall(context));
+        this.setState({dialing: sDialing}, () => {
+            context.makeCall();
+        });
     }
 
     setDialing = (sDialing) => {
         this.setState({dialing: sDialing});
     }
 
-    setDialingAndMakeCallWithState = (sDialing) => {
-        const currentCallIndex = this._getCurrentCallIndex();
-        this.setState({dialing: sDialing}, () => this.makeCall2( currentCallIndex, this._callIds, this.callById));
-    }
-
-    setDialingAndMakeCall2 = (sDialing, currentCallIndex, callIds = [], callById = {}) => {
-        this.setState({dialing: sDialing}, () => this.makeCall2(currentCallIndex, callIds, callById));
+    setDialingAndMakeCall2 = (sDialing) => {
+        this.setState({dialing: sDialing}, () => this.makeCall2());
     }
 
     backspaceKeypadValue = () => {
@@ -3625,273 +3999,177 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnBackspaceKeypadValueCallbacks.push(func);
     }
 
-    removeCall = (call) => {
-        if (!call) return;
-        if (!this.callById[call.id]) return;
-
-        const removeCallIndex = this._callIds.indexOf(call.id);
-
-        let currentCallIndex = this._getCurrentCallIndex();
-        if (removeCallIndex === currentCallIndex ) {
-            if( this._callIds.length > 1 ) {
-                currentCallIndex=0;
-            }
-            else{
-                currentCallIndex = -1;
-            }
-        }
-        else if(removeCallIndex < currentCallIndex ){
-            currentCallIndex--;
-        }
-
-        const callById = {...this.callById};
-        deleteProperty(callById, call.id);
-        this._callIds = [...this._callIds].filter(id => id !== call.id);
-        this.callById = callById;
-        //this.setState({this._callIds, this.callById});
-        this.setState({refresh:true});
-        this._setCurrentCallIndex( currentCallIndex );
-        this._onRemoveCall( call );
-    }
-
-    _onPhoneCall = (phoneAsCaller, call) => {
-        this.insertCall(call);
-    }
-
-    insertCall = (call) => {
-        if (!call) return;
-
-        if (this.state.autoRejectIncoming) {
-            call.hangupWithUnhold();
-            return;
-        }
-
-        this._callIds = [...this._callIds, call.id];
-        this.callById = {...this.callById};
-        const brOCCallObject = {
-            ...(this.callById[call.id] || {}),
-            id: call.id,
-            pbxTenant: call.pbxTenant,
-            pbxTalkerId: call.pbxTalkerId,
-            pbxRoomId: call.pbxRoomId,
-            createdAt: call.createdAt,
-            answeredAt: call.answeredAt,
-            partyName: call.partyName,
-            partyNumber: call.partyNumber,
-            incoming: call.incoming,
-            answered: call.answered,
-            holding: call.holding,
-            toggleHoldWithCheck: call.toggleHoldWithCheck,
-            hangupWithUnhold: call.hangupWithUnhold,
-            answer: call.answer,
-            toggleRecording: call.toggleRecording,
-            toggleMuted: call.toggleMuted,
-            _isExtension: !!this.state.extensions.find((ext) => ext.id == call.partyNumber),
-            callByWebphone: call
-        };
-        //set custom incoming sound.
-        const ringtoneInfos = this.getSystemSettingsData().getRingtoneInfos();
-
-            const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
-            if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
-                let incomingRingtone = "";
-                 //set custom incoming sound.
-                if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
-                    for (let i = 0; i < ringtoneInfos.length; i++) {
-                        const ringtoneInfo = ringtoneInfos[i];
-                        const caller = ringtoneInfo.ringtoneCaller;
-                        const matches = brOCCallObject.partyNumber.match( caller );
-                        if( matches ){
-                            const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
-                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( ringtoneFilepathOrFileurl, this._RootURLString  );
-                            break;
-                        }
-
-                    }
-                }
-            this.phone.setIncomingRingtone( incomingRingtone );
-        }
-
-
-        ////!temp
-        // //set custom incoming sound.
-        // const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject( brOCCallObject );
-        // if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
-        //     let  ringtoneUrl = location.href;
-        //     ringtoneUrl = Util.removeString( ringtoneUrl,  location.search );
-        //     const indexOfSlash = ringtoneUrl.lastIndexOf('/');
-        //     if( indexOfSlash !== -1 ) {
-        //         const indexOfDot = ringtoneUrl.lastIndexOf(".", indexOfSlash);
-        //         if (indexOfDot !== -1) {
-        //             ringtoneUrl = ringtoneUrl.substring(0, indexOfSlash );
-        //         }
-        //     }
-        //     ringtoneUrl += "/sounds/fx-lumu-cellphone-ringtone-huawei-y6-fx-old-phone-68532.wav";
-        //     console.log("ringtoneUrl=" + ringtoneUrl );
-        //     this.phone.setIncomingRingtone(ringtoneUrl);
-        // }
-
-
-        setProperty(this.callById, call.id,  brOCCallObject  );
+    onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
         this.setState({refresh:true} );
 
-        //if( this.state.isCalling === true && !call.pbxRoomId && !call.pbxTalkerId ){
-        if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.calling) {
-            const newCurrentCallIndex = this._callIds.indexOf(call.id);
-            this._setCurrentCallIndex(newCurrentCallIndex);
-            //this.setState({isCalling:false});
-        }
-
-        const currentCallIndex = this._getCurrentCallIndex();
-        if( currentCallIndex === -1 ){
-            this._setCurrentCallIndex(0);
-        }
-
-        [
-            'id',
-            'answered',
-            'answeredAt',
-            'muted',
-            'recording',
-            'holding',
-            'transferring',
-        ].forEach((field) => {
-            reaction(() => call[field], async (val) => {
-                console.log('call changed', field, val);
-                if (this.callById[call.id]) {
-                    //this.callById = {...this.callById};
-                    setProperty(this.callById, `${call.id}.${field}`, val);
-                    this.setState({refresh:true});
-
-                    //When a call turns into a talk, if the call is not active, place the call on hold.
-                    if( field === "answered" && val === true ) {
-                        const brOCCallObject = this.callById[ call.id ];
-                        const brOCCallObjectStatus = OCUtil.getCallStatusFromBrOCCallObject(brOCCallObject);
-                        if (brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.talking) {
-                            const brOCCallObject = this.callById[call.id];
-                            const bActive = this._isCurrentCallByCallId(brOCCallObject.id);
-                            if (!bActive) {
-                                brOCCallObject.toggleHoldWithCheck();
-                            }
-                        }
-                    }
-
-                }
-                const options = {
-                    call : call,
-                    field: field,
-                    value: val
-                };  //!forBug need copy objects/array?
-                this._onChangeCall( options );
-            })
-        })
-
-        this._onInsertCall( call );
-    }
-
-    _getBrOCCallObjectByCallId( callId ){
-        const brOCCallObject = this.callById[ callId ];
-        return brOCCallObject;
-    }
-
-    _isCurrentCallByCallId( callId ){
-        const callIndex = this.getCallIndexByCallId( callId );
-        const currentCallIndex = this._getCurrentCallIndex();
-        const bCurrent = callIndex === currentCallIndex;
-        return bCurrent;
-    }
-
-    // _getBrOCCallObjectByCallId( callId ){
-    //     const brOCCallObject = this.callById[ callId ];
-    //     return brOCCallObject;
-    // }
-
-    // _getCurrentCallId() {
-    //     callIds[currentCallIndex]
-    // }
-    _onInsertCall( call ){
         const options = {
-            call : call
-        }
-        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
-        for(let i = 0; i < this._OnInsertCallEventListeners.length; i++ ){
-            const event = this._OnInsertCallEventListeners[i];
-            event( options );   //!forBug need tryCatch?
-        }
-    }
-
-    setOnInsertCallEventListener(function_ ){
-        const index = this._OnInsertCallEventListeners.indexOf( function_ );
-        if( index !== -1 ){
-            return false;
-        }
-        this._OnInsertCallEventListeners.push( function_ );
-        return true;
-    }
-
-    removeOnInsertCallEventListener( function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnInsertCallEventListeners, function_ );
-        return removedIndex;
-    }
-
-    clearOnInsertCallEventListeners(){
-        this._OnInsertCallEventListeners.splice(0);
-    }
-
-    _onRemoveCall( call  ){
-        const options = {
-            call : call
+            callInfo : callInfo
         };
         //this._BusylightStatusChanger.onRemoveCall( options );  //!dev
-        for(let i = 0; i < this._OnRemoveCallEventListeners.length; i++ ){
-            const event = this._OnRemoveCallEventListeners[i];
+        for(let i = 0; i < this._OnRemoveCallInfoEventListeners.length; i++ ){
+            const event = this._OnRemoveCallInfoEventListeners[i];
+            event( options );   //!forBug need tryCatch?
+        }
+
+    }
+
+    //!callme
+    onUnholdByCallInfo( callInfoAsCaller ){
+        this.setState({refresh:true});
+
+        const options = {
+            callInfo : callInfoAsCaller
+        }
+        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
+        for(let i = 0; i < this._OnUnholdCallInfoEventListeners.length; i++ ){
+            const event = this._OnUnholdCallInfoEventListeners[i];
             event( options );   //!forBug need tryCatch?
         }
     }
 
-    setOnRemoveCallEventListener(function_ ){
-        const index = this._OnRemoveCallEventListeners.indexOf( function_ );
+    setOnUnholdCallInfoEventListener(function_ ){
+        const index = this._OnUnholdCallInfoEventListeners.indexOf( function_ );
         if( index !== -1 ){
             return false;
         }
-        this._OnRemoveCallEventListeners.push( function_ );
+        this._OnUnholdCallInfoEventListeners.push( function_ );
         return true;
     }
 
-    removeOnRemoveCallEventListener( function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnRemoveCallEventListeners, function_ );
+    removeOnUnholdCallInfoEventListener( function_ ){
+        const removedIndex = Util.removeItemFromArray( this._OnUnholdCallInfoEventListeners, function_ );
         return removedIndex;
     }
 
-    clearOnRemoveCallEventListeners(){
-        this._OnRemoveCallEventListeners.splice(0);
+    _clearOnUnholdCallInfoEventListeners(){
+        this._OnUnholdCallInfoEventListeners.splice(0);
     }
 
-    setOnChangeCurrentCallIdEventListener(function_ ){
-        const index = this._OnChangeCurrentCallIdEventListeners.indexOf( function_ );
+    //!callme
+    onHoldByCallInfo( callInfoAsCaller ){
+        this.setState({refresh:true} );
+
+        const options = {
+            callInfo : callInfoAsCaller
+        }
+        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
+        for(let i = 0; i < this._OnHoldCallInfoEventListeners.length; i++ ){
+            const event = this._OnHoldCallInfoEventListeners[i];
+            event( options );   //!forBug need tryCatch?
+        }
+
+
+    }
+
+    setOnHoldCallInfoEventListener(function_ ){
+        const index = this._OnHoldCallInfoEventListeners.indexOf( function_ );
         if( index !== -1 ){
             return false;
         }
-        this._OnChangeCurrentCallIdEventListeners.push( function_ );
+        this._OnHoldCallInfoEventListeners.push( function_ );
         return true;
     }
 
-    removeOnChangeCurrentCallIdEventListener( function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnChangeCurrentCallIdEventListeners, function_ );
+    removeOnHoldCallInfoEventListener( function_ ){
+        const removedIndex = Util.removeItemFromArray( this._OnHoldCallInfoEventListeners, function_ );
         return removedIndex;
     }
 
-    clearOnChangeCurrentCallIdEventListeners(){
-        this._OnChangeCurrentCallIdEventListeners.splice(0);
+    _clearOnHoldCallInfoEventListeners(){
+        this._OnHoldCallInfoEventListeners.splice(0);
     }
+
+
+    onAddCallInfoByCallInfos( callInfos, callInfo ) {
+        this.setState({refresh:true});
+
+        const options = {
+            callInfo : callInfo
+        }
+        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
+        for(let i = 0; i < this._OnAddCallInfoEventListeners.length; i++ ){
+            const event = this._OnAddCallInfoEventListeners[i];
+            event( options );   //!forBug need tryCatch?
+        }
+    }
+
+    // onUpdateWebphoneCallObjectPropertyByWebphoneCallInfos( webphoneCallInfosAsCaller, webphoneCallObject, field, val ){
+    //     this.setState({refresh:true});
+    //     const options = {
+    //         call : webphoneCallObject,
+    //         field: field,
+    //         value: val
+    //     };  //!forBug need copy objects/array?
+    //     for(let i = 0; i < this._OnChangeCallEventListeners.length; i++ ){
+    //         const event = this._OnChangeCallEventListeners[i];
+    //         event( options );   //!forBug need tryCatch?
+    //     }
+    // }
+
+    setOnAddCallInfoEventListener(function_ ){
+        const index = this._OnAddCallInfoEventListeners.indexOf( function_ );
+        if( index !== -1 ){
+            return false;
+        }
+        this._OnAddCallInfoEventListeners.push( function_ );
+        return true;
+    }
+
+    removeOnAddCallInfoEventListener( function_ ){
+        const removedIndex = Util.removeItemFromArray( this._OnAddCallInfoEventListeners, function_ );
+        return removedIndex;
+    }
+
+    _clearOnAddCallInfoEventListeners(){
+        this._OnAddCallInfoEventListeners.splice(0);
+    }
+
+    setOnRemoveCallInfoEventListener(function_ ){
+        const index = this._OnRemoveCallInfoEventListeners.indexOf( function_ );
+        if( index !== -1 ){
+            return false;
+        }
+        this._OnRemoveCallInfoEventListeners.push( function_ );
+        return true;
+    }
+
+    removeOnRemoveCallInfoEventListener( function_ ){
+        const removedIndex = Util.removeItemFromArray( this._OnRemoveCallInfoEventListeners, function_ );
+        return removedIndex;
+    }
+
+    _clearOnRemoveCallInfoEventListeners(){
+        this._OnRemoveCallInfoEventListeners.splice(0);
+    }
+
+    // setOnChangeCurrentCallIdEventListener(function_ ){
+    //     const index = this._OnChangeCurrentCallIdEventListeners.indexOf( function_ );
+    //     if( index !== -1 ){
+    //         return false;
+    //     }
+    //     this._OnChangeCurrentCallIdEventListeners.push( function_ );
+    //     return true;
+    // }
+
+    // removeOnChangeCurrentCallIdEventListener( function_ ){
+    //     const removedIndex = Util.removeItemFromArray( this._OnChangeCurrentCallIdEventListeners, function_ );
+    //     return removedIndex;
+    // }
+
+    // clearOnChangeCurrentCallIdEventListeners(){
+    //     this._OnChangeCurrentCallIdEventListeners.splice(0);
+    // }
 
     _clearAllEventListenersForEx(){
-        this.clearOnChangeCallEventListeners();
-        this.clearOnUpdateCallEventListeners();
-        this.clearOnInsertCallEventListeners();
-        this.clearOnRemoveCallEventListeners();
-        this.clearOnChangeCurrentCallIdEventListeners();
-        this.clearOnUnloadExtensionScriptEventListeners();
+        //this.clearOnChangeCallEventListeners();
+        //this.clearOnChangeCurrentCallIdEventListeners();
+
+        this._clearOnUnloadExtensionScriptEventListeners();
+        this._clearOnRemoveCallInfoEventListeners();
+        this._clearOnAddCallInfoEventListeners();
+        this._clearOnUpdateCallInfoEventListeners();
+        this._clearOnUnholdCallInfoEventListeners();
+        this._clearOnHoldCallInfoEventListeners();
     }
 
     reloadSystemSettingsExtensionScript(){
@@ -3940,106 +4218,84 @@ export default class BrekekeOperatorConsole extends React.Component {
         return removedIndex;
     }
 
-    clearOnUnloadExtensionScriptEventListeners(){
+    _clearOnUnloadExtensionScriptEventListeners(){
         this._OnUnloadExtensionScriptEventListeners.splice(0);
     }
 
+    // setOnChangeCallEventListener(function_ ){
+    //     const index = this._OnChangeCallEventListeners.indexOf( function_ );
+    //     if( index !== -1 ){
+    //         return false;
+    //     }
+    //     this._OnChangeCallEventListeners.push( function_ );
+    //     return true;
+    // }
 
-    _onChangeCall( options ){
-        for(let i = 0; i < this._OnChangeCallEventListeners.length; i++ ){
-            const event = this._OnChangeCallEventListeners[i];
-            event( options );   //!forBug need tryCatch?
-        }
-    }
+    // removeOnChangeCallEventListener(function_ ){
+    //     const removedIndex = Util.removeItemFromArray( this._OnChangeCallEventListeners, function_ );
+    //     return removedIndex;
+    // }
 
-    setOnChangeCallEventListener(function_ ){
-        const index = this._OnChangeCallEventListeners.indexOf( function_ );
-        if( index !== -1 ){
-            return false;
-        }
-        this._OnChangeCallEventListeners.push( function_ );
-        return true;
-    }
+    // clearOnChangeCallEventListeners(){
+    //     this._OnChangeCallEventListeners.splice(0);
+    // }
 
-    removeOnChangeCallEventListener(function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnChangeCallEventListeners, function_ );
-        return removedIndex;
-    }
+    onUpdateCallInfoByCallInfo = (callInfoAsCaller) => {
+        this.setState({refresh:true} );
 
-    clearOnChangeCallEventListeners(){
-        this._OnChangeCallEventListeners.splice(0);
-    }
-
-    updateCall = (call) => {
-        if (!call) return;
-
-        //this.callById = {...this.callById};
-        setProperty(this.callById, call.id, {
-            ...(this.callById[call.id] || {}),
-            id: call.id,
-            pbxTenant: call.pbxTenant,
-            pbxTalkerId: call.pbxTalkerId,
-            pbxRoomId: call.pbxRoomId,
-            createdAt: call.createdAt,
-            answeredAt: call.answeredAt,
-            partyName: call.partyName,
-            partyNumber: call.partyNumber,
-            incoming: call.incoming,
-            answered: call.answered,
-            holding: call.holding,
-            toggleHoldWithCheck: call.toggleHoldWithCheck,
-            hangupWithUnhold: call.hangupWithUnhold,
-            answer: call.answer,
-            toggleRecording: call.toggleRecording,
-            toggleMuted: call.toggleMuted,
-            _isExtension: !!this.state.extensions.find((ext) => ext.id == call.partyNumber),
-        });
-        this.setState({refresh:true});
-
-
-        this._onUpdateCall( call );
-    }
-
-    _onUpdateCall( call  ){
         const options = {
-            call:call,
+            callInfo:callInfoAsCaller
         };
         //this._BusylightStatusChanger.onUpdateCall( options );   //!dev
-        for(let i = 0; i < this._OnUpdateCallEventListeners.length; i++ ){
-            const event = this._OnUpdateCallEventListeners[i];
+        for(let i = 0; i < this._OnUpdateCallInfoEventListeners.length; i++ ){
+            const event = this._OnUpdateCallInfoEventListeners[i];
             event( options );   //!forBug need tryCatch?
         }
     }
 
-    setOnUpdateCallEventListener(function_ ){
-        const index = this._OnUpdateCallEventListeners.indexOf( function_ );
+    setOnUpdateCallInfoEventListener(function_ ){
+        const index = this._OnUpdateCallInfoEventListeners.indexOf( function_ );
         if( index !== -1 ){
             return false;
         }
-        this._OnUpdateCallEventListeners.push( function_ );
+        this._OnUpdateCallInfoEventListeners.push( function_ );
         return true;
     }
 
-    removeOnUpdateCallEventListener( function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnUpdateCallEventListeners, function_ );
+    removeOnUpdateCallInfoEventListener( function_ ){
+        const removedIndex = Util.removeItemFromArray( this._OnUpdateCallInfoEventListeners, function_ );
         return removedIndex;
     }
 
-    clearOnUpdateCallEventListeners(){
-        this._OnUpdateCallEventListeners.splice(0);
+    _clearOnUpdateCallInfoEventListeners(){
+        this._OnUpdateCallInfoEventListeners.splice(0);
     }
 
     toggleCallRecording = () => {
-        const currentCall = this.getCurrentCall();
-        if (currentCall) {
-            currentCall.toggleRecording();
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo) {
+            const promise = currentCallInfo.toggleRecordingAsync();
+            promise.then( (result) => {
+
+            } ).catch( (errMsg ) =>{
+                Notification.error({message:errMsg , duration:0 });
+            }).finally( () =>{
+                this.setState({refresh:true});
+            });
         }
     }
 
     toggleCallMuted = () => {
-        const currentCall = this.getCurrentCall();
-        if (currentCall) {
-            currentCall.toggleMuted();
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo) {
+            const promise = currentCallInfo.toggleMutedAsync();
+            promise.then( (result) => {
+
+            } ).catch( (errMsg ) =>{
+                Notification.error({message:errMsg , duration:0 });
+            }).finally( () =>{
+                this.setState({refresh:true});
+            });
         }
     }
 
@@ -4048,47 +4304,47 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     resumeCall = () => {
-        const currentCall = this.getCurrentCall();
-        if (currentCall && currentCall.holding) {
-            currentCall.toggleHoldWithCheck();
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo && currentCallInfo.getIsHolding()) {
+            currentCallInfo.toggleHoldWithCheck();
         }
     }
 
     holdCall = () => {
-        const currentCall = this.getCurrentCall();
-        if( !currentCall ){
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if( !currentCallInfo ){
             return false;
         }
-        if( currentCall.holding ){
-            return false;
-        }
-
-        const status = OCUtil.getCallStatusFromBrOCCallObject( currentCall );
-        if( status === BROC_BROCCALLOBJECT_CALL_STATUSES.calling || status === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming ){
+        if( currentCallInfo.getIsHolding() ){
             return false;
         }
 
-        currentCall.toggleHoldWithCheck();
+        const status = currentCallInfo.getCallStatus();
+        if( status === ACallInfo.CALL_STATUSES.calling || status === ACallInfo.CALL_STATUSES.incoming ){
+            return false;
+        }
+
+        currentCallInfo.toggleHoldWithCheck();
         this.setState({dialing: ''});
     }
 
     hangUpCall = () => {
-        const currentCall = this.getCurrentCall();
-        if (currentCall) {
-            currentCall.hangupWithUnhold();
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo) {
+            currentCallInfo.hangupWithUnhold();
         }
     }
 
     answerCall = () => {
-        const currentCall = this.getCurrentCall();
-        if (currentCall && !currentCall.answered) {
-            currentCall.answer();
-            const callerNo = currentCall.partyNumber;
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo && !currentCallInfo.getIsAnswered() ) {
+            currentCallInfo.answerCall();
+            const callerNo = currentCallInfo.getPartyNumber();
             this._CallHistory.addCallNoAndSave(callerNo);
         }
     }
 
-    _transferDialingCall = async () => {
+    transferDialingCall = async () => {
         const mode = undefined; //use attended
         this.transferCall( this.dialing, mode ).then( () => {
             this._clearDialing(); //!todo I want to run it after the transfer is complete.
@@ -4096,23 +4352,21 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     transferCall = async ( dialing, mode ) => {
-        const currentCall = this.getCurrentCall();
-        if (!currentCall) {
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (!currentCallInfo) {
             return;
         }
-        const tenant = currentCall.pbxTenant;
-        const talkerId = currentCall.pbxTalkerId;
+        //const tenant = currentCall.pbxTenant;
+        const tenant = undefined;   //!testit
+        const talkerId = currentCallInfo.getPbxTalkerId();
         await this.transferCallCore( dialing, mode, talkerId, tenant );
     }
 
+    //!testit
     transferCallCore = async ( dialing, mode, talkerId, tenant, onDoneFunc  ) => {
-        if (this.pal && dialing ) {
-            await this.pal.call_pal("transfer", {
-                tenant: tenant,
-                user: dialing,
-                tid: talkerId,
-                mode:mode
-            }).then((message) => {
+        if ( this._aphone.isPalReady() && dialing ) {
+            const promise = this._aphone.transferAsync( tenant, dialing, talkerId, mode );
+            await promise.then((message) => {
                 console.log("transferCallCore. result message=" + message );
                 if( onDoneFunc ){
                     onDoneFunc( this, message );
@@ -4126,13 +4380,14 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     sendDTMF = (key) => {
-        const currentCall = this.getCurrentCall();
-        if (this.pal && currentCall) {
-            this.pal.call_pal('sendDTMF', {
-                signal: key,
-                tenant: currentCall.pbxTenant,
-                talker_id: currentCall.pbxTalkerId,
-            })
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+       // if (this._aphone.isPalReady() && currentCallInfo) {
+        if ( currentCallInfo) {
+            //const tenant = currentCall.pbxTenant;
+            const tenant = undefined;   //!testit
+            const signal = key;
+            const talker_id = currentCallInfo.getPbxTalkerId();
+            this._aphone.sendDTMF(  tenant, talker_id, signal );
         }
     }
 
@@ -4152,57 +4407,42 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
             }
         }
-        await this.makeCall(context);
+        await this.makeCall();
     }
 
-    findCallByTalkerId= ( talkerId  ) =>{
-        const calls = Object.values( this.callById );
-        const itm = calls.find( ( element ) =>{
-            if( element.pbxTalkerId === talkerId ){
-                return true;
-            }
-            return false;
-        });
-        return itm;
-    }
+    // findCallByTalkerId= ( talkerId  ) =>{
+    //     const calls = Object.values( this.callById );
+    //     const itm = calls.find( ( element ) =>{
+    //         if( element.pbxTalkerId === talkerId ){
+    //             return true;
+    //         }
+    //         return false;
+    //     });
+    //     return itm;
+    // }
 
-    makeCall2 = async (currentCallIndex, callIds = [], callById = {}) => {
-
-        // if( this.state.isCalling === true ){
-        //     return false;
-        // }
-
-        // const currentCall = callById[callIds[currentCallIndex]];
-        // if (currentCall) {
-        //     return;
-        // }
-
+    makeCall2 = async ( ) => {
         const sDialing = this.state.dialing;
         if (!sDialing) {
             return false;
         }
-
         console.log("makeCall: sDialing=" + sDialing);
-        if (this.phone) {
+        this._CallHistory.addCallNoAndSave(sDialing);
 
-            this._CallHistory.addCallNoAndSave(sDialing);
+        const bUsingLine = this.state.usingLine;
 
-            if (this.state.usingLine) {
-                this.phone.call(sDialing, {
-                    extraHeaders: [`X-PBX-RPI: ${this.state.usingLine}`]
-                });
-            } else {
-                this.phone.call(sDialing);
-            }
+        // const bCall = this._aphone.callByPhoneClient(  sDialing, bUsingLine );
+        // if( !bCall ){
+        //     return false;
+        // }
+        this._aphone.callByPhoneClient(  sDialing, bUsingLine );
 
-            this._clearDialing();
-            if (this.state.currentScreenQuickCallWidget) {
-                this._setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});
-            }
-            //this.setState({isCalling:true});
-            return true;
+        this._clearDialing();
+        if (this.state.currentScreenQuickCallWidget) {
+            this._setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});
         }
-        return false;
+        //this.setState({isCalling:true});
+        return true;
 
     }
 
@@ -4217,9 +4457,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    makeCall = async (context = {}) => {
-        const {currentCallIndex, callIds = [], callById = {}} = context;
-        await this.makeCall2(currentCallIndex, callIds, callById);
+    makeCall = async ( ) => {
+        //const {currentCallIndex, callIds = [], callById = {}} = context;
+        await this.makeCall2();
 
     }
 
@@ -4227,27 +4467,39 @@ export default class BrekekeOperatorConsole extends React.Component {
         const {line_talker = '', room_id = ''} = this.state.linesStatus[line] || {};
         const park = this.state.parksStatus[line];
         if (park) {
-            this.phone.call(line);
+            this._aphone.callByPhoneClient(line);
             return;
         }
 
-        const lineCall = Object.values(this.callById).find((call) => call.pbxRoomId === room_id)
-        if (lineCall) {
-            if (lineCall.incoming && !lineCall.answered) {
-                const currentCall = this.getCurrentCall();
-                if (currentCall && currentCall.id !== lineCall.id) {
-                    this.holdCall();
-                    const currentCallIndex = this._getCurrentCallIndex();
-                    this._setCurrentCallIndex( currentCallIndex + 1 );
+        //const lineCall = Object.values(this.callById).find((call) => call.pbxRoomId === room_id)
+        const callInfos =  this._aphone.getCallInfos();
+        const lineCallInfo = callInfos.getCallInfoWherePbxRoomIdEqual( room_id );
+        if (lineCallInfo) {
+            if (lineCallInfo.getIsIncoming() && !lineCallInfo.getIsAnswered() ) {
+                const currentCallInfo = callInfos.getCurrentCallInfo();
+                // if( !currentCallInfo ){
+                //     const callIndex = callInfos.getCallIndexWhereCallIdEqual( lineCallInfo.getCallId() );
+                //     callInfos.setCurrentCallIndex( callIndex );
+                //     this.resumeCall();
+                // }
+                //else if ( currentCallInfo.getCallId() !== lineCallInfo.getCallId()) {
+                if ( currentCallInfo.getCallId() !== lineCallInfo.getCallId()) {
+                    if( currentCallInfo.getIsAnswered() ) {
+                        this.holdCall();
+                    }
+                    const callIndex = callInfos.getCallIndexWhereCallIdEqual( lineCallInfo.getCallId() );
+                    this.setCurrentCallIndex( callIndex );
+                    //this.resumeCall();
                 }
-                lineCall.answer();
+                lineCallInfo.answerCall();
 
-            } else if (lineCall.answered) {
-                await this.pal.call_pal('park', {
-                    tenant: this.state.loginUser.pbxTenant,
-                    tid: lineCall.pbxTalkerId,
-                    number: line,
-                }).catch((err) => {
+            } else if (lineCallInfo.getIsAnswered) {
+                const tenant = this.state.loginUser.pbxTenant;
+                const talkerId =  lineCallInfo.getPbxTalkerId();
+                const number = line;
+
+                const promise = this._aphone.parkAsync( tenant, talkerId, number );
+                await promise.catch((err) => {
                     console.error("Failed to park call.", err );
                     Notification.error({message: i18n.t('failed_to_park_call'),duration:0});
                     throw err;
@@ -4261,7 +4513,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         if (line_talker) {
             if (line_talker === this.state.loginUser.pbxUsername) {
-                await this.pal.call_pal('line', {line, status: 'off'}).catch((err) => {
+                const promise = this._aphone.lineAsync( line, "off");
+                await promise.catch((err) => {
                     console.error("Failed to unhold line.", err );
                     Notification.error({message: i18n.t('failed_to_unhold_line'),duration:0});
                     throw err;
@@ -4270,14 +4523,17 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         } else {
             if (this.state.usingLine) {
-                await this.pal.call_pal('line', {line: this.state.usingLine, status: 'off'}).catch((err) => {
+                const line_ = this.state.usingLine;
+                const promise = this._aphone.lineAsync( line_, "off");
+                await promise.catch((err) => {
                     console.error("Failed to unhold line.", err );
                     Notification.error({message: i18n.t('failed_to_unhold_line'),duration:0});
                     throw err;
                 });
                 this.setState({usingLine: ''});
             }
-            await this.pal.call_pal('line', {line, status: 'on'}).catch((err) => {
+            const promise = this._aphone.lineAsync( line, "on");
+            await promise.catch((err) => {
                 console.error("Failed to hold line.", err );
                 Notification.error({message: i18n.t('failed_to_hold_line'),duration:0});
                 throw err;
@@ -4291,17 +4547,16 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         if (this.state.parksStatus[number]) {
             this.holdCall();
-            this.phone.call(number);
+            this._aphone.callByPhoneClient(number);
             return;
         }
 
-        const currentCall = this.getCurrentCall();
-        if (currentCall) {
-            await this.pal.call_pal('park', {
-                tenant: this.state.loginUser.pbxTenant,
-                tid: currentCall.pbxTalkerId,
-                number,
-            }).catch((err) => {
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if (currentCallInfo) {
+            const tenant = this.state.loginUser.pbxTenant;
+            const talkerId = currentCallInfo.getPbxTalkerId();
+            const promise = this._aphone.parkAsync( tenant, talkerId, number );
+            await promise.catch((err) => {
                 console.error("Failed to park call.", err );
                 Notification.error({message: i18n.t('failed_to_park_call'),duration:0});
                 throw err;
@@ -4312,20 +4567,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    statusEvents = [];
-    flushStatusEvents = debounce(() => {
-        console.log('pal.notify_status', this.statusEvents);
-        this._flushExtensionStatusEvents();
-        //this._flushLineStatusEvents();
-        this.statusEvents = [];
-    }, 250)
-    // statusEvents = [];
-    // flushStatusEvents = () => {
-    //     console.log('pal.notify_status', this.statusEvents);
-    //     this._flushExtensionStatusEvents();
-    //     //this._flushLineStatusEvents();
-    //     this.statusEvents = [];
-    // };
+
 
 
 
@@ -4333,389 +4575,75 @@ export default class BrekekeOperatorConsole extends React.Component {
     //
     // }
 
-    _flushExtensionStatusEvents(){
-        let extensionsStatus = {...this.state.extensionsStatus};
-        let monitoringExtension = this.state.monitoringExtension;
-
-        for (const e of this.statusEvents) {
-            //this.old_notify_status && this.old_notify_status(e)
-
-            let status = 'hanging';
-            switch (e.status) {
-                case '14':
-                case '2':
-                case '36':
-                    status = 'talking';
-                    break;
-                case '35':
-                    status = 'holding';
-                    break;
-                case '-1':
-                    status = 'hanging';
-                    break;
-                case '1':
-                    status = 'calling';
-                    break;
-                case '65':
-                    status = 'ringing';
-                    break;
-                default:
-                    break;
-            }
-
-            // //!temp
-            // const callById = this.state.callById;
-            // const call = Object.values(this.state.callById).find(
-            //     (call) => {
-            //         //const b = call.pbxRoomId === e.room_id && call.pbxTalkerId === e.talker_id;
-            //         const b = call.pbxRoomId === e.room_id;
-            //         if( call.pbxRoomId ){
-            //             console.log( "//!temp call.pbxRoomId=" + call.pbxRoomId );
-            //         }
-            //         return b;
-            //     }
-            // );
-            // if( call ) {
-            //     const callIndex = this.state.callIds.indexOf(call.id);
-            //     const temp = 0; //!temp
-            // }
-
-            const path = `${e.user}.callStatus.${e.talker_id}`;
-            if (status === 'hanging') {
-                deleteProperty(extensionsStatus, path  );
-                if (e.user === monitoringExtension) {
-                    monitoringExtension = '';
-                }
-                this._ExtensionsStatus.onDeleteExtensionStatusProperty( this, extensionsStatus, path, status, e );
-            } else {
-                setProperty(extensionsStatus, path, status);
-                this._ExtensionsStatus.onSetExtensionStatusProperty( this, extensionsStatus, path, status, e );
-            }
-
-            const options = {
-                event : e
-            }
-            this._onPalNotifyStatus(options);
-        }
-
-        this.setState({ extensionsStatus, monitoringExtension });
-
-
-    }
-
-
-    lineEvents = [];
-    flushLineEvents = debounce(() => {
-        console.log('pal.notify_line', this.lineEvents);
-
-        let linesStatus = {...this.state.linesStatus};
-        let usingLine = this.state.usingLine;
-
-        for (const e of this.lineEvents) {
-            this.old_notify_line && this.old_notify_line(e)
-
-            if (e.status == 'on') {
-                linesStatus[e.line] = e;
-            } else if (e.status == 'off') {
-                deleteProperty(linesStatus, e.line);
-                usingLine = usingLine === e.line ? '' : usingLine;
-            }
-        }
-
-        this.setState({ linesStatus, usingLine });
-        this.lineEvents = [];
-
-    }, 250)
-
-    parkEvents = [];
-    flushParkEvents = debounce(() => {
-        console.log('pal.notify_park', this.parkEvents);
-
-        const parksStatus = {...this.state.parksStatus};
-        const myParksStatus = {...this.state.myParksStatus};
-
-        for (const e of this.parkEvents) {
-            this.old_notify_park && this.old_notify_park(e)
-
-            if (e.status == 'on') {
-                parksStatus[e.park] = e;
-            } else if (e.status == 'off') {
-                deleteProperty(parksStatus, e.park);
-                deleteProperty(myParksStatus, e.park);
-            }
-
-            this.setState({ parksStatus, myParksStatus });
-            this.parkEvents = [];
-        }
-
-    }, 250)
-
     _onBeforeUnload(event){
-        event.preventDefault();
-        event.returnValue = 'Check';
+        const hasCall = this.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
+        if( hasCall ) {
+            event.preventDefault();
+            event.returnValue = i18n.t("areYouSureLeaveThePage");
+        }
     }
 
     _onUnload(event){
-        console.log("OperatorConsole:onUnload. this.phone=" + this.phone );
+        console.log("OperatorConsole:onUnload. this.aphone=" + this._aphone );
+        this._deinitAphoneClient();
+        this._deinitPalWrapper();
+    }
 
-        // remove listener individually
-        this.phone.removeListener('pal.notify_line', this.notify_line);
-        // remove all listeners for this event
-        this.phone.removeAllListeners('pal.notify_line');
-
-        // remove listener individually
-        this.phone.removeListener('pal.notify_status', this.notify_status);
-        // remove all listeners for this event
-        this.phone.removeAllListeners('pal.notify_status');
-
-        // remove listener individually
-        this.phone.removeListener('pal.notify_serverstatus', this.notify_serverstatus);
-        // remove all listeners for this event
-        this.phone.removeAllListeners('pal.notify_serverstatus');
-
-        this.phone.cleanup();
-        this._removeWebphoneOtherEventListeners();
+    _deinitPalWrapper(){
+        if( this._loggedinPal ){
+            this._loggedinPal.close();
+            this._loggedinPal = null;
+        }
+        this._LoginPalWrapper.deinitPalWrapper();
     }
 
 
-    login = (params) => {
-        console.log('login:', params);
+    // onPalNotifyStatus( options ){
+    //     for(let i = 0; i < this._OnPalNotifyStatusEventListeners.length; i++ ){
+    //         const event = this._OnPalNotifyStatusEventListeners[i];
+    //         event( options );   //!forBug need tryCatch?
+    //     }
+    // }
 
-        if( this.phone ){
-            this.phone.removeAllListeners("call");
-            this.phone.removeAllListeners("call_update");
-            this.phone.removeAllListeners("call_end");
-            this.phone.removeAllListeners("pal.notify_serverstatus");
-            this.phone.removeAllListeners("pal");
-            this.phone.removeAllListeners("pal.notify_status");
-            this.phone.removeAllListeners("pal.notify_line");
-            this.phone.removeAllListeners("pal.notify_park");
+    // setOnPalNotifyStatusEventListener(function_ ){
+    //     const index = this._OnPalNotifyStatusEventListeners.indexOf( function_ );
+    //     if( index !== -1 ){
+    //         return false;
+    //     }
+    //     this._OnPalNotifyStatusEventListeners.push( function_ );
+    //     return true;
+    // }
 
-            this.phone.cleanup();
-            this._removeWebphoneOtherEventListeners();
-            this.phone = null;
-        }
+    // removeOnPalNotifyStatusEventListener( function_ ){
+    //     const removedIndex = Util.removeItemFromArray( this._OnPalNotifyStatusEventListeners, function_ );
+    //     return removedIndex;
+    // }
 
+    // clearOnPalNotifyStatusEventListeners(){
+    //     this._OnPalNotifyStatusEventListeners.splice(0);
+    // }
 
-
-        const lastLoginAccount = {
-            hostname: params.hostname,
-            port: params.port,
-            tenant: params.tenant,
-            username: params.username,
-            password: params.password
-        };
-        this.setState({lastLoginAccount: lastLoginAccount});
-        window.localStorage.setItem('lastLoginAccount', JSON.stringify( lastLoginAccount));
-
-        const eBrOcPhone = document.getElementById('brOCPhone');
-        const args = {
-            autoLogin: true,
-            clearExistingAccounts: true,
-            palEvents: [
-                'notify_serverstatus',
-                'onClose',
-                'onError',
-                'notify_status',
-                'notify_line',
-                'notify_park'
-                // ...
-            ],
-            accounts: [ params ],
-            'webphone.pal.param.user': '*',
-            'webphone.pal.param.line': '*',
-            'webphone.pal.param.park': '*',
-        };
-
-        this.phone = window.Brekeke.Phone.render(eBrOcPhone, args);
-
-        this._removeWebphoneOtherEventListeners();
-        this._onWebphoneError = e => {
-            console.log("Webphone event:error", e);
-            const temp = 0;
-        };
-        this._onWebphoneOnError = e => {
-            console.log("Webphone event:onError", e);
-            const temp = 0;
-        };
-        this._onWebphoneOnerror = e => {
-            console.log("Webphone event:onerror", e);
-            const temp = 0;
-        };
-
-        this._onWebphoneClose = e => {
-            console.log("Webphone event:close", e);
-            const temp = 0;
-        };
-        this._onWebphoneOnClose = e => {
-            console.log("Webphone event:onClose", e);
-            const temp = 0;
-        };
-        this._onWebphoneOnclose = e => {
-            console.log("Webphone event:onclose", e);
-            const temp = 0;
-        };
-
-        this.phone.on("error", this._onWebphoneError );
-        this.phone.on("onError", this._onWebphoneOnError );
-        this.phone.on("onerror", this._onWebphoneOnerror );
-        this.phone.on("close", this._onWebphoneClose );
-        this.phone.on("onClose", this._onWebphoneOnClose );
-        this.phone.on("onclose", this._onWebphoneOnclose  );
-
-
-        this.phone.on('call', c => {
-            console.log('call', c);
-            this._onPhoneCall( this.phone, c );
-        })
-        this.phone.on('call_update', c => {
-            console.log('call_update', c);
-            this.updateCall(c);
-        })
-        this.phone.on('call_end', c => {
-            console.log('call_end', c)
-            this.removeCall(c);
-        })
-        this.notify_serverstatus = e => {
-            console.log('pal.notify_serverstatus', e);
-
-            if (e?.status === 'active' ) {
-                this._initialize( this.account, this.pal );   //initialize
+    _setOCNoteFailAtDownLayoutAndSystemSettings( e, downLayoutAndSystemSettingsFailFunction  ) {
+        //!testit
+        if( Array.isArray(e)){
+            for( let i = 0; i < e.length; i++ ){
+                const err = e[i];
+                console.error("setOCNote failed. errors[" + i + "]=" , err );
             }
-            this._Campon.onPalNotifyServerstatus( this, e );
         }
-        this.phone.on("pal.notify_serverstatus", this.notify_serverstatus );
-
-
-        this.phone.on('pal', ( pal) => {
-            window.addEventListener("beforeunload",  this._onBeforeUnload );
-
-            this. account = this.phone.getCurrentAccount();
-            console.log('account', this.account)
-            console.log('pal', pal)
-
-            //Notification.close('reconnecting'); //!commentout close not found.
-
-            if (this.pal !== pal) {
-                this.pal = pal;
-
-                this.notify_status = e => {
-                    console.log('pal.notify_status', e)
-                    if (e) {
-                        this.statusEvents.push(e);
-                        this.flushStatusEvents();
-
-                    }
-                }
-
-                //this.old_notify_status = pal.notify_status
-                //pal.notify_status = this.notify_status;
-                this.phone.on('pal.notify_status', this.notify_status);
-
-                // NOTE: currently unused, Shin said registered events are not ready yet
-                // var old_notify_registered = pal.notify_registered
-                // pal.notify_registered = e => {
-                //   old_notify_registered && old_notify_registered(e)
-                //   if (e) {
-                //     this.setState({
-                //       extensionsStatus: {
-                //         ...(this.state.extensionsStatus || {}),
-                //         [e.user]: {
-                //           ...(this.state.extensionsStatus?.[e.user] || {}),
-                //           registered: e.registered == 'true',
-                //         }
-                //       }
-                //     })
-                //   }
-                // }
-
-                //this.old_notify_line = pal.notify_line
-                this.notify_line = e => {
-                    console.log('pal.notify_line', e)
-                    if (e) {
-                        this.lineEvents.push(e);
-                        this.flushLineEvents();
-                    }
-                }
-                //pal.notify_line = this.notify_line;
-                this.phone.on("pal.notify_line", this.notify_line );
-
-                //this.old_notify_park = pal.notify_park;
-                this.notify_park = e => {
-                    console.log('pal.notify_park', e)
-                    if (e) {
-                        this.parkEvents.push(e);
-                        this.flushParkEvents();
-                    }
-                }
-                //pal.notify_park = this.notify_park;
-                this.phone.on("pal.notify_park", this.notify_park );
-
-                const old_onError = pal.onError;
-                pal.onError = e => {
-                    console.log('pal.onError', e)
-                    old_onError && old_onError(e) // call old listener
-                }
-
-                // const old_notify_serverstatus = pal.notify_serverstatus
-                // pal.notify_serverstatus = e => {
-                //     console.log('pal.notify_serverstatus', e);
-                //     old_notify_serverstatus && old_notify_serverstatus(e) // call old listener
-                //
-                //     if (e?.status === 'active' ) {
-                //         this._initialize( account, pal );   //initialize
-                //     }
-                //     this._Campon.onPalNotifyServerstatus( this, e );
-                // }
-
-                let old_onClose = pal.onClose
-                pal.onClose = e => {
-                    console.log('pal.onClose', e)
-                    old_onClose && old_onClose(e) // call old listener
-                    if (!e.wasClean) {
-                        Notification.warning({ key: 'reconnecting', message: i18n.t('reconnecting_pbx'), duration: 20 });
-                    }
-                }
-            }
-
-            //this._initialize( account, pal );   //initialize  for new webphone 2023/04/10~
-        } /* ~this.phone.on( */ )  //~this.phone.on
-    } //~login
-
-    _onPalNotifyStatus( options ){
-        for(let i = 0; i < this._OnPalNotifyStatusEventListeners.length; i++ ){
-            const event = this._OnPalNotifyStatusEventListeners[i];
-            event( options );   //!forBug need tryCatch?
+        else{
+            console.error("setOCNote failed. error=" , e );
         }
-    }
+        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
 
-    setOnPalNotifyStatusEventListener(function_ ){
-        const index = this._OnPalNotifyStatusEventListeners.indexOf( function_ );
-        if( index !== -1 ){
-            return false;
-        }
-        this._OnPalNotifyStatusEventListeners.push( function_ );
-        return true;
-    }
-
-    removeOnPalNotifyStatusEventListener( function_ ){
-        const removedIndex = Util.removeItemFromArray( this._OnPalNotifyStatusEventListeners, function_ );
-        return removedIndex;
-    }
-
-    clearOnPalNotifyStatusEventListeners(){
-        this._OnPalNotifyStatusEventListeners.splice(0);
-    }
-
-    _setOCNoteFailAtDownLayoutAndSystemSettings( eventArg, downLayoutAndSystemSettingsFailFunction  ) {
-        let message = eventArg ? eventArg.message : "";
-        if (!message) {
-            message = "";
-        }
-        console.error("Failed to setOCNote.", message);
-        if (message) {
-            Notification.error({message: message,duration:0});
-        }
+        // let message = eventArg ? eventArg.message : "";
+        // if (!message) {
+        //     message = "";
+        // }
+        // console.error("Failed to setOCNote.", message);
+        // if (message) {
+        //     Notification.error({message: message,duration:0});
+        // }
         //throw new Error(message);
 
         //console.warn("Failed to getNote." , err );
@@ -4726,35 +4654,67 @@ export default class BrekekeOperatorConsole extends React.Component {
         //throw err;
     }
 
-    _downLayoutAndSystemSettings( downLayoutAndSystemSettingsSuccessFunction, downLayoutAndSystemSettingsFailFunction ){
-        if( !this.pal || this.state._downedLayoutAndSystemSettings ){
+    isInitialized(){
+        return this.state.isInitialized;
+    }
+
+    _downLayoutAndSystemSettingsForLoggedin( downLayoutAndSystemSettingsSuccessFunction, downLayoutAndSystemSettingsFailFunction ){
+        if( !this._loggedinPal || this.state._downedLayoutAndSystemSettings ){
             downLayoutAndSystemSettingsFailFunction({message:i18n.t("CouldNotDownloadLayoutAndSystemSettings")});
             return false;
         }
 
-        const this_ = this;
         const layoutShortname = this._getLastLayoutShortname();
         if( layoutShortname ) {
             const layoutFullname = this._getLayoutFullname( layoutShortname );
-            this.getNote( layoutFullname )
-                .then(( noteInfo ) => {
-                    const sNote = noteInfo.note;
+            const getNoteOptions = {
+                tenant : this.state.loginUser.pbxTenant,
+                name : layoutFullname
+            }
+            const this_ = this;
+            this._loggedinPal.getNote( getNoteOptions,
+                function( res, obj ){
+                    const sNote = res.note;
                     const oNote = JSON.parse( sNote );
-                    this.setOCNote( layoutShortname, oNote, function(){
+                    this_.setOCNote( layoutShortname, oNote, function(){
                             this_.setState( { _downedLayoutAndSystemSettings:true }, ()=> downLayoutAndSystemSettingsSuccessFunction() );
-                    },
-                        function(eventArg){
-                            this_._setOCNoteFailAtDownLayoutAndSystemSettings( eventArg, downLayoutAndSystemSettingsFailFunction  );
-                        });
-                })
-                // .catch((err) => {
-                //     console.warn("Failed to getNote." , err );
-                //     //this.setState({ error: true })
-                //     //this.setState( { error:true, _downedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
-                //     this._removeLastLayoutShortname();  //!reset
-                //     this.setState( {  displayState:brOcDisplayStates.noScreens } );
-                //     //throw err;
-                // });
+                        },
+                        function(e) {
+                            this_._setOCNoteFailAtDownLayoutAndSystemSettings(e, downLayoutAndSystemSettingsFailFunction);
+                        }
+                    );
+                },
+                function( err ){
+                    console.warn("Failed to getNote. error=" , err );
+                    //this.setState({ error: true })
+                    //this.setState( { error:true, _downedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
+                    this_._removeLastLayoutShortname();  //!reset
+                    this_.setState( {  displayState:brOcDisplayStates.noScreens } );
+                    //throw err;
+                }
+
+            );
+
+            //const this_ = this;
+            // this.getNote( layoutFullname )
+            //     .then(( noteInfo ) => {
+            //         const sNote = noteInfo.note;
+            //         const oNote = JSON.parse( sNote );
+            //         this.setOCNote( layoutShortname, oNote, function(){
+            //                 this_.setState( { _downedLayoutAndSystemSettings:true }, ()=> downLayoutAndSystemSettingsSuccessFunction() );
+            //         },
+            //             function(eventArg){
+            //                 this_._setOCNoteFailAtDownLayoutAndSystemSettings( eventArg, downLayoutAndSystemSettingsFailFunction  );
+            //             });
+            //     })
+            //     // .catch((err) => {
+            //     //     console.warn("Failed to getNote." , err );
+            //     //     //this.setState({ error: true })
+            //     //     //this.setState( { error:true, _downedLayoutAndSystemSettings:true, displayState:bcOcDisplayStates.noScreens } );   //!need?
+            //     //     this._removeLastLayoutShortname();  //!reset
+            //     //     this.setState( {  displayState:brOcDisplayStates.noScreens } );
+            //     //     //throw err;
+            //     // });
         }
         else{
             this.setState( {  displayState:brOcDisplayStates.noScreens } );
@@ -4772,175 +4732,182 @@ export default class BrekekeOperatorConsole extends React.Component {
         return BREKEKE_OPERATOR_CONSOLE;
     }
 
+    setI18nLocaleByWebphonePhoneClient( locale ){
+        i18n.locale = isValidLocale(locale) ? locale : DEFAULT_LOCALE;
+    }
 
-    _initialize( account, pal  ){
-        if( this.state.palReady ) {
-            console.log("Skip initialize.");
-            return;
-        }
-        this._RootURLString = Util.getRootUrlString();
-        this._onUnloadFunc = (event) => { this._onUnload( event )};
-        window.addEventListener("unload", this._onUnloadFunc );
+    onPalNotifyServerstatusByWebphonePhoneClient(e){
+        this._Campon.onPalNotifyServerstatus( this, e );
+    }
 
-        // prompt for permission if needed
-        //this.phone.promptBrowserPermission();
+    getExtensionsStatus(){
+        const o = this.state.extensionsStatus;
+        return o;
+    }
 
-        // or if we manually show the prompt, we can accept the permission on user click
-        this.phone.acceptBrowserPermission();
-        BREKEKE_OPERATOR_CONSOLE = this;
-        this._defaultSystemSettingsData = new SystemSettingsData( this );
+    getMonitoringExtension(){
+        const o = this.state.monitoringExtension;
+        return o;
+    }
 
+    getUsingLine(){
+        const o = this.state.usingLine;
+        return o;
+    }
 
+    getLinesStatus(){
+        const o = this.state.linesStatus;
+        return o;
+    }
 
-        pal.call_pal('getExtensions', {
-            tenant: account.pbxTenant,
-            pattern: '..*',
-            limit: -1,
-            type: 'user',
-            property_names: ['name'],
-        }).then(extensions => {
-            console.log('extensions', extensions);
-            this.setState({ extensions: extensions.map(([id,name]) => ({id,name})) })
-        })
+    getParksStatus(){
+        const o = this.state.parksStatus;
+        return o;
+    }
 
-        let bReadyExtensionProperties = false;
-        pal.call_pal('getExtensionProperties', {
-            tenant: account.pbxTenant,
-            extension: [account.pbxUsername],
-            property_names: ['language','admin'],
-        }).then(extensionProps => {
-            const locale = extensionProps?.[0]?.[0];
-            i18n.locale = isValidLocale(locale) ? locale : DEFAULT_LOCALE;
+    getMyParksStatus(){
+        const o = this.state.myParksStatus;
+        return o;
+    }
 
-            const sIsAdmin = extensionProps?.[0]?.[1];
-            const t = typeof sIsAdmin;
+    setParksStatusAndMyParksStatus( parksStatus, myParksStatus ){
+        this.setState({ parksStatus, myParksStatus });
+    }
 
-            let isAdmin = false;
-            if ( typeof( sIsAdmin ) === "string" ){
-                isAdmin = JSON.parse(sIsAdmin.toLowerCase());
-            }
-            this._setIsAdmin( isAdmin );
-            bReadyExtensionProperties = true;
-        }).catch(err => {
-            i18n.locale = DEFAULT_LOCALE;
-            console.error('Failed to getExtensionProperties', err);
-            const msg = i18n.t("failed_to_load_data_from_pbx",) + " " +  err;
-            Notification.error({message:msg, duration:0});
-        });
+    setExtensionsStatusAndMonitoringExtension( extensionsStatus, monitoringExtension ){
+        this.setState({ extensionsStatus, monitoringExtension });
+    }
 
-        const readyExtensionPropertiesTimelimit = Date.now() + 20000;
-        const setIntervalId = setInterval( () => {
-            if(  Date.now() > readyExtensionPropertiesTimelimit  ){
-                clearInterval( setIntervalId );
-                return;
-            }
-            if( bReadyExtensionProperties !== true ){
-                return;
-            }
-            clearInterval( setIntervalId );
-            const this_ = this;
-            this.setState({
-                loginUser: account,
-                palReady: true,
-                systemSettingsData: new SystemSettingsData(this)
-            }, () => {
+    setLinesStatusAndUsingLine( linesStatus, usingLine ){
+        this.setState({ linesStatus, usingLine });
+    }
+
+    onLoggedinByLogin(  loggedinPal, pbxHost, pbxPort, tenant, user, password, isAdmin, language  ){
+        window.addEventListener("beforeunload",  this._OnBeforeUnloadFunc );
+        this._loggedinPal = loggedinPal;
+        i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
+        const this_ = this;
+        const loginUser = {
+            pbxHost : pbxHost,
+            pbxPort : pbxPort,
+            pbxUsername : user,
+            pbxTenant : tenant,
+            pbxPassword : password,
+            language : language,
+            isAdmin : isAdmin,
+        };
+        this.setState({
+            loginUser: loginUser,
+            isInitialized: true,
+            systemSettingsData: new SystemSettingsData(this)
+        }, () => {
 //            this.syncDownScreens();
 //            this._syncDownLayout();
-                this._downLayoutAndSystemSettings(
-                    function(){
+            this._downLayoutAndSystemSettingsForLoggedin(
+                function(){
 
-                    },
-                    function(){
+                },
+                function(){
 
-                    }
-                );
-            });
-        }, 500  );
-
-
+                }
+            );
+        });
 
     }
 
-    getAdminExtensionPropertiesFromPal(){
-        const promise = this._getAdminExtensionPropertiesFromPal( this.pal, this.state.loginUser );
-        return promise;
-    }
+//     onEndInitByWebphonePhoneClient( account ){
+//         const this_ = this;
+//         this.setState({
+//             loginUser: account,
+//             isInitialized: true,
+//             systemSettingsData: new SystemSettingsData(this)
+//         }, () => {
+// //            this.syncDownScreens();
+// //            this._syncDownLayout();
+//             this._downLayoutAndSystemSettingsForLoggedin(
+//                 function(){
+//
+//                 },
+//                 function(){
+//
+//                 }
+//             );
+//         });
+//
+//     }
+
+    // /**
+    //  *
+    //  * @param oExtensions ex.[{id:111,name:"111name"},{id:222,name:"222name"}]
+    //  */
+    // onInitByAphone( oExtensions ){
+    //     console.log('extensions', oExtensions);
+    //     this.setState({ extensions: oExtensions });
+    //
+    // }
+
+    // getAdminExtensionPropertiesFromPal(){
+    //     const loginUser  = this.state.loginUser;
+    //     const tenant = loginUser?.pbxTenant;
+    //     const extension = loginUser?.pbxUsername;
+    //
+    //     const promise = this._aphone.getAdminExtensionPropertiesPromise( tenant, extension );
+    //     return promise;
+    // }
 
     getIsAdmin(){
-        return this.state.isAdmin;
+        return this.getLoggedinUserIsAdmin();
     }
 
-    _setIsAdmin(bool){
+    getLoggedinUserIsAdmin(){
+        const loginUser = this.state.loginUser;
+        if( !loginUser ){
+            console.warn("loginUser is undefined.");
+            return false;
+        }
+        const isAdmin = loginUser.isAdmin;
+        return isAdmin;
+    }
+
+    setIsAdminByWebphonePhoneClient(bool){
         this.setState({isAdmin:bool});
     }
 
     getOCNoteNamesPromise(){
-        const account = this.state.loginUser;
-        const promise = this.pal.call_pal("getNoteNames", {
-            tenant: account?.pbxTenant,
-            filter: BrekekeOperatorConsole.LAYOUT_NOTE_NAME_FILTER
-        });
+        const loginUser = this.state.loginUser;
+        const tenant = loginUser?.pbxTenant;
+        const filter = BrekekeOperatorConsole.LAYOUT_NOTE_NAME_FILTER;
+
+        const promise = this._aphone.getNoteNamesPromise( tenant, filter );
         return promise;
     }
 
-
-    _getAdminExtensionPropertiesFromPal( pal, account ){
-        const promise = this.pal.call_pal("getExtensionProperties", {
-            tenant: account?.pbxTenant,
-            extension: [ account?.pbxUsername],
-            property_names: ["admin"]
-        });
-        return promise;
+    getLoginPalWrapper(){
+        return this._LoginPalWrapper;
     }
+
 
     getExtensions(){
         return this.state.extensions; //!check use cache
     }
 
-    getPal = () => this.pal;
-
-    _removeWebphoneOtherEventListeners(){
-        // this.phone.removeListener('close', this._onWebphoneClose  );
-        // this.phone.removeListener('onclose', this._onWebphoneOnclose  );
-        // this.phone.removeListener('onClose', this._onWebphoneOnClose  );
-        // this.phone.removeListener('error', this._onWebphoneError  );
-        // this.phone.removeListener('onerror', this._onWebphoneOnerror  );
-        // this.phone.removeListener('onError', this._onWebphoneOnError  );
-
-        this.phone.removeAllListeners('close');
-        this.phone.removeAllListeners('onclose');
-        this.phone.removeAllListeners('onClose');
-        this.phone.removeAllListeners('error');
-        this.phone.removeAllListeners('onerror');
-        this.phone.removeAllListeners('onError');
-    }
-
     logout = () => {
         this._Campon.onBeginLogout(this);
 
-        // remove listener individually
-        this.phone.removeListener('pal.notify_status', this.notify_status )
-        // remove all listeners for this event
-        this.phone.removeAllListeners('pal.notify_status');
-
-
-
-        // remove listener individually
-        this.phone.removeListener('pal.notify_serverstatus', this.notify_serverstatus);
-        // remove all listeners for this event
-        this.phone.removeAllListeners('pal.notify_serverstatus');
-
-        window.removeEventListener("beforeunload", this._onBeforeUnload  );
-        if( this._onUnloadFunc ) {
-            window.removeEventListener("unload", this._onUnloadFunc);
+        window.removeEventListener("beforeunload", this._OnBeforeUnloadFunc  );
+        if( this._OnUnloadFunc ) {
+            window.removeEventListener("unload", this._OnUnloadFunc);
         }
-        this.phone.cleanup();
-        this._removeWebphoneOtherEventListeners();
+
+        this._deinitAphoneClient();
+
 
         //this._Campon.onBeginLogout(this); //!old location
         //this._BusylightStatusChanger.deinit();  //!dev
         this._onUnloadExtensionScript();
         this._UccacWrapper.deinitUccacWrapper();
+        this._deinitPalWrapper();
+
         this.setState({
             ...window.structuredClone(INIT_STATE),
             i18nReady: true,
@@ -4949,17 +4916,17 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     syncUp = async () => {
-        if (!this.pal) return;
+        if( !this._aphone){
+            return;
+        }
 
-        const [err] = await this.pal.call_pal('setAppData', {
-            data_id: PBX_APP_DATA_NAME,
-            data: {
-                version: PBX_APP_DATA_VERSION,
-                screens: this.state.screens,
-            }
-        }).then((data) => ([null, data]))
-            .catch((err) => ([err, null]));
 
+        const dataId = PBX_APP_DATA_NAME;
+        const data = {
+            version : PBX_APP_DATA_VERSION,
+            screens : this.state.screens
+        };
+        const [err] = await this._aphone.setAppDataAsync( dataId, data );
         if (err) {
             console.error(err);
             Notification.error({
@@ -5140,22 +5107,25 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
     getNoteNames = () => {
-        return this.pal.call_pal('getNoteNames', {
-            tenant: this.state.loginUser?.pbxTenant,
-        })
+        const tenant = this.state.loginUser?.pbxTenant;
+        return this._aphone.getNoteNamesPromise( tenant );
     }
+
     getNote = (name) => {
-        return this.pal.call_pal('getNote', {
-            tenant: this.state.loginUser?.pbxTenant,
-            name,
-        })
+        const tenant = this.state.loginUser?.pbxTenant;
+        return this._aphone.getNote( tenant, name );
     }
-    setNoteByPal = async(name, content) => {
-        return this.pal.call_pal('setNote', {
-            tenant: this.state.loginUser?.pbxTenant,
-            name,
-            note: content,
-        })
+
+    getNoteByLoggedinPal( name, onSuccessFunction, onErrorFunction ){
+        const tenant = this.state.loginUser.pbxTenant;
+        this._loggedinPal.getNote({tenant:tenant,name:name}, onSuccessFunction, onErrorFunction );
+    }
+
+
+
+    setNote = async(name, content) => {
+        const tenant = this.state.loginUser?.pbxTenant;
+        return this._aphone.setNoteByPhoneClient( tenant, name, content );
     }
 
     getOCNote = ( shortName ) => {
@@ -5166,8 +5136,27 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     setOCNoteByPal = async (shortName, content ) =>{
         const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
-        const noteResultPromise = this.setNoteByPal(noteName, content);
+        const noteResultPromise = this.setNote(noteName, content);
         return noteResultPromise;
+    }
+
+    setNoteByLoggedinPal( noteName, content, successFunction, errorFunction  ){
+        const tenant = this.state.loginUser.pbxTenant;
+        const description = "";
+        const useraccess = BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite
+        const options = {
+            tenant : tenant,
+            name : noteName,
+            description : description,
+            useraccess : useraccess,
+            note : content
+        }
+        this._loggedinPal.setNote( options, successFunction, errorFunction );
+    }
+
+    getNoteNamesByLoggedinPal( successFunction, errorFunction ){
+        const tenant = this.state.loginUser.pbxTenant;
+        this._loggedinPal.getNoteNames({tenant:tenant}, successFunction, errorFunction );
     }
 
     static LAYOUT_NOTE_NAME_PREFIX = "OperatorConsole-";
@@ -5223,8 +5212,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                 function(){
                     this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction );
                 },
-                function(){
-                    setOCNoteFailFunction();
+                function(e){
+                    setOCNoteFailFunction(e);
                 });
             return bStartInit;
         }
@@ -5257,11 +5246,13 @@ export default class BrekekeOperatorConsole extends React.Component {
         return loginTenantname;
     }
 
-    getCallsById(){
-        return this.callById;
-    }
 }
 let BREKEKE_OPERATOR_CONSOLE;
+BrekekeOperatorConsole.PAL_NOTE_USERACCESSES ={
+    NoAccess : 0,
+    ReadOnly : 1,
+    ReadWrite : 2
+}
 
 export function OperatorConsole( el, props ) {
     const root = ReactDOM.createRoot( el );

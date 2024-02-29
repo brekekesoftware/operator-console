@@ -26,10 +26,10 @@ export default class CallPanel extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.call?.answered && !this.durationTimeout) {
+    if (this.props.currentCallInfo?.getIsAnswered() && !this.durationTimeout) {
       this.updateCallDuration();
     }
-    if (!this.props.call?.answered && this.state.duration) {
+    if (!this.props.currentCallInfo?.getIsAnswered() && this.state.duration) {
       this.setState({ duration: '' });
     }
   }
@@ -41,7 +41,9 @@ export default class CallPanel extends React.Component {
   }
 
   render() {
-    const call = this.props.call;
+    const operatorConsoleAsParent = this.props.operatorConsoleAsParent;
+    //const call = this.props.call;
+    const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
 
     const callpanelFgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callpanelFgColor , "" );
     const callpanelBgColor = Util.getRgbaCSSStringFromAntdColor( this.props.callpanelBgColor, "" );
@@ -78,10 +80,10 @@ export default class CallPanel extends React.Component {
       }} onPaste={onPaste}>
         <div className="brOCCallPanelRow">
           <div className="brOCCallPanelLeft">
-            {!!call && (call.incoming ? IconPhoneIncoming : IconPhoneOutgoing)}
+            {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
           </div>
           <div className="brOCCallPanelMain">
-            <div className="brOCCallPanelPartyNumber">{call?.partyNumber}</div>
+            <div className="brOCCallPanelPartyNumber">{currentCallInfo?.getPartyNumber()}</div>
             <div className="brOCCallPanelDuration">{this.state.duration}</div>
           </div>
         </div>
@@ -103,11 +105,11 @@ export default class CallPanel extends React.Component {
       this.durationTimeout = null;
     }
 
-    const call = this.props.call;
-    if (call && call.answered) {
+    const currentCallInfo = this.props.currentCallInfo;
+    if (currentCallInfo && currentCallInfo.getIsAnswered()) {
       this.durationTimeout = setTimeout(this.updateCallDuration, 1000);
       this.setState({
-        duration: formatSecondsToHHMMSS(call.answeredAt ? (Date.now() - call.answeredAt) / 1000 : 0)
+        duration: formatSecondsToHHMMSS(currentCallInfo.getAnsweredAt() ? (Date.now() - currentCallInfo.getAnsweredAt()) / 1000 : 0)
       });
     }
   }

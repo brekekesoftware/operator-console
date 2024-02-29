@@ -2,7 +2,7 @@ import Menu from "antd/lib/menu";
 import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
 import MoreOutlined from "@ant-design/icons/MoreOutlined";
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import Notification from "antd/lib/notification";
 import {AppstoreOutlined, DownOutlined, MailOutlined, SettingOutlined, SmileOutlined} from "@ant-design/icons";
 import {icons} from "antd/es/image/PreviewGroup";
@@ -24,12 +24,27 @@ export default function DropDownMenu( { operatorConsole } ){
 
     const [ openLayoutModalOpen,  setOpenLayoutModalOpen ] = useState( false );
     const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
+    const [isLoading, setIsLoading ] = useState(false);
     const showOpenLayoutModalFunc = ( ) =>{
         setOpenLayoutModalOpen( true );
-        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalOpen  );;
+        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalOpen, setIsLoading  );;
     }
 
     let items;
+
+    let signOutStyle;
+    let signOutOnClick;
+    const hasCall = operatorConsole.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
+    if( hasCall ){
+        signOutStyle = {color:"#DDDDDD",cursor:"default"};
+        signOutOnClick = undefined;
+    }
+    else{
+        signOutStyle = undefined;
+        signOutOnClick =  operatorConsole.logout;
+    }
+
+
 
     if( operatorConsole.getIsAdmin() === true ) {
         items = [
@@ -44,7 +59,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div onClick={operatorConsole.logout}>
+                                <div style={signOutStyle} onClick={signOutOnClick}>
                                     {i18n.t("signout")}
                                 </div>
                             )
@@ -143,7 +158,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div onClick={operatorConsole.logout}>
+                                <div style={signOutStyle} onClick={signOutOnClick}>
                                     {i18n.t("signout")}
                                 </div>
                             )
@@ -181,20 +196,30 @@ export default function DropDownMenu( { operatorConsole } ){
             },
         ];
     }
+    const displayLoadingStyle = isLoading ? "block" : "none";
+    const spinScreen = useRef(null);
+    if( spinScreen.current ){
+        spinScreen.current.style.display = displayLoadingStyle;
+    }
 
     return (
         <>
             <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={newLayoutModalOpen} setNewLayoutModalOpen={setNewLayoutModalOpen} />
             <OpenLayoutModalForDropdownMenu noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
-
-        <Dropdown
-            menu={{
-                items,
-            }}
-            trigger="click"
-        >
-            <Button style={{position: 'absolute', top:4,right:4, zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>
-            {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
+            <div ref={spinScreen} className="spinScreen">
+                <div>
+                    <Spin/>
+                </div>
+            </div>
+            <Dropdown
+                menu={{
+                    items,
+                }}
+                trigger="click"
+            >
+                <Button style={{position: 'absolute', top: 4, right: 4, zIndex: 15}} shape="circle"
+                        icon={<MoreOutlined/>}></Button>
+                {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
         </Dropdown>
         </>
     );
@@ -359,12 +384,23 @@ export default function DropDownMenu( { operatorConsole } ){
                                     Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
                                     setNewLayoutModalOpen(false);
                             },
-                                function(eventArg){
-                                    const message = eventArg.message;
-                                    //console.error("Failed to setOCNote.", sErr );
-                                    console.error("Failed to save data to PBX.", message);
-                                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                                    Notification.error({message: msg, duration: 0});
+                                function(e){
+                                    //!testit
+                                    if( Array.isArray(e)){
+                                        for( let i = 0; i < e.length; i++ ){
+                                            const err = e[i];
+                                            console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                        }
+                                    }
+                                    else{
+                                        console.error("setOCNote failed. error=" , e );
+                                    }
+                                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                                    // const message = eventArg.message;
+                                    // //console.error("Failed to setOCNote.", sErr );
+                                    // console.error("Failed to save data to PBX.", message);
+                                    // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                    // Notification.error({message: msg, duration: 0});
                                     setNewLayoutModalOpen(false);
                                 });
                         });
@@ -411,12 +447,24 @@ export default function DropDownMenu( { operatorConsole } ){
                         Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
                         setNewLayoutModalOpen(false);
                 },
-                    function( eventArg){
-                        const message = eventArg.message;
-                        //console.error("Failed to setOCNote.", sErr );
-                        console.error("Failed to save data to PBX.", message);
-                        const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                        Notification.error({message: msg, duration: 0});
+                    function( e){
+                        // const message = eventArg.message;
+                        // //console.error("Failed to setOCNote.", sErr );
+                        // console.error("Failed to save data to PBX.", message);
+                        // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                        // Notification.error({message: msg, duration: 0});
+                        //!testit
+                        if( Array.isArray(e)){
+                            for( let i = 0; i < e.length; i++ ){
+                                const err = e[i];
+                                console.error("setOCNote failed. errors[" + i + "]=" , err );
+                            }
+                        }
+                        else{
+                            console.error("setOCNote failed. error=" , e );
+                        }
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+
                         setNewLayoutModalOpen(false);
                     });
             });

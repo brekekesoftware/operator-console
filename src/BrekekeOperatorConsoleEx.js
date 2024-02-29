@@ -1,4 +1,4 @@
-import {reaction} from "mobx";
+//import {reaction} from "mobx";
 import debounce from "debounce";
 
 export default  class BrekekeOperatorConsoleEx{
@@ -11,27 +11,27 @@ export default  class BrekekeOperatorConsoleEx{
         return window.BrekekeOperatorConsoleEx;
     }
 
-    setOnInsertCallEventListener( options ){
+    setOnAddCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const bSet = this._OperatorConsoleAsParent.setOnInsertCallEventListener( el );
+        const bSet = this._OperatorConsoleAsParent.setOnAddCallInfoEventListener( el );
         return bSet;
     }
 
-    removeOnInsertCallEventListener( options ){
+    removeOnAddCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const removedIndex = this._OperatorConsoleAsParent.removeOnInsertCallEventListener( el );
+        const removedIndex = this._OperatorConsoleAsParent.removeOnAddCallInfoEventListener( el );
         return removedIndex;
     }
 
-    setOnUpdateCallEventListener( options ){
+    setOnUpdateCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const bSet = this._OperatorConsoleAsParent.setOnUpdateCallEventListener( el );
+        const bSet = this._OperatorConsoleAsParent.setOnUpdateCallInfoEventListener( el );
         return bSet;
     }
 
-    removeOnUpdateCallEventListener( options ){
+    removeOnUpdateCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const removedIndex = this._OperatorConsoleAsParent.removeOnUpdateCallEventListener( el );
+        const removedIndex = this._OperatorConsoleAsParent.removeOnUpdateCallInfoEventListener( el );
         return removedIndex;
     }
 
@@ -47,34 +47,34 @@ export default  class BrekekeOperatorConsoleEx{
     //     return removedIndex;
     // }
 
-    setOnRemoveCallEventListener( options ){
+    setOnRemoveCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const bSet = this._OperatorConsoleAsParent.setOnRemoveCallEventListener( el );
+        const bSet = this._OperatorConsoleAsParent.setOnRemoveCallInfoEventListener( el );
         return bSet;
     }
 
-    removeOnRemoveCallEventListener( options ){
+    removeOnRemoveCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const removedIndex = this._OperatorConsoleAsParent.removeOnRemoveCallEventListener( el );
+        const removedIndex = this._OperatorConsoleAsParent.removeOnRemoveCallInfoEventListener( el );
         return removedIndex;
     }
 
-    getCurrentCallId(){
-        const callId = this._OperatorConsoleAsParent.getCurrentCallId();
-        return callId;
-    }
+    // getCurrentCallId(){
+    //     const callId = this._OperatorConsoleAsParent.getCurrentCallIdForWebphoneCallInfos();
+    //     return callId;
+    // }
 
-    setOnChangeCurrentCallIdEventListener( options ){
-        const el = options["eventListener"];
-        const bSet = this._OperatorConsoleAsParent.setOnChangeCurrentCallIdEventListener( el );
-        return bSet;
-    }
+    // setOnChangeCurrentCallIdEventListener( options ){
+    //     const el = options["eventListener"];
+    //     const bSet = this._OperatorConsoleAsParent.setOnChangeCurrentCallIdEventListener( el );
+    //     return bSet;
+    // }
 
-    removeOnChangeCurrentCallIdCallEventListener( options ){
-        const el = options["eventListener"];
-        const removedIndex = this._OperatorConsoleAsParent.removeOnChangeCurrentCallIdEventListener( el );
-        return removedIndex;
-    }
+    // removeOnChangeCurrentCallIdCallEventListener( options ){
+    //     const el = options["eventListener"];
+    //     const removedIndex = this._OperatorConsoleAsParent.removeOnChangeCurrentCallIdEventListener( el );
+    //     return removedIndex;
+    // }
 
     setOnUnloadExtensionScriptEventListener( options ){
         const el = options["eventListener"];
@@ -88,39 +88,78 @@ export default  class BrekekeOperatorConsoleEx{
         return removedIndex;
     }
 
-    setOnPalNotifyStatusEventListener( options ){
+    // setOnPalNotifyStatusEventListener( options ){
+    //     const el = options["eventListener"];
+    //     const bSet = this._OperatorConsoleAsParent.setOnPalNotifyStatusEventListener( el );
+    //     return bSet;
+    // }
+
+    // removeOnPalNotifyStatusEventListener( options ){
+    //     const el = options["eventListener"];
+    //     const removedIndex = this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( el );
+    //     return removedIndex;
+    // }
+
+    setOnHoldCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const bSet = this._OperatorConsoleAsParent.setOnPalNotifyStatusEventListener( el );
+        const bSet = this._OperatorConsoleAsParent.setOnHoldCallInfoEventListener( el );
         return bSet;
     }
 
-    removeOnPalNotifyStatusEventListener( options ){
+    removeOnHoldCallInfoEventListener( options ){
         const el = options["eventListener"];
-        const removedIndex = this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( el );
+        const removedIndex = this._OperatorConsoleAsParent.removeOnHoldCallInfoEventListener( el );
+        return removedIndex;
+    }
+
+    setOnUnholdCallInfoEventListener( options ){
+        const el = options["eventListener"];
+        const bSet = this._OperatorConsoleAsParent.setOnUnholdCallInfoEventListener( el );
+        return bSet;
+    }
+
+    removeOnUnholdCallInfoEventListener( options ){
+        const el = options["eventListener"];
+        const removedIndex = this._OperatorConsoleAsParent.removeOnUnholdCallInfoEventListener( el );
         return removedIndex;
     }
 
     getLoginUsername(){
-        const loginUsername = this._OperatorConsoleAsParent.getLoginUsername();
+        const loginUsername = this._OperatorConsoleAsParent.getLoggedinUsername();
         return loginUsername;
     }
 
     getLoginTenantname(){
-        const loginTenantname = this._OperatorConsoleAsParent.getLoginTenantname();
+        const loginTenantname = this._OperatorConsoleAsParent.getLoggedinTenant();
         return loginTenantname;
     }
 
-    getMobxReaction(){
-        return reaction;
-    }
+    // getMobxReaction(){
+    //     return reaction;
+    // }
 
     getReactDebounce(){
         return debounce;
     }
 
-    getCallsById(){
-        const callsById = this._OperatorConsoleAsParent.getCallsById();
-        return callsById;
+    getCallInfoArray(){
+        const callInfoArray = [...this._OperatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoArray()];
+        return callInfoArray;
     }
 
+    getCurrentCallIndex(){
+       const callIndex = this._OperatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallIndex();
+       return callIndex;
+    }
+
+    getCallInfoCount(){
+        const count = this._OperatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount();
+        return count;
+    }
+
+    getCallInfoAt( index ){
+        const callInfo = this._OperatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoAt(index);
+        return callInfo;
+    }
+    
 }

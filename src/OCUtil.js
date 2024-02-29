@@ -53,15 +53,15 @@ export default class OCUtil{
         return -1;
     }
 
-    static getCallStatusFromBrOCCallObject( brOCCallObject ){
+    static getCallStatusFromWebphoneCallObject( webphoneCallObject  ){
         let status = null;
-        if( brOCCallObject.holding === true ){
+        if( webphoneCallObject .holding === true ){
             status = BROC_BROCCALLOBJECT_CALL_STATUSES.holding;
         }
-        else if( brOCCallObject.answered === true ){
+        else if( webphoneCallObject .answered === true ){
             status = BROC_BROCCALLOBJECT_CALL_STATUSES.talking;
         }
-        else if( brOCCallObject.incoming === true ){
+        else if( webphoneCallObject .incoming === true ){
             status = BROC_BROCCALLOBJECT_CALL_STATUSES.incoming;
         }
         else{

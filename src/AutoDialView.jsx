@@ -126,7 +126,8 @@ export default class AutoDialView extends React.Component {
                                                             <button title={i18n.t(`legacy_button_description.LegacyMakeCallButton`)} className="kbc-button kbc-button-fill-parent legacyButtonPadding"
                                                                     onClick={ () => {
                                                                         this.props.operatorConsoleAsParent.abortAutoDialView();
-                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+                                                                        //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo  );
                                                                     }
                                                                     }>
                                                                 { <FontAwesomeIcon size="lg" icon="fas fa-phone"/> }
@@ -161,7 +162,8 @@ export default class AutoDialView extends React.Component {
                                                         <td style={{width:50}}>
                                                             <button title={i18n.t(`legacy_button_description.LegacyMakeCallButton`)} className="kbc-button kbc-button-fill-parent legacyButtonPadding"
                                                                     onClick={ () => {
-                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2( ext.id, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+                                                                        //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( ext.id, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2( ext.id  );
                                                                         this.props.operatorConsoleAsParent.abortAutoDialView();
                                                                     }
                                                                     }>

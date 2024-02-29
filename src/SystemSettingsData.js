@@ -26,9 +26,6 @@ export default class SystemSettingsData{
         return this._Data.quickBusyClickToCall;
     }
 
-    _onBeginSetSystemSettingsDataSuccess(){
-
-    }
 
     /**
      *
@@ -40,13 +37,13 @@ export default class SystemSettingsData{
      * @private
      */
     _onBeginSetSystemSettingsDataFail( eventArgs, initFailFunction ){
-        for( let i = 0; i < eventArgs.length; i++ ){
-            const ea = eventArgs[i];
-            console.error("Failed to UC chat agent component initialization. errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" , ea.errorEvent );
-            const message = i18n.t("FailedToUCCACInitialization") + " errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" + ea.errorEvent;
-            Notification.error({message: message, duration:0 });
-        }
-        initFailFunction();
+        // for( let i = 0; i < eventArgs.length; i++ ){
+        //     const ea = eventArgs[i];
+        //     console.error("Failed to UC chat agent component initialization. errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" , ea.errorEvent );
+        //     const message = i18n.t("FailedToUCCACInitialization") + " errorCode=" + ea.errorCode + ",resourcePath=" + ea.errorResourcePath + ",errorEvent=" + ea.errorEvent;
+        //     Notification.error({message: message, duration:0 });
+        // }
+        initFailFunction( eventArgs );
     }
 
     _onBeginSetSystemSettingsDataSuccess( appData, initSuccessFunction ){
@@ -54,6 +51,7 @@ export default class SystemSettingsData{
         const ringtoneInfos = appData.ringtoneInfos;
         SystemSettingsData.cacheRingtones( ringtoneInfos );
 
+        //!modify systemSettingsData
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
@@ -62,6 +60,7 @@ export default class SystemSettingsData{
         this._Data.quickBusyClickToCall = appData.quickBusyClickToCall;
         this._Data.ucUrl = appData.ucUrl;
         this._Data.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled;
+        this._Data.phoneTerminal = appData.phoneTerminal;
         this._Data.extensionScript = appData.extensionScript;
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
 
@@ -74,8 +73,8 @@ export default class SystemSettingsData{
             function(){
                 this_._onBeginSetSystemSettingsDataSuccess( appData, initSuccessFunction  );
             },
-            function( eventArgs ) {
-                this_._onBeginSetSystemSettingsDataFail( eventArgs, initFailFunction );
+            function( e ) {
+                this_._onBeginSetSystemSettingsDataFail( e, initFailFunction );
             }
             );
         return startInit;
@@ -146,6 +145,7 @@ export default class SystemSettingsData{
         this._Data.ucUrl = "";
         this._Data.ucChatAgentComponentEnabled = false;
         this._Data.extensionScript = "";
+        this._Data.phoneTerminal = "phoneTerminal_webphone";
     }
 
     getShortDials(){
@@ -168,6 +168,10 @@ export default class SystemSettingsData{
         return this._Data.ucChatAgentComponentEnabled;
     }
 
+    getPhoneTerminal(){
+        return this._Data.phoneTerminal;
+    }
+
     _formatSystemSettingsAppData(appData){
         if( !appData ){
             appData = {};
@@ -181,6 +185,7 @@ export default class SystemSettingsData{
         appData.ucUrl = appData.ucUrl ? appData.ucUrl : "";
         appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;
         appData.extensionScript = appData.extensionScript ? appData.extensionScript : "";
+        appData.phoneTerminal = appData.phoneTerminal ? appData.phoneTerminal : "phoneTerminal_webphone";
         return appData;
     }
 

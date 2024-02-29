@@ -46,7 +46,7 @@ export default function OpenLayoutModalForDropDownMenu(props  ) {
 
 }
 
-export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFunc, setOpenLayoutModalOpenFunc   ) {
+export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFunc, setOpenLayoutModalOpenFunc, setIsLoading   ) {
     const selectOCNoteByShortname = ( operatorConsole, shortname ) =>{
         const promise = operatorConsole.getOCNote(  shortname );
         promise.then( (noteInfo) => {
@@ -54,15 +54,30 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
             const oNote = JSON.parse(sNote);
             operatorConsole.setOCNote(shortname, oNote, function () {
                     //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
+                    setIsLoading(false);
                     setOpenLayoutModalOpenFunc(false);
                 },
-                function (eventArg) {
-                    const message = eventArg.message;
-                    console.error("Failed to setOCNote.", message);
-                    Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message,duration:0});
+                function (e) {
+                    // const message = eventArg.message;
+                    // console.error("Failed to setOCNote.", message);
+                    // Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message,duration:0});
+                    //!testit
+                    setIsLoading(false);
+                    if( Array.isArray(e)){
+                        for( let i = 0; i < e.length; i++ ){
+                            const err = e[i];
+                            console.error("setOCNote failed. errors[" + i + "]=" , err );
+                        }
+                    }
+                    else{
+                        console.error("setOCNote failed. error=" , e );
+                    }
+                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+
                     setOpenLayoutModalOpenFunc(false);
                 });
         });
+        setIsLoading(true);
         // }).catch( (err) =>{
         // });
     };

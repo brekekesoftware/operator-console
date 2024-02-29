@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useRef} from 'react'
 import {useState} from "react";
 import {Button, Form, Input, Modal} from "antd";
 import i18n from "./i18n";
@@ -32,78 +32,87 @@ export default function NoScreensView( props ){
     const handleNewLayoutOk = () => {
         newLayoutUseForm.validateFields().then(( values ) => {
             let layoutName = values.layoutName;
-            setNewLayoutName( layoutName );
+            setNewLayoutName(layoutName);
             layoutName = layoutName.trim();
-            if( layoutName.length === 0 ){
-                Notification.error( { key:"validation", message:i18n.t('OnlySpacesAreNotAllowed'), duration:15 } );
+            if (layoutName.length === 0) {
+                Notification.error({key: "validation", message: i18n.t('OnlySpacesAreNotAllowed'), duration: 15});
                 return;
             }
 
-            const bMatch = REGEX.test( layoutName );
-            if( !bMatch ){
-                Notification.error(  {  key:"validation", message:i18n.t('newLayoutValidationError'), duration:15 } );
+            const bMatch = REGEX.test(layoutName);
+            if (!bMatch) {
+                Notification.error({key: "validation", message: i18n.t('newLayoutValidationError'), duration: 15});
                 return;
             }
 
             //exists already?
-            const layoutNoteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
-
-            const pGetNoteNames = operatorConsoleAsParent.getOCNoteNamesPromise();
-            pGetNoteNames.then( ( noteNames ) => {
-                let bNoteExists = true;
-                if( !noteNames || noteNames.length === 0 ){
-                    bNoteExists = false;
-                }
-                else{
-                    const sFind = noteNames.find( ( itm ) => itm === layoutNoteName );
-                    if( !sFind ){
+            const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
+            operatorConsoleAsParent.getNoteNamesByLoggedinPal(
+                function (res, obj) {
+                    const noteNames = res;
+                    let bNoteExists = true;
+                    if (!noteNames || noteNames.length === 0) {
                         bNoteExists = false;
+                    } else {
+                        const sFind = noteNames.find((itm) => itm === layoutNoteName);
+                        if (!sFind) {
+                            bNoteExists = false;
+                        }
                     }
-                }
 
-                if( bNoteExists ){
+                    if (bNoteExists) {
 
-                    setNewLayoutConfirmOpen(true);
+                        setNewLayoutConfirmOpen(true);
 
-                }
-                else {
-                    const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
-                    const systemSettingsDataData = systemSettingsData.getData();
+                    } else {
+                        const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
+                        const systemSettingsDataData = systemSettingsData.getData();
 
-                    const  layoutsAndSettingsData =  {
-                        version:  BrekekeOperatorConsole.getAppDataVersion(),
-                        screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                        systemSettings: systemSettingsDataData
-                    };
+                        const layoutsAndSettingsData = {
+                            version: BrekekeOperatorConsole.getAppDataVersion(),
+                            screens: BrekekeOperatorConsole.getEmptyScreens(),
+                            systemSettings: systemSettingsDataData
+                        };
 
-                    const noteContent = JSON.stringify( layoutsAndSettingsData );
-                    const setNotePromise = operatorConsoleAsParent.setOCNoteByPal(layoutName, noteContent);
-                    setNotePromise.then(() => {
-                        operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
-                                operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData  );
-                                Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                        },
-                            function( eventArg){
-                                const message = eventArg.message;
+                        const noteContent = JSON.stringify(layoutsAndSettingsData);
+                        const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
+                        operatorConsoleAsParent.setNoteByLoggedinPal(layoutNoteName, noteContent,
+                            function (res, obj) {
+                                operatorConsoleAsParent.setOCNote(layoutName, layoutsAndSettingsData, function () {
+                                        operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( layoutName, layoutsAndSettingsData);
+                                        Notification.success({message: i18n.t("saved_data_to_pbx_successfully")});
+                                    },
+                                    function (eventArg) {
+                                        const message = eventArg.message;
+                                        //console.error("Failed to setOCNote.", message  );
+                                        console.error("Failed to save data to PBX.", message);
+                                        const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                        Notification.error({message: msg, duration: 0});
+                                    }
+                                );
+                            },
+                            function (error) {
+                                //!testit
+                                //const message = eventArg.message;
                                 //console.error("Failed to setOCNote.", message  );
-                                console.error("Failed to save data to PBX.", message );
-                                const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                console.error("Failed to save data to PBX.", error);
+                                const msg = i18n.t("failed_to_save_data_to_pbx");
                                 Notification.error({message: msg, duration: 0});
-                            });
-                    });
+                            }
+                        );
+                    }
+                },
+                function (err) {
+                    //!testit
+                    //const message = eventArg.message;
+                    //console.error("Failed to setOCNote.", err  );
+                    console.error("Failed to getNoteNames from loggedin PAL.", err);
+                    const msg = i18n.t("failed_to_load_data_from_pbx");
+                    Notification.error({message: msg, duration: 0});
                 }
-
-            })
-                .catch( (err) =>{
-                    console.error("Failed to getNoteNames from  PBX.", err);
-                    const msg = i18n.t("failed_to_load_data_from_pbx") + " " + err;
-                    Notification.error({message:msg, duration:0} );
-                });
-
-
-
-
+            );
         });
+
         // setLoading(true);
         // setTimeout(() => {
         //     setLoading(false);
@@ -130,21 +139,43 @@ export default function NoScreensView( props ){
         };
 
         const noteContent = JSON.stringify( layoutsAndSettingsData );
-        const setNotePromise = operatorConsoleAsParent.setOCNoteByPal(layoutName, noteContent);
-        setNotePromise.then(() => {
-            operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
-                    operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( this, layoutName, layoutsAndSettingsData );
-                    Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
-                    setNewLayoutConfirmOpen(false);
-            },
-                function( eventArg ){
-                    const message = eventArg.message;
-                    console.error("Failed to save data to PBX.", message);
-                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                    Notification.error({message: msg, duration: 0});
-                    setNewLayoutConfirmOpen(false);
-                });
-        })
+        const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
+        operatorConsoleAsParent.setNoteByLoggedinPal( noteName, noteContent,
+            function( res, obj ){
+                operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                        operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData );
+                        Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                        setNewLayoutConfirmOpen(false);
+                    },
+                    function( e ){
+                        ////!testit
+                        // const message = eventArg.message;
+                        // console.error("Failed to save data to PBX.", message);
+                        // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                        // Notification.error({message: msg, duration: 0});
+                        //!testit
+                        if( Array.isArray(e)){
+                            for( let i = 0; i < e.length; i++ ){
+                                const err = e[i];
+                                console.error("setSystemSettingsDataData failed. errors[" + i + "]=" , err );
+                            }
+                        }
+                        else{
+                            console.error("setSystemSettingsDataData failed. error=" , e );
+                        }
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                        setNewLayoutConfirmOpen(false);
+                    });
+            }
+            ,
+            function( error ){
+                //!testit
+                //const message = eventArg.message;
+                console.error("Failed to setNote.", error  );
+                //throw new Error( dataErrorMessage );
+                Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
+            }
+        );
 
     };
     const cancelConfirmNewLayout = () => {
@@ -162,46 +193,80 @@ export default function NoScreensView( props ){
     const [openLayoutOpen, setOpenLayoutOpen] = useState(false);
 
     const selectOCNoteByShortname = ( shortname ) =>{
-        const promise = operatorConsoleAsParent.getOCNote(  shortname );
-        promise.then( (noteInfo) =>{
-            const sNote = noteInfo.note;
-            const oNote = JSON.parse(sNote);
-            const dataErrorMessage = operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
-                operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(  this );
-            },
-                function(eventArg){
-                    const message = eventArg.message;
-                    console.error("Failed to setOCNote.", message );
-                    //throw new Error( dataErrorMessage );
-                    Notification.error({message:i18n.t("failed_to_load_data_from_pbx") + " " + message, duration:0 });
-                });
+        const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
+        operatorConsoleAsParent.getNoteByLoggedinPal(  noteName,
+            function( res, obj ){
+                const noteInfo = res;
+                const sNote = noteInfo.note;
+                const oNote = JSON.parse(sNote);
+                const dataErrorMessage = operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
+                    setIsLoading(false);
+                    operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(  this );
+                },
+                    function(e){
+                        //!testit
+                        setIsLoading(false);
+                        if( Array.isArray(e)){
+                            for( let i = 0; i < e.length; i++ ){
+                                const err = e[i];
+                                console.error("setOCNote failed. errors[" + i + "]=" , err );
+                            }
+                        }
+                        else{
+                            console.error("setOCNote failed. error=" , e );
+                        }
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                    }
 
-        });
+                    );
+            }
+            ,
+            function(error){
+                //!testit
+                setIsLoading(false);
+                //const message = eventArg.message;
+                console.error("Failed to setNote.", error  );
+                //throw new Error( dataErrorMessage );
+                Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
+            }
+        );
+        setIsLoading(true);
     };
 
     const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
+    const [isLoading, setIsLoading] = useState(false);
 
     const refreshNoteNames = () => {
         setNoteNamesContent(<Spin />);
-        const promise = operatorConsoleAsParent.getOCNoteNamesPromise();
-        promise.then((noteNames) => {
-            if (!noteNames || noteNames.length == 0) {
-                setNoteNamesContent(i18n.t("Layout_does_not_exist"));
-            } else {
-                let jsxContents = [];
-                for (let i = 0; i < noteNames.length; i++) {
-                    const noteName = noteNames[i];
-                    const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
-                    const sNoteShortname = <div key={i}><a onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
-                    jsxContents.push( sNoteShortname );
+
+        operatorConsoleAsParent.getNoteNamesByLoggedinPal(
+            function( res, obj ){
+                const allNoteNames = res;
+                if( !allNoteNames ){
+                    setNoteNamesContent(i18n.t("Layout_does_not_exist"));
+                    return;
                 }
-                setNoteNamesContent(jsxContents);
+                const noteNames = allNoteNames.filter( function(value){ return value.startsWith( BrekekeOperatorConsole.LAYOUT_NOTE_NAME_PREFIX )} );
+                if (!noteNames || noteNames.length == 0) {
+                    setNoteNamesContent(i18n.t("Layout_does_not_exist"));
+                } else {
+                    let jsxContents = [];
+                    for (let i = 0; i < noteNames.length; i++) {
+                        const noteName = noteNames[i];
+                        const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                        const sNoteShortname = <div key={i}><a onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
+                        jsxContents.push( sNoteShortname );
+                    }
+                    setNoteNamesContent(jsxContents);
+                }
+            },
+            function(error ){
+                //!testit
+                console.error(error);
+                const sErr = i18n.t("failed_to_load_data_from_pbx");
+                Notification.error( { message:sErr, duration:0 } );
             }
-        }).catch((err) => {
-            console.error(err);
-            const sErr = i18n.t("failed_to_load_data_from_pbx") + " " + err;
-            Notification.error( { message:sErr, duration:0 } );
-        });
+        );
     }
 
     const handleOpenLayoutOpen = () =>{
@@ -213,7 +278,8 @@ export default function NoScreensView( props ){
     let newOrOpenLayoutFooter;
     let newOrOpenLayoutTitle;
     let newOrOpenLayoutText;
-    if( operatorConsoleAsParent.getIsAdmin() ){
+    const isAdmin = operatorConsoleAsParent.getLoggedinUserIsAdmin();
+    if( isAdmin === true ){
         newOrOpenLayoutTitle = i18n.t("NewOrOpenLayoutTitle");
         newOrOpenLayoutText = i18n.t("NewOrOpenLayoutText");
         newOrOpenLayoutFooter =[
@@ -246,6 +312,11 @@ export default function NoScreensView( props ){
     }
 
 
+    const displayLoadingStyle =  isLoading ? "block" : "none";
+    const spinScreen = useRef(null);
+    if( spinScreen.current ) {
+        spinScreen.current.style.display = displayLoadingStyle;
+    }
 
     return (
         <>
@@ -304,6 +375,11 @@ export default function NoScreensView( props ){
             >
                 {newOrOpenLayoutText}
             </Modal>
+            <div ref={spinScreen} className="spinScreen">
+                <div>
+                    <Spin/>
+                </div>
+            </div>
         </>
     );
 }

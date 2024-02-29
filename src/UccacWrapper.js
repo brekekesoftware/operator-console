@@ -79,7 +79,7 @@ export default  class UccacWrapper{
         }
     }
 
-    _onUccacInitSuccess(ev){
+    _onUccacInitSuccess(){
         this._initialized = true;
         this._OperatorConsoleAsParent.onInitUccacWrapperSuccessByUccacWrapper( this );
         for( let i = 0; i < this._OnUccacInitSuccessFunctions.length; i++ ){
@@ -87,7 +87,7 @@ export default  class UccacWrapper{
             func( this );
         }
         if( this._onUccacInitSuccessFunctionForCaller ){
-            this._onUccacInitSuccessFunctionForCaller( ev );
+            this._onUccacInitSuccessFunctionForCaller( );
         }
     }
 

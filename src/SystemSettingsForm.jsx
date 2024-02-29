@@ -54,6 +54,12 @@ const SystemSettingsForm = ( props ) => {
                 </Radio.Group>
             </Form.Item>
             <h1>{i18n.t("otherSettings")}</h1>
+            <Form.Item label={i18n.t("phoneTerminal")} name="phoneTerminal">
+                <Radio.Group disabled={ props["hasCall"] }>
+                    <Radio value={"phoneTerminal_webphone"}>{i18n.t("webphone")}</Radio>
+                    <Radio value={"phoneTerminal_pal"}>{i18n.t("otherPhoneTerminal_pal")}</Radio>
+                </Radio.Group>
+            </Form.Item>
             <Form.Item label={i18n.t("extensionScript")} name="extensionScript" >
                 <TextArea rows={30} maxLength={1000000}  style={{minHeight:600,minWidth:800,marginRight:30}} />
             </Form.Item>

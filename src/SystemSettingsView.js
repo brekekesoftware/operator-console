@@ -1,4 +1,4 @@
-import React, {useRef} from "react";
+import React from "react";
 import Form from "antd/lib/form";
 import Button from 'antd/lib/button';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -79,6 +79,19 @@ export default class SystemSettingsView extends React.Component {
                    }
 
                }
+
+               const systemSettings = this.operatorConsoleAsParent.getSystemSettingsData();
+               const hasCall = this.operatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
+               if( hasCall ) {
+                   const data = systemSettings.getData();
+                   const ptData = data["phoneTerminal"];
+                   const ptValue = values["phoneTerminal"]
+                   if (ptData !== ptValue) {
+                       Notification.error({message: i18n.t('cannotChangeThePhoneTerminal') } );
+                       return;
+                   }
+               }
+
                //!later validation
                //values.ucChatAgentComponentEnabled
 
@@ -91,7 +104,6 @@ export default class SystemSettingsView extends React.Component {
                // }
 
                console.log('saving systemSettings...', values );
-               const systemSettings = this.operatorConsoleAsParent.getSystemSettingsData();
                const this_ = this;
 
                this.setState( {isSystemSettingsSaving:true}, ()=> {
@@ -99,8 +111,8 @@ export default class SystemSettingsView extends React.Component {
                            function () {
                                this_._onSetSystemSettingsDataSuccess(systemSettings)
                            },
-                           function () {
-                               this_._onSetSystemSettingsDataFail()
+                           function (e) {
+                               this_._onSetSystemSettingsDataFail(e);
                            }
                        );
                    }
@@ -116,7 +128,18 @@ export default class SystemSettingsView extends React.Component {
             this.setState({isSystemSettingsSaving: false});
     }
 
-    _onSetSystemSettingsDataFail(){
+    _onSetSystemSettingsDataFail(e){
+        //!testit
+        if( Array.isArray(e)){
+            for( let i = 0; i < e.length; i++ ){
+                const err = e[i];
+                console.error("setSystemSettingsDataData failed. errors[" + i + "]=" , err );
+            }
+        }
+        else{
+            console.error("setSystemSettingsDataData failed. error=" , e );
+        }
+        Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
         this._onEndSetSystemSettings();
     }
 
@@ -158,9 +181,33 @@ export default class SystemSettingsView extends React.Component {
     //         return;
     //     }
 
-    _onSetOCNoteFailAtSyncUp( eventArg ){
-        const message = eventArg.message;
-        console.error("Failed to setOCNote.", message  );
+    _onSetOCNoteFailAtSyncUp( e ){
+        // const message = eventArg.message;
+        // console.error("Failed to setOCNote.", message  );
+        // Notification.error({
+        //     key: 'sync',
+        //     message: i18n.t("failed_to_save_data_to_pbx"),
+        //     btn: (
+        //         <Button type="primary" size="small" onClick={() => {
+        //             //Notification.close('sync');
+        //             this._syncUp();
+        //         }}>
+        //             {i18n.t('retry')}
+        //         </Button>
+        //     ),
+        //     duration: 0,
+        // });
+        //!testit
+        if( Array.isArray(e)){
+            for( let i = 0; i < e.length; i++ ){
+                const err = e[i];
+                console.error("setOCNote failed. errors[" + i + "]=" , err );
+            }
+        }
+        else{
+            console.error("setOCNote failed. error=" , e );
+        }
+        //Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
         Notification.error({
             key: 'sync',
             message: i18n.t("failed_to_save_data_to_pbx"),
@@ -182,7 +229,6 @@ export default class SystemSettingsView extends React.Component {
      }
 
     _syncUp = async () => {
-        const pal = this.operatorConsoleAsParent.getPal();
         //if (!pal) return;
         const systemSettingsData = this.operatorConsoleAsParent.getSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
@@ -202,8 +248,8 @@ export default class SystemSettingsView extends React.Component {
             //this.operatorConsoleAsParent.setLastSystemSettingsDataData( systemSettingsDataData );
             this.operatorConsoleAsParent.setOCNote(shortname, layoutsAndSettingsData, function(){
                 this_._onSetOCNoteSuccessAtSyncUp();
-            }, function( eventArg){
-                    this_._onSetOCNoteFailAtSyncUp(eventArg);
+            }, function( e){
+                    this_._onSetOCNoteFailAtSyncUp(e);
                 },
                 false, true);
             // if( sErr ){
@@ -236,7 +282,9 @@ export default class SystemSettingsView extends React.Component {
     //     }
     // }
 
+
     render(){
+        const hasCall = this.operatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
         const this_ = this;
         const  isButtonsEnabled = this.state.isSystemSettingsSaving === true;
             return  <>
@@ -260,6 +308,7 @@ export default class SystemSettingsView extends React.Component {
                 <div style={{position:"absolute",left:20,top:40,paddingRight:20,paddingBottom:20,width:"calc(100% - 40px)",height:"calc(100% - 60px)",overflow:"scroll"}}>
                         <div>
                             <SystemSettingsForm
+                                hasCall={hasCall}
                                 setSystemSettingsUseFormBindedFunction={this.setSystemSettingsUseFormBindedFunction}
                                 systemSettingsData={ this.operatorConsoleAsParent.getSystemSettingsData() }
                                 // onChangeUcChatAgentComponentEnabledFunction ={this._onChangeUcChatAgentComponentEnabled}

@@ -19,11 +19,19 @@ export default function OpenLayoutModalForNoScreensView(props ) {
             setNewOrOpenLayoutOpen(true);
         };
 
-        const footer = [
-            <Button key="back" onClick={handleCancel}>
-                {i18n.t("cancel")}
-            </Button>,
-        ];
+        console.log("noteNamesContent.type?.displayName=" + noteNamesContent.type?.displayName );
+
+        let footer;
+        if( noteNamesContent.type?.displayName === "Spin" ){
+            footer = [];
+        }
+        else {
+            footer = [
+                <Button key="back" onClick={handleCancel}>
+                    {i18n.t("cancel")}
+                </Button>,
+            ];
+        }
 
     return ( <Modal
         {...props}

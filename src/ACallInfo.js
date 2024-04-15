@@ -14,6 +14,13 @@ export default class ACallInfo {
     }
 
     /**
+     *  abstract method
+     */
+    conference(){
+        throw new Error("Not implemented.");
+    }
+
+    /**
      * abstract method
      */
     getPbxRoomId(){

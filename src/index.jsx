@@ -716,8 +716,20 @@ function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, labe
                     color:color,
                     backgroundColor:backgroundColor
                 }}
+                onClick={context.joinConversation}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+    );
+    /*
+    return (
+        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+                style={{
+                    border:border,
+                    borderRadius:borderRadius,
+                    color:color,
+                    backgroundColor:backgroundColor
+                }}
                 onClick={(!context.monitoringExtension) ? undefined : context.joinConversation}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
     );
+     */
 }
 function LegacyOutgoingCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     //const { currentCallIndex, callIds = [], callById = {} } = context;
@@ -3946,7 +3958,11 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     joinConversation = () => {
-        // TODO: implement this
+        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if( !currentCallInfo ){
+            return;
+        }
+        currentCallInfo.conference();
     }
 
     appendKeypadValue = (key) => {
@@ -4346,7 +4362,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     transferDialingCall = async () => {
         const mode = undefined; //use attended
-        this.transferCall( this.dialing, mode ).then( () => {
+        this.transferCall( this.state.dialing, mode ).then( () => {
             this._clearDialing(); //!todo I want to run it after the transfer is complete.
         } );
     }

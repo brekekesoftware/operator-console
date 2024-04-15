@@ -668,5 +668,12 @@ export default class PalPhoneClient  extends APhoneClient {
         this._pal.remoteControl( options, onOkFunc, onErrorFunc );
     }
 
+    conference( palCallInfo, onOkFunc, onErrorFunc ){
+        const tenant = this._OperatorConsoleAsParent.getLoggedinTenant();;
+        const talkerId = palCallInfo.getPbxTalkerId();
+        const options = {tenant:tenant,talker_id :talkerId,action:"talk"};
+        this._pal.conference( options, onOkFunc, onErrorFunc );
+    }
+
     static PHONE_INDEX = 1;
 }

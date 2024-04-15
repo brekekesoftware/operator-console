@@ -1,4 +1,6 @@
 import ACallInfo from "./ACallInfo";
+import Notification from "antd/lib/notification";
+import i18n from "./i18n";
 
 export default class WebphoneCallInfo extends ACallInfo {
 
@@ -7,6 +9,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._WebphoneCallInfosAsParent = webphoneCallInfosAsParent;
         this._Id = callObject.id;
         this._hangupWithUnhold = callObject.hangupWithUnhold;
+        this._conferenceTransferring = callObject.conferenceTransferring;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
         this._incoming = callObject.incoming;
@@ -31,6 +34,19 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     hangupWithUnhold() {
         this._hangupWithUnhold();
+    }
+
+    /**
+     *  overload method
+     */
+    conference(){
+       const promise =  this._conferenceTransferring();
+       promise.then( function(res){ //res is true.
+           //console.log("Succeeded  to conference call. res=", res );
+       }, function(res){
+           console.error("Failed to conference call. res=", res );
+           Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration:0 });
+       } );
     }
 
     /**

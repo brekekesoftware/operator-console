@@ -328,5 +328,23 @@ export default class PalCallInfo extends ACallInfo {
 
     }
 
+    /**
+     *  overload method
+     */
+    conference(){
+        const phoneClient = this._CallInfosAsParent.getPhoneClientAsParent();
+        phoneClient.conference( this,
+            function( res, obj){
+                if( res && res.startsWith("failed")){
+                    console.error("Failed to conference call. res=", res );
+                    Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration:0 });
+                }
+            },
+            function( err ) {
+                console.error("Failed to conference call. err=", err );
+                Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + err, duration:0 });
+            }
+        );
+    }
 
 }

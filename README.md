@@ -9,14 +9,9 @@ npm run build:dev -- --watch  # build for development with auto rebuilding
 npm run build:prd             # build for production
 ```
 
-After building, you can use some static HTTP server to host `dist` directory.
-For example:
-```bash
-cd dist
-python3 -m http.server 8080
-```
+After building, you can use some static HTTPS(SSL) server to host `dist` directory.
 
-Then open http://localhost:8080/operator-console.html in your browser.  
+Then open https://localhost:8443/operator-console.html in your browser.  
 To edit layouts, please login as an admin user.
 
 ## Project strcture

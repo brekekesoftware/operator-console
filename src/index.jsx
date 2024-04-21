@@ -1174,6 +1174,10 @@ function CallTable( props ) {
         {key: 'getAnsweredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
     ]
 
+    const callTableThFontSize = 10;
+    const callTableTdFontSize = 12;
+    const activeButtonFontSize = 9;
+
     const outerBorderRadius = props.calltableOuterBorderRadius ? props.calltableOuterBorderRadius : 0; //!default
     const outerBorderThickness = props.calltableOuterBorderThickness ? props.calltableOuterBorderThickness : 0; //!default
     const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  props.calltableOuterBorderColor, "rgba(0,0,0,0)" );
@@ -1185,10 +1189,13 @@ function CallTable( props ) {
     const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableHeaderRowUnderlineColor , "#e0e0e0" );   //!default
     const bodyRowUnderlineThickness = props.calltableBodyRowUnderlineThickness ? props.calltableBodyRowUnderlineThickness : 1; //!default
     const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBodyRowUnderlineColor , "#e0e0e0" );   //!default
+    const callTableTheadRowHeight = 44;
+    const callTableTbodyRowHeight = 44;
+    const cellCount = CallTableColumns.length + 1;   //1 is active botton
 
 
     return (
-        <div className="brOCCalltableWrapper">
+        <div className="brOCCalltableWrapper" data-broc-widgetindex={props.widgetIndex}>
         <table className="brOCCalltable"  style={{
             borderRadius:outerBorderRadius,
             border: outerBorderThickness + "px solid " + outerBorderColor,
@@ -1199,7 +1206,8 @@ function CallTable( props ) {
                 color:headerFgColor,
                 borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
                 display:"table-row",
-                tableLayout:"unset"
+                tableLayout:"unset",
+                height:callTableTheadRowHeight
             }}>
                 {CallTableColumns.map((item, i ) => {
                     const key = item.key;
@@ -1219,12 +1227,14 @@ function CallTable( props ) {
                                    paddingTop:0,
                                    paddingBottom:0,
                                    borderRadius:borderRadiusTH,
+                                   fontSize:callTableThFontSize
                                }}>{title}</th>;})
                 }
                 <th style={{
                     paddingTop:0,
                     paddingBottom:0,
-                    borderRadius:"0 " + outerBorderRadius + "px 0 0"
+                    borderRadius:"0 " + outerBorderRadius + "px 0 0",
+                    fontSize:callTableThFontSize
                 }}>{i18n.t("activeButton")}</th>
             </tr>
             </thead>
@@ -1241,8 +1251,9 @@ function CallTable( props ) {
                     tdActive = "\u00A0";
                 }
                 else{
-                    tdActive = <button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" onClick={ () => context.switchCallIndex(i)}>{i18n.t("active")}</button>;
+                    tdActive = <div style={{width:42,height:42,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => context.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
                 }
+
 
                 return (<tr key={idKey++} style={{
                     color: bodyFgColor,
@@ -1250,7 +1261,8 @@ function CallTable( props ) {
                     paddingTop:0,
                     paddingBottom:0,
                     borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
-                    display:"table-row"
+                    display:"table-row",
+                    height: callTableTbodyRowHeight
                 }}>
                     {CallTableColumns.map((column, i) => {
                             let borderRadiusTD;
@@ -1276,7 +1288,8 @@ function CallTable( props ) {
                                        style={{
                                            paddingTop:0,
                                            paddingBottom:0,
-                                           borderRadius:borderRadiusTD
+                                           borderRadius:borderRadiusTD,
+                                           fontSize:callTableTdFontSize
                                        }}>{v}</td>
                         }
                     )}
@@ -1288,6 +1301,7 @@ function CallTable( props ) {
                     </td>
                 </tr>);
             })}
+            <tr colSpan={cellCount}></tr>
             </tbody>
         </table>
         </div>
@@ -1450,6 +1464,7 @@ class Note extends React.Component {
     }
 
     componentDidMount() {
+
         if (this.props.context?.getNote) {
             this.setState({ loading: true });
             this.props.context.getNote(this.props.noteName )
@@ -1467,6 +1482,8 @@ class Note extends React.Component {
                 });
         }
     }
+
+
 
     setNoteDebounced = debounce(() => {
         if (this.props.context?.setNote) {
@@ -2545,7 +2562,6 @@ const INIT_STATE = {
 };
 
 
-
 export default class BrekekeOperatorConsole extends React.Component {
     constructor(props) {
         super(props);
@@ -2634,7 +2650,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     onSelectOCNoteByShortnameFromNoScreensView( noScreensViewAsCaller ){
         //this.reloadSystemSettingsExtensionScript();
-        this.setState( { _downedLayoutAndSystemSettings:true } );
+        this.setState( { _downedLayoutAndSystemSettings:true, displayState : brOcDisplayStates.showScreen } );
+
     }
 
     onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData  ){
@@ -2797,7 +2814,320 @@ export default class BrekekeOperatorConsole extends React.Component {
         //   console.log('failed to get last signed in account', err);
         // }
 
+        const this_ = this;
+        this._onPasteFunction = function(e){
+            this_._onPaste(e);
+        };
+        this._pasteEvent = window.addEventListener("paste",  this._onPasteFunction);
+        this._onKeydownFunction =  function(e){
+            this_._onKeydown(e);
+        };
+        this._keydownEvent = window.addEventListener("keydown", this._onKeydownFunction );
+
     }
+
+    componentWillUnmount(){
+        window.removeEventListener( "paste", this._onPasteFunction);
+        window.removeEventListener( "keydown", this._onKeydown);
+    }
+
+    _onKeydown(e){
+        const isDowned = this.state._downedLayoutAndSystemSettings;
+        if( !isDowned ){
+            return;
+        }
+        const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
+        if( !isScreenView ){
+            return;
+        }
+
+        if (
+            e.getModifierState("Hyper") ||
+            e.getModifierState("Fn") ||
+            e.getModifierState("Super") ||
+            e.getModifierState("OS") ||
+            e.getModifierState("Win") ||  /* hack for IE */
+            e.getModifierState("Copilot") /* //!todo //!check //!forbug  work? */
+        ) {
+            return;
+        }
+
+        if (
+            e.getModifierState("Alt") +
+            e.getModifierState("Control") +
+            e.getModifierState("Meta") >
+            1
+        ) {
+            return;
+        }
+
+        if (
+            (e.getModifierState("ScrollLock") ||
+                e.getModifierState("Scroll")) /* hack for IE */ &&
+            !e.getModifierState("Control") &&
+            !e.getModifierState("Alt") &&
+            !e.getModifierState("Meta")
+        ) {
+            switch (e.key) {
+                case "ArrowDown":
+                case "Down":
+                    e.preventDefault();
+                    break;
+                case "ArrowLeft":
+                case "Left":
+                    e.preventDefault();
+                    break;
+                case "ArrowRight":
+                case "Right":
+                    e.preventDefault();
+                    break;
+                case "ArrowUp":
+                case "Up":
+                    e.preventDefault();
+                    break;
+            }
+        }
+
+
+        const keyCode = e.keyCode;
+        switch( keyCode ) {
+            case 13:
+                this.makeCall();
+                this._clearDialing();
+                return;
+            case 8: //backspace
+            {
+                let dialing = this.state.dialing;
+                if (!dialing || dialing.length === 0) {
+                    return;
+                }
+                dialing = dialing.substring(0, dialing.length - 1);
+                this.setDialing(dialing);
+                return;
+            }
+             break;
+            case 46:    //delete
+            {
+                let dialing = this.state.dialing;
+                if (!dialing || dialing.length === 0) {
+                    return;
+                }
+                dialing = dialing.substring(1, dialing.length);
+                this.setDialing(dialing);
+                return;
+            }
+            break;
+            case 9: //tab
+            //case 32: //space
+            case 16: //shift
+            case 17: //control
+            case 18: //alt
+            case 112: //F1
+            case 113: //F2
+            case 114: //F3
+            case 115: //F4
+            case 116: //F5
+            case 117: //F6
+            case 118: //F7
+            case 119: //F8
+            case 120: //F9
+            case 121: //F10
+            case 122: //F11
+            case 123: //F12
+            case 37:    //Left arrow
+            case 39:    //Right arrow
+            case 38: //Up arrow
+            case 40: //Down arrow
+            case 93:    //menu
+            case 144: //Numlock
+            case 33: //pageup
+            case 34: //pagedown
+            case 38: //end
+            case 36: //home
+            case 45: //insert
+            case 145: //scroll lock
+            case 19: //pause
+            case 44: //print screen
+                //case ***; //copilot //!check //!todo //!check //!forbug
+            case 91: //meta
+            case 29: //NonConvert
+                return;
+                break;
+        }
+
+        //modify keychar
+        let keychar;
+        switch(keyCode) {
+            case 96:    //Num 0
+                keychar = '0';
+                break;
+            case 97:    //Num 1
+                keychar = '1';
+                break;
+            case 98: //Num 2
+                keychar = '2';
+                break;
+            case 99: //Num 3
+                keychar = '3';
+                break;
+            case 100: //Num 4
+                keychar = '4';
+                break;
+            case 101: //Num 5
+                keychar =  '5';
+                break;
+            case 102: //Num 6
+                keychar = '6';
+                break;
+            case 103: //Num 7
+                keychar = '7';
+                break;
+            case 104: //Num 8
+                keychar = '8';
+                break;
+            case 105: //Num 9
+                keychar = '9';
+                break;
+            case 111: //Num divide
+                keychar = '/';
+                break;
+            case 106: //Num multiply
+                keychar = '*';
+                break;
+            case 109: //Num subtract
+                keychar = '-';
+                break;
+            case 107: //Num add
+                keychar = '+'
+                break;
+            case 110: //Num decimal
+                keychar = '.';
+                break;
+           default:
+                keychar  = String.fromCharCode(keyCode);
+                break;
+        }
+        if( !keychar ){
+            return;
+        }
+        const isCaplockOn =  e.getModifierState( "CapsLock" );
+        if( isCaplockOn ){
+            if( e.shiftKey ){
+                keychar = keychar.toLowerCase();
+            }
+            else {
+                keychar = keychar.toUpperCase();
+            }
+        }
+        else{
+            if( e.shiftKey ) {
+                keychar = keychar.toUpperCase();
+            }
+            else{
+                keychar = keychar.toLowerCase();
+            }
+        }
+
+        let  dialing = this.state.dialing;
+        if( !dialing ){
+            dialing = keychar;
+        }
+        else {
+            dialing += keychar;
+        }
+        this.setDialing( dialing );
+
+    }
+
+    _onPaste(e) {
+        e.preventDefault();
+        const isDowned = this.state._downedLayoutAndSystemSettings;
+        if( !isDowned ){
+            return;
+        }
+        const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
+        if( !isScreenView ){
+            return;
+        }
+        const paste = (e.clipboardData || window.clipboardData).getData("text");
+        this.setDialing( paste );
+    }
+
+
+    // componentDidUpdate( prevProps ){
+    //     this._deformCallTablezTbodies( prevProps );
+    // }
+
+
+    // _deformCallTablezTbodies( prevProps ) {
+    //     const isDowned = this.state._downedLayoutAndSystemSettings;
+    //     if( !isDowned ){
+    //         return;
+    //     }
+    //     const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
+    //     if( !isScreenView ){
+    //         return;
+    //     }
+    //
+    //
+    //     //default view
+    //     const screens = [...this.state.screens];
+    //     for( let i = 0; i < screens.length; i++ ){
+    //         const screen = screens[i];
+    //         const widgets = screen.widgets;
+    //         for( let k = 0; k < widgets.length; k++ ){
+    //             const widget = widgets[k];
+    //             const widgetType = widget.type;
+    //             if( widgetType !== "CallTable" ){
+    //                 continue;
+    //             }
+    //             //Calltable
+    //             const widgetIndex = k;
+    //             const eWidget = document.querySelector('[data-broc-widgetindex="' + widgetIndex + '"]');;
+    //             const eTbody = eWidget.querySelector('tbody');
+    //
+    //             const eTbodyRows = eTbody.querySelectorAll("tr");
+    //             let tbodyRowsHeight = 0;
+    //             for( let r = 0; r < eTbodyRows.length; r++ ){
+    //                 const eTbodyRow = eTbodyRows[r];
+    //                 const h = eTbodyRows.offsetHeight;
+    //                 tbodyRowsHeight += h;
+    //             }
+    //
+    //             const eTbodyHeight = eTbody.offsetHeight;
+    //             const bNeedInsertEmptyTbodyRow = tbodyRowsHeight < eTbodyHeight;
+    //             let eEmptyTbodyRow = eTbody.querySelector('[data-broc-isemptytcalltableztbodyrow="true"]');
+    //             if( bNeedInsertEmptyTbodyRow){
+    //                 if( !eEmptyTbodyRow ){
+    //                     eEmptyTbodyRow = document.createElement("tr");
+    //                     const eThead = eTbody.parentElement.querySelector("thead");
+    //                     const eThreadRow = eThead.querySelector("tr");
+    //                     const eThreadCells = eThreadRow.querySelectorAll("th");
+    //                     const cellCount  = eThreadCells.length;
+    //                     eEmptyTbodyRow.setAttribute("colspan", cellCount.toString() );
+    //                     eEmptyTbodyRow.setAttribute("data-broc-isemptytcalltableztbodyrow", "true" );
+    //                     eTbody.appendChild( eEmptyTbodyRow );
+    //                 }
+    //                 else {
+    //                     const eTbodyRows = eTbody.querySelectorAll("tr");
+    //                     if (eTbodyRows && eTbodyRows.length !== 0 ){
+    //                         const eTbodyLastRow = eTbodyRows [eTbodyRows.length - 1];
+    //                         eTbodyLastRow.after(eEmptyTbodyRow);
+    //                     }
+    //                 }
+    //             }
+    //             else{
+    //                 if( eEmptyTbodyRow ){
+    //                     eEmptyTbodyRow.remove();
+    //                 }
+    //             }
+    //
+    //
+    //         }
+    //     }
+    //
+    //
+    // }
 
     _getLastLayoutLocalstorageKeyName(){
         //let info = this.state.lastLoginAccount;
@@ -3284,6 +3614,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                             }} onMouseMove={(e) => e.stopPropagation()}>
                                                                 <Widget
                                                                     {...widget}
+                                                                    widgetIndex={i}
                                                                     operatorConsoleAsParent={this}
                                                                     uccacWrapper={this._UccacWrapper}
                                                                     context={{

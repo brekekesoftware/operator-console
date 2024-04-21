@@ -64,20 +64,13 @@ export default class CallPanel extends React.Component {
     const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
     const sBoxShadow = sBoxshadowOutside + ( sBoxshadowOutside && sBoxshadowInside ? "," : "" ) + sBoxshadowInside;
 
-    function onPaste(e) {
-      e.preventDefault();
-      const paste = (e.clipboardData || window.clipboardData).getData("text");
-      const oc = BrekekeOperatorConsole.getStaticInstance();
-      oc.setDialing( paste );
-    }
-
     return (
       <div className="brOCCallPanel" style={{
         borderRadius:borderRadius,
         backgroundColor:callpanelBgColor,
         boxShadow:sBoxShadow,
         color:callpanelFgColor
-      }} onPaste={onPaste}>
+      }}>
         <div className="brOCCallPanelRow">
           <div className="brOCCallPanelLeft">
             {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}

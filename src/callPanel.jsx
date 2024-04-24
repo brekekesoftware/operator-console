@@ -64,6 +64,20 @@ export default class CallPanel extends React.Component {
     const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
     const sBoxShadow = sBoxshadowOutside + ( sBoxshadowOutside && sBoxshadowInside ? "," : "" ) + sBoxshadowInside;
 
+    const bIsDTMFInput = operatorConsoleAsParent.getIsDTMFInput();
+
+    let dialing;
+    if( !this.props.dialing ){
+      dialing = "";
+    }
+    else{
+      dialing = this.props.dialing;
+    }
+
+    // if( dialing.length > CallPanel.SHOW_DIALING_LENGTH ){
+    //   dialing = dialing.substring( dialing.length - CallPanel.SHOW_DIALING_LENGTH, dialing.length );
+    // }
+
     return (
       <div className="brOCCallPanel" style={{
         borderRadius:borderRadius,
@@ -81,11 +95,11 @@ export default class CallPanel extends React.Component {
           </div>
         </div>
         <div className="brOCCallPanelRow">
-          {!!this.props.dialing && (
+          { bIsDTMFInput !== true && dialing.length !== 0 && (
             <div className="brOCCallPanelLeft">{IconKeyboard}</div>
           )}
           <div className="brOCCallPanelMain">
-            <div className="brOCCallPanelDialing">{this.props.dialing}</div>
+            <div className="brOCCallPanelDialing">{dialing}</div>
           </div>
         </div>
       </div>
@@ -106,4 +120,5 @@ export default class CallPanel extends React.Component {
       });
     }
   }
+
 }

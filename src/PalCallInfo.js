@@ -99,6 +99,8 @@ export default class PalCallInfo extends ACallInfo {
     onCallSuccessByPalCallInfos( eNotifyStatus ){
         this._answered = true;
         this._answeredAt = eNotifyStatus["time"];
+        this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onCallSuccessByPalCallInfo(this);
+
     }
 
     /**

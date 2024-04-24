@@ -654,7 +654,9 @@ function LegacyMakeCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                     backgroundColor:backgroundColor
                 }}
                 onClick={ () => {
-                    context.makeCallWithShortDial( context );
+                    if( operatorConsoleAsParent.getIsDTMFInput() !== true ) {
+                        context.makeCallWithShortDial( context );
+                    }
                 }
                 }>
             {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
@@ -2568,6 +2570,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         BREKEKE_OPERATOR_CONSOLE = this;
         //this.callById = {};
         //this._callIds = new Array();
+        this._isDTMFInput = false;
         this._OnBackspaceKeypadValueCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
         this._OnClearDialingCallbacks = [];
@@ -2818,12 +2821,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._onPasteFunction = function(e){
             this_._onPaste(e);
         };
-        this._pasteEvent = window.addEventListener("paste",  this._onPasteFunction);
+        window.addEventListener("paste",  this._onPasteFunction);
         this._onKeydownFunction =  function(e){
             this_._onKeydown(e);
         };
-        this._keydownEvent = window.addEventListener("keydown", this._onKeydownFunction );
+        window.addEventListener("keydown", this._onKeydownFunction );
 
+    }
+
+    getIsDTMFInput(){
+        return this._isDTMFInput;
     }
 
     componentWillUnmount(){
@@ -2891,12 +2898,18 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const keyCode = e.keyCode;
         switch( keyCode ) {
-            case 13:
+            case 13:    //enter key
+                if( this._isDTMFInput === true ) {
+                    return;
+                }
                 this.makeCall();
                 this._clearDialing();
                 return;
             case 8: //backspace
             {
+                if( this._isDTMFInput === true ){
+                    return;
+                }
                 let dialing = this.state.dialing;
                 if (!dialing || dialing.length === 0) {
                     return;
@@ -2908,6 +2921,10 @@ export default class BrekekeOperatorConsole extends React.Component {
              break;
             case 46:    //delete
             {
+                if( this._isDTMFInput === true ){
+                    return;
+                }
+
                 let dialing = this.state.dialing;
                 if (!dialing || dialing.length === 0) {
                     return;
@@ -3028,14 +3045,41 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         }
 
-        let  dialing = this.state.dialing;
-        if( !dialing ){
-            dialing = keychar;
+        if( this._isDTMFInput === true ){
+            if(  this._isSendDTMFChar( keychar ) !== true ) {
+                return;
+            }
+            let  dialing = this.state.dialing;
+            if( !dialing ){
+                dialing = keychar;
+            }
+            else {
+                dialing += keychar;
+            }
+
+            if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+                dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
+            }
+            this.setDialing( dialing );
+
+            this.sendDTMFIfNeed(keychar);
+
         }
-        else {
-            dialing += keychar;
+        else{
+            let  dialing = this.state.dialing;
+            if( dialing.length >= BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+                return;
+            }
+
+            if( !dialing ){
+                dialing = keychar;
+            }
+            else {
+                dialing += keychar;
+            }
+            this.setDialing( dialing );
+
         }
-        this.setDialing( dialing );
 
     }
 
@@ -3049,8 +3093,25 @@ export default class BrekekeOperatorConsole extends React.Component {
         if( !isScreenView ){
             return;
         }
+
+        if( this._isDTMFInput === true ){
+            return;
+        }
+
         const paste = (e.clipboardData || window.clipboardData).getData("text");
-        this.setDialing( paste );
+        if( !paste ){
+            return;
+        }
+
+        let pasteString;
+        if( paste.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+            pasteString = paste.substring(0, BrekekeOperatorConsole.DIALING_MAX_LENGTH );
+        }
+        else{
+            pasteString = paste;
+        }
+
+        this.setDialing( pasteString );
     }
 
 
@@ -3549,7 +3610,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                     holdCall: this.holdCall,
                                                                     hangUpCall: this.hangUpCall,
                                                                     answerCall: this.answerCall,
-                                                                    sendDTMF: this.sendDTMF,
+                                                                    sendDTMFIfNeed: this.sendDTMFIfNeed,
                                                                     makeCall: this.makeCall,
                                                                     transferCall: this.transferCall,
                                                                     handleLine: this.handleLine,
@@ -3646,7 +3707,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                         holdCall: this.holdCall,
                                                                         hangUpCall: this.hangUpCall,
                                                                         answerCall: this.answerCall,
-                                                                        sendDTMF: this.sendDTMF,
+                                                                        sendDTMFIfNeed: this.sendDTMFIfNeed,
                                                                         makeCall: this.makeCall,
                                                                         transferCall: this.transferCall,
                                                                         handleLine: this.handleLine,
@@ -4191,7 +4252,15 @@ export default class BrekekeOperatorConsole extends React.Component {
             return false;
         }
         //this._onChangeCurrentCallIndex( index, currentCallIndex  );
+
+        this._onChangeCurrentCallIndex( currentCallIndex, index );
+
+
         return true;
+    }
+
+    _onChangeCurrentCallIndex( currentCallIndex, index ) {
+        this._resetCallInput();
     }
 
     // _onChangeCurrentCallIndex(index, prevIndex ){
@@ -4297,10 +4366,22 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     appendKeypadValue = (key) => {
-        this.setState({dialing: this.state.dialing + key}, () => this._onAppendKeypadValue(key));
-        if (this.getCurrentCallInfo()) {
-            this.sendDTMF(key);
+        let dialing = this.state.dialing + key;
+        if( this._isDTMFInput === true ){
+            const bSend = this.sendDTMFIfNeed(key);
+            if( !bSend ){
+                return;
+            }
+            if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+                dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
+            }
         }
+        else{
+            if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ) {
+                return;
+            }
+        }
+        this.setState({dialing: dialing}, () => this._onAppendKeypadValue(key));
     }
 
     _onAppendKeypadValue(key) {
@@ -4330,7 +4411,15 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     backspaceKeypadValue = () => {
-        this.setState({dialing: this.state.dialing.slice(0, -1)}, () => this._onBackspaceKeypadVakue());
+        if( this._isDTMFInput === true ){
+            return;
+        }
+
+        if( !this.state.dialing || this.state.dialing.length == 0 ){
+            return;
+        }
+        const dialing = this.state.dialing.slice(0, -1);
+        this.setState({dialing: dialing}, () => this._onBackspaceKeypadVakue());
     }
 
     _onBackspaceKeypadVakue() {
@@ -4360,20 +4449,6 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     }
 
-    //!callme
-    onUnholdByCallInfo( callInfoAsCaller ){
-        this.setState({refresh:true});
-
-        const options = {
-            callInfo : callInfoAsCaller
-        }
-        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
-        for(let i = 0; i < this._OnUnholdCallInfoEventListeners.length; i++ ){
-            const event = this._OnUnholdCallInfoEventListeners[i];
-            event( options );   //!forBug need tryCatch?
-        }
-    }
-
     setOnUnholdCallInfoEventListener(function_ ){
         const index = this._OnUnholdCallInfoEventListeners.indexOf( function_ );
         if( index !== -1 ){
@@ -4390,22 +4465,6 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     _clearOnUnholdCallInfoEventListeners(){
         this._OnUnholdCallInfoEventListeners.splice(0);
-    }
-
-    //!callme
-    onHoldByCallInfo( callInfoAsCaller ){
-        this.setState({refresh:true} );
-
-        const options = {
-            callInfo : callInfoAsCaller
-        }
-        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
-        for(let i = 0; i < this._OnHoldCallInfoEventListeners.length; i++ ){
-            const event = this._OnHoldCallInfoEventListeners[i];
-            event( options );   //!forBug need tryCatch?
-        }
-
-
     }
 
     setOnHoldCallInfoEventListener(function_ ){
@@ -4587,7 +4646,52 @@ export default class BrekekeOperatorConsole extends React.Component {
     //     this._OnChangeCallEventListeners.splice(0);
     // }
 
+
+    _resetCallInput(){
+        const callInfos = this._aphone.getCallInfos();
+        const currentCallIndex = callInfos.getCurrentCallIndex();
+        const bDisconnected =  currentCallIndex < 0;
+        if( bDisconnected ){
+            this._clearDialing();
+            this._isDTMFInput = false;
+            return;
+        }
+        const currentCallInfo = callInfos.getCallInfoAt( currentCallIndex );
+
+        const callStatus = currentCallInfo.getCallStatus();
+        const prevCallStatus = this._prevCurrentCallStatus;
+        if( callStatus === prevCallStatus ){
+            return;
+        }
+
+        this._prevCurrentCallStatus = callStatus;
+
+        //!ref to 202404240424
+        switch( callStatus ){
+            case ACallInfo.CALL_STATUSES.talking:
+            case ACallInfo.CALL_STATUSES.calling:
+                this._clearDialing();
+                this._isDTMFInput = true;
+            break;
+            case ACallInfo.CALL_STATUSES.holding:
+            case ACallInfo.CALL_STATUSES.incoming:
+                this._clearDialing();
+                this._isDTMFInput = false;
+                break;
+            default:
+                console.error("Could not reset CallInput!");
+                break;
+
+        }
+
+        //Not need.
+        //this.setState({refresh:true} );
+    }
+
+
+    //!callme
     onUpdateCallInfoByCallInfo = (callInfoAsCaller) => {
+        this._resetCallInput();
         this.setState({refresh:true} );
 
         const options = {
@@ -4598,7 +4702,46 @@ export default class BrekekeOperatorConsole extends React.Component {
             const event = this._OnUpdateCallInfoEventListeners[i];
             event( options );   //!forBug need tryCatch?
         }
+
+
     }
+
+    //!callme
+    onCallSuccessByPalCallInfo( palCallInfoAsCaller ){
+        this._resetCallInput();
+    }
+
+    //!callme
+    onHoldByCallInfo( callInfoAsCaller ){
+        this._resetCallInput();
+        this.setState({refresh:true} );
+
+        const options = {
+            callInfo : callInfoAsCaller
+        }
+        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
+        for(let i = 0; i < this._OnHoldCallInfoEventListeners.length; i++ ){
+            const event = this._OnHoldCallInfoEventListeners[i];
+            event( options );   //!forBug need tryCatch?
+        }
+    }
+
+    //!callme
+    onUnholdByCallInfo( callInfoAsCaller ){
+        this._resetCallInput();
+        this.setState({refresh:true});
+
+        const options = {
+            callInfo : callInfoAsCaller
+        }
+        //this._BusylightStatusChanger.onInsertCall( options );  //!dev
+        for(let i = 0; i < this._OnUnholdCallInfoEventListeners.length; i++ ){
+            const event = this._OnUnholdCallInfoEventListeners[i];
+            event( options );   //!forBug need tryCatch?
+        }
+    }
+
+
 
     setOnUpdateCallInfoEventListener(function_ ){
         const index = this._OnUpdateCallInfoEventListeners.indexOf( function_ );
@@ -4672,7 +4815,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
         currentCallInfo.toggleHoldWithCheck();
-        this.setState({dialing: ''});
+        //this.setState({dialing: ''});
     }
 
     hangUpCall = () => {
@@ -4709,7 +4852,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         await this.transferCallCore( dialing, mode, talkerId, tenant );
     }
 
-    //!testit
     transferCallCore = async ( dialing, mode, talkerId, tenant, onDoneFunc  ) => {
         if ( this._aphone.isPalReady() && dialing ) {
             const promise = this._aphone.transferAsync( tenant, dialing, talkerId, mode );
@@ -4726,16 +4868,35 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    sendDTMF = (key) => {
+    _isSendDTMFChar( key ){
+        if( !key || key.length !== 1 ){
+            return false;
+        }
+        const b = BrekekeOperatorConsole.DTMF_CHARS.indexOf( key ) !== -1;
+        return b;
+    }
+
+    sendDTMFIfNeed = (key) => {
+
+        if( this._isDTMFInput !== true ){
+            return false;
+        }
+
+
         const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        if( !currentCallInfo ){
+            return false;
+        }
+        const bNeedSendDTMF = this._isSendDTMFChar(key);
        // if (this._aphone.isPalReady() && currentCallInfo) {
-        if ( currentCallInfo) {
+        if ( bNeedSendDTMF) {
             //const tenant = currentCall.pbxTenant;
             const tenant = undefined;   //!testit
             const signal = key;
             const talker_id = currentCallInfo.getPbxTalkerId();
             this._aphone.sendDTMF(  tenant, talker_id, signal );
         }
+        return bNeedSendDTMF;
     }
 
     makeCallWithShortDial = async (context) => {
@@ -5600,6 +5761,11 @@ BrekekeOperatorConsole.PAL_NOTE_USERACCESSES ={
     ReadOnly : 1,
     ReadWrite : 2
 }
+BrekekeOperatorConsole.DTMF_CHARS = [
+    '0','1','2','3','4','5','6','7','8','9','*','#'
+]
+BrekekeOperatorConsole.DIALING_MAX_LENGTH = 20; //!const
+
 
 export function OperatorConsole( el, props ) {
     const root = ReactDOM.createRoot( el );

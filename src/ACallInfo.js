@@ -161,6 +161,7 @@ export default class ACallInfo {
     }
 
 }
+//!modify OperatorConsole ref from 202404240424
 ACallInfo.CALL_STATUSES ={
     //unknown : 0,
     talking: 1,

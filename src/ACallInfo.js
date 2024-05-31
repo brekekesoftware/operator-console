@@ -16,6 +16,13 @@ export default class ACallInfo {
     /**
      *  abstract method
      */
+    hangup(){
+        throw new Error("Not implemented.");
+    }
+
+    /**
+     *  abstract method
+     */
     conference(){
         throw new Error("Not implemented.");
     }
@@ -141,7 +148,7 @@ export default class ACallInfo {
     /**
      *  abstract method
      */
-    toggleHoldWihtCheck(){
+    toggleHoldWihtCheck( okFunc, ngFunc ){
         throw new Error("Not implemented.");
     }
 
@@ -158,6 +165,23 @@ export default class ACallInfo {
     toggleRecordingAsync(){
         throw new Error("Not implemented.");
         return new Promise( null );
+    }
+
+    /**
+     *  abstract  method
+     * @param func
+     */
+    addOnHoldFunction( func ) {
+        throw new Error("Not implemented.");
+    }
+
+    /**
+     *  abstract method
+     * @param func
+     * @return is deleted.
+     */
+    removeOnHoldFunction( func ){
+        throw new Error("Not implemented.");
     }
 
 }

@@ -87,7 +87,7 @@ export default class AutoDialView extends React.Component {
                                             okText={i18n.t("yes")}
                                             cancelText={i18n.t("no")}
                                 >
-                                    <Button type="secondary">Clear recent</Button>
+                                    <Button>Clear recent</Button>
                                 </Popconfirm>
                             </td>
                             <td style={{textAlign:"right",verticalAlign:"top"}} onClick={this._onClickClose.bind(this)} className="linkDeco" >[X]</td>
@@ -123,6 +123,7 @@ export default class AutoDialView extends React.Component {
                                                         <td style={{width:"1%"}}>{callNo}</td>
                                                         <td><div className={statusClassName}></div></td>
                                                         <td>
+                                                            <div style={{display:"flex",justifyContent:"center"}}>
                                                             <button title={i18n.t(`legacy_button_description.LegacyMakeCallButton`)} className="kbc-button kbc-button-fill-parent legacyButtonPadding"
                                                                     onClick={ () => {
                                                                         this.props.operatorConsoleAsParent.abortAutoDialView();
@@ -132,6 +133,7 @@ export default class AutoDialView extends React.Component {
                                                                     }>
                                                                 { <FontAwesomeIcon size="lg" icon="fas fa-phone"/> }
                                                             </button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 )
@@ -159,19 +161,23 @@ export default class AutoDialView extends React.Component {
                                                         <td style={{width:100}}>{ext.id}</td>
                                                         <td style={{width:100}}>{ext.name}</td>
                                                         <td style={{width:20}}><div className={statusClassName}></div></td>
-                                                        <td style={{width:50}}>
-                                                            <button title={i18n.t(`legacy_button_description.LegacyMakeCallButton`)} className="kbc-button kbc-button-fill-parent legacyButtonPadding"
-                                                                    onClick={ () => {
+                                                        <td style={{width: 50}}>
+                                                            <div style={{display: "flex", justifyContent: "center"}}>
+                                                                <button
+                                                                    title={i18n.t(`legacy_button_description.LegacyMakeCallButton`)}
+                                                                    className="kbc-button kbc-button-fill-parent legacyButtonPadding"
+                                                                    onClick={() => {
                                                                         //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( ext.id, this.props.currentCallIndex, this.props.callIds, this.props.callById );
-                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2( ext.id  );
+                                                                        this.props.operatorConsoleAsParent.setDialingAndMakeCall2(ext.id);
                                                                         this.props.operatorConsoleAsParent.abortAutoDialView();
                                                                     }
                                                                     }>
-                                                                { <FontAwesomeIcon size="lg" icon="fas fa-phone"/> }
-                                                            </button>
+                                                                    {<FontAwesomeIcon size="lg" icon="fas fa-phone"/>}
+                                                                </button>
+                                                            </div>
                                                         </td>
                                                     </tr>
-                                                )
+                                            )
                                             })}
                                             </tbody>
                                         </table>

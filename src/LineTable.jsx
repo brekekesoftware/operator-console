@@ -248,7 +248,7 @@ function TransferButton({ context, lineInfo, callInfo, title,
                     if (!callInfo) {
                         Notification.error({message: i18n.t("failed_to_transfer_call")});
                     } else {
-                        callInfo.hangupWithUnhold();
+                        callInfo.hangup();
                     }
                 }
             }
@@ -275,7 +275,7 @@ function TransferButton({ context, lineInfo, callInfo, title,
                     if (!callInfo) {
                         Notification.error({message: i18n.t("failed_to_transfer_call")});
                     } else {
-                        callInfo.hangupWithUnhold();
+                        callInfo.hangup();
                     }
                 }
             }

@@ -32,6 +32,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
         return this._isPalReady;
     }
 
+    hangup( webphoneCallInfo  ){
+        const callId = webphoneCallInfo.getCallId();
+        const session = this._webrtcclient.getSession(callId);
+        session.rtcSession.terminate();
+    }
+
     /**
      *  overload method
      * @param tenant
@@ -114,8 +120,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._Webphone.on("onClose", this._onWebphoneOnClose );
         this._Webphone.on("onclose", this._onWebphoneOnclose  );
 
+        const this_ = this;
+        this._Webphone.on("webrtcclient", function( webrcclient ) {
+            this_._Webphone.removeAllListeners("webrtcclient");
+            this_._webrtcclient = webrcclient;
+        });
 
-        const this_  = this;
         this._Webphone.on('call', c => {
             console.log('call', c);
             this_._onCall( c );
@@ -456,6 +466,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
      */
     deinitPhoneClient(){
         this._isPalReady = false;
+        this._webrtcclient = null;
         this._Webphone.removeAllListeners("call");
         this._Webphone.removeAllListeners("call_update");
         this._Webphone.removeAllListeners("call_end");
@@ -482,6 +493,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._Webphone.removeAllListeners('error');
         this._Webphone.removeAllListeners('onerror');
         this._Webphone.removeAllListeners('onError');
+        this._Webphone.removeAllListeners("webrtcclient");
 
         super.deinitPhoneClient();
     }
@@ -584,7 +596,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
             property_names: ['name'],
         }).then(extensions => {
             const oExtensions = extensions.map(([id,name]) => ({id,name}));
-            onInitSuccessFunction( oExtensions );
+            const intervalId = setInterval( ()=>{
+                if( this._webrtcclient ){
+                    clearInterval( intervalId );
+                    onInitSuccessFunction( oExtensions );
+                }
+            }, 1000);
         })
 
     }
@@ -614,5 +631,16 @@ export default class WebphonePhoneClient  extends APhoneClient {
         }
         //return true;
     }
-    
+
+    // unhold( aCallInfo, onOkFunc, onErrorFunc ){
+    //     const tenant = this._OperatorConsoleAsParent.getLoggedinTenant();
+    //     const talkerId = aCallInfo.getPbxTalkerId();
+    //     this.pal.unhold({tenant:tenant,tid:talkerId}, onOkFunc, onErrorFunc );
+    // }
+    //
+    // hold( aCallInfo, onOkFunc, onErrorFunc ){
+    //     const tenant = this._OperatorConsoleAsParent.getLoggedinTenant();
+    //     const talkerId = aCallInfo.getPbxTalkerId();
+    //     this.pal.hold({tenant:tenant,tid:talkerId}, onOkFunc, onErrorFunc );
+    // }
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import ReactDOM from 'react-dom/client'
 import Login from './login'
 // import { IconPhone, IconBackspace } from './icons'
@@ -95,7 +95,7 @@ import ExtensionsStatus from "./ExtensionsStatus";
 import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
 import NoScreensView from "./NoScreensView";
-import {Modal} from "antd";
+import {Select,Modal} from "antd";
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";
 import LegacyUccacWidgetSettings from "./LegacyUccacWidgetSettings";
 import CallTableSettings from "./CallTableSettings";
@@ -110,6 +110,7 @@ import UccacWidget from "./UccacWidget";
 import Login from "./Login";
 import ACallInfos from "./ACallInfos";
 import ACallInfo from "./ACallInfo";
+import FileInfosLoader from "./FileInfosLoader";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -122,9 +123,9 @@ export const brOcDisplayStates = Object.freeze({
 function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgColor, callpanelFgColor,
                             outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
                             insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
-                            context = {} }) {
+                            context }) {
     //const { currentCallIndex, callIds = [], callById = {}, dialing  } = context;
-    const dialing = context.dialing;
+    const dialing = !!context ? context.dialing : undefined;
     //const currentCall = callById[callIds[currentCallIndex]];
     const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
     return (
@@ -145,6 +146,7 @@ function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgCol
             insideShadow_blur={insideShadow_blur}
             insideShadow_spread={insideShadow_spread}
             insideShadow_color={insideShadow_color}
+            isEditMode={!context}
         />
     );
 }
@@ -203,6 +205,7 @@ function LegacyCallTalkingButton({ operatorConsoleAsParent, subtype, icon, label
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className=
             {
@@ -217,7 +220,7 @@ function LegacyCallTalkingButton({ operatorConsoleAsParent, subtype, icon, label
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 // function LegacyIsExtensionButton({ subtype, icon, label, context = {} }) {
@@ -240,6 +243,7 @@ function LegacyNoAnswerButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", context.autoRejectIncoming && 'kbc-button-danger')}
                 style={{
@@ -248,7 +252,7 @@ function LegacyNoAnswerButton({ operatorConsoleAsParent, subtype, icon, label, b
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={context.toggleAutoRejectIncoming}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={context.toggleAutoRejectIncoming}>{iconJsx}</button>
     );
 }
 function LegacyCallbackButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -257,6 +261,7 @@ function LegacyCallbackButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -265,7 +270,7 @@ function LegacyCallbackButton({ operatorConsoleAsParent, subtype, icon, label, b
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyTransferButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context ={} }) {
@@ -274,6 +279,7 @@ function LegacyTransferButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         // <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => context.operatorConsole.transferDialingCall() } className="kbc-button kbc-button-fill-parent"
         <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => operatorConsoleAsParent.transferDialingCall() } className="kbc-button kbc-button-fill-parent"                style={{
@@ -282,7 +288,7 @@ function LegacyTransferButton({ operatorConsoleAsParent, subtype, icon, label, b
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 
@@ -296,6 +302,7 @@ function LegacyToggleRecordingButton({ operatorConsoleAsParent, subtype, icon, l
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallInfo?.getIsRecording() && 'kbc-button-danger')}
                 style={{
@@ -307,7 +314,7 @@ function LegacyToggleRecordingButton({ operatorConsoleAsParent, subtype, icon, l
                 onClick={ () =>{
                     context.toggleCallRecording();
                 }}
-                >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                >{iconJsx}</button>
     );
 }
 function LegacyAlarmButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -316,6 +323,7 @@ function LegacyAlarmButton({ operatorConsoleAsParent, subtype, icon, label, butt
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -324,7 +332,7 @@ function LegacyAlarmButton({ operatorConsoleAsParent, subtype, icon, label, butt
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyPrevCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
@@ -337,6 +345,7 @@ function LegacyPrevCallButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash")}
                 style={{
@@ -347,7 +356,7 @@ function LegacyPrevCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                 }}
                 onClick={(!callInfoCount || currentCallIndex === 0) ? undefined : context.switchCallUp}
         >
-            {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+            {iconJsx}
         </button>
     );
 }
@@ -357,6 +366,7 @@ function LegacyMonitorDialingExtensionButton({ operatorConsoleAsParent, subtype,
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -365,7 +375,7 @@ function LegacyMonitorDialingExtensionButton({ operatorConsoleAsParent, subtype,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={context.monitorDialingExtension}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={context.monitorDialingExtension}>{iconJsx}</button>
     );
 }
 function LegacyStationLineDesignationButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -374,6 +384,7 @@ function LegacyStationLineDesignationButton({ operatorConsoleAsParent, subtype, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -382,7 +393,7 @@ function LegacyStationLineDesignationButton({ operatorConsoleAsParent, subtype, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyParkCallButton({ operatorConsoleAsParent, subtype, icon, label, number, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -393,6 +404,7 @@ function LegacyParkCallButton({ operatorConsoleAsParent, subtype, icon, label, n
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", light)}
                 style={{
@@ -401,7 +413,7 @@ function LegacyParkCallButton({ operatorConsoleAsParent, subtype, icon, label, n
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={() => context?.handlePark(number)}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={() => context?.handlePark(number)}>{iconJsx}</button>
     );
 }
 function LegacySeriesSetButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -410,6 +422,7 @@ function LegacySeriesSetButton({ operatorConsoleAsParent, subtype, icon, label, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -418,7 +431,7 @@ function LegacySeriesSetButton({ operatorConsoleAsParent, subtype, icon, label, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyMonitoringCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
@@ -427,6 +440,7 @@ function LegacyMonitoringCallButton({ operatorConsoleAsParent, subtype, icon, la
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", !!context.monitoringExtension && 'kbc-button-danger')} //!todo implement
                 style={{
@@ -435,7 +449,7 @@ function LegacyMonitoringCallButton({ operatorConsoleAsParent, subtype, icon, la
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyStartButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -444,6 +458,7 @@ function LegacyStartButton({ operatorConsoleAsParent, subtype, icon, label, butt
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -452,7 +467,7 @@ function LegacyStartButton({ operatorConsoleAsParent, subtype, icon, label, butt
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyToggleMutedButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
@@ -464,6 +479,7 @@ function LegacyToggleMutedButton({ operatorConsoleAsParent, subtype, icon, label
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallInfo?.getIsMuted() && 'kbc-button-danger')}
                 style={{
@@ -472,7 +488,7 @@ function LegacyToggleMutedButton({ operatorConsoleAsParent, subtype, icon, label
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCallInfo) ? undefined : context.toggleCallMuted}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo) ? undefined : context.toggleCallMuted}>{iconJsx}</button>
     );
 }
 function LegacyLeavingSeatButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
@@ -481,6 +497,7 @@ function LegacyLeavingSeatButton({ operatorConsoleAsParent, subtype, icon, label
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -489,7 +506,7 @@ function LegacyLeavingSeatButton({ operatorConsoleAsParent, subtype, icon, label
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyNightTimeButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
@@ -498,6 +515,7 @@ function LegacyNightTimeButton({ operatorConsoleAsParent, subtype, icon, label, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo implement
                 style={{
@@ -506,7 +524,7 @@ function LegacyNightTimeButton({ operatorConsoleAsParent, subtype, icon, label, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyAvailableButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -515,6 +533,7 @@ function LegacyAvailableButton({ operatorConsoleAsParent, subtype, icon, label, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"   //!todo impelement
                 style={{
@@ -523,7 +542,7 @@ function LegacyAvailableButton({ operatorConsoleAsParent, subtype, icon, label, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyNextCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {}}) {
@@ -536,6 +555,7 @@ function LegacyNextCallButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (currentCallIndex < callInfoCount - 1) && "kbc-button-danger-flash")}
                 style={{
@@ -545,7 +565,7 @@ function LegacyNextCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                     backgroundColor:backgroundColor
                 }}
                 onClick={(!callInfoCount || currentCallIndex === callInfoCount - 1) ? undefined : context.switchCallDown}>
-            {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+            {iconJsx}
         </button>
     );
 }
@@ -577,6 +597,7 @@ function LegacyLineButton({ operatorConsoleAsParent, subtype, icon, label, line,
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}
                 className={clsx("kbc-button kbc-button-fill-parent", light)}
@@ -588,16 +609,17 @@ function LegacyLineButton({ operatorConsoleAsParent, subtype, icon, label, line,
                 }}
                 onClick={() => context.handleLine(line)}
         >
-            {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+            {iconJsx}
         </button>
     );
 }
-function LegacyKeypadButton({ operatorConsoleAsParent, subtype, icon, symbol, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+function LegacyKeypadButton({ operatorConsoleAsParent, subtype, icon,  symbol, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, symbol );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -616,7 +638,7 @@ function LegacyKeypadButton({ operatorConsoleAsParent, subtype, icon, symbol, bu
                             context.appendKeypadValue(symbol);
                         }
                     }
-                }>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : symbol}</button>
+                }>{iconJsx}</button>
     );
 }
 
@@ -645,6 +667,7 @@ function LegacyMakeCallButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -659,7 +682,7 @@ function LegacyMakeCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                     }
                 }
                 }>
-            {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+            {iconJsx}
         </button>
     );
 }
@@ -671,6 +694,7 @@ function LegacyBackspaceButton({ operatorConsoleAsParent, subtype, icon, label, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -680,7 +704,7 @@ function LegacyBackspaceButton({ operatorConsoleAsParent, subtype, icon, label, 
                     backgroundColor:backgroundColor
                 }}
                 onClick={context.backspaceKeypadValue}>
-            {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+            {iconJsx}
         </button>
     );
 }
@@ -693,6 +717,7 @@ function LegacyIncomingCallButton({ operatorConsoleAsParent, subtype, icon, labe
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className={clsx("kbc-button kbc-button-fill-parent", (currentCallInfo?.getIsIncoming() && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding() ) && 'kbc-button-danger')}    //!todo implement
                 style={{
@@ -701,7 +726,7 @@ function LegacyIncomingCallButton({ operatorConsoleAsParent, subtype, icon, labe
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -710,6 +735,7 @@ function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, labe
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -718,7 +744,7 @@ function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, labe
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={context.joinConversation}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={context.joinConversation}>{iconJsx}</button>
     );
     /*
     return (
@@ -729,7 +755,7 @@ function LegacyThreeWayCallButton({ operatorConsoleAsParent, subtype, icon, labe
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!context.monitoringExtension) ? undefined : context.joinConversation}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!context.monitoringExtension) ? undefined : context.joinConversation}>{iconJsx}</button>
     );
      */
 }
@@ -742,6 +768,7 @@ function LegacyOutgoingCallButton({ operatorConsoleAsParent, subtype, icon, labe
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", (!!currentCallInfo && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsIncoming() && !currentCallInfo?.getIsHolding()) && 'kbc-button-danger')}  //!todo implement
                 style={{
@@ -750,7 +777,7 @@ function LegacyOutgoingCallButton({ operatorConsoleAsParent, subtype, icon, labe
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyHangUpCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -762,6 +789,23 @@ function LegacyHangUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
+
+    let bDisabled;
+    if( currentCallInfo ){
+        const callStatus = currentCallInfo.getCallStatus();
+        const bHolding = callStatus === ACallInfo.CALL_STATUSES.holding;
+        if( bHolding === true ){
+            bDisabled = true;
+        }
+        else{
+            bDisabled = false;
+        }
+    }
+    else{
+        bDisabled = false;
+    }
+
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -770,7 +814,16 @@ function LegacyHangUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCallInfo) ? undefined : context.hangUpCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={
+                    () => {
+                        if(!currentCallInfo) {
+                            return;
+                        }
+                        context.hangUpCall();
+                    }
+                }
+                disabled={bDisabled}
+                >{iconJsx}</button>
     );
 }
 function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -782,6 +835,7 @@ function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label,
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -790,7 +844,19 @@ function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label,
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCallInfo || !currentCallInfo.getIsHolding()) ? undefined : context.resumeCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={
+                    () => {
+                        if( !currentCallInfo ) {
+                            return;
+                        }
+                        const bHolding =  currentCallInfo.getIsHolding();
+                        if( !bHolding ) {
+                            return;
+                        }
+                        context.resumeCall();
+                    }
+                }
+                >{iconJsx}</button>
     );
 }
 function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -803,6 +869,7 @@ function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -811,7 +878,7 @@ function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={(!currentCallInfo || !currentCallInfo.getIsAnswered() || currentCallInfo.getIsHolding() ) ? undefined : context.holdCall}>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={(!currentCallInfo || !currentCallInfo.getIsAnswered() || currentCallInfo.getIsHolding() ) ? undefined : context.holdCall}>{iconJsx}</button>
     );
 }
 function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -824,6 +891,7 @@ function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -834,22 +902,54 @@ function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
                 }}
                 onClick={
                     () => {
-                        const b = !!currentCallInfo && currentCallInfo.getIsIncoming() && !currentCallInfo.getIsAnswered();
-                        if (b) {
-                            context.answerCall();
+                        if( !currentCallInfo ) {
+                            return;
                         }
+                        const bIsIncoming = currentCallInfo.getIsIncoming();
+                        if( !bIsIncoming ) {
+                            return;
+                        }
+                        const bIsAnswered = currentCallInfo.getIsAnswered();
+                        if( bIsAnswered ) {
+                            return;
+                        }
+
+                        context.answerCall();
                     }
                 }>
-                {icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}
+                {iconJsx}
         </button>
     );
 }
+function getIconJsx( icon, label ){
+    let iconJsx;
+    if( !icon ){
+        iconJsx = label;
+    }
+    else if( icon.startsWith("PATH:") ){
+        let alt;
+        if( label ){
+            alt = label;
+        }
+        else{
+            alt = icon;
+        }
+        const src = icon.substring(5,icon.length);   //5 is path:
+        iconJsx = (<img src={src} alt={alt} width={32} heigth={32} />);
+    }
+    else {
+        iconJsx = (<FontAwesomeIcon size="lg" icon={icon}/>);
+    }
+    return iconJsx;
+}
+
 function LegacyDummyButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness  }) {
     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -858,7 +958,7 @@ function LegacyDummyButton({ operatorConsoleAsParent, subtype, icon, label, butt
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-        >{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -867,6 +967,7 @@ function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, 
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         //<button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", context.widget && context.currentScreenQuickCallWidget === context.widget && 'kbc-button-danger')}
@@ -876,7 +977,7 @@ function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={ () => context?.toggleQuickCallScreen( context.widget )  }>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={ () => context?.toggleQuickCallScreen( context.widget )  }>{iconJsx}</button>
     );
 }
 
@@ -887,6 +988,7 @@ function LegacyAutoDialButton({ operatorConsoleAsParent, subtype, icon, label, b
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     return (
         //<button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger')}
@@ -896,7 +998,7 @@ function LegacyAutoDialButton({ operatorConsoleAsParent, subtype, icon, label, b
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={ () => context?.onClickAutoDial( context.widget )  }>{icon ? <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                onClick={ () => context?.onClickAutoDial( context.widget )  }>{iconJsx}</button>
     );
 }
 
@@ -906,6 +1008,7 @@ function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, labe
     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx( icon, label );
     if( !context ){ //edit mode
         return (
             <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"    //!todo implement onClick
@@ -929,8 +1032,52 @@ function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, labe
                         color:color,
                         backgroundColor:backgroundColor
                     }}
-                    onClick={() => setDialingAndMakeCall(number, context )}>{icon ?
-                <FontAwesomeIcon size="lg" icon={icon}/> : label}</button>
+                    onClick={() => {
+                        let onetouchdialMode = widget.onetouchdialMode;
+                        if( !onetouchdialMode ) {
+                            onetouchdialMode = "callOnly";    //!default
+                        }
+
+                        const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
+                        if( !!currentCallInfo ) {   //transfer?
+                            const callStatus = currentCallInfo.getCallStatus();
+                            const canTransferByCallStatus = callStatus == ACallInfo.CALL_STATUSES.holding || callStatus === ACallInfo.CALL_STATUSES.talking;
+                            if( canTransferByCallStatus === true ) {
+                                const canTransferByOnetouchdialMode = onetouchdialMode === "attendedTransferOrCall" || onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "attendedTransferOnly" || onetouchdialMode === "blindTransferOnly";
+                                if(  canTransferByOnetouchdialMode === true ) {
+                                    //const talkerId = currentCallInfo.getPbxTalkerId();
+                                    //const tenant = operatorConsoleAsParent.getLoggedinTenant();
+                                    const mode = onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "blindTransferOnly" ? "blind" : undefined; //use attended
+                                    operatorConsoleAsParent.transferCall( number, mode, currentCallInfo );
+                                    return;
+                                }
+                            }
+                        }
+
+                        //call
+                        if( onetouchdialMode !== "attendedTransferOnly" && onetouchdialMode !== "blindTransferOnly" ) {
+                            if( currentCallInfo ) {
+                                const callStatus = currentCallInfo.getCallStatus();
+                                if( callStatus === ACallInfo.CALL_STATUSES.talking ) {
+                                    const timelimit = Date.now() + BrekekeOperatorConsole.WAIT_HOLD_TIMELIMIT_MILLIS_AT_ONETOUCHDIAL;
+                                    const func = function (callInfoAsCaller) {
+                                        const removed = currentCallInfo.removeOnHoldFunction(func);
+                                        if (Date.now() > timelimit) {
+                                            Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial') + "\r\n" +  e, duration:0 });
+                                            return;
+                                        }
+                                        setDialingAndMakeCall(number, context);
+                                    };
+                                    currentCallInfo.addOnHoldFunction(func);
+                                    currentCallInfo.toggleHoldWithCheck();
+                                    return;
+                                }
+                            }
+                            setDialingAndMakeCall(number, context);
+                        }
+                    }}>
+                {iconJsx}
+            </button>
         );
     }
 }
@@ -1590,6 +1737,14 @@ class LegacyButtonSettings extends React.Component {
         this.state = {
             widget: window.structuredClone(this.props.widget),
         };
+
+         const operatorConsoleAsParent = props.operatorConsoleAsParent;
+        const defaultButtonFileInfos = operatorConsoleAsParent.getDefaultButtonImageFileInfos();
+        let fileInfos = defaultButtonFileInfos.getFileInfos();
+        if( !fileInfos ){
+            fileInfos = new Array();
+        }
+        let key = -1;
         this.iconSelect = (
             <Select
                 showSearch
@@ -1601,10 +1756,25 @@ class LegacyButtonSettings extends React.Component {
                 <Select.Option value={''}></Select.Option>
                 {[...Object.values(fas), ...Object.values(far), ...Object.values(fab)].map((icon, i) => {
                     const value = icon.prefix + ' fa-' + icon.iconName;
+                    key++;
                     return (
-                        <Select.Option key={i} value={value}>
+                        <Select.Option key={key} value={value}>
                             <FontAwesomeIcon fixedWidth icon={icon}/>
                             <span style={{marginLeft: 4}}>{icon.iconName}</span>
+                        </Select.Option>
+                    );
+                })}
+                { fileInfos.map( (fileInfo, i ) =>{
+                    key++;
+                    const fileName = fileInfo["name"];
+                    const fileUrl = fileInfo["url"];
+                    const value = "PATH:" + fileUrl;
+                    return (
+                        <Select.Option key={key} value={value}>
+                            <div style={{display:"table",verticalAlign:"middle"}}>
+                                <img src={fileUrl} width={32} height={32} style={{verticalAlign:"middle"}}/>
+                                <div style={{display:"table-cell",paddingLeft: 4,verticalAlign:"middle"}}>{fileName}</div>
+                            </div>
                         </Select.Option>
                     );
                 })}
@@ -1712,9 +1882,25 @@ class LegacyButtonSettings extends React.Component {
                     </Form.Item>
                 </>)}
                 {this.state.widget.subtype === LegacyOneTouchDialButton.name && (
-                    <Form.Item label={i18n.t("number")} name="number">
-                        <Input allowClear/>
-                    </Form.Item>
+                    <>
+                        <Form.Item label={i18n.t("number")} name="number">
+                            <Input allowClear/>
+                        </Form.Item>
+                        <Form.Item label={i18n.t("mode")} name="onetouchdialMode">
+                            <Select
+                                // onChange={(value) => {
+                                // }}
+                                style={{ width: "100%"}}
+                                //placeholder="Please select a option"
+                            >
+                                <Option value="callOnly">{i18n.t("callOnly")}</Option>
+                                <Option value="attendedTransferOrCall">{i18n.t("attendedTransferOrCall")}</Option>
+                                <Option value="blindTransferOrCall">{i18n.t("blindTransferOrCall")}</Option>
+                                <Option value="attendedTransferOnly">{i18n.t("attendedTransferOnly")}</Option>
+                                <Option value="blindTransferOnly">{i18n.t("blindTransferOnly")}</Option>
+                            </Select>
+                        </Form.Item>
+                    </>
                 )}
                 <Form.Item label={i18n.t("fgColor")} name={"buttonFgColor" } rules={[
                     {
@@ -1974,7 +2160,7 @@ const WidgetSettingsMap = {
     [LegacyCallPanel.name]:LegacyCallPanelSettings,
     [CallTable.name]: CallTableSettings,
     [ExtensionTable.name]: ExtensionTableSettings,
-    [LegacyUccacWidget.name]:LegacyUccacWidgetSettings,
+    [LegacyUccacWidget.name]:LegacyUccacWidgetSettings
 }
 
 const ToolboxWidgets = [
@@ -2604,10 +2790,15 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._LoginPalWrapper = new PalWrapper();
 
         this._RootURLString = Util.getRootUrlString();
+        this._DefaultButtonImageFileInfos = new FileInfosLoader();
         this._OnBeforeUnloadFunc = (event) => { this._onBeforeUnload(event)};
         this._OnUnloadFunc = (event) => { this._onUnload( event )};
         window.addEventListener("unload", this._OnUnloadFunc );
         this._defaultSystemSettingsData = new SystemSettingsData( this );
+    }
+
+    getDefaultButtonImageFileInfos(){
+        return this._DefaultButtonImageFileInfos;
     }
 
     getPhoneClient(){
@@ -2848,6 +3039,12 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
 
+        //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+        const newLayoutModalOpen = this.state.newLayoutModalOpen;
+        if( newLayoutModalOpen === true ){
+            return;
+        }
+
         if (
             e.getModifierState("Hyper") ||
             e.getModifierState("Fn") ||
@@ -2891,6 +3088,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 case "ArrowUp":
                 case "Up":
                     e.preventDefault();
+                    break;
+                case "Process":
+                    e.preventDefault()();
                     break;
             }
         }
@@ -2968,6 +3168,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                 //case ***; //copilot //!check //!todo //!check //!forbug
             case 91: //meta
             case 29: //NonConvert
+            case 0: //char key ( with F12?) //for Firefox
+            case 229: //char key ( with F12?)
                 return;
                 break;
         }
@@ -4485,8 +4687,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnHoldCallInfoEventListeners.splice(0);
     }
 
+    onAnswerIncomingCallByPalCallInfo( callInfoAsCaller ){
+        this._CallHistory.addCallNoAndSave( callInfoAsCaller.getPartyNumber() );
+    }
 
     onAddCallInfoByCallInfos( callInfos, callInfo ) {
+        const callStatus = callInfo.getCallStatus();
+        if( callStatus === ACallInfo.CALL_STATUSES.calling ){
+            this._CallHistory.addCallNoAndSave( callInfo.getPartyNumber() );
+        }
+
         this.setState({refresh:true});
 
         const options = {
@@ -4821,7 +5031,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     hangUpCall = () => {
         const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         if (currentCallInfo) {
-            currentCallInfo.hangupWithUnhold();
+            currentCallInfo.hangup();
         }
     }
 
@@ -4829,8 +5039,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         if (currentCallInfo && !currentCallInfo.getIsAnswered() ) {
             currentCallInfo.answerCall();
-            const callerNo = currentCallInfo.getPartyNumber();
-            this._CallHistory.addCallNoAndSave(callerNo);
+            // const callerNo = currentCallInfo.getPartyNumber();
+            // this._CallHistory.addCallNoAndSave(callerNo);
         }
     }
 
@@ -4841,15 +5051,29 @@ export default class BrekekeOperatorConsole extends React.Component {
         } );
     }
 
-    transferCall = async ( dialing, mode ) => {
-        const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
-        if (!currentCallInfo) {
-            return;
+    transferCall = async ( dialing, mode, callInfo ) => {
+        if( !callInfo ){
+            callInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         }
-        //const tenant = currentCall.pbxTenant;
+        if (!callInfo) {
+            return false;
+        }
+        //const tenant = callInfo.pbxTenant;
         const tenant = undefined;   //!testit
-        const talkerId = currentCallInfo.getPbxTalkerId();
-        await this.transferCallCore( dialing, mode, talkerId, tenant );
+        const talkerId = callInfo.getPbxTalkerId();
+        await this.transferCallCore( dialing, mode, talkerId, tenant,
+                function( this_, message ){
+                    if( mode === "blind") {
+                        if (message && message.toLowerCase().startsWith("fail")) {
+                            //!fail
+                        } else {
+                            callInfo.hangup();
+                        }
+                    }
+                }
+            );
+
+        return true;
     }
 
     transferCallCore = async ( dialing, mode, talkerId, tenant, onDoneFunc  ) => {
@@ -4866,6 +5090,12 @@ export default class BrekekeOperatorConsole extends React.Component {
                 throw err;
             });
         }
+        else {
+            //!testit
+            console.error("Failed to transfer call. isPalReady=" + this._aphone.isPalReady() + ",dialing=" + dialing );
+            Notification.error({message: i18n.t('failed_to_transfer_call'), duration: 0});
+        }
+
     }
 
     _isSendDTMFChar( key ){
@@ -4935,7 +5165,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             return false;
         }
         console.log("makeCall: sDialing=" + sDialing);
-        this._CallHistory.addCallNoAndSave(sDialing);
+        //this._CallHistory.addCallNoAndSave(sDialing);
 
         const bUsingLine = this.state.usingLine;
 
@@ -5142,7 +5372,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         else{
             console.error("setOCNote failed. error=" , e );
         }
-        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') , duration:0 });
 
         // let message = eventArg ? eventArg.message : "";
         // if (!message) {
@@ -5311,17 +5541,53 @@ export default class BrekekeOperatorConsole extends React.Component {
         }, () => {
 //            this.syncDownScreens();
 //            this._syncDownLayout();
-            this._downLayoutAndSystemSettingsForLoggedin(
-                function(){
 
+            const filesFileUrl = "components/button/icons/default/filenames.txt";
+            const loadDefaultButtonImageFileInfosOptions = {
+                filesFileUrl: filesFileUrl,
+                timeoutMillisecond:60000,
+                loadSuccessFunction : (options) =>{
+                    this._startDownLayoutAndSystemSettingsForLoggedin();
                 },
-                function(){
-
+                loadFailFunction : (options) =>{
+                    const xhrFail = options["xhrFail"];
+                    //const filesfile = options["filesFile"];
+                    const httpStatus = xhrFail.status;
+                    if( httpStatus !== 404 ){
+                        //defined
+                        console.error("Failed to load file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
+                        Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  fileRootUrl, duration:0 });
+                    }
+                    this._startDownLayoutAndSystemSettingsForLoggedin();
+                },
+                loadErrorFunction : ( options ) =>{
+                    console.error("An error occurred while loading the file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
+                    Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  fileRootUrl, duration:0 });
+                    this._startDownLayoutAndSystemSettingsForLoggedin();
+                },
+                loadTimeoutFunction: (options) =>{
+                    console.error("Loading the file list timed out. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
+                    Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  fileRootUrl, duration:0 });
+                    this._startDownLayoutAndSystemSettingsForLoggedin();
                 }
-            );
+            };
+            this._DefaultButtonImageFileInfos.load( loadDefaultButtonImageFileInfosOptions  );
+
         });
 
     }
+
+    _startDownLayoutAndSystemSettingsForLoggedin(){
+        this._downLayoutAndSystemSettingsForLoggedin(
+            function(){
+
+            },
+            function(){
+
+            }
+        );
+    }
+
 
 //     onEndInitByWebphonePhoneClient( account ){
 //         const this_ = this;
@@ -5765,7 +6031,7 @@ BrekekeOperatorConsole.DTMF_CHARS = [
     '0','1','2','3','4','5','6','7','8','9','*','#'
 ]
 BrekekeOperatorConsole.DIALING_MAX_LENGTH = 20; //!const
-
+BrekekeOperatorConsole.WAIT_HOLD_TIMELIMIT_MILLIS_AT_ONETOUCHDIAL = 20 * 1000;
 
 export function OperatorConsole( el, props ) {
     const root = ReactDOM.createRoot( el );

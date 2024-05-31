@@ -7,6 +7,7 @@ export default class WebphoneCallInfo extends ACallInfo {
     constructor( webphoneCallInfosAsParent, callObject) {
         super( webphoneCallInfosAsParent );
         this._WebphoneCallInfosAsParent = webphoneCallInfosAsParent;
+        this._OnHoldFunctions = new Array();    //!const
         this._Id = callObject.id;
         this._hangupWithUnhold = callObject.hangupWithUnhold;
         this._conferenceTransferring = callObject.conferenceTransferring;
@@ -108,6 +109,12 @@ export default class WebphoneCallInfo extends ACallInfo {
         if( field === "holding" ){
             if( val === true ){
                 this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onHoldByCallInfo(this);
+
+                const onHoldFunctions = [...this._OnHoldFunctions];
+                for( let i = 0; i < onHoldFunctions.length; i++ ) {
+                    const func = onHoldFunctions[i];
+                    func( this );   //!forBug needs try catch?
+                }
             }
             else if( val === false ){
                 this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUnholdByCallInfo(this);
@@ -127,6 +134,8 @@ export default class WebphoneCallInfo extends ACallInfo {
     }
 
     onUpdateWebphoneCallObject(callObject) {
+        const wasAnsweredAt = this._answeredAt;
+
         this._hangupWithUnhold = callObject.hangupWithUnhold;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
@@ -143,6 +152,14 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
 
+        if( this._incoming ) {
+            if (!wasAnsweredAt || wasAnsweredAt === 0) {
+                if (this._answeredAt && this._answeredAt !== 0) {
+                    //answered incoming call.
+                    this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByPalCallInfo( this );
+                }
+            }
+        }
         this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUpdateCallInfoByCallInfo(this);
 
     }
@@ -153,6 +170,14 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     getCallId() {
         return this._Id;
+    }
+
+    /**
+     *  Overload method
+     */
+    hangup(){
+        const cl = this._WebphoneCallInfosAsParent.getWebphonePhoneClientAsParent();
+        cl.hangup( this );
     }
 
     /**
@@ -236,5 +261,26 @@ export default class WebphoneCallInfo extends ACallInfo {
         return promise;
     }
 
+    /**
+     *  overload method
+     * @param func
+     */
+    addOnHoldFunction( func ) {
+        this._OnHoldFunctions.push( func );
+    }
 
+    /**
+     *  overload method
+     * @param func
+     * @return is deleted.
+     */
+    removeOnHoldFunction( func ) {
+        const index = this._OnHoldFunctions.indexOf(func);
+        if( index === -1 ){
+            return false;
+        }
+
+        this._OnHoldFunctions.splice(index, 1);
+        return true;
+    }
 }

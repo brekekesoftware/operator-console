@@ -27,7 +27,7 @@ export default function NoScreensView( props ){
     const [ newLayoutUseForm ] = Form.useForm();
     const [newLayoutConfirmOpen, setNewLayoutConfirmOpen] = useState(false);
     const [newLayoutName, setNewLayoutName ] = useState( "" );
-    const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
 
     const handleNewLayoutOk = () => {
         newLayoutUseForm.validateFields().then(( values ) => {
@@ -122,7 +122,7 @@ export default function NoScreensView( props ){
     };
     const handleNewLayoutCancel = () => {
         cancelConfirmNewLayout();
-        setNewLayoutModalOpen(false);
+        operatorConsoleAsParent.setState({newLayoutModalOpen:false} );
         setOpen(true);
     };
 
@@ -288,7 +288,7 @@ export default function NoScreensView( props ){
             </Button>,
             <Button key="submit" type="primary" onClick={ () =>{
                 setOpen(false);
-                setNewLayoutModalOpen(true);
+                operatorConsoleAsParent.setState({newLayoutModalOpen:true});
             } }>
                 {i18n.t("newLayout")}
             </Button>,
@@ -326,7 +326,7 @@ export default function NoScreensView( props ){
                 useStateNoteNamesContent = { noteNamesContent }
             />
             <Modal
-                open={newLayoutModalOpen}
+                open={ operatorConsoleAsParent.getState().newLayoutModalOpen}
                 title={i18n.t("newLayout")}
                 onOk={   handleNewLayoutOk }
                 onCancel={handleNewLayoutCancel}

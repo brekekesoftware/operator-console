@@ -8,6 +8,7 @@ export default class WebphoneCallInfos extends ACallInfos{
         this._WebphoneCallInfoArray = new Array();
         this._WebphoneCallInfoObject = new Object();    //{callid:webphoneCallInfo}
         this._currentCallIndex = -1;
+        this._WebphonePhoneClientAsParent = options["phoneClient"];
         //this._callIds = new Array();
         //this.callById = new Object();
     }
@@ -98,5 +99,9 @@ export default class WebphoneCallInfos extends ACallInfos{
         // });
         const callInfo = this._getCallInfoByCallId( call.id );
         callInfo.onUpdateWebphoneCallObject( call );
+    }
+
+    getWebphonePhoneClientAsParent(){
+        return this._WebphonePhoneClientAsParent;
     }
 }

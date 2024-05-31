@@ -8,7 +8,7 @@ export default class PalCallInfo extends ACallInfo {
     constructor( palCallInfosAsParent, callId, palNotifyStatusEventParam ) {
         super( palCallInfosAsParent );
         this._PalCallInfosAsParent = palCallInfosAsParent;
-
+        this._OnHoldFunctions = new Array();    //!const
         const e = palNotifyStatusEventParam;
         const status = parseInt( e["status"] );
 
@@ -72,6 +72,7 @@ export default class PalCallInfo extends ACallInfo {
                 if( !bMakeCall ) {
                     this._answered = true;
                     this._answeredAt = e["time"];
+                    this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByPalCallInfo( this );
                 }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.answerSuccess:
@@ -85,6 +86,11 @@ export default class PalCallInfo extends ACallInfo {
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.hold:
                 this._holding = true;
                 this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onHoldByCallInfo(this);
+                const onHoldFunctions = [...this._OnHoldFunctions];
+                for( let i = 0; i < onHoldFunctions.length; i++ ) {
+                    const func = onHoldFunctions[i];
+                    func( this );   //!forBug needs try catch?
+                }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.answerCallee:
                 this._pbxRoomId = e["room_id"];
@@ -95,6 +101,30 @@ export default class PalCallInfo extends ACallInfo {
         }
         this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUpdateCallInfoByCallInfo(this);
     }
+
+    /**
+     *  overload method
+     * @param func
+     */
+    addOnHoldFunction( func ) {
+        this._OnHoldFunctions.push( func );
+    }
+
+    /**
+     *  overload method
+     * @param func
+     * @return is deleted.
+     */
+    removeOnHoldFunction( func ) {
+        const index = this._OnHoldFunctions.indexOf(func);
+        if( index === -1 ){
+            return false;
+        }
+
+        this._OnHoldFunctions.splice(index, 1);
+        return true;
+    }
+
 
     onCallSuccessByPalCallInfos( eNotifyStatus ){
         this._answered = true;
@@ -116,7 +146,7 @@ export default class PalCallInfo extends ACallInfo {
                     Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
                 }
                 else {
-                    this_._hangUp();
+                    this_.hangup();
                 }
             },
             function( err ){
@@ -125,11 +155,14 @@ export default class PalCallInfo extends ACallInfo {
             });
         }
         else{
-            this._hangUp();
+            this.hangup();
         }
     }
 
-    _hangUp(){
+    /**
+     *  overload method
+     */
+    hangup(){
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
         phoneClient.hangup( this,
             function( res, obj){
@@ -150,7 +183,7 @@ export default class PalCallInfo extends ACallInfo {
             this._CallInfosAsParent.getPhoneClientAsParent().unhold( this,
                 function( res, obj){
                     if( res.startsWith("failed")) {
-                        console.error("Failed to unhold call. res=", res );
+                        console.error("Failed to unhold call. res=", res);
                         Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
                     }
                 },
@@ -163,11 +196,11 @@ export default class PalCallInfo extends ACallInfo {
         else{
             this._CallInfosAsParent.getPhoneClientAsParent().hold( this,
                 function( res, obj){
-
+                    //!forBug res includes failed?
                 },
                 function( err ) {
-                    console.error("Failed to hold call. err=", err );
-                    Notification.error({message: i18n.t('failedToHoldCall') + "\r\n" + err, duration:0 });
+                    console.error("Failed to hold call. err=", err);
+                    Notification.error({message: i18n.t('failedToHoldCall') + "\r\n" + err, duration: 0});
                 }
             );
         }

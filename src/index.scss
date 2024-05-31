@@ -472,7 +472,6 @@ table.brOCCalltable thead{
     position: sticky;
 	top:0;
 	left:0;
-	z-index: 1;
 	background-color:#f8f8f8;
 }
 
@@ -584,4 +583,8 @@ table.brOCLinetable tbody tr td
   left:0;
   right:0;
   bottom:0;
+}
+
+:where(.css-dev-only-do-not-override-htwhyh).ant-select {
+	display:unset;
 }

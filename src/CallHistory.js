@@ -1,13 +1,24 @@
-const _LOCAL_STORAGE_KEY = "com.brekeke.operatorconsole.callhistory";
+const _CallHistory_LOCAL_STORAGE_KEY_PREFIX = "com.brekeke.operatorconsole.callhistory.";
 
 const DEFAULT_MAX_DISPLAY_COUNT = 500;
 const DEFAULT_MAX_SAVE_COUNT = 3000;
 export class CallHistory {
 
     constructor(operatorConsoleAsParent ) {
-        this.parent = operatorConsoleAsParent;
+        this._Parent = operatorConsoleAsParent;
+        this._LocalstorageKey = this._getLocalStorageKey();
         this._clear();
         //window.localStorage.removeItem( _LOCAL_STORAGE_KEY ); //!temp //!dev
+    }
+
+    _getLocalStorageKey(){
+        let tenant = this._Parent.getLoggedinTenant();
+        if( !tenant ){
+            tenant = "";
+        }
+        const user = this._Parent.getLoggedinUsername();
+        const key = _CallHistory_LOCAL_STORAGE_KEY_PREFIX + tenant + "." + user;
+        return key;
     }
 
     _clear() {
@@ -16,7 +27,7 @@ export class CallHistory {
     }
 
     clearAndSave(){
-        window.localStorage.removeItem( _LOCAL_STORAGE_KEY );
+        window.localStorage.removeItem( this._LocalstorageKey  );
         this._clear();
     }
 
@@ -27,7 +38,7 @@ export class CallHistory {
     }
 
     load(){
-        const sCallNos = window.localStorage.getItem( _LOCAL_STORAGE_KEY );
+        const sCallNos = window.localStorage.getItem( this._LocalstorageKey  );
         if( !sCallNos ){
             this._clear();
             console.log("CallHistory loaded. Call history is empty.");
@@ -37,7 +48,7 @@ export class CallHistory {
         const callNos = sCallNos.split(',');
 
         this._callNos = callNos;
-        const settings = this.parent.getSystemSettingsData();
+        const settings = this._Parent.getSystemSettingsData();
         this._sortedCallNos = CallHistory._createSortedScoreCallNos( this._callNos, settings.getAutoDialMaxSaveCount(), settings.getAutoDialMaxDisplayCount() );
         console.log("CallHistory loaded. Call no count=" + this._sortedCallNos.length );
 
@@ -157,16 +168,16 @@ export class CallHistory {
             sCallNos = sCallNos.substring( 0, sCallNos.length - 1 );
         }
 
-        window.localStorage.setItem( _LOCAL_STORAGE_KEY , sCallNos );
+        window.localStorage.setItem( this._LocalstorageKey , sCallNos );
     }
 
     addCallNoAndSave( callNo ){
-        const saveCount = this.parent.getSystemSettingsData().getAutoDialMaxSaveCount();
+        const saveCount = this._Parent.getSystemSettingsData().getAutoDialMaxSaveCount();
         while( this._callNos.length >= saveCount ){
             this._callNos.pop();
         }
         this._callNos.unshift( callNo );
-        this._sortedCallNos = CallHistory._createSortedScoreCallNos( this._callNos, saveCount, this.parent.getSystemSettingsData().getAutoDialMaxDisplayCount()  );
+        this._sortedCallNos = CallHistory._createSortedScoreCallNos( this._callNos, saveCount, this._Parent.getSystemSettingsData().getAutoDialMaxDisplayCount()  );
 
         this._save();
     }
@@ -176,7 +187,7 @@ export class CallHistory {
     }
 
     // _getMaxDisplayCount(){
-    //     const systemSettingsData = this.parent.getSystemSettingsData();
+    //     const systemSettingsData = this._Parent.getSystemSettingsData();
     //     const count =systemSettingsData.getAutoDialMaxDisplayCount();
     //     if( count ){
     //         return count;
@@ -185,7 +196,7 @@ export class CallHistory {
     // }
     //
     // _getMaxSaveCount(){
-    //     const count = this.parent.state.systemSettingsAppData?.autoDialMaxSaveCount;
+    //     const count = this._Parent.state.systemSettingsAppData?.autoDialMaxSaveCount;
     //     if( count ){
     //         return count;
     //     }

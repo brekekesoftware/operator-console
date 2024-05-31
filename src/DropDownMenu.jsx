@@ -17,9 +17,9 @@ const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 export default function DropDownMenu( { operatorConsole } ){
     let loginLabel = operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : ''
     loginLabel += operatorConsole.state.loginUser.pbxUsername;
-    const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
     const showNewLayoutModalFunc = () => {
-        setNewLayoutModalOpen(true);
+        operatorConsole.setState({newLayoutModalOpen:true});
     };
 
     const [ openLayoutModalOpen,  setOpenLayoutModalOpen ] = useState( false );
@@ -204,7 +204,7 @@ export default function DropDownMenu( { operatorConsole } ){
 
     return (
         <>
-            <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={newLayoutModalOpen} setNewLayoutModalOpen={setNewLayoutModalOpen} />
+            <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={operatorConsole.getState().newLayoutModalOpen} />
             <OpenLayoutModalForDropdownMenu noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
             <div ref={spinScreen} className="spinScreen">
                 <div>
@@ -324,7 +324,7 @@ export default function DropDownMenu( { operatorConsole } ){
     //     </Dropdown>
     // );
 
-    function NewLayoutDialog( { operatorConsole, showNewLayoutModalFunc, newLayoutModalOpen,  setNewLayoutModalOpen } ){
+    function NewLayoutDialog( { operatorConsole, showNewLayoutModalFunc } ){
         //const [loading, setLoading] = useState(false);
         const [ newLayoutUseForm ] = Form.useForm();
         const [newLayoutConfirmOpen, setNewLayoutConfirmOpen] = useState(false);
@@ -382,7 +382,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         setNotePromise.then(() => {
                             operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                                     Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                                    setNewLayoutModalOpen(false);
+                                    operatorConsole.setState({newLayoutModalOpen:false});
                             },
                                 function(e){
                                     //!testit
@@ -401,7 +401,7 @@ export default function DropDownMenu( { operatorConsole } ){
                                     // console.error("Failed to save data to PBX.", message);
                                     // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
                                     // Notification.error({message: msg, duration: 0});
-                                    setNewLayoutModalOpen(false);
+                                    operatorConsole.setState({newLayoutModalOpen:false});
                                 });
                         });
                     }
@@ -425,7 +425,7 @@ export default function DropDownMenu( { operatorConsole } ){
 
         };
         const handleCancel = () => {
-            setNewLayoutModalOpen(false);
+            operatorConsole.setState({newLayoutModalOpen:false});
         };
 
         const confirmNewLayout = (  ) => {
@@ -445,7 +445,7 @@ export default function DropDownMenu( { operatorConsole } ){
             setNotePromise.then(() => {
                 operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                         Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
-                        setNewLayoutModalOpen(false);
+                        operatorConsole.setState({newLayoutModalOpen:false});
                 },
                     function( e){
                         // const message = eventArg.message;
@@ -465,7 +465,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         }
                         Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
 
-                        setNewLayoutModalOpen(false);
+                        operatorConsole.setState({newLayoutModalOpen:false});
                     });
             });
         };
@@ -486,7 +486,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 {/*    Open Modal with customized footer*/}
                 {/*</Button>*/}
                 <Modal
-                    open={newLayoutModalOpen}
+                    open={ operatorConsole.getState().newLayoutModalOpen}
                     title={i18n.t("newLayout")}
                     onOk={  () => handleOk( { newLayoutConfirmOpen, setNewLayoutConfirmOpen,newLayoutCondition, setNewLayoutCondition } ) }
                     onCancel={handleCancel}

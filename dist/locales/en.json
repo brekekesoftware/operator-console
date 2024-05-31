@@ -1,5 +1,15 @@
 {
   "en": {
+	"LoadingTheFileListTimedOut" : "Loading the file list timed out.",
+	"FailedToLoadFileList" : "Failed to load file list.",
+	"AnErrorOccurredWhileLoadingTheFileList":"An error occurred while loading the file list.",
+	"failedToHoldCallAtOneTouchDial" : "An active call was not put on hold within a certain amount of time.",
+	"mode": "Mode",
+	"callOnly": "Call",
+	"attendedTransferOrCall": "Call/Attended transfer",
+	"blindTransferOrCall": "Call/Blind transfer",	
+	"attendedTransferOnly": "Attended transfer",
+	"blindTransferOnly": "Blind transfer",	
 	"show_screen": "Show screen",
 	"autodial_view": "Auto dial",
 	"settings_screen": "Settings",

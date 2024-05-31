@@ -78,32 +78,45 @@ export default class CallPanel extends React.Component {
     //   dialing = dialing.substring( dialing.length - CallPanel.SHOW_DIALING_LENGTH, dialing.length );
     // }
 
-    return (
-      <div className="brOCCallPanel" style={{
-        borderRadius:borderRadius,
-        backgroundColor:callpanelBgColor,
-        boxShadow:sBoxShadow,
-        color:callpanelFgColor
-      }}>
-        <div className="brOCCallPanelRow">
-          <div className="brOCCallPanelLeft">
-            {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
+    if( this.props.isEditMode !== true  ) {
+      return (
+          <div className="brOCCallPanel" style={{
+            borderRadius: borderRadius,
+            backgroundColor: callpanelBgColor,
+            boxShadow: sBoxShadow,
+            color: callpanelFgColor
+          }}>
+            <div className="brOCCallPanelRow">
+              <div className="brOCCallPanelLeft">
+                {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
+              </div>
+              <div className="brOCCallPanelMain">
+                <div className="brOCCallPanelPartyNumber">{currentCallInfo?.getPartyNumber()}</div>
+                <div className="brOCCallPanelDuration">{this.state.duration}</div>
+              </div>
+            </div>
+            <div className="brOCCallPanelRow">
+              {bIsDTMFInput !== true && dialing.length !== 0 && (
+                  <div className="brOCCallPanelLeft">{IconKeyboard}</div>
+              )}
+              <div className="brOCCallPanelMain">
+                <div className="brOCCallPanelDialing">{dialing}</div>
+              </div>
+            </div>
           </div>
-          <div className="brOCCallPanelMain">
-            <div className="brOCCallPanelPartyNumber">{currentCallInfo?.getPartyNumber()}</div>
-            <div className="brOCCallPanelDuration">{this.state.duration}</div>
+      );
+    }
+    else {
+      return (
+          <div className="brOCCallPanel" style={{
+            borderRadius: borderRadius,
+            backgroundColor: callpanelBgColor,
+            boxShadow: sBoxShadow,
+            color: callpanelFgColor
+          }}>
           </div>
-        </div>
-        <div className="brOCCallPanelRow">
-          { bIsDTMFInput !== true && dialing.length !== 0 && (
-            <div className="brOCCallPanelLeft">{IconKeyboard}</div>
-          )}
-          <div className="brOCCallPanelMain">
-            <div className="brOCCallPanelDialing">{dialing}</div>
-          </div>
-        </div>
-      </div>
-    )
+      );
+    }
   }
 
   updateCallDuration = () => {

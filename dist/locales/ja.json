@@ -1,5 +1,15 @@
 {
   "ja": {
+  	"LoadingTheFileListTimedOut" : "ファイルリストの読み込みがタイムアウトしました。",
+	"FailedToLoadFileList" : "ファイルリストの読み込みに失敗しました。",
+	"AnErrorOccurredWhileLoadingTheFileList":"ファイルリストの読み込みでエラーが発生しました。",	
+	"failedToHoldCallAtOneTouchDial": "アクティブな通話は、一定の時間内に保留されませんでした。",
+	"mode": "モード",
+	"callOnly": "発信",
+	"attendedTransferOrCall": "発信/アテンデッド転送",
+	"blindTransferOrCall": "発信/ブラインド転送",	
+	"attendedTransferOnly": "アテンデッド転送",
+	"blindTransferOnly": "ブラインド転送",	
 	"show_screen": "レイアウトの表示",
 	"autodial_view": "オートダイヤル",
     "settings_screen": "設定",

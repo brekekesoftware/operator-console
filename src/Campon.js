@@ -37,7 +37,7 @@ export default class Campon{
                         if (!callInfo) {
                             Notification.error({ message:i18n.t("failed_to_transfer_call")});
                         } else {
-                            callInfo.hangupWithUnhold();
+                            callInfo.hangup();
                         }
                     }
                 }
@@ -97,7 +97,8 @@ export default class Campon{
          const oc2 = extensionsStatusAsCaller.getOperatorConsoleAsParent();
          const callInfo = oc2.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(waitCamponObject.transferTalkerId);
 
-        const transferMode = "attended";
+        //const transferMode = "attended";
+        const transferMode = waitCamponObject.isBlindTransfer === true ? "blind" : "attended"; //!testit
         this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, waitCamponObject.transferTalkerId, waitCamponObject.transferTenant,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
@@ -108,7 +109,7 @@ export default class Campon{
                         Notification.error({ message:i18n.t("failed_to_transfer_call")});
                     } else {
                         if( waitCamponObject.isBlindTransfer ){
-                            callInfo.hangupWithUnhold();
+                            callInfo.hangup();
                         }
                     }
                 }

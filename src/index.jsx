@@ -3075,23 +3075,28 @@ export default class BrekekeOperatorConsole extends React.Component {
             switch (e.key) {
                 case "ArrowDown":
                 case "Down":
-                    e.preventDefault();
-                    break;
+                    //e.preventDefault();
+                    //break;
+                    return;
                 case "ArrowLeft":
                 case "Left":
-                    e.preventDefault();
-                    break;
+                    //e.preventDefault();
+                    //break;
+                    return;
                 case "ArrowRight":
                 case "Right":
-                    e.preventDefault();
-                    break;
+                    //e.preventDefault();
+                    //break;
+                    return;
                 case "ArrowUp":
                 case "Up":
-                    e.preventDefault();
-                    break;
+                    //e.preventDefault();
+                    //break;
+                    return;
                 case "Process":
-                    e.preventDefault()();
-                    break;
+                    //e.preventDefault()();
+                    //break;
+                    return;
             }
         }
 
@@ -3286,7 +3291,6 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _onPaste(e) {
-        e.preventDefault();
         const isDowned = this.state._downedLayoutAndSystemSettings;
         if( !isDowned ){
             return;
@@ -3313,6 +3317,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             pasteString = paste;
         }
 
+        e.preventDefault();
         this.setDialing( pasteString );
     }
 

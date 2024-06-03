@@ -9,7 +9,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._WebphoneCallInfosAsParent = webphoneCallInfosAsParent;
         this._OnHoldFunctions = new Array();    //!const
         this._Id = callObject.id;
-        this._hangupWithUnhold = callObject.hangupWithUnhold;
+        this._hangup = callObject.hangup;
         this._conferenceTransferring = callObject.conferenceTransferring;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
@@ -28,13 +28,6 @@ export default class WebphoneCallInfo extends ACallInfo {
 
 
 
-    }
-
-    /**
-     *  overload method
-     */
-    hangupWithUnhold() {
-        this._hangupWithUnhold();
     }
 
     /**
@@ -136,7 +129,7 @@ export default class WebphoneCallInfo extends ACallInfo {
     onUpdateWebphoneCallObject(callObject) {
         const wasAnsweredAt = this._answeredAt;
 
-        this._hangupWithUnhold = callObject.hangupWithUnhold;
+        this._hangup = callObject.hangup;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
         this._incoming = callObject.incoming;
@@ -176,8 +169,9 @@ export default class WebphoneCallInfo extends ACallInfo {
      *  Overload method
      */
     hangup(){
-        const cl = this._WebphoneCallInfosAsParent.getWebphonePhoneClientAsParent();
-        cl.hangup( this );
+        this._hangup();
+        //const cl = this._WebphoneCallInfosAsParent.getWebphonePhoneClientAsParent();
+        //cl.hangup( this );
     }
 
     /**

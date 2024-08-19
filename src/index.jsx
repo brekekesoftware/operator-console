@@ -83,7 +83,12 @@ import i18n, { DEFAULT_LOCALE, isValidLocale, loadTranslations } from "./i18n";
 
 import SystemSettingsView, {OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID,OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION} from "./SystemSettingsView";
 const PBX_APP_DATA_NAME = 'operator_console';
-const PBX_APP_DATA_VERSION = '0.1';
+//const PBX_APP_DATA_VERSION = '0.1';
+const PBX_APP_DATA_VERSION = '2.0.0';
+const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
+const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
+
+
 import { CallHistory } from './CallHistory';
 import AutoDialView from "./AutoDialView";
 import DropDownMenu from "./DropDownMenu";
@@ -95,7 +100,7 @@ import ExtensionsStatus from "./ExtensionsStatus";
 import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
 import NoScreensView from "./NoScreensView";
-import {Select,Modal} from "antd";
+import {Select, Modal, Tabs} from "antd";
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";
 import LegacyUccacWidgetSettings from "./LegacyUccacWidgetSettings";
 import CallTableSettings from "./CallTableSettings";
@@ -111,6 +116,11 @@ import Login from "./Login";
 import ACallInfos from "./ACallInfos";
 import ACallInfo from "./ACallInfo";
 import FileInfosLoader from "./FileInfosLoader";
+import EditScreenView from "./editor/EditScreenView";
+import ScreenData from "./data/ScreenData";
+import ShowScreenView_ver2 from "./runtime/ShowScreenView_ver2";
+import PaneData from "./data/PaneData";
+import WidgetData from "./data/widgetData/WidgetData";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -118,12 +128,15 @@ export const brOcDisplayStates = Object.freeze({
     waitQuickCallKey: 3,
     systemSettingsView: 4,
     noScreens:5,
+    editingScreen_ver2:6,
+    showScreen_ver2:7,
+    waitQuickCallKey_ver2:8
 });
 
 function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgColor, callpanelFgColor,
-                            outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
-                            insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
-                            context }) {
+                             outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
+                             insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
+                             context }) {
     //const { currentCallIndex, callIds = [], callById = {}, dialing  } = context;
     const dialing = !!context ? context.dialing : undefined;
     //const currentCall = callById[callIds[currentCallIndex]];
@@ -151,9 +164,9 @@ function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgCol
     );
 }
 function LegacyUccacWidget({ operatorConsoleAsParent, uccacWrapper, borderRadius, uccacwidgetBgColor, uccacwidgetFgColor,
-                             outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
-                             insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
-                             context  }) {
+                               outsideShadow_horizontalOffset, outsideShadow_verticalOffset, outsideShadow_blur,  outsideShadow_spread, outsideShadow_color,
+                               insideShadow_horizontalOffset,insideShadow_verticalOffset, insideShadow_blur,  insideShadow_spread, insideShadow_color,
+                               context  }) {
     return (
         <UccacWidget
             operatorConsoleAsParent={operatorConsoleAsParent}
@@ -283,11 +296,11 @@ function LegacyTransferButton({ operatorConsoleAsParent, subtype, icon, label, b
     return (
         // <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => context.operatorConsole.transferDialingCall() } className="kbc-button kbc-button-fill-parent"
         <button title={i18n.t(`legacy_button_description.${subtype}`)} onClick={ () => operatorConsoleAsParent.transferDialingCall() } className="kbc-button kbc-button-fill-parent"                style={{
-                    border:border,
-                    borderRadius:borderRadius,
-                    color:color,
-                    backgroundColor:backgroundColor
-                }}
+            border:border,
+            borderRadius:borderRadius,
+            color:color,
+            backgroundColor:backgroundColor
+        }}
         >{iconJsx}</button>
     );
 }
@@ -314,7 +327,7 @@ function LegacyToggleRecordingButton({ operatorConsoleAsParent, subtype, icon, l
                 onClick={ () =>{
                     context.toggleCallRecording();
                 }}
-                >{iconJsx}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyAlarmButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness }) {
@@ -823,7 +836,7 @@ function LegacyHangUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
                     }
                 }
                 disabled={bDisabled}
-                >{iconJsx}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -856,7 +869,7 @@ function LegacyUnholdCallButton({ operatorConsoleAsParent, subtype, icon, label,
                         context.resumeCall();
                     }
                 }
-                >{iconJsx}</button>
+        >{iconJsx}</button>
     );
 }
 function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
@@ -917,7 +930,7 @@ function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
                         context.answerCall();
                     }
                 }>
-                {iconJsx}
+            {iconJsx}
         </button>
     );
 }
@@ -1345,114 +1358,114 @@ function CallTable( props ) {
 
     return (
         <div className="brOCCalltableWrapper" data-broc-widgetindex={props.widgetIndex}>
-        <table className="brOCCalltable"  style={{
-            borderRadius:outerBorderRadius,
-            border: outerBorderThickness + "px solid " + outerBorderColor,
-            backgroundColor:backgroundColor,
-        }}>
-            <thead>
-            <tr style={{
-                color:headerFgColor,
-                borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
-                display:"table-row",
-                tableLayout:"unset",
-                height:callTableTheadRowHeight
+            <table className="brOCCalltable"  style={{
+                borderRadius:outerBorderRadius,
+                border: outerBorderThickness + "px solid " + outerBorderColor,
+                backgroundColor:backgroundColor,
             }}>
-                {CallTableColumns.map((item, i ) => {
-                    const key = item.key;
-                    const title = item.title;
+                <thead>
+                <tr style={{
+                    color:headerFgColor,
+                    borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
+                    display:"table-row",
+                    tableLayout:"unset",
+                    height:callTableTheadRowHeight
+                }}>
+                    {CallTableColumns.map((item, i ) => {
+                        const key = item.key;
+                        const title = item.title;
 
-                    let borderRadiusTH;
-                    const isFirstTH = i == 0;
-                    if( isFirstTH === true ){
-                        borderRadiusTH =  outerBorderRadius +  "px 0 0 0";
+                        let borderRadiusTH;
+                        const isFirstTH = i == 0;
+                        if( isFirstTH === true ){
+                            borderRadiusTH =  outerBorderRadius +  "px 0 0 0";
+                        }
+                        else{
+                            borderRadiusTH =  "";   //"0"
+                        }
+
+                        return <th key={key}
+                                   style={{
+                                       paddingTop:0,
+                                       paddingBottom:0,
+                                       borderRadius:borderRadiusTH,
+                                       fontSize:callTableThFontSize
+                                   }}>{title}</th>;})
+                    }
+                    <th style={{
+                        paddingTop:0,
+                        paddingBottom:0,
+                        borderRadius:"0 " + outerBorderRadius + "px 0 0",
+                        fontSize:callTableThFontSize
+                    }}>{i18n.t("activeButton")}</th>
+                </tr>
+                </thead>
+                <tbody style={{
+                    color:bodyFgColor,
+                    display:"table-row-group"
+                }}>
+                {callInfoArray.map((callInfo, i) => {
+                    let tdActive;
+                    if( isEditMode  ){
+                        tdActive = "\u00A0";
+                    }
+                    else if( i === currentCallIndex ){
+                        tdActive = "\u00A0";
                     }
                     else{
-                        borderRadiusTH =  "";   //"0"
+                        tdActive = <div style={{width:42,height:42,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => context.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
                     }
 
-                    return <th key={key}
-                               style={{
-                                   paddingTop:0,
-                                   paddingBottom:0,
-                                   borderRadius:borderRadiusTH,
-                                   fontSize:callTableThFontSize
-                               }}>{title}</th>;})
-                }
-                <th style={{
-                    paddingTop:0,
-                    paddingBottom:0,
-                    borderRadius:"0 " + outerBorderRadius + "px 0 0",
-                    fontSize:callTableThFontSize
-                }}>{i18n.t("activeButton")}</th>
-            </tr>
-            </thead>
-            <tbody style={{
-                color:bodyFgColor,
-                display:"table-row-group"
-            }}>
-            {callInfoArray.map((callInfo, i) => {
-                let tdActive;
-                if( isEditMode  ){
-                    tdActive = "\u00A0";
-                }
-                else if( i === currentCallIndex ){
-                    tdActive = "\u00A0";
-                }
-                else{
-                    tdActive = <div style={{width:42,height:42,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => context.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
-                }
 
-
-                return (<tr key={idKey++} style={{
-                    color: bodyFgColor,
-                    backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
-                    paddingTop:0,
-                    paddingBottom:0,
-                    borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
-                    display:"table-row",
-                    height: callTableTbodyRowHeight
-                }}>
-                    {CallTableColumns.map((column, i) => {
-                            let borderRadiusTD;
-                            const isFirstTD = i == 0;
-                            if( isFirstTD === true ){
-                                borderRadiusTD =  "0 " + outerBorderRadius +  "px 0 0";
-                            }
-                            else{
-                                borderRadiusTD =  "";   //"0"
-                            }
-                            borderRadiusTD =  "";   //"0"
-
-                            const key = column.key;
-                            const formatter = column.formatter;
-                            let v;
-                            if( !callInfo ){
-                                v = "\u00A0";   //for edit mode
-                            }
-                            else{
-                                v =  formatter( callInfo[key]() );
-                            }
-                            return <td key={key}
-                                       style={{
-                                           paddingTop:0,
-                                           paddingBottom:0,
-                                           borderRadius:borderRadiusTD,
-                                           fontSize:callTableTdFontSize
-                                       }}>{v}</td>
-                        }
-                    )}
-                    <td style={{
-                        width:80,paddingTop:0,paddingBottom:0,
-                        borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
+                    return (<tr key={idKey++} style={{
+                        color: bodyFgColor,
+                        backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
+                        paddingTop:0,
+                        paddingBottom:0,
+                        borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
+                        display:"table-row",
+                        height: callTableTbodyRowHeight
                     }}>
-                        {tdActive}
-                    </td>
-                </tr>);
-            })}
-            <tr colSpan={cellCount}></tr>
-            </tbody>
-        </table>
+                        {CallTableColumns.map((column, i) => {
+                                let borderRadiusTD;
+                                const isFirstTD = i == 0;
+                                if( isFirstTD === true ){
+                                    borderRadiusTD =  "0 " + outerBorderRadius +  "px 0 0";
+                                }
+                                else{
+                                    borderRadiusTD =  "";   //"0"
+                                }
+                                borderRadiusTD =  "";   //"0"
+
+                                const key = column.key;
+                                const formatter = column.formatter;
+                                let v;
+                                if( !callInfo ){
+                                    v = "\u00A0";   //for edit mode
+                                }
+                                else{
+                                    v =  formatter( callInfo[key]() );
+                                }
+                                return <td key={key}
+                                           style={{
+                                               paddingTop:0,
+                                               paddingBottom:0,
+                                               borderRadius:borderRadiusTD,
+                                               fontSize:callTableTdFontSize
+                                           }}>{v}</td>
+                            }
+                        )}
+                        <td style={{
+                            width:80,paddingTop:0,paddingBottom:0,
+                            borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
+                        }}>
+                            {tdActive}
+                        </td>
+                    </tr>);
+                })}
+                <tr colSpan={cellCount}></tr>
+                </tbody>
+            </table>
         </div>
     );
 }
@@ -1634,7 +1647,7 @@ class Note extends React.Component {
 
 
 
-    setNoteDebounced = debounce(() => {
+    _setNoteDebounced = debounce(() => {
         if (this.props.context?.setNote) {
             this.props.context.setNote(this.props.noteName, this.state.content)
                 .then(() => this.setState({ saving: false }))
@@ -1644,7 +1657,7 @@ class Note extends React.Component {
 
     onContentChanged = (e) => {
         this.setState({ content: e.target.value, saving: true, error: false });
-        this.setNoteDebounced();
+        this._setNoteDebounced();
     }
 
     render() {
@@ -1738,7 +1751,7 @@ class LegacyButtonSettings extends React.Component {
             widget: window.structuredClone(this.props.widget),
         };
 
-         const operatorConsoleAsParent = props.operatorConsoleAsParent;
+        const operatorConsoleAsParent = props.operatorConsoleAsParent;
         const defaultButtonFileInfos = operatorConsoleAsParent.getDefaultButtonImageFileInfos();
         let fileInfos = defaultButtonFileInfos.getFileInfos();
         if( !fileInfos ){
@@ -1892,6 +1905,7 @@ class LegacyButtonSettings extends React.Component {
                                 // }}
                                 style={{ width: "100%"}}
                                 //placeholder="Please select a option"
+                                defaultValue={"callOnly"}
                             >
                                 <Option value="callOnly">{i18n.t("callOnly")}</Option>
                                 <Option value="attendedTransferOrCall">{i18n.t("attendedTransferOrCall")}</Option>
@@ -2699,6 +2713,10 @@ const DEFAULT_SCREEN = {
     "width": 1280,
     "height": 720,
     "grid": 10,
+    "tabDatas" : [{
+        tabTitle:"Untitled tab",
+        widgetDatas: new Array()
+    }]
 };
 const DEFAULT_SCREENS = [
     window.structuredClone({...DEFAULT_SCREEN, widgets: DEFAULT_WIDGETS}),
@@ -2732,7 +2750,7 @@ const INIT_STATE = {
     usingLine: '',
 
     selectingWidgetIndex: -1,
-    editingWidgets: [],
+    //editingWidgets: [],
     editingScreenWidth: 400,
     editingScreenHeight: 400,
     editingScreenGrid: 10,
@@ -2740,13 +2758,18 @@ const INIT_STATE = {
     editingScreenForeground:'#000000',
 
     currentScreenQuickCallWidget: null,
+    currentScreenQuickCallWidgetSubData: null,
     currentScreenIndex: 0,
     screens: [DEFAULT_SCREEN],
 
     locale: '',
     displayState: undefined,
-    showAutoDialWidgets: []
+    showAutoDialWidgets: [],
+    showAutoDialWidgetSubDatas_ver2 : [],
     //isSaveEditingScreenButtonDisabled: false
+    currentScreenTabIndex : 0,
+    isSelectingTabInEditLayout : false,
+    editingTabDatas : new Array()
 };
 
 
@@ -2763,6 +2786,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
         this.state = window.structuredClone(INIT_STATE);
+
         //this.state.operatorConsole = this;
         this._CallHistory = new CallHistory(this);
         this._OnBeginSaveEditingScreenFunctions = [];
@@ -2844,7 +2868,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     onSelectOCNoteByShortnameFromNoScreensView( noScreensViewAsCaller ){
         //this.reloadSystemSettingsExtensionScript();
-        this.setState( { _downedLayoutAndSystemSettings:true, displayState : brOcDisplayStates.showScreen } );
+        this.setState( { _downedLayoutAndSystemSettings:true, displayState : brOcDisplayStates.showScreen_ver2 } );
 
     }
 
@@ -2854,7 +2878,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         systemSettingsData.setSystemSettingsDataData( layoutsAndSettingsData.systemSettings,
             function(){
                 this_.setLastLayoutShortname( layoutName );
-                this_.setState( { _downedLayoutAndSystemSettings:true, screens: layoutsAndSettingsData.screens, systemSettingsData:systemSettingsData } );
+                const screenData_ver2 = new ScreenData();
+                this_.setState( { screenData_ver2 : screenData_ver2, _downedLayoutAndSystemSettings:true, screens: layoutsAndSettingsData.screens, systemSettingsData:systemSettingsData, displayState:brOcDisplayStates.showScreen_ver2, newLayoutModalOpen:false } );
             },
             function(e){ //initFail
                 //!testit
@@ -2867,9 +2892,15 @@ export default class BrekekeOperatorConsole extends React.Component {
                 else{
                     console.error("setSystemSettingsDataData failed. error=" , e );
                 }
+
+                try {
+                    e = JSON.stringify(e);
+                }
+                catch(err){
+                }
                 Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
             }
-       );
+        );
     }
 
     _initAphoneClient( aphone, initOptions ){
@@ -2963,9 +2994,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                         //return initAsync;
                     }
                 );
-               };
+            };
             initOptions.onInitFailFunction = function( error ){
-                    onInitFailUccacFunction(error);
+                onInitFailUccacFunction(error);
             };
             this._initAphoneClient(  phoneClient,  initOptions );
             return false;
@@ -2995,7 +3026,10 @@ export default class BrekekeOperatorConsole extends React.Component {
                 this.setState({i18nReady: false, locale: i18n.locale}, () => {
                     loadTranslations(i18n.locale).then(() => {
                         this.setState({i18nReady: true});
-                    })
+                    }).catch( (e) =>{
+                        console.error("Load translations failed. error=" , e );
+                        Notification.error({message: "Load translations failed.", duration:0 });
+                    });
                 });
             }
         });
@@ -3029,13 +3063,27 @@ export default class BrekekeOperatorConsole extends React.Component {
         window.removeEventListener( "keydown", this._onKeydown);
     }
 
+    setEnableKeydownToDialing(b){
+        this._enableKeydownToDialing = b;
+    }
+
+    setEnablePasteToDialing(b){
+        this._enablePasteToDialing = b;
+    }
+
+
     _onKeydown(e){
+        if( this._enableKeydownToDialing === false ){
+            return;
+        }
+
         const isDowned = this.state._downedLayoutAndSystemSettings;
         if( !isDowned ){
             return;
         }
         const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
-        if( !isScreenView ){
+        const isShowScreenView_ver2 = this.state.displayState === brOcDisplayStates.showScreen_ver2;
+        if( !isScreenView && !isShowScreenView_ver2 ){
             return;
         }
 
@@ -3123,7 +3171,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 this.setDialing(dialing);
                 return;
             }
-             break;
+                break;
             case 46:    //delete
             {
                 if( this._isDTMFInput === true ){
@@ -3138,7 +3186,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 this.setDialing(dialing);
                 return;
             }
-            break;
+                break;
             case 9: //tab
             //case 32: //space
             case 16: //shift
@@ -3170,7 +3218,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             case 145: //scroll lock
             case 19: //pause
             case 44: //print screen
-                //case ***; //copilot //!check //!todo //!check //!forbug
+            //case ***; //copilot //!check //!todo //!check //!forbug
             case 91: //meta
             case 29: //NonConvert
             case 0: //char key ( with F12?) //for Firefox
@@ -3227,7 +3275,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             case 110: //Num decimal
                 keychar = '.';
                 break;
-           default:
+            default:
                 keychar  = String.fromCharCode(keyCode);
                 break;
         }
@@ -3291,12 +3339,18 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _onPaste(e) {
+
+        if( this._enablePasteToDialing === false ){
+            return;
+        }
+
         const isDowned = this.state._downedLayoutAndSystemSettings;
         if( !isDowned ){
             return;
         }
         const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
-        if( !isScreenView ){
+        const isShowScreenView_ver2 = this.state.displayState === brOcDisplayStates.showScreen_ver2;
+        if( !isScreenView && !isShowScreenView_ver2 ){
             return;
         }
 
@@ -3467,6 +3521,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         return language;
     }
 
+    getDialing(){
+        return this.state.dialing;
+    }
+
 
     _getLastLayoutShortname(){
         const key = this._getLastLayoutLocalstorageKeyName();
@@ -3506,7 +3564,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.displayState;
     }
 
-    _setDisplayState(displayState, otherSetStates, callback) {
+    setDisplayState(displayState, otherSetStates, callback) {
         const states = {displayState, ...otherSetStates};
         this.setState(states, callback);
     }
@@ -3521,13 +3579,42 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({showAutoDialWidgets: [], currentScreenQuickCallWidget: null});
     }
 
+    _onEditingTabClick(sKey){
+        const tabIndex = parseInt( sKey );
+        this.setState( {
+                currentScreenTabIndex:tabIndex,
+                isSelectingTabInEditLayout: true,
+                selectingWidgetIndex : -1
+            },
+        );
+
+    }
+
+    _onShowScreenTabClick(sKey){
+        const tabIndex = parseInt( sKey );
+        this.setState( {
+                currentScreenTabIndex:tabIndex
+            },
+        );
+
+    }
+
     render() {
         if (!this.state.i18nReady) {
             return <Empty image={null} description={<Spin/>}/>
         }
 
-        const selectingWidget = this.state.editingWidgets[this.state.selectingWidgetIndex];
-        const SeletingWidgetSettings = WidgetSettingsMap[selectingWidget?.type];
+        const editingWidgetDatas = this._getSelectingEditingWidgetDatas();
+
+        //const selectingWidget = this.state.editingWidgets[this.state.selectingWidgetIndex];
+        let selectingEditingWidget;
+        if( editingWidgetDatas ) {
+            selectingEditingWidget = editingWidgetDatas[this.state.selectingWidgetIndex];
+        }
+        else{
+            selectingEditingWidget = null;
+        }
+        const SeletingEditingWidgetSettings = WidgetSettingsMap[selectingEditingWidget?.type];
         let selectingWidgetSettingsKey = 0;
 
         const handleShowConfirmDeleteWidgetOk = () => {
@@ -3538,13 +3625,123 @@ export default class BrekekeOperatorConsole extends React.Component {
             this.setState({showConfirmDeleteWidget: false});
         };
 
+        const handleShowConfirmDeleteTabOk = () => {
+            this.setState({showConfirmDeleteTab: false});
+            this.removeTabInEditMode(this.state.currentScreenTabIndex);
+        };
+        const handleShowConfirmDeleteTabCancel = () => {
+            this.setState({showConfirmDeleteTab: false});
+        };
+
+        const isEditingScreen = !!this.state.isInitialized && this.state._downedLayoutAndSystemSettings && this.state.displayState === brOcDisplayStates.editingScreen;
+        let editingTabItems;
+        if( isEditingScreen ){
+            //const editingScreen = this.state.screens[ this.state.currentScreenIndex ];
+            const tabDatas = this.state.editingTabDatas;
+            editingTabItems = new Array(  tabDatas.length );
+            for( let i = 0; i < editingTabItems.length; i++ ){
+                //const tabData = tabDatas[i];
+                const editingTabData = this.state.editingTabDatas[i];
+                const editingWidgetDatas = editingTabData.widgetDatas;
+                const editingTabJsx = (
+                    <Rnd
+                        size={{width: this.state.editingScreenWidth, height: this.state.editingScreenHeight}}
+                        style={{
+                            border: 'solid 1px #E0E0E0',
+                            background: this.state.editingScreenBackground,
+                            color: this.state.editingScreenForeground
+                        }}
+                        cancel=".brOCEditingWidget"
+                        onResizeStop={(ev, dir, ref) => {
+                            const style = window.getComputedStyle(ref);
+                            this.setEditingScreenSize(parseInt(style.width), parseInt(style.height))
+                        }}>
+                        <GridLines className="brOCEditingGridLines"
+                                   strokeWidth={2}
+                                   cellWidth={this.state.editingScreenGrid * 10}
+                                   cellWidth2={this.state.editingScreenGrid}
+                                   cellHeight={this.state.editingScreenGrid * 10}
+                                   cellHeight2={this.state.editingScreenGrid}
+                        >
+                            {editingWidgetDatas.map((widget, i) => {
+                                const Widget = WidgetMap[widget.type];
+                                if (!Widget) return null;
+                                return (
+                                    <Rnd
+                                        key={i}
+                                        className={clsx("brOCEditingWidget", this.state.selectingWidgetIndex === i && "brOCSelectingWidget")}
+                                        size={{width: widget.width, height: widget.height}}
+                                        position={{x: widget.x, y: widget.y}}
+                                        bounds="parent"
+                                        dragGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
+                                        resizeGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
+                                        onMouseDown={(e) => {
+                                            this.selectWidget(i);
+                                            e.stopPropagation();
+                                        }}
+                                        onDragStop={(e, data) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                            this.onWidgetMoved(i, data.lastX, data.lastY);
+                                            this.makeWidgetOnTop(i);
+                                        }}
+                                        onResize={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                        onResizeStart={(e) => {
+                                            e.stopPropagation();
+                                            e.preventDefault();
+                                        }}
+                                        enableResizing={this.state.selectingWidgetIndex === i}
+                                        onResizeStop={(e, dir, ref, delta, pos) => {
+                                            const style = window.getComputedStyle(ref);
+                                            this.onWidgetResized(i, pos.x, pos.y, parseInt(style.width), parseInt(style.height))
+                                        }}
+                                    >
+                                        <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper}  />
+                                    </Rnd>
+                                )
+                            })}
+                        </GridLines>
+                    </Rnd>
+                );
+
+                const editingTabItem = {
+                    key : i.toString(),
+                    label : editingTabData.tabTitle,
+                    children : editingTabJsx
+                };
+                editingTabItems[i] = editingTabItem;
+            }
+        }
+        else{
+            editingTabItems = null;
+        }
+
+        const editingTabData = this._getSelectingEditingTabData();
+        const tabsActiveKey = this.state.currentScreenTabIndex.toString();
+        const isEditingScreen_ver2 = this.state.displayState === brOcDisplayStates.editingScreen_ver2;
+        if( isEditingScreen_ver2 ){
+
+            const srcScreenData_ver2 = this.state.screenData_ver2;
+            const dstScreenData_ver2 = srcScreenData_ver2.cloneScreenData();
+            this._editingScreenData_ver2 = dstScreenData_ver2;
+            return (
+                <EditScreenView
+                    operatorConsoleAsParent={this} screenData={this._editingScreenData_ver2}
+            >
+            </EditScreenView> );
+        }
+
+
 
         return (<>
             {!!this.state.isInitialized ? (
                 <div style={{flexGrow:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                     {this.state._downedLayoutAndSystemSettings ? (
-                            this.state.displayState === brOcDisplayStates.editingScreen ? (
+                            this.state.displayState === brOcDisplayStates.editingScreen ? ( //editMode
                                 <div style={{display: 'flex', flexGrow: 1, overflow: 'hidden'}}>
                                     <div className="brOCWidgetBox" style={{
                                         width: 240,
@@ -3648,67 +3845,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                         </div>
                                         <div style={{display: 'flex', flexGrow: 1}}>
                                             <div style={{position: 'relative', flexGrow: 1, overflow: 'hidden', background: '#f5f5f5'}}>
-                                                <Rnd
-                                                    size={{width: this.state.editingScreenWidth, height: this.state.editingScreenHeight}}
-                                                    style={{
-                                                        border: 'solid 1px #E0E0E0',
-                                                        background: this.state.editingScreenBackground,
-                                                        color: this.state.editingScreenForeground
-                                                    }}
-                                                    cancel=".brOCEditingWidget"
-                                                    onResizeStop={(ev, dir, ref) => {
-                                                        const style = window.getComputedStyle(ref);
-                                                        this.setEditingScreenSize(parseInt(style.width), parseInt(style.height))
-                                                    }}>
-                                                    <GridLines className="brOCEditingGridLines"
-                                                               strokeWidth={2}
-                                                               cellWidth={this.state.editingScreenGrid * 10}
-                                                               cellWidth2={this.state.editingScreenGrid}
-                                                               cellHeight={this.state.editingScreenGrid * 10}
-                                                               cellHeight2={this.state.editingScreenGrid}
-                                                    >
-                                                        {this.state.editingWidgets.map((widget, i) => {
-                                                            const Widget = WidgetMap[widget.type];
-                                                            if (!Widget) return null;
-                                                            return (
-                                                                <Rnd
-                                                                    key={i}
-                                                                    className={clsx("brOCEditingWidget", this.state.selectingWidgetIndex === i && "brOCSelectingWidget")}
-                                                                    size={{width: widget.width, height: widget.height}}
-                                                                    position={{x: widget.x, y: widget.y}}
-                                                                    bounds="parent"
-                                                                    dragGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
-                                                                    resizeGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
-                                                                    onMouseDown={(e) => {
-                                                                        this.selectWidget(i);
-                                                                        e.stopPropagation();
-                                                                    }}
-                                                                    onDragStop={(e, data) => {
-                                                                        e.stopPropagation();
-                                                                        e.preventDefault();
-                                                                        this.onWidgetMoved(i, data.lastX, data.lastY);
-                                                                        this.makeWidgetOnTop(i);
-                                                                    }}
-                                                                    onResize={(e) => {
-                                                                        e.stopPropagation();
-                                                                        e.preventDefault();
-                                                                    }}
-                                                                    onResizeStart={(e) => {
-                                                                        e.stopPropagation();
-                                                                        e.preventDefault();
-                                                                    }}
-                                                                    enableResizing={this.state.selectingWidgetIndex === i}
-                                                                    onResizeStop={(e, dir, ref, delta, pos) => {
-                                                                        const style = window.getComputedStyle(ref);
-                                                                        this.onWidgetResized(i, pos.x, pos.y, parseInt(style.width), parseInt(style.height))
-                                                                    }}
-                                                                >
-                                                                    <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper}  />
-                                                                </Rnd>
-                                                            )
-                                                        })}
-                                                    </GridLines>
-                                                </Rnd>
+                                                <Tabs activeKey={tabsActiveKey} items={ editingTabItems} onTabClick={ (key) => this._onEditingTabClick(key)  } />
                                             </div>
                                             <div style={{
                                                 width: 262,
@@ -3718,19 +3855,26 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                 gap: 12,
                                                 overflow: 'hidden'
                                             }}>
-                                                {!!selectingWidget?.type && (
-                                                    <div style={{padding:"12px 12px 0px 12px"}}>{i18n.t(`widget_description.${selectingWidget?.type}`)}</div>
+                                                {!!selectingEditingWidget?.type && (
+                                                    <div style={{padding:"12px 12px 0px 12px"}}>{i18n.t(`widget_description.${selectingEditingWidget?.type}`)}</div>
                                                 )}
                                                 <div style={{overflowY: 'auto', flexGrow: 1, height:0, paddingLeft:12, paddingRight:12 }}>   {  /* height:0 is for show scrollbar */ }
-                                                    {!!SeletingWidgetSettings && (
-                                                        <SeletingWidgetSettings
+                                                    {!!SeletingEditingWidgetSettings && (
+                                                        <SeletingEditingWidgetSettings
                                                             key={ selectingWidgetSettingsKey++ }
                                                             widgetIndex={this.state.selectingWidgetIndex}
-                                                            widget={{...selectingWidget}}
+                                                            widget={{...selectingEditingWidget}}
                                                             onChange={this.updateSelectingWidgetSettings}
                                                             getNoteNames={this.getNoteNames}
                                                             operatorConsoleAsParent={this}
                                                         />
+                                                    )}
+                                                    {this.state.isSelectingTabInEditLayout === true && (
+                                                        <Form id="tabFormInEditMode" layout="vertical" initialValues={{tabTitle:editingTabData.tabTitle}} >
+                                                            <Form.Item label={i18n.t("tabTitle")} name="tabTitle">
+                                                                <Input maxLength={30}  />
+                                                            </Form.Item>
+                                                        </Form>
                                                     )}
                                                 </div>
                                                 {this.state.selectingWidgetIndex !== -1 && (<div style={{padding:"0px 12px 12px 12px"}}>
@@ -3749,10 +3893,38 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                         <p>{i18n.t("ConfirmDeleteWidgetText")}</p>
                                                     </Modal>
                                                 </div>)}
+                                                {this.state.isSelectingTabInEditLayout === true && (
+                                                    <div style={{padding:"0px 12px 12px 12px"}}>
+                                                        <Button type="secondary"
+                                                                onClick={() => this.changeTabTitleInEditMode()}>
+                                                            {i18n.t("changeTitle")}
+                                                        </Button>
+                                                        <Button type="secondary"
+                                                                onClick={() => this.addTabInEditMode()}>
+                                                            {i18n.t("add@AddTabButton")}
+                                                        </Button>
+                                                        <Button type="secondary"
+                                                                onClick={() => this.duplicateTabInEditMode()}>
+                                                            {i18n.t("duplicate")}
+                                                        </Button>                                                        <Popconfirm title={i18n.t("are_you_sure")}
+                                                                    onConfirm={() => this.removeTabInEditMode(this.state.currentScreenTabIndex)}
+                                                                    okText={i18n.t("yes")}
+                                                                    cancelText={i18n.t("no")}
+                                                        >
+                                                            <Button type="danger">{i18n.t("remove")}</Button>
+                                                        </Popconfirm>
+                                                        <Modal title={i18n.t("ConfirmDeleteTabTitle")} open={this.state.showConfirmDeleteTab} onOk={handleShowConfirmDeleteTabOk} onCancel={handleShowConfirmDeleteTabCancel}>
+                                                            <p>{i18n.t("ConfirmDeleteTabText")}</p>
+                                                        </Modal>
+                                                </div>)}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            // ) : this.state.displayState === brOcDisplayStates.editingScreen_ver2 ? (
+                            //     <EditScreen_ver2
+                            //         operatorConsoleAsParent={this}
+                            //     />
                             ) : this.state.displayState === brOcDisplayStates.waitQuickCallKey ? (<>
                                     <div style={{
                                         flexGrow: 1,
@@ -3765,27 +3937,27 @@ export default class BrekekeOperatorConsole extends React.Component {
                                         {/*<Carousel dotPosition="top" lazyLoad swipeToSlide draggable*/}
                                         {/*          beforeChange={this.onBeforeCurrentScreenIndexChange}*/}
                                         {/*          afterChange={this.setCurrentScreenIndex} initialSlide={this.state.currentScreenIndex}>*/}
-                                        {this.state.screens.map((screen, i) => (
-                                            <div key={i}>
-                                                <div style={{
-                                                    position: 'relative',
-                                                    width: screen.width,
-                                                    height: screen.height,
-                                                    margin: '0 auto',
-                                                    marginTop: 48,
-                                                }}>
-                                                    {screen.widgets.map((widget, i) => {
-                                                        const Widget = WidgetMap[widget.type];
+                                        {this.state.screens.map((screen, screenIndex) => {
+                                            const tabItems = new Array(screen.tabDatas.length);
+                                            for (let i = 0; i < tabItems.length; i++) {
+                                                const tabData = screen.tabDatas[i];
+                                                const tabTitle = tabData.tabTitle;
+                                                let tabJsx;
+                                                if (!tabData.widgetDatas || tabData.widgetDatas.length === 0) {
+                                                    tabJsx = <Empty image={null} description={i18n.t("no_widgets")}/>;
+                                                } else {
+                                                    tabJsx = tabData.widgetDatas.map((widgetData, i) => {
+                                                        const Widget = WidgetMap[widgetData.type];
                                                         if (!Widget) return null;
                                                         return (<div key={i} style={{
                                                             position: 'absolute',
-                                                            left: widget.x,
-                                                            top: widget.y,
-                                                            width: widget.width,
-                                                            height: widget.height
+                                                            left: widgetData.x,
+                                                            top: widgetData.y,
+                                                            width: widgetData.width,
+                                                            height: widgetData.height
                                                         }} onMouseMove={(e) => e.stopPropagation()}>
                                                             <Widget
-                                                                {...widget}
+                                                                {...widgetData}
                                                                 operatorConsoleAsParent={this}
                                                                 uccacWrapper={this._UccacWrapper}
                                                                 context={{
@@ -3827,26 +3999,44 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                     toggleQuickCallScreen: this.toggleQuickCallScreen,
                                                                     onClickAutoDial: this.onClickAutoDial,
                                                                     currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
-                                                                    widget: widget,
+                                                                    widget: widgetData,
                                                                     showAutoDialWidgets: this.state.showAutoDialWidgets,
                                                                     operatorConsole: this
                                                                 }}
                                                             />
-                                                        </div>)
-                                                    })}
-                                                    {screen.widgets.length === 0 && (
-                                                        <Empty image={null} description={i18n.t("no_widgets")}/>
-                                                    )}
+                                                        </div>);
+                                                    });
+                                                }
+                                                const key = i.toString();
+                                                const tabItem = {
+                                                    key:key,
+                                                    label: tabTitle,
+                                                    children: tabJsx
+                                                };
+                                                tabItems[i] = tabItem;
+                                            }
+
+                                            return <div key={screenIndex}>
+                                                <div style={{
+                                                    position: 'relative',
+                                                    width: screen.width,
+                                                    height: screen.height,
+                                                    margin: '0 auto',
+                                                    marginTop: 48,
+                                                }}>
+                                                    <Tabs activeKey={ tabsActiveKey  } items={tabItems} onTabClick={ (key) => this._onShowScreenTabClick(key)  } />
                                                 </div>
                                             </div>
-                                        ))}
+                                        })}
                                         {/*</Carousel>*/}
                                     </div>
                                     <DropDownMenu operatorConsole={this}></DropDownMenu>
                                 </>)
                                 : this.state.displayState === brOcDisplayStates.systemSettingsView ? (
                                         <SystemSettingsView operatorConsole={this}/>
-                                    ) :
+                                    ) : this.state.displayState === brOcDisplayStates.showScreen_ver2 ? (
+                                        <ShowScreenView_ver2 operatorConsoleAsParent={this} />
+                                ) :
                                     (<>
                                         {/* defaultView */}
                                         <div style={{
@@ -3861,27 +4051,36 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             {/*          beforeChange={this.onBeforeCurrentScreenIndexChange}*/}
                                             {/*          afterChange={this.setCurrentScreenIndex}*/}
                                             {/*          initialSlide={this.state.currentScreenIndex}>*/}
-                                            {this.state.screens.map((screen, i) => (
-                                                <div key={i}>
-                                                    <div style={{
-                                                        position: 'relative',
-                                                        width: screen.width,
-                                                        height: screen.height,
-                                                        margin: '0 auto',
-                                                        marginTop: 48,
-                                                    }}>
-                                                        {screen.widgets.map((widget, i) => {
-                                                            const Widget = WidgetMap[widget.type];
+                                            {this.state.screens.map((screen, screenIndex) => {
+                                                // if( !screen.tabDatas ){
+                                                //     //set default tabData
+                                                //     screen.tabDatas = new Array(1);
+                                                //     screen.tabDatas[0] = {
+                                                //         tabTitle : "Untitled tab",
+                                                //         widgetDatas : new Array()
+                                                //     }
+                                                // }
+                                                const tabItems = new Array( screen.tabDatas.length );
+                                                for( let i = 0; i < tabItems.length; i++ ){
+                                                    const tabData = screen.tabDatas[i];
+                                                    const tabTitle = tabData.tabTitle;
+                                                    let  tabJsx;
+                                                    if( !tabData.widgetDatas ||  tabData.widgetDatas.length === 0 ) {
+                                                        tabJsx = <Empty image={null} description={i18n.t("no_widgets")}/>;
+                                                    }
+                                                    else{
+                                                        tabJsx = tabData.widgetDatas.map( ( widgetData, i ) =>{
+                                                            const Widget = WidgetMap[ widgetData.type ];
                                                             if (!Widget) return null;
                                                             return (<div key={i} style={{
                                                                 position: 'absolute',
-                                                                left: widget.x,
-                                                                top: widget.y,
-                                                                width: widget.width,
-                                                                height: widget.height
+                                                                left: widgetData.x,
+                                                                top: widgetData.y,
+                                                                width: widgetData.width,
+                                                                height: widgetData.height
                                                             }} onMouseMove={(e) => e.stopPropagation()}>
                                                                 <Widget
-                                                                    {...widget}
+                                                                    {...widgetData}
                                                                     widgetIndex={i}
                                                                     operatorConsoleAsParent={this}
                                                                     uccacWrapper={this._UccacWrapper}
@@ -3924,20 +4123,35 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                                         toggleQuickCallScreen: this.toggleQuickCallScreen,
                                                                         currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
                                                                         onClickAutoDial: this.onClickAutoDial,
-                                                                        widget: widget,
+                                                                        widget: widgetData,
                                                                         makeCallWithShortDial: this.makeCallWithShortDial,
                                                                         showAutoDialWidgets: this.state.showAutoDialWidgets,
                                                                         operatorConsole: this
                                                                     }}
                                                                 />
-                                                            </div>)
-                                                        })}
-                                                        {screen.widgets.length === 0 && (
-                                                            <Empty image={null} description={i18n.t("no_widgets")}/>
-                                                        )}
+                                                            </div>);
+                                                        });
+                                                    }
+                                                    const tabItem = {
+                                                        key : i.toString(),
+                                                        label : tabTitle,
+                                                        children : tabJsx
+                                                    };
+                                                    tabItems[i] = tabItem;
+                                                }
+
+                                                return <div key={screenIndex}>
+                                                    <div style={{
+                                                        position: 'relative',
+                                                        width: screen.width,
+                                                        height: screen.height,
+                                                        margin: '0 auto',
+                                                        marginTop: 48,
+                                                    }}>
+                                                        <Tabs activeKey={tabsActiveKey} items={tabItems} onTabClick={ (key) => this._onShowScreenTabClick(key)  } />
                                                     </div>
                                                 </div>
-                                            ))}
+                                            })}
                                             {/*</Carousel>*/}
                                         </div>
                                         <DropDownMenu operatorConsole={this}></DropDownMenu>
@@ -3949,7 +4163,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             //callById={this.callById}
                                             isVisible={this.state.showAutoDialWidgets && this.state.showAutoDialWidgets.length !== 0}
                                         />
-                                        <QuickBusy operatorConsoleAsParent={this}/>
+                                        {/*<QuickBusy operatorConsoleAsParent={this}/>*/}
                                     </>)
                         )
                         : this.state.displayState === brOcDisplayStates.noScreens ? (
@@ -4002,37 +4216,75 @@ export default class BrekekeOperatorConsole extends React.Component {
     setEditingScreenForeground = (color) => {
         this.setState({editingScreenForeground: color.hex})
     }
-    startEditingScreen = () => {
-        const {widgets, background, width, height, grid, foreground } = this.state.screens[this.state.currentScreenIndex];
 
-        this._setDisplayState(brOcDisplayStates.editingScreen,
+    startEditingScreen_ver2 = ()=>{
+        this.setDisplayState(brOcDisplayStates.editingScreen_ver2 );
+    }
+
+    startEditingScreen = () => {
+        const {tabDatas, background, width, height, grid, foreground } = this.state.screens[this.state.currentScreenIndex];
+
+        const editingTabDatas = window.structuredClone( tabDatas );
+
+
+        //const currentTabData  = tabDatas[ this.state.currentScreenTabIndex ];
+        //const widgets = currentTabData.widgetDatas;
+        //const editingWidgets = window.structuredClone(widgets || []);
+
+
+        this.setDisplayState(brOcDisplayStates.editingScreen,
             {
-                editingWidgets: window.structuredClone(widgets || []),
+//                editingWidgets: editingWidgets,
+                editingTabDatas : editingTabDatas,
                 editingScreenBackground: background || '#ffffff00',
                 editingScreenForeground: foreground || '#000000',
                 editingScreenWidth: width || 800,
                 editingScreenHeight: height || 600,
                 editingScreenGrid: grid || 10,
+                isSelectingTabInEditLayout : true,
+                selectingWidgetIndex: -1
             }
         );
     }
 
     startShowScreen = () => {
-        this._setDisplayState(brOcDisplayStates.showScreen);
+        this.setDisplayState(brOcDisplayStates.showScreen);
+    }
+
+    startShowScreen_ver2 = () => {
+        this.setDisplayState(brOcDisplayStates.showScreen_ver2 );
     }
 
     startSettingsScreen = () => {
-        this._setDisplayState(brOcDisplayStates.systemSettingsView);
+        this.setDisplayState(brOcDisplayStates.systemSettingsView);
+    }
+
+    getShowAutoDialWidgetSubDatas_ver2(){
+        return this.state.showAutoDialWidgetSubDatas_ver2;
     }
 
     toggleQuickCallScreen = (quickCallButtonWidget) => {
         console.log("quickCallButtonWidget=" + quickCallButtonWidget);
 
         if (this.state.currentScreenQuickCallWidget === quickCallButtonWidget) {
-            this._setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});   //toggle off
+            this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});   //toggle off
         } else {
-            this._setDisplayState(brOcDisplayStates.waitQuickCallKey, {currentScreenQuickCallWidget: quickCallButtonWidget});
+            this.setDisplayState(brOcDisplayStates.waitQuickCallKey, {currentScreenQuickCallWidget: quickCallButtonWidget});
         }
+    }
+
+    toggleQuickCallButton_ver2 = (quickCallButtonWidgetSubData) => {
+        console.log("quickCallButtonWidgetSubData=" + quickCallButtonWidgetSubData);
+
+        if (this.state.currentScreenQuickCallWidgetSubData === quickCallButtonWidgetSubData) {
+            this.setState({currentScreenQuickCallWidgetSubData: null});   //toggle off
+        } else {
+            this.setState( {currentScreenQuickCallWidgetSubData: quickCallButtonWidgetSubData});
+        }
+    }
+
+    getCurrentScreenQuickCallWidgetSubDataFromState(){
+        return this.state.currentScreenQuickCallWidgetSubData;
     }
 
     static _getIndexFromArray(array, item) {
@@ -4062,6 +4314,23 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({showAutoDialWidgets: widgets});  //for rerender
     }
 
+    onClickAutoDialButton_ver2 = (legacyButtonRuntimeSubWidget_autoDialButton) => {
+        console.log("onClick LegacyButtonRuntimeSubWidget_autoDialButton=" + legacyButtonRuntimeSubWidget_autoDialButton);
+        const subDatas = this.getShowAutoDialWidgetSubDatas_ver2();
+        const subData = legacyButtonRuntimeSubWidget_autoDialButton.getLegacyButtonSubWidgetData();
+        const index = BrekekeOperatorConsole._getIndexFromArray(subDatas, subData);
+        if (index === -1) {
+            //visible autoDialView
+            subDatas.push(subData);
+        } else {
+            subDatas.splice(index, 1);
+            // if( widgets.length === 0 ){
+            //   //invisible
+            // }
+        }
+        this.setState({showAutoDialWidgetSubDatas_ver2: subDatas});  //for rerender
+    }
+
     addOnBeginSaveEditingScreenFunctionIfNotExists(func) {
         for (let i = 0; i < this._OnBeginSaveEditingScreenFunctions.length; i++) {
             if (this._OnBeginSaveEditingScreenFunctions[i] === func) {
@@ -4072,8 +4341,44 @@ export default class BrekekeOperatorConsole extends React.Component {
         return true;
     }
 
+    _getCurrentTabDatas(){
+        const screen = this.state.screens[ this.state.currentScreenIndex];
+        const tabDatas = screen.tabDatas;
+        return tabDatas;
+    }
 
-    saveEditingScreen = () => {
+    _getCurrentTabData(){
+        const tabDatas = this._getCurrentTabDatas();
+        const tabData = tabDatas[ this.state.currentScreenTabIndex ];
+        return tabData;
+    }
+
+    changeTabTitleInEditMode(){
+        const form = document.getElementById("tabFormInEditMode");
+        const eTabTitle = form.tabTitle;
+        let tabTitle = eTabTitle.value.trim();
+        if( tabTitle.length === 0 ){
+            Notification.warning( { message:i18n.t("tabTitleIsEmpty")} );
+            return;
+        }
+        tabTitle = this._getEditingNewTabTitle( tabTitle, this._getSelectingEditingTabData()  );
+        if( tabTitle === null ){
+            Notification.warning({ message:i18n.t("tabTitleIsTooLong.")});
+            return;
+        }
+
+        const tabData = this._getSelectingEditingTabData();
+        tabData.tabTitle = tabTitle;
+        this.setState({editingTabDatas: this.state.editingTabDatas});
+    }
+
+    // _onKeydownTabTitleInEditMode( ev ){
+    //     const form = document.getElementById("tabFormInEditMode");
+    //     const tabTitle = form.tabTitle.value;
+    //     this._previousTabTitleInEditMode = tabTitle;
+    // }
+
+    saveEditingScreen = ( ) => {
         for (let i = 0; i < this._OnBeginSaveEditingScreenFunctions.length; i++) {
             const cantSaveMessage = this._OnBeginSaveEditingScreenFunctions[i](this);
             if (cantSaveMessage) {
@@ -4082,32 +4387,74 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         }
 
+        //const screen = this.state.screens[ this.state.currentScreenIndex ];
+        //const tabDatas = screen.tabDatas;
+
+        //const tabIndex = this.state.currentScreenTabIndex;
+        //const tabData = tabDatas[ tabIndex ];
+        //tabData.widgetDatas = this.state.editingWidgets;
+
+        const newTabDatas = window.structuredClone(  this.state.editingTabDatas );
+
         const screens = [...this.state.screens];
         screens[this.state.currentScreenIndex] = {
-            widgets: this.state.editingWidgets,
+            //widgets: this.state.editingWidgets,
             background: this.state.editingScreenBackground,
             width: this.state.editingScreenWidth,
             height: this.state.editingScreenHeight,
             grid: this.state.editingScreenGrid,
-            foreground:this.state.editingScreenForeground
+            foreground:this.state.editingScreenForeground,
+            tabDatas : newTabDatas
         }
         console.log('saving screen', screens[this.state.currentScreenIndex]);
 
-        this._setDisplayState(brOcDisplayStates.showScreen, {screens}, () => {
-                this._syncUp();
-            }
-        );
+        this.setState(
+            {screens:screens}, ()=> {
+                this._syncUp(() => {
+                    this.setDisplayState(brOcDisplayStates.showScreen, {screens}, () => {
+                        }
+                    );
+                });
+       });
     }
 
-    _syncUp = async () => {
+    saveEditingScreen_ver2 = ( ) => {
+        for (let i = 0; i < this._OnBeginSaveEditingScreenFunctions.length; i++) {
+            const cantSaveMessage = this._OnBeginSaveEditingScreenFunctions[i](this);
+            if (cantSaveMessage) {
+                Notification.error({message: cantSaveMessage});
+                return;
+            }
+        }
+
+        const clonedScreenData_ver2 = this._editingScreenData_ver2.cloneScreenData();
+
+        this.setState(
+            {screenData_ver2:clonedScreenData_ver2}, ()=> {
+                this._syncUp(() => {
+                    this.setDisplayState(brOcDisplayStates.showScreen_ver2, {}, () => {
+                        }
+                    );
+                });
+            });
+    }
+
+    getScreenData_ver2(){
+        return this.state.screenData_ver2;
+    }
+
+    _syncUp = async ( onSuccessFunction ) => {
         //if (!pal) return;
         const systemSettingsData = this.getSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
 
+        const oScreen_ver2 = this.state.screenData_ver2.getDataAsObject();
+
         const  layoutsAndSettingsData =  {
             version:  BrekekeOperatorConsole.getAppDataVersion(),
             screens:  this.state.screens,
-            systemSettings: systemSettingsDataData
+            systemSettings: systemSettingsDataData,
+            screen_ver2 : oScreen_ver2
         };
 
         const shortname = this.getLastLayoutShortname();
@@ -4115,7 +4462,11 @@ export default class BrekekeOperatorConsole extends React.Component {
         let error;
         await this.setOCNoteByPal( shortname, noteContent ).
         then( () => {
+            Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
             //this.setLastSystemSettingsDataData( systemSettingsDataData );
+            if( onSuccessFunction ){
+                onSuccessFunction();
+            }
         }).catch( (err) => {
             error =err;
         });
@@ -4139,20 +4490,23 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
 
-        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
         //this.operatorConsoleAsParent.abortSystemSettings();
     }
 
     abortEditingScreen = () => {
-        this._setDisplayState(brOcDisplayStates.showScreen);
+        this.setDisplayState(brOcDisplayStates.showScreen);
     }
 
     abortAutoDialView = () => {
         this.setState({showAutoDialWidgets: []});  //for rerender
     }
 
+    abortAutoDialView_ver2 = () => {
+        this.setState({showAutoDialWidgetSubDatas_ver2: []});  //for rerender
+    }
+
     abortSystemSettings = () => {
-        this._setDisplayState(brOcDisplayStates.showScreen);
+        this.setDisplayState(brOcDisplayStates.showScreen_ver2);
     }
 
     setCurrentScreenIndex = (index) => {
@@ -4255,13 +4609,46 @@ export default class BrekekeOperatorConsole extends React.Component {
         widget.y = ev.clientY - screenRect.top - offsetY;
         widget.y -= widget.y % screen.grid;
 
+        const editingTabDatas = this.state.editingTabDatas;
+        const editingTabData =  editingTabDatas[ this.state.currentScreenTabIndex ];
+        const editingWidgetDatas = editingTabData.widgetDatas;
+        const newEditingWidgetDatas =  [...editingWidgetDatas, widget]
+
+        editingTabData.widgetDatas = newEditingWidgetDatas;
+        editingTabDatas[ this.state.currentScreenTabIndex ] = editingTabData;   //!optimize no need.
+
         this.setState({
-            editingWidgets: [...this.state.editingWidgets, widget]
+            editingTabDatas : editingTabDatas
         });
-        this.selectWidget(this.state.editingWidgets.length);
+        //this.selectWidget(this.state.editingWidgets.length);
+
+        // const selectingTabData = this._getSelectingEditingTabData();
+        // const newEditingWidgets = [ ...selectingTabData.widgetDatas, widget ];
+        // selectingTabData.widgetDatas = newEditingWidgets;
+        // this.setState({ editingTabDatas : this.state.editingTabDatas });
+
+
     }
+
+    _getSelectingEditingTabData(){
+        const tabData = this.state.editingTabDatas[ this.state.currentScreenTabIndex ];
+        return tabData;
+    }
+
+    _getSelectingEditingWidgetDatas(){
+        const tabData = this._getSelectingEditingTabData();
+        if( !tabData ){
+            return null;
+        }
+        const widgetDatas = tabData.widgetDatas;
+        return widgetDatas;
+    }
+
+
     onWidgetMoved = (i, x, y) => {
-        const editingWidgets = [...this.state.editingWidgets];
+        //const editingWidgets = [...this.state.editingWidgets];
+        const editingTabData = this._getSelectingEditingTabData();
+        const editingWidgetDatas = [...editingTabData.widgetDatas];
         const rx = x % this.state.editingScreenGrid;
         if (rx > this.state.editingScreenGrid * 0.5) {
             x += (this.state.editingScreenGrid - rx);
@@ -4274,17 +4661,26 @@ export default class BrekekeOperatorConsole extends React.Component {
         } else {
             y -= ry;
         }
-        editingWidgets[i].x = x;
-        editingWidgets[i].y = y;
-        this.setState({editingWidgets});
+        editingWidgetDatas[i].x = x;
+        editingWidgetDatas[i].y = y;
+        editingTabData.widgetDatas = editingWidgetDatas;
+        this.state.editingTabDatas[ this.state.currentScreenTabIndex ] = editingTabData;    //!optimize no need.
+        this.setState( {editingTabDatas : this.state.editingTabDatas});
+        //this.setState({editingWidgets});
     }
     onWidgetResized = (i, x, y, width, height) => {
-        const editingWidgets = [...this.state.editingWidgets];
+        //const editingWidgets = [...this.state.editingWidgets];
+        const editingTabData = this._getSelectingEditingTabData();
+        const editingWidgets = [...editingTabData.widgetDatas];
+
         editingWidgets[i].x = x;
         editingWidgets[i].y = y;
         editingWidgets[i].width = width;
         editingWidgets[i].height = height;
-        this.setState({editingWidgets});
+
+        editingTabData.widgetDatas = editingWidgets;
+        this.setState( {editingTabDatas : this.state.editingTabDatas});
+        //this.setState({editingWidgets});
     }
     onWidgetRemoved = (i) => {
         // const widget = this.state.editingWidgets[i];
@@ -4296,44 +4692,154 @@ export default class BrekekeOperatorConsole extends React.Component {
         // }
 
 
-        const editingWidgets = [...this.state.editingWidgets];
+        //const editingWidgets = [...this.state.editingWidgets];
+
+        const editingTabDatas = this.state.editingTabDatas;
+        const editingTabData = editingTabDatas[ this.state.currentScreenTabIndex ];
+        const editingWidgetDatas = editingTabData.widgetDatas;
+
         //const removingWidget = editingWidgets[ i ];
         // const func = removingWidget.OnRemovingWidget;
         // if( func ){
         //   func(this,i);
         // }
-        editingWidgets.splice(i, 1);
+        editingWidgetDatas.splice(i, 1);
         this.setState({
-            editingWidgets,
+            editingTabDatas : editingTabDatas
         });
         this.selectWidget(this.state.selectingWidgetIndex === i ? -1 : this.state.selectingWidgetIndex);
     }
 
+    removeTabInEditMode( tabIndex ){
+        const screen = this.state.screens[ this.state.currentScreenIndex ];
+        if ( this.state.editingTabDatas.length == 1) {
+            Notification.warning({message: i18n.t("YouCanNotDeleteLastTab")});
+            return;
+        }
+
+        const editingTabDatas = this.state.editingTabDatas;
+        editingTabDatas.splice( tabIndex , 1 );
+
+        let newSelectingTabIndex;
+        if( tabIndex == editingTabDatas.length ){
+            newSelectingTabIndex = tabIndex - 1;
+        }
+        else{
+            newSelectingTabIndex = tabIndex;
+        }
+
+
+        this.setState({
+            editingTabDatas :  editingTabDatas,
+            currentScreenTabIndex : newSelectingTabIndex
+        });
+        //this.setState({ editingTabdatas :  this.state.editingTabDatas, currentScreenTabIndex: newSelectingTabIndex });
+
+
+    }
+
     getEditingWidget() {
         if (this.state.selectingWidgetIndex >= 0) {
-            const editingWidgets = [...this.state.editingWidgets];
-            const editingWidget = editingWidgets[this.state.selectingWidgetIndex];
+            const editingWidgetDatasOrg = this._getSelectingEditingWidgetDatas();
+            //const editingWidgets = [...editingWidgetDatasOrg];
+            //const editingWidget = editingWidgets[this.state.selectingWidgetIndex];
+            const editingWidget = editingWidgetDatasOrg[this.state.selectingWidgetIndex];
             return editingWidget;
         }
         return null;
     }
 
     getEditingWidgets() {
-        const editingWidgets = [...this.state.editingWidgets];
+        const editingWidgetDatasOrg = this._getSelectingEditingWidgetDatas();
+        const editingWidgets = [...editingWidgetDatasOrg];
         return editingWidgets;
     }
 
 
     duplicateWidget = (i) => {
-        const editingWidgets = [...this.state.editingWidgets];
+        const editingWidgetDatasOrg = this._getSelectingEditingWidgetDatas();
+        const editingWidgets = [...editingWidgetDatasOrg];
         const widget = window.structuredClone(editingWidgets[this.state.selectingWidgetIndex]);
         widget.x += 25;
         widget.y += 25;
         editingWidgets.splice(i + 1, 0, widget);
-        this.setState({
-            editingWidgets
-        });
+        // this.setState({
+        //     editingWidgets
+        // });
+        const editingTabData = this._getSelectingEditingTabData();
+        editingTabData.widgetDatas = editingWidgets;
+        const editingTabDatas = this.state.editingTabDatas;
+        editingTabDatas[ this.state.currentScreenTabIndex] = editingTabData;   //!optimize no need
+        this.setState({ editingTabDatas : editingTabDatas });
+
         this.selectWidget(this.state.selectingWidgetIndex + 1);
+    }
+
+    _getEditingNewTabTitle( newTabTitle, currentTabData ){
+        const editingTabDatas = this.state.editingTabDatas;
+        let tabTitle = newTabTitle;
+        for( let i = 0; i < editingTabDatas.length; i++ ){
+            const editingTabData = editingTabDatas[i];
+            if( editingTabData === currentTabData ){
+                continue;
+            }
+            const currentTabTitle = editingTabData.tabTitle;
+            if( currentTabTitle === newTabTitle ){
+                tabTitle = newTabTitle + " (2)";
+                return this._getEditingNewTabTitle( tabTitle );
+            }
+        }
+
+        if( tabTitle.length > BrekekeOperatorConsole.TAB_TITLE_MAX_LENGTH ){
+            return null;
+        }
+
+        return tabTitle;
+    }
+
+    duplicateTabInEditMode(){
+        const editingTabDatas = this.state.editingTabDatas;
+        const editingTabData = editingTabDatas[ this.state.currentScreenTabIndex ];
+        const newTabTitle = this._getEditingNewTabTitle( editingTabData.tabTitle  );
+        if( newTabTitle === null ){
+            Notification.warning({ message:i18n.t("tabTitleIsTooLong.")});
+            return;
+        }
+
+        const newWidgetDatas = [...editingTabData.widgetDatas];
+        const newTabData = {
+            tabTitle : newTabTitle,
+            widgetDatas : newWidgetDatas
+        }
+        const insertIndex = this.state.currentScreenTabIndex;
+        editingTabDatas.splice( insertIndex, 0, newTabData );
+        this.setState({editingTabDatas:editingTabDatas});
+    }
+
+    addTabInEditMode(){
+        const form = document.getElementById("tabFormInEditMode");
+        let newTabTitle = form.tabTitle.value.trim();
+        if( newTabTitle.length === 0 ){
+            Notification.warning({message:i18n.t("tabTitleIsEmpty")});
+            return;
+        }
+
+        newTabTitle = this._getEditingNewTabTitle( newTabTitle );
+        if( newTabTitle === null ){
+            Notification.warning({ message:i18n.t("tabTitleIsTooLong.")});
+            return;
+        }
+
+
+        const editingTabDatas = this.state.editingTabDatas;
+        const newTabData = {
+            tabTitle : newTabTitle,
+            widgetDatas : new Array()
+        }
+
+        const insertIndex = this.state.currentScreenTabIndex;
+         editingTabDatas.splice( insertIndex, 0, newTabData );
+        this.setState({editingTabDatas:editingTabDatas});
     }
 
     selectWidget = (i) => {
@@ -4369,7 +4875,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             window.addEventListener( "keydown", this._onKeydownAtEditingScreenFunc );
         }
 
-        this.setState({selectingWidgetIndex: i});
+        this.setState({selectingWidgetIndex: i, isSelectingTabInEditLayout: false});
     }
 
     _onKeydownAtEditingScreen( ev ) {
@@ -4395,23 +4901,35 @@ export default class BrekekeOperatorConsole extends React.Component {
 
 
     makeWidgetOnTop = (i) => {
-        const editingWidgets = [...this.state.editingWidgets];
-        const [widget] = editingWidgets.splice(i, 1);
-        editingWidgets.push(widget);
+        //const editingWidgets = [...this.state.editingWidgets];
+        const editingWidgetDatas = [...this._getSelectingEditingWidgetDatas()];
+        const [widget] = editingWidgetDatas.splice(i, 1);
+        editingWidgetDatas.push(widget);
+        const editingTabDatas = this.state.editingTabDatas;
+        const editingTabData = editingTabDatas[ this.state.currentScreenTabIndex];
+        editingTabData.widgetDatas = editingWidgetDatas;
+        editingTabDatas[ this.state.currentScreenTabIndex ] = editingTabData; //!optimize no need.
         this.setState({
-            editingWidgets,
+            editingTabDatas : editingTabDatas
         });
-        this.selectWidget(editingWidgets.length - 1);
+        this.selectWidget(editingWidgetDatas.length - 1);
     }
 
 
     updateSelectingWidgetSettings = (settings) => {
-        const editingWidgets = [...this.state.editingWidgets];
-        editingWidgets[this.state.selectingWidgetIndex] = {
-            ...editingWidgets[this.state.selectingWidgetIndex],
+        //const editingWidgets = [...this.state.editingWidgets];
+        const editingWidgetDatas = [...this._getSelectingEditingWidgetDatas()];
+        editingWidgetDatas[this.state.selectingWidgetIndex] = {
+            ...editingWidgetDatas[this.state.selectingWidgetIndex],
             ...settings,
         };
-        this.setState({editingWidgets});
+
+        const editingTabDatas = this.state.editingTabDatas;
+        const editingTabData = editingTabDatas[ this.state.currentScreenTabIndex ];
+        editingTabData.widgetDatas = editingWidgetDatas;
+        editingTabDatas[ this.state.currentScreenTabIndex ] = editingTabData;   //!optimize no need
+        this.setState({editingTabDatas : editingTabDatas });
+        //this.setState({editingWidgets});
     }
 
     // //!obsolute
@@ -4605,7 +5123,12 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     setDialingAndMakeCall = (sDialing, context) => {
         this.setState({dialing: sDialing}, () => {
-            context.makeCall();
+            if( context ) {
+                context.makeCall();
+            }
+            else{
+                this.makeCall();
+            }
         });
     }
 
@@ -4887,7 +5410,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             case ACallInfo.CALL_STATUSES.calling:
                 this._clearDialing();
                 this._isDTMFInput = true;
-            break;
+                break;
             case ACallInfo.CALL_STATUSES.holding:
             case ACallInfo.CALL_STATUSES.incoming:
                 this._clearDialing();
@@ -5008,6 +5531,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({autoRejectIncoming: !this.state.autoRejectIncoming});
     }
 
+    getAutoRejectIncoming(){
+        return this.state.autoRejectIncoming;
+    }
+
     resumeCall = () => {
         const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         if (currentCallInfo && currentCallInfo.getIsHolding()) {
@@ -5067,16 +5594,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         const tenant = undefined;   //!testit
         const talkerId = callInfo.getPbxTalkerId();
         await this.transferCallCore( dialing, mode, talkerId, tenant,
-                function( this_, message ){
-                    if( mode === "blind") {
-                        if (message && message.toLowerCase().startsWith("fail")) {
-                            //!fail
-                        } else {
-                            callInfo.hangup();
-                        }
+            function( this_, message ){
+                if( mode === "blind") {
+                    if (message && message.toLowerCase().startsWith("fail")) {
+                        //!fail
+                    } else {
+                        callInfo.hangup();
                     }
                 }
-            );
+            }
+        );
 
         return true;
     }
@@ -5123,7 +5650,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             return false;
         }
         const bNeedSendDTMF = this._isSendDTMFChar(key);
-       // if (this._aphone.isPalReady() && currentCallInfo) {
+        // if (this._aphone.isPalReady() && currentCallInfo) {
         if ( bNeedSendDTMF) {
             //const tenant = currentCall.pbxTenant;
             const tenant = undefined;   //!testit
@@ -5182,7 +5709,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         this._clearDialing();
         if (this.state.currentScreenQuickCallWidget) {
-            this._setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});
+            this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});
         }
         //this.setState({isCalling:true});
         return true;
@@ -5319,7 +5846,14 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
     _onBeforeUnload(event){
-        const hasCall = this.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
+        const phoneClient = this.getPhoneClient();
+        let hasCall;
+        if( phoneClient ){
+            hasCall = phoneClient.getCallInfos().getCallInfoCount() !== 0;
+        }
+        else{
+            hasCall = false;
+        }
         if( hasCall ) {
             event.preventDefault();
             event.returnValue = i18n.t("areYouSureLeaveThePage");
@@ -5377,7 +5911,14 @@ export default class BrekekeOperatorConsole extends React.Component {
         else{
             console.error("setOCNote failed. error=" , e );
         }
-        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') , duration:0 });
+        try {
+            const sError = JSON.stringify(e);
+            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+        }
+        catch( err ){
+            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+        }
+        //Notification.error({message: i18n.t('failed_to_save_data_to_pbx') , duration:0 });
 
         // let message = eventArg ? eventArg.message : "";
         // if (!message) {
@@ -5419,8 +5960,19 @@ export default class BrekekeOperatorConsole extends React.Component {
                 function( res, obj ){
                     const sNote = res.note;
                     const oNote = JSON.parse( sNote );
+                    // const oScreen_ver2 = oNote["screen_ver2"];
+                    // let screenData_ver2;
+                    // if( !oScreen_ver2 ){
+                    //     screenData_ver2 = new ScreenData();
+                    // }
+                    // else{
+                    //     screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
+                    // }
                     this_.setOCNote( layoutShortname, oNote, function(){
-                            this_.setState( { _downedLayoutAndSystemSettings:true }, ()=> downLayoutAndSystemSettingsSuccessFunction() );
+                            //this_.setState( { _downedLayoutAndSystemSettings:true, screenData_ver2: screenData_ver2, displayState:brOcDisplayStates.showScreen_ver2  }, ()=> {
+                            this_.setState( { _downedLayoutAndSystemSettings:true, displayState:brOcDisplayStates.showScreen_ver2  }, ()=> {
+                                downLayoutAndSystemSettingsSuccessFunction();
+                            } );
                         },
                         function(e) {
                             this_._setOCNoteFailAtDownLayoutAndSystemSettings(e, downLayoutAndSystemSettingsFailFunction);
@@ -5486,6 +6038,10 @@ export default class BrekekeOperatorConsole extends React.Component {
     getExtensionsStatus(){
         const o = this.state.extensionsStatus;
         return o;
+    }
+
+    getUccacWrapper(){
+        return this._UccacWrapper;
     }
 
     getMonitoringExtension(){
@@ -5665,6 +6221,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this._LoginPalWrapper;
     }
 
+    getLoginUser(){
+        return this.state.loginUser;
+    }
 
     getExtensions(){
         return this.state.extensions; //!check use cache
@@ -5694,16 +6253,41 @@ export default class BrekekeOperatorConsole extends React.Component {
         });
     }
 
+    // _setDefaultTabDatasToStateScreens(){
+    //     const screens = this.state.screens;
+    //     for( let i = 0; i < screens.length; i++ ){
+    //         const screen = screens[i];
+    //         let  tabDatas = screen.tabDatas;
+    //         if( tabDatas ){
+    //             continue;
+    //         }
+    //         tabDatas = new Array(1);
+    //         const tabData = {
+    //             //tabTitle : i18n.t("defaultTabTitle"), //Can not do this
+    //             tabTitle : "Untitled tab",
+    //             widgetDatas : new Array()
+    //         };
+    //         tabDatas[0] = tabData;
+    //         screen.tabDatas = tabDatas;
+    //     }
+    //     this.setState({screens:screens});
+    // }
+
     syncUp = async () => {
         if( !this._aphone){
             return;
         }
 
+        const oScreen_ver2 = this.state.screenData_ver2.getDataAsObject();
+
+
 
         const dataId = PBX_APP_DATA_NAME;
+        //!old Do not use.
         const data = {
             version : PBX_APP_DATA_VERSION,
-            screens : this.state.screens
+            screens : this.state.screens,
+            screen_ver2 : oScreen_ver2
         };
         const [err] = await this._aphone.setAppDataAsync( dataId, data );
         if (err) {
@@ -5951,8 +6535,65 @@ export default class BrekekeOperatorConsole extends React.Component {
         return shortname;
     }
 
-    _onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction){
-        this.setState( {screens:screens, systemSettingsData:systemSettingsData }, () =>{
+    _convertAppData_version_0_1To2_0_0( oOldContent ){
+        const oContent = {};
+        oContent.version = PBX_APP_DATA_VERSION;
+        const oldScreens = oOldContent.screens;
+        oContent.screens = oldScreens; //!bad. Not used but still available  //!forBug. Need deep copy?
+        oContent.systemSettings = oOldContent.systemSettings;  //!forBug. Need deep copy?
+
+        const oldScreen = oldScreens[0];
+
+        const screenDataVer2 = new ScreenData();
+
+        const background = oldScreen.background;
+        if( background ){
+            screenDataVer2.setScreenBackgroundColor( background );
+        }
+        const foreground = oldScreen.foreground;
+        if( foreground ){
+            screenDataVer2.setScreenForegroundColor( foreground );
+        }
+        const grid = oldScreen.grid;
+        if( grid ){
+            screenDataVer2.setEditingScreenGrid(grid);
+        }
+
+        const screenPaneDatas = screenDataVer2.getScreenPaneDatas();
+        const screenPaneData = screenPaneDatas.addPaneData(PaneData.PANE_TYPES.rootPane,null);
+        const widgetDatas =  screenPaneData.getWidgetDatasForNoTabs();
+
+        const oldWidgets = oldScreen.widgets;
+        if( oldWidgets && Array.isArray( oldWidgets ) ){
+            for( let i = 0; i < oldWidgets.length; i++ ){
+                const oldWidget = oldWidgets[i];
+
+                const widgetTypeId = WidgetData.getWidgetTypeIdByWidgetTypeName( oldWidget.type );
+
+                const editingScreenGrid = screenDataVer2.getEditingScreenGrid();
+                const widgetRelativePositionX = oldWidget.x - oldWidget.x  % editingScreenGrid + ( WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
+                const widgetRelativePositionY = oldWidget.y - oldWidget.y  % editingScreenGrid + ( WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
+                const widgetData = widgetDatas.addWidgetData( widgetTypeId, widgetRelativePositionX, widgetRelativePositionY, oldWidget.width, oldWidget.height  );
+                if( widgetData ){
+                    widgetData.importFromWidget_ver0_1( oldWidget );
+                }
+            }
+        }
+
+        const oScreen_ver2 = screenDataVer2.getDataAsObject();
+        oContent.screen_ver2 = oScreen_ver2;
+        return oContent;
+    }
+
+    _onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction){
+        let screenData_ver2;
+        if( !oScreen_ver2 ){
+            screenData_ver2 = new ScreenData();
+        }
+        else{
+            screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
+        }
+        this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
             //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
             this.reloadSystemSettingsExtensionScript();
             //this._BusylightStatusChanger.init();    //!dev
@@ -5976,20 +6617,46 @@ export default class BrekekeOperatorConsole extends React.Component {
     setOCNote( shortName,  oContent, setOCNoteSuccessFunction, setOCNoteFailFunction, setLastLayoutShortName=true, skipSetSystemSettingsDataData = false  ){
         const version = oContent.version;
         if( version !== PBX_APP_DATA_VERSION ){
-            //!TODO versioning    //!later
-            //return i18n.t("DataVersionMismatch");
-            setOCNoteFailFunction({message:i18n.t("DataVersionMismatch")});
-            return false;
+            if( version === "0.1" ){
+                oContent = this._convertAppData_version_0_1To2_0_0(oContent);
+                //!dev
+                if( !oContent ){
+                    setOCNoteFailFunction({message: i18n.t("DataVersionMismatch")});
+                    return false;
+                }
+
+            }
+            else {
+                //return i18n.t("DataVersionMismatch");
+                setOCNoteFailFunction({message: i18n.t("DataVersionMismatch")});
+                return false;
+            }
         }
 
         const screens = oContent.screens;
+        //set default tabDatas
+        for( let i = 0; i < screens.length; i++ ) {
+            const screen = screens[i];
+            if (!screen.tabDatas) {
+                screen.tabDatas = [
+                    {
+                        tabTitle: i18n.t("defaultTabTitle"),
+                        widgetDatas: new Array(),
+                    }
+                ]
+            }
+        }
+
+
         const systemSettingsDataData = oContent.systemSettings;
         const systemSettingsData = this.state.systemSettingsData;
+        const oScreen_ver2 = oContent.screen_ver2;
+
         if( skipSetSystemSettingsDataData === false ) {
             const this_ = this;
             const bStartInit = systemSettingsData.setSystemSettingsDataData(systemSettingsDataData,
                 function(){
-                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction );
+                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction );
                 },
                 function(e){
                     setOCNoteFailFunction(e);
@@ -5997,7 +6664,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             return bStartInit;
         }
         else{
-            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
+            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
             return false;
         }
 
@@ -6036,6 +6703,7 @@ BrekekeOperatorConsole.DTMF_CHARS = [
     '0','1','2','3','4','5','6','7','8','9','*','#'
 ]
 BrekekeOperatorConsole.DIALING_MAX_LENGTH = 20; //!const
+BrekekeOperatorConsole.TAB_TITLE_MAX_LENGTH = 30; //!const
 BrekekeOperatorConsole.WAIT_HOLD_TIMELIMIT_MILLIS_AT_ONETOUCHDIAL = 20 * 1000;
 
 export function OperatorConsole( el, props ) {

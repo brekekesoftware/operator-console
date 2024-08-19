@@ -1,0 +1,26 @@
+.brOC .quickBusy {
+    position:absolute;
+    right:0;
+    top:var(--headerHeight);
+    border-radius: var(--defaultBorderRadius);
+    margin-top:0;
+    background-color:initial;
+    z-index: 112;
+}
+
+.brOC .quickBusy > table {
+    background-color: var(--defaultOutsideBgColor);
+    animation-duration: 0.5s;
+    animation-name: QuickBusyTableSlideIn;
+}
+
+@keyframes QuickBusyTableSlideIn {
+    0% {
+        margin-left:100%;
+        opacity: 0;
+    }
+    100% {
+        margin-left:0%;
+        opacity: 1;
+    }
+}

@@ -139,6 +139,11 @@ export default class SystemSettingsView extends React.Component {
         else{
             console.error("setSystemSettingsDataData failed. error=" , e );
         }
+        try {
+            e = JSON.stringify(e);
+        }
+        catch( err ){
+        }
         Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
         this._onEndSetSystemSettings();
     }
@@ -232,11 +237,14 @@ export default class SystemSettingsView extends React.Component {
         //if (!pal) return;
         const systemSettingsData = this.operatorConsoleAsParent.getSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
+        const screenData_ver2 = this.operatorConsoleAsParent.getScreenData_ver2();
+        const oScreen_ver2 = screenData_ver2.getDataAsObject();
 
         const  layoutsAndSettingsData =  {
             version:  BrekekeOperatorConsole.getAppDataVersion(),
             screens:  this.operatorConsoleAsParent.state.screens,
-            systemSettings: systemSettingsDataData
+            systemSettings: systemSettingsDataData,
+            screen_ver2:oScreen_ver2
         };
 
         const shortname = this.operatorConsoleAsParent.getLastLayoutShortname();

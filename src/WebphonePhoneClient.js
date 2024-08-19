@@ -14,14 +14,14 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
         const options_ = {...options}
         options_["phoneClient"] = this;
-        this._WebphoneCallInfos = new WebphoneCallInfos( options_ );
+        this._webphoneCallInfos = new WebphoneCallInfos( options_ );
     }
 
     /**
      *  overload method
      */
     getCallInfos(){
-        return this._WebphoneCallInfos;
+        return this._webphoneCallInfos;
     }
 
     /**
@@ -83,7 +83,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
             'webphone.pal.param.park': '*',
         };
 
-        this._Webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
+        this._webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
 
         const onInitSuccessFunction = options["onInitSuccessFunction"];
 
@@ -113,47 +113,47 @@ export default class WebphonePhoneClient  extends APhoneClient {
             const temp = 0;
         };
 
-        this._Webphone.on("error", this._onWebphoneError );
-        this._Webphone.on("onError", this._onWebphoneOnError );
-        this._Webphone.on("onerror", this._onWebphoneOnerror );
-        this._Webphone.on("close", this._onWebphoneClose );
-        this._Webphone.on("onClose", this._onWebphoneOnClose );
-        this._Webphone.on("onclose", this._onWebphoneOnclose  );
+        this._webphone.on("error", this._onWebphoneError );
+        this._webphone.on("onError", this._onWebphoneOnError );
+        this._webphone.on("onerror", this._onWebphoneOnerror );
+        this._webphone.on("close", this._onWebphoneClose );
+        this._webphone.on("onClose", this._onWebphoneOnClose );
+        this._webphone.on("onclose", this._onWebphoneOnclose  );
 
         const this_ = this;
-        this._Webphone.on("webrtcclient", function( webrcclient ) {
-            this_._Webphone.removeAllListeners("webrtcclient");
+        this._webphone.on("webrtcclient", function( webrcclient ) {
+            this_._webphone.removeAllListeners("webrtcclient");
             this_._webrtcclient = webrcclient;
         });
 
-        this._Webphone.on('call', c => {
+        this._webphone.on('call', c => {
             console.log('call', c);
             this_._onCall( c );
         });
-        this._Webphone.on('call_update', c => {
+        this._webphone.on('call_update', c => {
             console.log('call_update', c);
-            this._WebphoneCallInfos.onUpdateCallObjectByWebphoneClient( c );
+            this._webphoneCallInfos.onUpdateCallObjectByWebphoneClient( c );
         })
-        this._Webphone.on('call_end', c => {
+        this._webphone.on('call_end', c => {
             console.log('call_end', c);
-            this._WebphoneCallInfos.onEndCallByPhoneClient( c.id );
+            this._webphoneCallInfos.onEndCallByPhoneClient( c.id );
         })
         this.notify_serverstatus = e => {
             console.log('pal.notify_serverstatus', e);
 
             if (e?.status === 'active' ) {
-                //const staccount = this._Webphone.getCurrentAccount();
+                //const staccount = this._webphone.getCurrentAccount();
                 this._initialize( onInitSuccessFunction );   //initialize
             }
             this._OperatorConsoleAsParent.onPalNotifyServerstatusByWebphonePhoneClient(e);
         }
-        this._Webphone.on("pal.notify_serverstatus", this.notify_serverstatus );
+        this._webphone.on("pal.notify_serverstatus", this.notify_serverstatus );
 
 
-        this._Webphone.on('pal', ( pal) => {
+        this._webphone.on('pal', ( pal) => {
 
-            //this. account = this._Webphone.getCurrentAccount();
-            //console.log('account', this._Webphone.getCurrentAccount());
+            //this. account = this._webphone.getCurrentAccount();
+            //console.log('account', this._webphone.getCurrentAccount());
             console.log('pal', pal)
 
             //Notification.close('reconnecting'); //!commentout close not found.
@@ -172,7 +172,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
                 //this.old_notify_status = pal.notify_status
                 //pal.notify_status = this.notify_status;
-                this._Webphone.on('pal.notify_status', this.notify_status);
+                this._webphone.on('pal.notify_status', this.notify_status);
 
                 // NOTE: currently unused, Shin said registered events are not ready yet
                 // var old_notify_registered = pal.notify_registered
@@ -199,7 +199,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                     }
                 }
                 //pal.notify_line = this.notify_line;
-                this._Webphone.on("pal.notify_line", this.notify_line );
+                this._webphone.on("pal.notify_line", this.notify_line );
 
                 this.notify_park = e => {
                     console.log('pal.notify_park', e)
@@ -209,7 +209,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                     }
                 }
                 //pal.notify_park = this.notify_park;
-                this._Webphone.on("pal.notify_park", this.notify_park );
+                this._webphone.on("pal.notify_park", this.notify_park );
 
                 const old_onError = pal.onError;
                 pal.onError = e => {
@@ -239,7 +239,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
             }
 
             //this._initialize( account, pal );   //initialize  for new webphone 2023/04/10~
-        } /* ~this._Webphone.on( */ )  //~this._Webphone.on
+        } /* ~this._webphone.on( */ )  //~this._webphone.on
     }
 
     statusEvents = [];
@@ -328,7 +328,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
     _onCall( call  ){
         //this._OperatorConsoleAsParent._onPhoneCallByWebphonePhoneClient( this, call ); //!old
-        this._WebphoneCallInfos.addCallInfoByWebphoneCallObject(call);
+        this._webphoneCallInfos.addCallInfoByWebphoneCallObject(call);
 
 
         //set custom incoming sound.
@@ -467,33 +467,37 @@ export default class WebphonePhoneClient  extends APhoneClient {
     deinitPhoneClient(){
         this._isPalReady = false;
         this._webrtcclient = null;
-        this._Webphone.removeAllListeners("call");
-        this._Webphone.removeAllListeners("call_update");
-        this._Webphone.removeAllListeners("call_end");
-        this._Webphone.removeAllListeners("pal.notify_serverstatus");
-        this._Webphone.removeAllListeners("pal");
-        this._Webphone.removeAllListeners("pal.notify_status");
-        this._Webphone.removeAllListeners("pal.notify_line");
-        this._Webphone.removeAllListeners("pal.notify_park");
+		
+		if( this._webphone ){
+			this._webphone.removeAllListeners("call");
+			this._webphone.removeAllListeners("call_update");
+			this._webphone.removeAllListeners("call_end");
+			this._webphone.removeAllListeners("pal.notify_serverstatus");
+			this._webphone.removeAllListeners("pal");
+			this._webphone.removeAllListeners("pal.notify_status");
+			this._webphone.removeAllListeners("pal.notify_line");
+			this._webphone.removeAllListeners("pal.notify_park");
 
-        //this._Webphone.removeListener('pal.notify_status', this.notify_status )
-        //this._Webphone.removeListener('pal.notify_serverstatus', this.notify_serverstatus);
-        // this._Webphone.removeListener('close', this._onWebphoneClose  );
-        // this._Webphone.removeListener('onclose', this._onWebphoneOnclose  );
-        // this._Webphone.removeListener('onClose', this._onWebphoneOnClose  );
-        // this._Webphone.removeListener('error', this._onWebphoneError  );
-        // this._Webphone.removeListener('onerror', this._onWebphoneOnerror  );
-        // this._Webphone.removeListener('onError', this._onWebphoneOnError  );
+			//this._webphone.removeListener('pal.notify_status', this.notify_status )
+			//this._webphone.removeListener('pal.notify_serverstatus', this.notify_serverstatus);
+			// this._webphone.removeListener('close', this._onWebphoneClose  );
+			// this._webphone.removeListener('onclose', this._onWebphoneOnclose  );
+			// this._webphone.removeListener('onClose', this._onWebphoneOnClose  );
+			// this._webphone.removeListener('error', this._onWebphoneError  );
+			// this._webphone.removeListener('onerror', this._onWebphoneOnerror  );
+			// this._webphone.removeListener('onError', this._onWebphoneOnError  );
 
-        this._Webphone.cleanup();
+			this._webphone.cleanup();
 
-        this._Webphone.removeAllListeners('close');
-        this._Webphone.removeAllListeners('onclose');
-        this._Webphone.removeAllListeners('onClose');
-        this._Webphone.removeAllListeners('error');
-        this._Webphone.removeAllListeners('onerror');
-        this._Webphone.removeAllListeners('onError');
-        this._Webphone.removeAllListeners("webrtcclient");
+			this._webphone.removeAllListeners('close');
+			this._webphone.removeAllListeners('onclose');
+			this._webphone.removeAllListeners('onClose');
+			this._webphone.removeAllListeners('error');
+			this._webphone.removeAllListeners('onerror');
+			this._webphone.removeAllListeners('onError');
+			this._webphone.removeAllListeners("webrtcclient");
+			this._webphone = null;
+		}
 
         super.deinitPhoneClient();
     }
@@ -581,10 +585,10 @@ export default class WebphonePhoneClient  extends APhoneClient {
     _initialize(  onInitSuccessFunction ){
 
         // prompt for permission if needed
-        //this._Webphone.promptBrowserPermission();
+        //this._webphone.promptBrowserPermission();
 
         // or if we manually show the prompt, we can accept the permission on user click
-        this._Webphone.acceptBrowserPermission();
+        this._webphone.acceptBrowserPermission();
 
 
 
@@ -608,7 +612,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
 
     _setIncomingRingtone( soundFileUrl ){
-        this._Webphone.setIncomingRingtone( soundFileUrl );
+        this._webphone.setIncomingRingtone( soundFileUrl );
     }
 
     /**
@@ -618,7 +622,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
      * @returns {boolean}
      */
     callByPhoneClient( sDialing, usingLine ){
-        // if (!this._Webphone) {
+        // if (!this._webphone) {
         //     return false;
         // }
 
@@ -627,7 +631,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 extraHeaders: [`X-PBX-RPI: ${usingLine}`]
             });
         } else {
-            this._Webphone.call(sDialing);
+            this._webphone.call(sDialing);
         }
         //return true;
     }

@@ -72,7 +72,15 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                     else{
                         console.error("setOCNote failed. error=" , e );
                     }
-                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+
+                    try {
+                        const sError = JSON.stringify(e);
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                    }
+                    catch( err ){
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                    }
+                    //Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
 
                     setOpenLayoutModalOpenFunc(false);
                 });

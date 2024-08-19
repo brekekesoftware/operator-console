@@ -3,12 +3,21 @@ html,body {
   height: 100%;
 }
 
+body{
+  margin:0;
+}
+
 .brOC * {
 	/* font-family: WorkSans, Meiryo, -apple-system, BlinkMacSystemFont, "Segoe UI", */
 		/* Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", */
 		/* "Segoe UI Symbol"; */
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
 	font-size:14px;
+}
+
+:root{
+  --broc_dividerHalfWidth: 3px;
+  --broc_dividerHalfHeight: 3px;
 }
 
 .brOC {
@@ -18,6 +27,9 @@ html,body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  --dividerWidth: 6px;
+  --dividerHeight: 6px;
+
 }
 
 #brOCPhone {
@@ -264,7 +276,6 @@ table caption {
 }
 
 table tr {
-  background-color: #f8f8f8;
   border-bottom: 1px solid #e0e0e0;
   border-collapse: collapse;
   padding: .35em;
@@ -497,17 +508,19 @@ table.brOCLinetable{
   border-collapse:separate;
   border-spacing:0;
 }
-table.brOCLinetable tr,
-table.brOCLinetable thread,
-table.brOCLinetable tbody,
-table.brOCLinetable thread tr,
-table.brOCLinetable tbody tr,
-table.brOCLinetable thread tr th,
-table.brOCLinetable tbody tr td
-{
-  background: unset;
-  background-color:unset;
-}
+
+//table.brOCLinetable tr,
+//table.brOCLinetable thread,
+//table.brOCLinetable tbody,
+//table.brOCLinetable thread tr,
+//table.brOCLinetable tbody tr,
+//table.brOCLinetable thread tr th,
+//table.brOCLinetable tbody tr td
+//{
+//  background: unset;
+//  background-color:unset;
+//}
+
 table.brOCLinetable tbody tr td
 {
 	display:table-cell;
@@ -561,6 +574,15 @@ table.brOCLinetable tbody tr td
 	border-color:unset;
 }
 
+////for Customizable button's foreground color
+//.brOC button.kbc-button-fill-parent, a.kbc-button-fill-parent,
+//.brOC button.kbc-button, a.kbc-button,
+//.brOC .kbc-button-fill-parent,
+//.brOC .kbc-button
+//{
+//  color:unset;
+//}
+
 .brOC .ant-btn-success:disabled{
      background-color: #badfa9;
 }
@@ -585,6 +607,132 @@ table.brOCLinetable tbody tr td
   bottom:0;
 }
 
+.brOC button{
+  user-select:none;
+}
+
 :where(.css-dev-only-do-not-override-htwhyh).ant-select {
 	display:unset;
+}
+
+.brOC .containerContent{
+  overflow:auto;
+  /* white-space: nowrap; */
+}
+
+.brOC div.horizontalDivider{
+  background-color:lightgray;
+  cursor: ns-resize;
+  min-height: var(--dividerHeight);
+  width: 100%;
+}
+
+.brOC div.verticalDivider{
+  background-color:lightgray;
+  cursor: ew-resize;
+  height: 100%;
+  min-width: var(--dividerWidth);
+}
+
+.brOC div.leftContainer,
+.brOC div.rightContainer
+{
+  width:calc(50% - var(--dividerWidth));
+}
+
+.brOC div.upperContainer,
+.brOC div.bottomContainer
+{
+  height:calc(50% - var(--dividerHeight));
+}
+
+.brOC div.editorHorizontalAreaHeight100Percent{
+  height:100%;
+}
+.brOC div.editorHorizontalAreaHeight50Percent{
+  height:50%;
+}
+.brOC div.editorVerticalAreaWidth100Percent{
+  width:100%;
+}
+.brOC div.editorVerticalAreaWidth50Percent{
+  width:50%;
+}
+
+.brOC div.width50PercentMinusDividerWidth{
+  width:calc(50% - var(--dividerWidth));
+}
+
+.brOC div.width100Percent{
+  width:100%;
+}
+
+.brOC div.height50PercentMinusDividerHeight{
+  height:calc(50% - var(--dividerHeight));
+}
+
+.brOC div.height100Percent{
+  height:100%;
+}
+
+.brOC overflowAuto{
+  overflow:auto;
+}
+
+//.brOC .ant-tabs-nav-wrap {
+//  overflow: unset;
+//}
+
+.brOC .grabbable {
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
+.brOC .grabbable:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.brOC .editingGridLines{
+  height:100%;
+  width:100%;
+  overflow: auto;
+  position:relative;
+  user-select:none;
+}
+
+.brOC .editingGridLinesForTab{
+  height:100%;
+  width:100%;
+  overflow: auto;
+  position:relative;
+}
+
+.brOC .width100percentAndHeight100percent{
+  width:100%;
+  height:100%;
+}
+
+.brOC .ant-tabs-content{
+  height:100%;
+}
+
+.brOC .ant-tabs-tabpane {
+  height:100%;
+}
+
+.brOC textarea:where(.css-dev-only-do-not-override-htwhyh).ant-input{
+  height:unset;
+}
+
+.brOC :where(.css-dev-only-do-not-override-htwhyh).ant-tabs .ant-tabs-tab+.ant-tabs-tab{
+  margin:0 0 0 8px;
+}
+
+.brOC :where(.css-dev-only-do-not-override-htwhyh).ant-tabs .ant-tabs-tab{
+  padding:unset;
+  margin:0 0 0 8px;
 }

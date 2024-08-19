@@ -151,6 +151,8 @@ const modules = (env, argv) => ({
   },
   performance: {
     hints: "warning",
+    maxEntrypointSize: 102400000,
+    maxAssetSize: 102400000
   },
   optimization: {
     // this causes "Minified React error"

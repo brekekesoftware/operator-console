@@ -1,7 +1,7 @@
 import {CallHistory} from "./CallHistory";
 import Campon from "./Campon";
 import SystemSettingsForm from "./SystemSettingsForm";
-import QuickBusy from "./QuickBusy";
+import QuickBusy_ver2 from "./runtime/QuickBusy_ver2";
 import OCUtil from "./OCUtil";
 import Util from "./Util";
 import i18n from "./i18n";
@@ -181,7 +181,7 @@ export default class SystemSettingsData{
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
         appData.shortDials = appData.shortDials ? appData.shortDials : null;
         appData.ringtoneInfos = appData.ringtoneInfos ? appData.ringtoneInfos : null;
-        appData.quickBusyClickToCall = appData.quickBusyClickToCall ? appData.quickBusyClickToCall : QuickBusy.getDefaultQuickBusyClickToCall();
+        appData.quickBusyClickToCall = appData.quickBusyClickToCall ? appData.quickBusyClickToCall : QuickBusy_ver2.getDefaultQuickBusyClickToCall();
         appData.ucUrl = appData.ucUrl ? appData.ucUrl : "";
         appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;
         appData.extensionScript = appData.extensionScript ? appData.extensionScript : "";

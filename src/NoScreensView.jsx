@@ -7,6 +7,7 @@ import Notification from "antd/lib/notification";
 import BrekekeOperatorConsole from "./index";
 import OpenLayoutModalForNoScreensView from "./OpenLayoutModalForNoScreensView";
 import Spin from "antd/lib/spin";
+import ScreenData from "./data/ScreenData";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -67,11 +68,13 @@ export default function NoScreensView( props ){
                     } else {
                         const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
                         const systemSettingsDataData = systemSettingsData.getData();
+                        const oScreen_ver2 = new ScreenData().getDataAsObject();
 
                         const layoutsAndSettingsData = {
                             version: BrekekeOperatorConsole.getAppDataVersion(),
                             screens: BrekekeOperatorConsole.getEmptyScreens(),
-                            systemSettings: systemSettingsDataData
+                            systemSettings: systemSettingsDataData,
+                            screen_ver2:oScreen_ver2
                         };
 
                         const noteContent = JSON.stringify(layoutsAndSettingsData);
@@ -131,11 +134,13 @@ export default function NoScreensView( props ){
 
         const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
         const systemSettingsDataData = systemSettingsData.getData();
+        const oScreen_ver2 = new ScreenData().getDataAsObject();
 
         const  layoutsAndSettingsData =  {
             version:  BrekekeOperatorConsole.getAppDataVersion(),
             screens:  BrekekeOperatorConsole.getEmptyScreens(),
-            systemSettings: systemSettingsDataData
+            systemSettings: systemSettingsDataData,
+            screen_ver2:oScreen_ver2
         };
 
         const noteContent = JSON.stringify( layoutsAndSettingsData );
@@ -172,7 +177,6 @@ export default function NoScreensView( props ){
                 //!testit
                 //const message = eventArg.message;
                 console.error("Failed to setNote.", error  );
-                //throw new Error( dataErrorMessage );
                 Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
             }
         );
@@ -199,7 +203,7 @@ export default function NoScreensView( props ){
                 const noteInfo = res;
                 const sNote = noteInfo.note;
                 const oNote = JSON.parse(sNote);
-                const dataErrorMessage = operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
+                operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
                     setIsLoading(false);
                     operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(  this );
                 },
@@ -226,7 +230,6 @@ export default function NoScreensView( props ){
                 setIsLoading(false);
                 //const message = eventArg.message;
                 console.error("Failed to setNote.", error  );
-                //throw new Error( dataErrorMessage );
                 Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
             }
         );
@@ -318,6 +321,7 @@ export default function NoScreensView( props ){
         spinScreen.current.style.display = displayLoadingStyle;
     }
 
+    const bNewLayoutModalOpen = operatorConsoleAsParent.getState().newLayoutModalOpen;
     return (
         <>
             <OpenLayoutModalForNoScreensView
@@ -326,7 +330,7 @@ export default function NoScreensView( props ){
                 useStateNoteNamesContent = { noteNamesContent }
             />
             <Modal
-                open={ operatorConsoleAsParent.getState().newLayoutModalOpen}
+                open={ bNewLayoutModalOpen }
                 title={i18n.t("newLayout")}
                 onOk={   handleNewLayoutOk }
                 onCancel={handleNewLayoutCancel}

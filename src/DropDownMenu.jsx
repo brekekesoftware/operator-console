@@ -11,6 +11,7 @@ import { Dropdown, Button, Space, Menu } from 'antd';
 import BrekekeOperatorConsole from "./index";
 import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLayoutModalForDropDownMenu";
 import Spin from "antd/lib/spin";
+import ScreenData from "./data/ScreenData";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -71,22 +72,30 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 type: 'divider',
             },
-            // {
-            //     key: '1',
-            //     label: (
-            //         <div onClick={operatorConsole.startShowScreen}>
-            //             {i18n.t("show_screen")}
-            //         </div>
-            //     ),
-            // },
             {
                 key: '1',
                 label: (
-                    <div onClick={operatorConsole.startEditingScreen}>
+                    <div onClick={operatorConsole.startEditingScreen_ver2}>
                         {i18n.t("editLayout")}
                     </div>
                 ),
             },
+            {
+                key: '2',
+                label: (
+                    <div onClick={operatorConsole.startShowScreen_ver2}>
+                        {i18n.t("show_screen")}
+                    </div>
+                ),
+            },
+            // {
+            //     key: '3',
+            //     label: (
+            //         <div onClick={operatorConsole.startEditingScreen}>
+            //             {i18n.t("editLayout")}
+            //         </div>
+            //     ),
+            // },
             // {
             //     key: '3',
             //     label: (
@@ -120,7 +129,7 @@ export default function DropDownMenu( { operatorConsole } ){
             //     ),
             // },
             {
-                key: '2',
+                key: '3',
                 label: (
                     <div onClick={showNewLayoutModalFunc}>
                         {i18n.t("newLayout")}
@@ -128,7 +137,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '3',
+                key: '4',
                 label: (
                     <div onClick={showOpenLayoutModalFunc}>
                         {i18n.t("openLayout")}
@@ -136,7 +145,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },,
             {
-                key: '4',
+                key: '5',
                 label: (
                     <div onClick={operatorConsole.startSettingsScreen}>
                         {i18n.t("settings_screen")}
@@ -220,7 +229,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 <Button style={{position: 'absolute', top: 4, right: 4, zIndex: 15}} shape="circle"
                         icon={<MoreOutlined/>}></Button>
                 {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
-        </Dropdown>
+            </Dropdown>
         </>
     );
 
@@ -370,11 +379,13 @@ export default function DropDownMenu( { operatorConsole } ){
                     else {
                         const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
                         const systemSettingsDataData = systemSettingsData.getData();
+                        const oScreen_ver2 = new ScreenData().getDataAsObject();
 
                         const  layoutsAndSettingsData =  {
                             version:  BrekekeOperatorConsole.getAppDataVersion(),
                             screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                            systemSettings: systemSettingsDataData
+                            systemSettings: systemSettingsDataData,
+                            screen_ver2:oScreen_ver2
                         };
 
                         const noteContent = JSON.stringify( layoutsAndSettingsData );
@@ -383,7 +394,7 @@ export default function DropDownMenu( { operatorConsole } ){
                             operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                                     Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
                                     operatorConsole.setState({newLayoutModalOpen:false});
-                            },
+                                },
                                 function(e){
                                     //!testit
                                     if( Array.isArray(e)){
@@ -433,11 +444,13 @@ export default function DropDownMenu( { operatorConsole } ){
 
             const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
             const systemSettingsDataData = systemSettingsData.getData();
+            const oScreen_ver2 = new ScreenData().getDataAsObject();
 
             const  layoutsAndSettingsData =  {
                 version:  BrekekeOperatorConsole.getAppDataVersion(),
                 screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                systemSettings: systemSettingsDataData
+                systemSettings: systemSettingsDataData,
+                screen_ver2:oScreen_ver2
             };
 
             const noteContent = JSON.stringify( layoutsAndSettingsData );
@@ -446,7 +459,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                         Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
                         operatorConsole.setState({newLayoutModalOpen:false});
-                },
+                    },
                     function( e){
                         // const message = eventArg.message;
                         // //console.error("Failed to setOCNote.", sErr );
@@ -463,7 +476,15 @@ export default function DropDownMenu( { operatorConsole } ){
                         else{
                             console.error("setOCNote failed. error=" , e );
                         }
-                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+
+                        try {
+                            const sError = JSON.stringify(e);
+                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                        }
+                        catch( err ){
+                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                        }
+
 
                         operatorConsole.setState({newLayoutModalOpen:false});
                     });
@@ -496,14 +517,14 @@ export default function DropDownMenu( { operatorConsole } ){
                         </Button>,
 
                         <Popconfirm key="popconfirm"
-                            title={i18n.t("OverwriteLayout")}
-                            description={i18n.t("NewNoteOverwriteConfirm")}
-                            open={newLayoutConfirmOpen}
-                            onOpenChange={handleNewLayoutConfirmOpenChange}
-                            onConfirm={ confirmNewLayout }
-                            onCancel={cancelNewLayout}
-                            okText={i18n.t("ok")}
-                            cancelText={i18n.t("no")}
+                                    title={i18n.t("OverwriteLayout")}
+                                    description={i18n.t("NewNoteOverwriteConfirm")}
+                                    open={newLayoutConfirmOpen}
+                                    onOpenChange={handleNewLayoutConfirmOpenChange}
+                                    onConfirm={ confirmNewLayout }
+                                    onCancel={cancelNewLayout}
+                                    okText={i18n.t("ok")}
+                                    cancelText={i18n.t("no")}
                         >
                             {/*<Button type="link">Delete a task</Button>*/}
                             {/*<Button key="submit" type="primary" onClick={handleOk}>*/}

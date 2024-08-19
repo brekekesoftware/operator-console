@@ -53,7 +53,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
             {/*</div>*/}
           </div>
           <div style={{display: "flex", height: "calc(100% - 47px)"}}>
-            <div style={{width: "100%",overflow:"auto",marginBottom:"10px"}}>
+            <div style={{width: "100%",overflow:"auto",marginLeft:"10px",marginBottom:"10px"}}>
               <RuntimeRootPane paneData={ rootPaneData } runtimeScreenViewAsParent={this}  className="width100percentAndHeight100percent" />
             </div>
           </div>

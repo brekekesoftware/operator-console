@@ -85,8 +85,8 @@ import SystemSettingsView, {OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID,OPERATOR_CO
 const PBX_APP_DATA_NAME = 'operator_console';
 //const PBX_APP_DATA_VERSION = '0.1';
 const PBX_APP_DATA_VERSION = '2.0.0';
-const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
-const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
+//const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
+//const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
 
 
 import { CallHistory } from './CallHistory';
@@ -6571,8 +6571,12 @@ export default class BrekekeOperatorConsole extends React.Component {
                 const widgetTypeId = WidgetData.getWidgetTypeIdByWidgetTypeName( oldWidget.type );
 
                 const editingScreenGrid = screenDataVer2.getEditingScreenGrid();
-                const widgetRelativePositionX = oldWidget.x - oldWidget.x  % editingScreenGrid + ( WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
-                const widgetRelativePositionY = oldWidget.y - oldWidget.y  % editingScreenGrid + ( WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
+                //const widgetRelativePositionX = oldWidget.x - oldWidget.x  % editingScreenGrid + ( WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
+                //const widgetRelativePositionY = oldWidget.y - oldWidget.y  % editingScreenGrid + ( WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
+                //const widgetRelativePositionX = oldWidget.x - oldWidget.x  % editingScreenGrid;
+                //const widgetRelativePositionY = oldWidget.y - oldWidget.y  % editingScreenGrid;
+                const widgetRelativePositionX = oldWidget.x;
+                const widgetRelativePositionY = oldWidget.y;
                 const widgetData = widgetDatas.addWidgetData( widgetTypeId, widgetRelativePositionX, widgetRelativePositionY, oldWidget.width, oldWidget.height  );
                 if( widgetData ){
                     widgetData.importFromWidget_ver0_1( oldWidget );

@@ -627,7 +627,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
         // }
 
         if ( usingLine ) {
-            this.phone.call(sDialing, {
+            this._webphone.call(sDialing, {
                 extraHeaders: [`X-PBX-RPI: ${usingLine}`]
             });
         } else {

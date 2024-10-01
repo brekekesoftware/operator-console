@@ -1,9 +1,12 @@
+import { v4 as uuidv4 } from 'uuid';
+
 /**
  *  abstract class
  */
 export default class ACallInfo {
     constructor( callInfosAsParent ) {
         this._CallInfosAsParent = callInfosAsParent;
+        this._CallInfoUuid = uuidv4();
     }
 
     /**
@@ -182,6 +185,10 @@ export default class ACallInfo {
      */
     removeOnHoldFunction( func ){
         throw new Error("Not implemented.");
+    }
+
+    getCallInfoUuid(){
+        return this._CallInfoUuid;
     }
 
 }

@@ -250,26 +250,46 @@ export default class SystemSettingsView extends React.Component {
         const shortname = this.operatorConsoleAsParent.getLastLayoutShortname();
         const noteContent = JSON.stringify( layoutsAndSettingsData );
         let error;
-        const this_ = this;
-        await this.operatorConsoleAsParent.setOCNoteByPal( shortname, noteContent ).
-        then( () => {
-            //this.operatorConsoleAsParent.setLastSystemSettingsDataData( systemSettingsDataData );
-            this.operatorConsoleAsParent.setOCNote(shortname, layoutsAndSettingsData, function(){
-                this_._onSetOCNoteSuccessAtSyncUp();
-            }, function( e){
-                    this_._onSetOCNoteFailAtSyncUp(e);
-                },
-                false, true);
-            // if( sErr ){
-            //     console.error("Failed to setOCNote.", sErr );
-            //     throw new Error(sErr);
-            // }
-        }  );
-        // }).catch( (err) => {
-        //     console.error(err);
-        //     error =err;
-        // });
+        const this_ = this
+        const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
 
+        const setNoteOptions ={
+            methodName : "setNote",
+            methodParams : JSON.stringify({
+                    tenant : this.operatorConsoleAsParent.getLoggedinTenant(),
+                    name:noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    note : noteContent
+            }),
+            onSuccessFunction : ( res )=>{
+                //this.operatorConsoleAsParent.setLastSystemSettingsDataData( systemSettingsDataData );
+                this.operatorConsoleAsParent.setOCNote(shortname, layoutsAndSettingsData, function(){
+                        this_._onSetOCNoteSuccessAtSyncUp();
+                    }, function( e){
+                        this_._onSetOCNoteFailAtSyncUp(e);
+                    },
+                    false, true);
+                // if( sErr ){
+                //     console.error("Failed to set OCNote.", sErr );
+                //     throw new Error(sErr);
+                // }
+//        }  );
+            },
+            onFailFunction : ( errorOrResponse ) =>{
+                //!testit
+                console.error("Failed to setOCNote.", errorOrResponse );
+
+                try {
+                    const sErr = JSON.stringify(errorOrResponse);
+                    Notification.error({message: i18n.t('Failed_to_save_note') + "\r\n" +  sErr, duration:0 });
+                }
+                catch(err2){
+                    Notification.error({message: i18n.t('Failed_to_save_note') + "\r\n" +  errorOrResponse, duration:0 });
+                }
+            }
+        }
+        this.operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( setNoteOptions );
     }
 
     setSystemSettingsUseForm = ( systemSettingsUseForm ) => {

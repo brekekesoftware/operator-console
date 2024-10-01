@@ -111,27 +111,51 @@ export default class Login extends React.Component {
                 port: params.port,
                 tenant: params.tenant,
                 username: params.username,
-                password: params.password
+                password: params.password,
+                pbxDirectoryName : params.pbxDirectoryName
             };
             this._OperatorConsoleAsParent.setLastLoginAccount( lastLoginAccount );
             window.localStorage.setItem('lastLoginAccount', JSON.stringify( lastLoginAccount));
-            const palWrapper = this._OperatorConsoleAsParent.getLoginPalWrapper();
-            palWrapper.deinitPalWrapper();
-            const this_ = this;
-            const initPalWrapperOptions ={
-                pbxHost : params.hostname,
-                pbxPort : params.port,
-                secure_login_password : false,  //!important skip loading md5.js
-                onInitFailFunction : function( ev ){
-                    console.error("Failed to init PalWrapper eventArg=" + ev );
-                    this_.setState({isSigningin:false});
-                    this_._setMessage( i18n.t("failedToInitPalWrapper"));
-                },
-                onInitSuccessFunction : function(){
-                    this_._onInitPalWrapperSuccess( params );
-                }
-            };
-            palWrapper.initPalWrapper( initPalWrapperOptions );
+
+            const onInitPalRestApiSuccessFunction = () =>{
+                const palWrapper = this._OperatorConsoleAsParent.getLoginPalWrapper();
+                palWrapper.deinitPalWrapper();
+                const this_ = this;
+                const initPalWrapperOptions ={
+                    pbxHost : params.hostname,
+                    pbxPort : params.port,
+                    secure_login_password : false,  //!important skip loading md5.js
+                    onInitFailFunction : function( ev ){
+                        console.error("Failed to init PalWrapper eventArg=" + ev );
+                        this_.setState({isSigningin:false});
+                        this_._setMessage( i18n.t("failedToInitPalWrapper"));
+                    },
+                    onInitSuccessFunction : function(){
+                        this_._onInitPalWrapperSuccess( params );
+                    },
+                    pbxDirectoryName : params.pbxDirectoryName
+                };
+                palWrapper.initPalWrapper( initPalWrapperOptions );
+            }
+            const onInitPalRestApiFailFunction = ( err ) =>{
+                this.setState({isSigningin:false});
+                this._setMessage( i18n.t("Failed_to_init_pal_rest_api"));
+            }
+
+            //PAL rest api
+            const initPalRestApiOptions = {
+                //hostname: params.hostname,
+                //port: params.port,
+                tenant: params.tenant,
+                username: params.username,
+                password: params.password,
+                port:params.port,
+                hostname:params.hostname,
+                pbxDirectoryName:params.pbxDirectoryName,
+                onInitSuccessFunction: onInitPalRestApiSuccessFunction,
+                onInitFailFunction: onInitPalRestApiFailFunction,
+            }
+            this._OperatorConsoleAsParent.getPalRestApi().initPalRestApi( initPalRestApiOptions );
 
 
             // params["operatorConsoleAsParent"] = this;
@@ -218,7 +242,18 @@ export default class Login extends React.Component {
                         >
                             <Input className="ant-input-forBrOCLogin" type="password" placeholder={i18n.t("password")} />
                         </Form.Item>
-
+                        <Form.Item
+                            name="pbxDirectoryName"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: i18n.t("username_is_required"),
+                                },
+                            ]}
+                            style={{display:"none"}}
+                        >
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")}  type="hidden"  />
+                        </Form.Item>
                         <Form.Item>
                             <Button type="success" htmlType="submit" className="brOCLoginButton" disabled={this.state.isSigningin}>
                                 {i18n.t("signin")}

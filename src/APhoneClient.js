@@ -31,41 +31,59 @@ export default class APhoneClient {
     deinitPhoneClient() {
     }
 
-    /**
-     *  abstract method
-     * @returns {Promise<err>}
-     */
-    async setAppDataAsync(dataId, data ) {
-        throw new Error("Not implemented.");
-    }
+    // /**
+    //  *  abstract method
+    //  * @returns {Promise<err>}
+    //  */
+    // async setAppDataAsync(dataId, data ) {
+    //     throw new Error("Not implemented.");
+    // }
 
-    /**
-     *  abstract method
-     * @param tenant
-     */
-    getNoteNamesPromise(tenant, filter) {
-        throw new Error("Not implemented.");
-    }
+    // /**
+    //  *  abstract method
+    //  * @param options
+    //  * @returns {Promise<*>}
+    //  */
+    // async getContactListAsync( options ){
+    //     throw new Error("Not implemented");
+    // }
+
+    // /**
+    //  *  abstract method
+    //  * @param options
+    //  * @returns {Promise<*>}
+    //  */
+    // async getContactAsync( options ){
+    //     throw new Error("Not implemented");
+    // }
+
+    //     /**
+    //  *  abstract method
+    //  * @param tenant
+    //  */
+    // getNoteNamesPromise(tenant, filter) {
+    //     throw new Error("Not implemented.");
+    // }
 
 
-    /**
-     *  abstract method
-     * @param tenant
-     * @param name
-     */
-    getNote(tenant, name) {
-        throw new Error("Not implemented.");
-    }
+    // /**
+    //  *  abstract method
+    //  * @param tenant
+    //  * @param name
+    //  */
+    // getNote(tenant, name) {
+    //     throw new Error("Not implemented.");
+    // }
 
-    /**
-     *  abstract method
-     * @param tenant
-     * @param name
-     * @param content
-     */
-    setNoteByPhoneClient(tenant, name, content) {
-        throw new Error("Not implemented.");
-    }
+    // /**
+    //  *  abstract method
+    //  * @param tenant
+    //  * @param name
+    //  * @param content
+    //  */
+    // async setNoteByPhoneClient(tenant, name, content) {
+    //     throw new Error("Not implemented.");
+    // }
 
     /**
      *  abstract method

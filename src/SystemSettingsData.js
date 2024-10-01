@@ -6,6 +6,7 @@ import OCUtil from "./OCUtil";
 import Util from "./Util";
 import i18n from "./i18n";
 import Notification from "antd/lib/notification";
+import {CallHistory2} from "./CallHistory2";
 
 export default class SystemSettingsData{
     constructor( operatorConsoleAsParent ) {
@@ -25,6 +26,14 @@ export default class SystemSettingsData{
     getQuickBusyClickToCall() {
         return this._Data.quickBusyClickToCall;
     }
+
+    getAutoDialRecentDisplayOrder(){
+        return this._Data.autoDialRecentDisplayOrder;
+    }
+	
+	getAutoDialPhonebookName(){
+		return this._Data.autoDialPhonebookName;
+	}
 
 
     /**
@@ -63,7 +72,8 @@ export default class SystemSettingsData{
         this._Data.phoneTerminal = appData.phoneTerminal;
         this._Data.extensionScript = appData.extensionScript;
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
-
+        this._Data.autoDialRecentDisplayOrder = appData.autoDialRecentDisplayOrder;
+		this._Data.autoDialPhonebookName = appData.autoDialPhonebookName;
         initSuccessFunction();
     }
 
@@ -146,6 +156,8 @@ export default class SystemSettingsData{
         this._Data.ucChatAgentComponentEnabled = false;
         this._Data.extensionScript = "";
         this._Data.phoneTerminal = "phoneTerminal_webphone";
+        this._Data.autoDialRecentDisplayOrder = CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC;
+		this._Data.autoDialPhonebookName = "";
     }
 
     getShortDials(){
@@ -186,6 +198,8 @@ export default class SystemSettingsData{
         appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;
         appData.extensionScript = appData.extensionScript ? appData.extensionScript : "";
         appData.phoneTerminal = appData.phoneTerminal ? appData.phoneTerminal : "phoneTerminal_webphone";
+        appData.autoDialRecentDisplayOrder = CallHistory2.parseAutoDialRecentDisplayOrderForce( appData.autoDialRecentDisplayOrder );
+		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
         return appData;
     }
 

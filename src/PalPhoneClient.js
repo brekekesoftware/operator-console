@@ -283,125 +283,179 @@ export default class PalPhoneClient  extends APhoneClient {
 
 
 
-    /**
-     *  overload method
-     * @param appData
-     * @returns {Promise<*>}
-     */
-    async setAppDataAsync( dataId, data  ){
-        //!testit
-        const options = {
-            data_id: dataId,
-            data: {...data}
-        };
+    // /**
+    //  *  overload method
+    //  * @param appData
+    //  * @returns {Promise<*>}
+    //  */
+    // async setAppDataAsync( dataId, data  ){
+    //     //!testit
+    //     const options = {
+    //         data_id: dataId,
+    //         data: {...data}
+    //     };
+    //
+    //     const promise =  new Promise(  ( resolve, reject ) =>
+    //         {
+    //             this._pal.setAppData(options,
+    //                 function( res, obj ){
+    //                     resolve(res);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
 
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
-                this._pal.setAppData(options,
-                    function( res, obj ){
-                        resolve(res);
-                    },
-                    function( err ){
-                        reject(err);
-                    }
-                );
-            }
-        );
-        return promise;
-    }
+    // /**
+    //  *  Overload method
+    //  * @param dataId
+    //  * @returns {Promise<*>}
+    //  */
+    // async getAppDataAsync( dataId ){
+    //     const options = {
+    //         data_id: dataId
+    //     };
+    //     const promise =  new Promise(  ( resolve, reject ) =>
+    //         {
+    //             this._pal.getAppData(options,
+    //                 function( res, obj ){
+    //                     resolve(res);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
 
-    /**
-     *  overload method
-     * @param tenant
-     */
-    getNoteNamesPromise(tenant, filter) {
-        const options ={
-            tenant:tenant
-        };
+    // async getContactListAsync( options ){
+    //     const promise = new Promise( (resolve, reject ) => {
+    //             this._pal.getContactList( options,  //https://docs.brekeke.com/pbx/getcontactlist
+    //                 function( res, obj ){
+    //                     resolve(res);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
+	
+	// async getContactAsync( options ){
+    //     const promise = new Promise( (resolve, reject ) => {
+    //             this._pal.getContact( options,  //https://docs.brekeke.com/pbx/getcontact
+    //                 function( res, obj ){
+    //                     resolve(res);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
 
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
-                this._pal.getNoteNames(options,
-                    function( noteNames, obj ){
-                        if( filter !== undefined && filter !== null && Array.isArray(  noteNames  )  ){
-                            const filteredNoteNames = noteNames.filter(
-                                function( noteName ){
-                                    const b = noteName.match( filter );
-                                    return b;
-                                }
-                            );
-                            resolve( filteredNoteNames );
-                        }
-                        else {
-                            resolve(noteNames);
-                        }
-                    },
-                    function( err ){
-                        reject(err);
-                    }
-                );
-            }
-        );
+    // /**
+    //  *  overload method
+    //  * @param tenant
+    //  */
+    // getNoteNamesPromise(tenant, filter) {
+    //     const options ={
+    //         tenant:tenant
+    //     };
+    //
+    //     const promise =  new Promise(  ( resolve, reject ) =>
+    //         {
+    //             this._pal.getNoteNames(options,
+    //                 function( noteNames, obj ){
+    //                     if( filter !== undefined && filter !== null && Array.isArray(  noteNames  )  ){
+    //                         const filteredNoteNames = noteNames.filter(
+    //                             function( noteName ){
+    //                                 const b = noteName.match( filter );
+    //                                 return b;
+    //                             }
+    //                         );
+    //                         resolve( filteredNoteNames );
+    //                     }
+    //                     else {
+    //                         resolve(noteNames);
+    //                     }
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //
+    //     return promise;
+    // }
 
-        return promise;
-    }
+    // /**
+    //  *  overload method
+    //  * @param tenant
+    //  * @param name
+    //  * @returns {*}
+    //  */
+    // getNote( tenant, name ){
+    //     const options ={
+    //         tenant:tenant,
+    //         name:name
+    //     };
+    //
+    //     const promise =  new Promise(  ( resolve, reject ) =>
+    //         {
+    //             this._pal.getNote(options,
+    //                 function( note, obj ){
+    //                     resolve(note);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
 
-    /**
-     *  overload method
-     * @param tenant
-     * @param name
-     * @returns {*}
-     */
-    getNote( tenant, name ){
-        const options ={
-            tenant:tenant,
-            name:name
-        };
-
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
-                this._pal.getNote(options,
-                    function( note, obj ){
-                        resolve(note);
-                    },
-                    function( err ){
-                        reject(err);
-                    }
-                );
-            }
-        );
-        return promise;
-    }
-
-    /**
-     *  overload method
-     * @param name
-     * @param content
-     */
-    setNoteByPhoneClient( tenant, name, content ){
-
-        const setNoteOptions = {
-            tenant : tenant,
-            name:name,
-            description : "",
-            useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
-            note : content
-        };
-
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
-                this._pal.setNote(setNoteOptions,
-                    function( res, obj ){
-                        resolve(res);
-                    },
-                    function( err ){
-                        reject(err);
-                    }
-                );
-            }
-        );
-        return promise;
-    }
+    // /**
+    //  *  overload method
+    //  * @param name
+    //  * @param content
+    //  */
+    // async setNoteByPhoneClient( tenant, name, content ){
+    //
+    //     const setNoteOptions = {
+    //         tenant : tenant,
+    //         name:name,
+    //         description : "",
+    //         useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+    //         note : content
+    //     };
+    //
+    //     const promise =  new Promise(  ( resolve, reject ) =>
+    //         {
+    //             this._pal.setNote(setNoteOptions,
+    //                 function( res, obj ){
+    //                     resolve(res);
+    //                 },
+    //                 function( err ){
+    //                     reject(err);
+    //                 }
+    //             );
+    //         }
+    //     );
+    //     return promise;
+    // }
 
     //lineEvents = [];
     flushLineEvents = debounce(() => {

@@ -42,7 +42,11 @@ class PalWrapper{
         if( this._pbxPort !== undefined ){
             pbxUrl += ":" + this._pbxPort;
         }
-        pbxUrl += "/pbx";
+        let pbxDirectoryName = options["pbxDirectoryName"];
+        if( !pbxDirectoryName || pbxDirectoryName.length === 0 ){
+            pbxDirectoryName = "pbx";   //!default
+        }
+        pbxUrl += "/" + pbxDirectoryName;
         this._pbxUrl = pbxUrl;
         this._pbxUrlEndsWithSlash = pbxUrl + "/";
 

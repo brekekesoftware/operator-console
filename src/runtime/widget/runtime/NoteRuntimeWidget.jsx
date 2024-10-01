@@ -21,50 +21,75 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
         const noteName = widgetData.getNoteName();
 
         if( noteName ) {
-            oc.getNote(noteName)
-                .then(({note, useraccess}) => {
-                    this._readonly = useraccess != 2;
-                    this._lastNoteName = noteName;
-                    this.setState({loading:false, content:note});
-                })
-                .catch((err) => {
-                    console.log('Failed  to getNote.', err);
+            const getNoteOptions = {
+                methodName : "getNote",
+                methodParams : JSON.stringify({
+                    tenant : oc.getLoggedinTenant(),
+                    name : noteName
+                }),
+                onSuccessFunction : ( res ) =>{
+                    if( res ) {
+                        const useraccess = res["useraccess"];
+                        const note = res["note"];
+                        this._readonly = useraccess != 2;
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false, content: note});
+                    }
+                    else{
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false});
+                    }
+                },
+                onFailFunction : ( errorOrResponse )  =>{
+                    console.log('Failed  to getNote.', errorOrResponse);
                     this._lastNoteName = noteName;
                     this._readonly = true;
                     //throw err;
                     this.setState({loading:false,content:"",error:true});
-                });
+                }
+            };
+            oc.getPalRestApi().callPalRestApiMethod( getNoteOptions );
             loading = true;
         }
         this.state = {content: "", loading:loading, saving:false, error:false};
-    }
-
-    componentDidUpdate() {
-        super.componentDidUpdate();
-
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-
-
     }
 
     componentDidMount() {
         super.componentDidMount();
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
-        if( this.state.loading === false && noteName  && this._lastNoteName !== noteName ) {
-            oc.getNote(noteName)
-                .then(({note, useraccess}) => {
-                    this._readonly = useraccess != 2;
-                    this._lastNoteName = noteName;
-                    this.setState({loading:false, content:note});
-                })
-                .catch((err) => {
-                    console.log('Failed  to getNote.', err);
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        if( this.state.loading === false && noteName  && this._lastNoteName !== noteName ){
+
+            const getNoteOptions = {
+                methodName : "getNote",
+                methodParams : JSON.stringify({
+                    tenant : oc.getLoggedinTenant(),
+                    name : noteName
+                }),
+                onSuccessFunction : ( res ) => {
+                    if( res ) {
+                        const useraccess = res["useraccess"];
+                        const note = res["note"];
+                        this._readonly = useraccess != 2;
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false, content: note});
+                    }
+                    else{
+                        //Note not found.
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false});
+                    }
+                },
+                onFailFunction : ( errorOrResponse ) => {
+                    console.log('Failed  to getNote.', errorOrResponse);
                     this._lastNoteName = noteName;
                     this._readonly = false;
                     //throw err;
                     this.setState({loading:false,content:"",error:true});
-                });
+                }
+            };
+            oc.getPalRestApi().callPalRestApiMethod( getNoteOptions );
             this.setState({loading:true});
         }
     }
@@ -75,9 +100,24 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
         const noteName = widgetData.getNoteName();
 
         if( noteName ){
-            oc.setNote(noteName, this.state.content )
-                .then(() => this.setState({saving:false}) )
-                .catch(() => this.setState({error:true}))
+            const setNoteOptions = {
+                methodName : "setNote",
+                methodParams : JSON.stringify({
+                    tenant : oc.getLoggedinTenant(),
+                    name:noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    note : this.state.content
+                }),
+                onSuccessFunction : ( res ) =>{
+                    this.setState({saving:false});
+                },
+                onFailFunction : ( errOrResponse ) =>{
+                    //!testit
+                    this.setState({error:true} );
+                }
+            }
+            oc.getPalRestApi().callPalRestApiMethod( setNoteOptions );
         }
     }, 500);
 
@@ -118,13 +158,13 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
                         onChange={this._onContentChanged}
                         onFocus={ () => {
                             const oc = BrekekeOperatorConsole.getStaticInstance();
-                            oc.setEnableKeydownToDialing(false);
-                            oc.setEnablePasteToDialing(false);
+                            oc.addDisableKeydownToDialingCounter();
+                            oc.addDisablePasteToDialingCounter();
                         } }
                         onBlur={ () =>{
                             const oc = BrekekeOperatorConsole.getStaticInstance();
-                            oc.setEnableKeydownToDialing(true);
-                            oc.setEnablePasteToDialing(true);
+                            oc.subtractDisableKeydownToDialingCounter();
+                            oc.subtractDisablePasteToDialingCounter();
                         }}
                         readOnly={this._readonly}
                         maxLength={10000000}

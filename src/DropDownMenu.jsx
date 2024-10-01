@@ -12,6 +12,7 @@ import BrekekeOperatorConsole from "./index";
 import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLayoutModalForDropDownMenu";
 import Spin from "antd/lib/spin";
 import ScreenData from "./data/ScreenData";
+import OCUtil from "./OCUtil";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -357,75 +358,107 @@ export default function DropDownMenu( { operatorConsole } ){
 
                 //exists already?
                 const layoutNoteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
-
-                const pGetNoteNames = operatorConsole.getOCNoteNamesPromise();
-                pGetNoteNames.then( ( noteNames ) => {
-                    let bNoteExists = true;
-                    if( !noteNames || noteNames.length === 0 ){
-                        bNoteExists = false;
-                    }
-                    else{
-                        const sFind = noteNames.find( ( itm ) => itm === layoutNoteName );
-                        if( !sFind ){
+                const getNoteNamesOptions ={
+                    methodName : "getNoteNames",
+                    methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
+                    onSuccessFunction : ( noteNames ) =>{
+                        let bNoteExists = true;
+                        if( !noteNames || noteNames.length === 0 ){
                             bNoteExists = false;
                         }
-                    }
+                        else{
+                            const sFind = noteNames.find( ( itm ) => itm === layoutNoteName );
+                            if( !sFind ){
+                                bNoteExists = false;
+                            }
+                        }
 
-                    if( bNoteExists ){
+                        if( bNoteExists ){
 
-                        setNewLayoutConfirmOpen(true);
+                            setNewLayoutConfirmOpen(true);
 
-                    }
-                    else {
-                        const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
-                        const systemSettingsDataData = systemSettingsData.getData();
-                        const oScreen_ver2 = new ScreenData().getDataAsObject();
+                        }
+                        else {
+                            const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
+                            const systemSettingsDataData = systemSettingsData.getData();
+                            const oScreen_ver2 = new ScreenData().getDataAsObject();
 
-                        const  layoutsAndSettingsData =  {
-                            version:  BrekekeOperatorConsole.getAppDataVersion(),
-                            screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                            systemSettings: systemSettingsDataData,
-                            screen_ver2:oScreen_ver2
-                        };
+                            const  layoutsAndSettingsData =  {
+                                version:  BrekekeOperatorConsole.getAppDataVersion(),
+                                screens:  BrekekeOperatorConsole.getEmptyScreens(),
+                                systemSettings: systemSettingsDataData,
+                                screen_ver2:oScreen_ver2
+                            };
 
-                        const noteContent = JSON.stringify( layoutsAndSettingsData );
-                        const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
-                        setNotePromise.then(() => {
-                            operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
-                                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                                    operatorConsole.setState({newLayoutModalOpen:false});
+                            const noteContent = JSON.stringify( layoutsAndSettingsData );
+                            const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
+
+                            const setNoteOptions = {
+                                methodName : "setNote",
+                                methodParams : JSON.stringify({
+                                    tenant : operatorConsole.getLoggedinTenant(),
+                                    name:noteName,
+                                    description : "",
+                                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                                    note : noteContent
+                                }),
+                                onSuccessFunction : (res) =>{
+
+                                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                                            Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                                            operatorConsole.setState({newLayoutModalOpen:false});
+                                        },
+                                        function(e){
+                                            //!testit
+                                            if( Array.isArray(e)){
+                                                for( let i = 0; i < e.length; i++ ){
+                                                    const err = e[i];
+                                                    console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                                }
+                                            }
+                                            else{
+                                                console.error("setOCNote failed. error=" , e );
+                                            }
+                                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                                            // const message = eventArg.message;
+                                            // //console.error("Failed to setOCNote.", sErr );
+                                            // console.error("Failed to save data to PBX.", message);
+                                            // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                            // Notification.error({message: msg, duration: 0});
+
+                                            //operatorConsole.setState({newLayoutModalOpen:false});
+                                    });
                                 },
-                                function(e){
+                                onFailFunction : ( errorOrResponse ) =>{
                                     //!testit
-                                    if( Array.isArray(e)){
-                                        for( let i = 0; i < e.length; i++ ){
-                                            const err = e[i];
+                                    if( Array.isArray(errorOrResponse)){
+                                        for( let i = 0; i < errorOrResponse.length; i++ ){
+                                            const err = errorOrResponse[i];
                                             console.error("setOCNote failed. errors[" + i + "]=" , err );
                                         }
                                     }
                                     else{
-                                        console.error("setOCNote failed. error=" , e );
+                                        console.error("setOCNote failed. error=" , errorOrResponse );
                                     }
-                                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  errorOrResponse, duration:0 });
                                     // const message = eventArg.message;
                                     // //console.error("Failed to setOCNote.", sErr );
                                     // console.error("Failed to save data to PBX.", message);
                                     // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
                                     // Notification.error({message: msg, duration: 0});
                                     operatorConsole.setState({newLayoutModalOpen:false});
-                                });
-                        });
+                                }
+                            }
+                            operatorConsole.getPalRestApi().callPalRestApiMethod( setNoteOptions );
+
+                        }
+                    },
+                    onFailFunction : ( errOrResponse ) =>{
+                        //!testit
+                        OCUtil.logErrorWithNotification("Failed to getNoteNames from  PBX.", i18n.t("failed_to_load_data_from_pbx"), errOrResponse )
                     }
-
-                })
-                    .catch( (err) =>{
-                        console.error("Failed to getNoteNames from  PBX.", err);
-                        const msg = i18n.t("failed_to_load_data_from_pbx") + " " + err;
-                        Notification.error({message:msg, duration:0} );
-                    });
-
-
-
+                };
+                operatorConsole.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
 
             });
             // setLoading(true);
@@ -454,41 +487,81 @@ export default function DropDownMenu( { operatorConsole } ){
             };
 
             const noteContent = JSON.stringify( layoutsAndSettingsData );
-            const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
-            setNotePromise.then(() => {
-                operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
-                        Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
-                        operatorConsole.setState({newLayoutModalOpen:false});
-                    },
-                    function( e){
-                        // const message = eventArg.message;
-                        // //console.error("Failed to setOCNote.", sErr );
-                        // console.error("Failed to save data to PBX.", message);
-                        // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                        // Notification.error({message: msg, duration: 0});
-                        //!testit
-                        if( Array.isArray(e)){
-                            for( let i = 0; i < e.length; i++ ){
-                                const err = e[i];
-                                console.error("setOCNote failed. errors[" + i + "]=" , err );
+            const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
+
+            const setNoteOptions = {
+                methodName : "setNote",
+                methodParams : JSON.stringify({
+                    tenant : operatorConsole.getLoggedinTenant(),
+                    name: noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    note : noteContent
+                }),
+                onSuccessFunction : ( res ) =>{
+                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                            Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                            operatorConsole.setState({newLayoutModalOpen:false});
+                        },
+                        function( e){
+                            // const message = eventArg.message;
+                            // //console.error("Failed to setOCNote.", sErr );
+                            // console.error("Failed to save data to PBX.", message);
+                            // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                            // Notification.error({message: msg, duration: 0});
+                            //!testit
+                            if( Array.isArray(e)){
+                                for( let i = 0; i < e.length; i++ ){
+                                    const err = e[i];
+                                    console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                }
                             }
-                        }
-                        else{
-                            console.error("setOCNote failed. error=" , e );
-                        }
+                            else{
+                                console.error("setOCNote failed. error=" , e );
+                            }
 
-                        try {
-                            const sError = JSON.stringify(e);
-                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
-                        }
-                        catch( err ){
-                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
-                        }
+                            try {
+                                const sError = JSON.stringify(e);
+                                Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                            }
+                            catch( err ){
+                                Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                            }
 
 
-                        operatorConsole.setState({newLayoutModalOpen:false});
-                    });
-            });
+                            operatorConsole.setState({newLayoutModalOpen:false});
+                        });
+                },
+                onFailFunction : ( errorOrResponse ) =>{
+                    // const message = eventArg.message;
+                    // //console.error("Failed to setOCNote.", sErr );
+                    // console.error("Failed to save data to PBX.", message);
+                    // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                    // Notification.error({message: msg, duration: 0});
+                    //!testit
+                    if( Array.isArray(errorOrResponse)){
+                        for( let i = 0; i < errorOrResponse.length; i++ ){
+                            const err = errorOrResponse[i];
+                            console.error("setOCNote failed. errors[" + i + "]=" , err );
+                        }
+                    }
+                    else{
+                        console.error("setOCNote failed. error=", errorOrResponse  );
+                    }
+
+                    try {
+                        const sError = JSON.stringify(errorOrResponse);
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                    }
+                    catch( err ){
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  errorOrResponse, duration:0 });
+                    }
+
+                    //operatorConsole.setState({newLayoutModalOpen:false});
+                }
+            };
+            operatorConsole.getPalRestApi().callPalRestApiMethod( setNoteOptions );
+
         };
         const cancelNewLayout = () => {
             setNewLayoutConfirmOpen(false);
@@ -509,7 +582,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 <Modal
                     open={ operatorConsole.getState().newLayoutModalOpen}
                     title={i18n.t("newLayout")}
-                    onOk={  () => handleOk( { newLayoutConfirmOpen, setNewLayoutConfirmOpen,newLayoutCondition, setNewLayoutCondition } ) }
+                    onOk={  () => handleOk() }
                     onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={handleCancel}>

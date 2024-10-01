@@ -87,3 +87,26 @@
 .brOC .panel.is-show{
     display:block;
 }
+
+.brOC div.autoDialView_ver2_tableParent {
+    max-height:400px;
+    overflow:auto;
+    scrollbar-width: thin;
+}
+
+.brOC div.autoDialView_ver2_tableParent > table {
+    overflow:unset;
+}
+
+.brOC div.autoDialView_ver2_tableParent > table > thead > tr > th  {
+    position: sticky;
+    left:0;
+    top:0;
+    white-space:nowrap;
+    z-index:1;
+    background-color:var(--defaultTHBackgroundColor);
+}
+
+.brOC .defaultContentTable > tbody > tr > td.paddingTopZeroImportant_AutoDialView_ver2{
+    padding-top:0 !important;;
+}

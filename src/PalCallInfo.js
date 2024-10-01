@@ -72,7 +72,7 @@ export default class PalCallInfo extends ACallInfo {
                 if( !bMakeCall ) {
                     this._answered = true;
                     this._answeredAt = e["time"];
-                    this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByPalCallInfo( this );
+                    this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByCallInfo( this );
                 }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.answerSuccess:

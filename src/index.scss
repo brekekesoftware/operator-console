@@ -29,7 +29,9 @@ body{
   overflow: hidden;
   --dividerWidth: 6px;
   --dividerHeight: 6px;
-
+  --defaultTHBackgroundColor : #FFFFFF;
+  --defaultCellBackgroundColor : #FFFFFF;
+  --defaultCellHoverBackgroundColor : #F5F5F5;
 }
 
 #brOCPhone {
@@ -97,6 +99,38 @@ $kbc-btn-size-map: (
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+//button.kbc-button-fill-parent, a.kbc-button-fill-parent{
+//  margin:0;
+//  margin-left:0;
+//  margin-bottom:0;
+//  margin-right:0;
+//  margin-top:0;
+//}
+//
+//button.kbc-button, a.kbc-button{
+//  margin:0;
+//  margin-left:0;
+//  margin-bottom:0;
+//  margin-right:0;
+//  margin-top:0;
+//}
+//
+//.kbc-button-fill-parent {
+//  margin:0;
+//  margin-left:0;
+//  margin-bottom:0;
+//  margin-right:0;
+//  margin-top:0;
+//}
+//
+//.kbc-button{
+//  margin:0;
+//  margin-left:0;
+//  margin-bottom:0;
+//  margin-right:0;
+//  margin-top:0;
+//}
 
 .kbc-button-fill-parent {
   width: calc(100% - 0.7rem);
@@ -501,6 +535,13 @@ table.brOCExtensiontable tbody tr td
 {
   background: unset;
   background-color:unset;
+}
+
+button.brOCDefaultKbcButtonMargin {
+  margin-left:2px;
+  margin-right:2px;
+  margin-bottom:8px;
+  margin-top:0px;
 }
 
 table.brOCLinetable{

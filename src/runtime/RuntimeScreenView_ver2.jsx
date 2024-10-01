@@ -3,7 +3,6 @@ import logo from "../logo.png";
 import EditorRootPane from "../editor/EditorRootPane";
 import DropDownMenu from "../DropDownMenu";
 import RuntimeRootPane from "./RuntimeRootPane";
-import AutoDialView from "../AutoDialView";
 import AutoDialView_ver2 from "./AutoDialView_ver2";
 import QuickBusy_ver2 from "./QuickBusy_ver2";
 
@@ -30,10 +29,6 @@ export default class RuntimeScreenView_ver2 extends React.Component{
             </div>
             <DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>
             <AutoDialView_ver2
-                sortedCallNos={this._OperatorConsoleAsParent._CallHistory.getSortedCallNos()}
-                //currentCallIndex={this._getCurrentCallIndex()}
-                //callIds={this._callIds}
-                //callById={this.callById}
                 isVisible={isVisibleAutoDialView_Ver2}
             />
             <QuickBusy_ver2 />

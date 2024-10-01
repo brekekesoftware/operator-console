@@ -83,6 +83,7 @@ export default class QuickBusy extends React.Component {
         }
         return ary.length;
     }
+
     _collectCandidateCallNos( dialing ){
         //history
         const historyCallNos = this._operatorConsoleAsParent.getCallHistory().getSortedCallNos();

@@ -6,6 +6,7 @@ import AutoComplete from "antd/lib/auto-complete";
 import BrekekeOperatorConsole from "../../../index";
 import {Colorpicker} from "antd-colorpicker";
 import InputNumber from "antd/lib/input-number";
+import OCUtil from "../../../OCUtil";
 
 export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
     constructor( props ) {
@@ -18,9 +19,19 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
     componentDidMount(){
         super.componentDidMount();
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.getNoteNames().then((names) => {
-            this.setState({ nameOptions: names.map((value) => ({ value })) });
-        })
+        const getNoteNamesOptions = {
+          methodName : "getNoteNames",
+          methodParams : JSON.stringify({tenant:oc.getLoggedinTenant()}),
+            onSuccessFunction : ( names ) => {
+                this.setState({ nameOptions: names.map((value) => ({ value })) });
+            },
+            onFailFunction : (errOrResponse) =>{
+              //!testit
+              OCUtil.logErrorWithNotification("Failed to get note names.", i18n.t("Failed_to_get_note_names"), errOrResponse );
+            }
+        };
+        oc.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
+
     }
 
     // componentDidUpdate(){
@@ -44,10 +55,19 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
         //const noteName = e.currentTarget.value;
         this._getWidgetData().setNoteName( noteName  );
         this.getEditScreenViewAsParent().setState({rerender:true});
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.getNoteNames().then((names) => {
-            this.setState({ nameOptions: names.map((value) => ({ value })) });
-        })
+        const oc = BrekekeOperatorConsole.getStaticInstance()
+        const getNoteNamesOptions = {
+            methodName : "getNoteNames",
+            methodParams : JSON.stringify({tenant:oc.getLoggedinTenant()}),
+            onSuccessFunction : ( names ) => {
+                this.setState({ nameOptions: names.map((value) => ({ value })) });
+            },
+            onFailFunction : (errOrResponse) =>{
+                //!testit
+                OCUtil.logErrorWithNotification("Failed to get note names.", i18n.t("Failed_to_get_note_names"), errOrResponse );
+            }
+        };
+        oc.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
     }
 
     getEditScreenViewAsParent(){

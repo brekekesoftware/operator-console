@@ -1,0 +1,55 @@
+.brOC .phonebookContactInfozInfoView {
+    position:absolute;
+    right:0;
+    top:var(--headerHeight);
+    border-radius: var(--defaultBorderRadius);
+    margin-top:0;
+    background-color:initial;
+    z-index: 112;
+}
+
+.brOC .phonebookContactInfozInfoView > table {
+    background-color: var(--defaultOutsideBgColor);
+    animation-duration: 0.5s;
+    animation-name: phonebookContactInfozInfoViewTableSlideIn;
+}
+
+/*.brOC table.phonebookContactInfozInfoViewInsideTable{*/
+/*    background-color: var(--defaultInsideBgColor);*/
+/*}*/
+
+@keyframes phonebookContactInfozInfoViewTableSlideIn {
+    0% {
+        margin-left:100%;
+        opacity: 0;
+    }
+    100% {
+        margin-left:0%;
+        opacity: 1;
+    }
+}
+
+.brOC th.displayNameTitleTh {
+    background-color: #5C9842 !important;
+    color:#FFFFFF;
+    padding-top:var(--defaultItemVSpace) !important;
+    border-radius: var(--defaultBorderRadius) var(--defaultBorderRadius) 0 0;
+}
+
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable{
+    background-color: unset;
+    width:100%;
+}
+
+
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > thead > tr > th,
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > tbody > tr > th,
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > tbody > tr > td{
+    background-color:unset;
+}
+
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > thead > tr > th:hover,
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > tbody > tr > th:hover,
+.brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > tbody > tr > td:hover{
+    background-color:unset;
+}

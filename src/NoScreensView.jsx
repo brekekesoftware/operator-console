@@ -8,6 +8,7 @@ import BrekekeOperatorConsole from "./index";
 import OpenLayoutModalForNoScreensView from "./OpenLayoutModalForNoScreensView";
 import Spin from "antd/lib/spin";
 import ScreenData from "./data/ScreenData";
+import OCUtil from "./OCUtil";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -47,9 +48,11 @@ export default function NoScreensView( props ){
             }
 
             //exists already?
-            const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
-            operatorConsoleAsParent.getNoteNamesByLoggedinPal(
-                function (res, obj) {
+            const getNoteNamesOptions ={
+              methodName : "getNoteNames",
+              methodParams : JSON.stringify({tenant:operatorConsoleAsParent.getLoggedinTenant()}),
+                onSuccessFunction: ( res ) =>{
+                    const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
                     const noteNames = res;
                     let bNoteExists = true;
                     if (!noteNames || noteNames.length === 0) {
@@ -78,42 +81,52 @@ export default function NoScreensView( props ){
                         };
 
                         const noteContent = JSON.stringify(layoutsAndSettingsData);
-                        const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
-                        operatorConsoleAsParent.setNoteByLoggedinPal(layoutNoteName, noteContent,
-                            function (res, obj) {
+                        //const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
+
+                        const setNoteOptions = {
+                            methodName : "setNote",
+                            methodParams : JSON.stringify({
+                                tenant: operatorConsoleAsParent.getLoggedinTenant(),
+                                name: layoutNoteName,
+                                description: "",
+                                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                                note: noteContent
+                            }),
+                            onSuccessFunction : ( res ) =>{
                                 operatorConsoleAsParent.setOCNote(layoutName, layoutsAndSettingsData, function () {
                                         operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( layoutName, layoutsAndSettingsData);
                                         Notification.success({message: i18n.t("saved_data_to_pbx_successfully")});
                                     },
                                     function (eventArg) {
+                                        //!testit
                                         const message = eventArg.message;
-                                        //console.error("Failed to setOCNote.", message  );
-                                        console.error("Failed to save data to PBX.", message);
-                                        const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                                        Notification.error({message: msg, duration: 0});
+                                        OCUtil.logErrorWithNotification("Failed to save data to PBX.", i18n.t("failed_to_save_data_to_pbx"), message );
                                     }
                                 );
                             },
-                            function (error) {
+                            onFailFunction : ( errOrResponse ) =>{
                                 //!testit
-                                //const message = eventArg.message;
-                                //console.error("Failed to setOCNote.", message  );
-                                console.error("Failed to save data to PBX.", error);
-                                const msg = i18n.t("failed_to_save_data_to_pbx");
-                                Notification.error({message: msg, duration: 0});
+                                OCUtil.logErrorWithNotification("Failed to save data to PBX.", i18n.t("failed_to_save_data_to_pbx"), errOrResponse );
                             }
-                        );
+                        }
+                        operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( setNoteOptions );
                     }
                 },
-                function (err) {
-                    //!testit
-                    //const message = eventArg.message;
-                    //console.error("Failed to setOCNote.", err  );
-                    console.error("Failed to getNoteNames from loggedin PAL.", err);
-                    const msg = i18n.t("failed_to_load_data_from_pbx");
+                onFailFunction : ( errorOrResponse ) =>{
+                    //console.error("Failed to getNoteNames from PAL REST API.", errorOrResponse);
+
+                    let msg;
+                    try {
+                        const s = JSON.stringify(errorOrResponse);
+                        msg = i18n.t("failed_to_load_data_from_pbx") + "\r\n" + s;
+                    }
+                    catch(err){
+                        msg = i18n.t("failed_to_load_data_from_pbx") + "\r\n" + errorOrResponse;
+                    }
                     Notification.error({message: msg, duration: 0});
                 }
-            );
+            };
+            operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
         });
 
         // setLoading(true);
@@ -145,8 +158,17 @@ export default function NoScreensView( props ){
 
         const noteContent = JSON.stringify( layoutsAndSettingsData );
         const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
-        operatorConsoleAsParent.setNoteByLoggedinPal( noteName, noteContent,
-            function( res, obj ){
+
+        const setNoteOptions ={
+            methodName : "setNote",
+            methodParams : JSON.stringify({
+                tenant: operatorConsoleAsParent.getLoggedinTenant(),
+                name: noteName,
+                description: "",
+                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                note: noteContent
+            }),
+            onSuccessFunction : ( res ) =>{
                 operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
                         operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData );
                         Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
@@ -171,15 +193,11 @@ export default function NoScreensView( props ){
                         Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
                         setNewLayoutConfirmOpen(false);
                     });
-            }
-            ,
-            function( error ){
-                //!testit
-                //const message = eventArg.message;
-                console.error("Failed to setNote.", error  );
-                Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
-            }
-        );
+            },
+            onFailFunction : ( errOrResponse ) =>{
+                OCUtil.logErrorWithNotification("Failed to setNote.", i18n.t("failed_to_save_data_to_pbx"), errOrResponse );
+            }};
+            operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( setNoteOptions  );
 
     };
     const cancelConfirmNewLayout = () => {
@@ -198,41 +216,70 @@ export default function NoScreensView( props ){
 
     const selectOCNoteByShortname = ( shortname ) =>{
         const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
-        operatorConsoleAsParent.getNoteByLoggedinPal(  noteName,
-            function( res, obj ){
-                const noteInfo = res;
-                const sNote = noteInfo.note;
-                const oNote = JSON.parse(sNote);
-                operatorConsoleAsParent.setOCNote( shortname, oNote, function(){
-                    setIsLoading(false);
-                    operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(  this );
-                },
-                    function(e){
-                        //!testit
-                        setIsLoading(false);
-                        if( Array.isArray(e)){
-                            for( let i = 0; i < e.length; i++ ){
-                                const err = e[i];
-                                console.error("setOCNote failed. errors[" + i + "]=" , err );
-                            }
-                        }
-                        else{
-                            console.error("setOCNote failed. error=" , e );
-                        }
-                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
-                    }
 
+        const getNoteByPalRestApiOptions = {
+            methodName : "getNote",
+            methodParams : JSON.stringify({
+                tenant : operatorConsoleAsParent.getLoggedinTenant(),
+                name : noteName
+             }),
+            onSuccessFunction : ( res ) =>{
+                if( res ) {
+                    const noteInfo = res;
+                    const sNote = noteInfo.note;
+                    let oNote;
+                    try {
+                        oNote = JSON.parse(sNote);
+                    } catch (err) {
+                        setIsLoading(false)
+                        OCUtil.logErrorWithNotification(null, i18n.t('failed_to_load_data_from_pbx'), err);
+                        return;
+                    }
+                    operatorConsoleAsParent.setOCNote(shortname, oNote, function () {
+                            setIsLoading(false);
+                            operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(this);
+                        },
+                        function (e) {
+                            //!testit
+                            setIsLoading(false);
+                            if (Array.isArray(e)) {
+                                for (let i = 0; i < e.length; i++) {
+                                    const err = e[i];
+                                    console.error("setOCNote failed. errors[" + i + "]=", err);
+                                }
+                            } else {
+                                console.error("setOCNote failed. error=", e);
+                            }
+                            Notification.error({
+                                message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" + e,
+                                duration: 0
+                            });
+                        }
                     );
-            }
-            ,
-            function(error){
+                }
+                else{
+                    setIsLoading(false);
+                    Notification.warning({message:i18n.t("The_note_does_not_exist") });
+                    refreshNoteNames();
+                }
+            },
+            onFailFunction : ( errorOrResponse ) =>{
                 //!testit
                 setIsLoading(false);
                 //const message = eventArg.message;
-                console.error("Failed to setNote.", error  );
-                Notification.error({message:i18n.t("failed_to_save_data_to_pbx"), duration:0 });
+                console.error("Failed to getNote.", errorOrResponse  );
+                let err;
+                try {
+                    err = JSON.stringify(errorOrResponse);
+                }
+                catch(e){
+                    err = e;
+                }
+                Notification.error({message:i18n.t("Failed_to_get_note") + "\r\n" + err, duration:0 });
             }
-        );
+        }
+        operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteByPalRestApiOptions );
+
         setIsLoading(true);
     };
 
@@ -242,8 +289,12 @@ export default function NoScreensView( props ){
     const refreshNoteNames = () => {
         setNoteNamesContent(<Spin />);
 
-        operatorConsoleAsParent.getNoteNamesByLoggedinPal(
-            function( res, obj ){
+        const getNoteNamesByPalRestApiOptions = {
+          methodName : "getNoteNames",
+          methodParams: JSON.stringify({
+              tenant : operatorConsoleAsParent.getLoggedinTenant()
+          }),
+            onSuccessFunction : ( res ) =>{
                 const allNoteNames = res;
                 if( !allNoteNames ){
                     setNoteNamesContent(i18n.t("Layout_does_not_exist"));
@@ -263,13 +314,12 @@ export default function NoScreensView( props ){
                     setNoteNamesContent(jsxContents);
                 }
             },
-            function(error ){
+            onFailFunction : ( errOrResponse ) =>{
                 //!testit
-                console.error(error);
-                const sErr = i18n.t("failed_to_load_data_from_pbx");
-                Notification.error( { message:sErr, duration:0 } );
+                OCUtil.logErrorWithNotification( null, i18n.t("failed_to_load_data_from_pbx"), errOrResponse );
             }
-        );
+        };
+        operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteNamesByPalRestApiOptions );
     }
 
     const handleOpenLayoutOpen = () =>{

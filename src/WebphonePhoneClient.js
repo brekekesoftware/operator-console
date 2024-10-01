@@ -358,64 +358,86 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
     }
 
-    /**
-     *  overload method
-     * @param appData
-     * @returns {Promise<*>}
-     */
-    async setAppDataAsync( dataId, data ){
-        //if (!this.pal) return;
+    // /**
+    //  *  overload method
+    //  * @param appData
+    //  * @returns {Promise<*>}
+    //  */
+    // async setAppDataAsync( dataId, data ){
+    //     //if (!this.pal) return;
+    //
+    //     const appData = {
+    //         data_id: dataId,
+    //         data: {...data}
+    //     };
+    //
+    //     const [err] = await this.pal.call_pal('setAppData', appData).then((data) => ([null, data]))
+    //         .catch((err) => ([err, null]));
+    //     return err;
+    // }
 
-        const appData = {
-            data_id: dataId,
-            data: {...data}
-        };
 
-        const [err] = await this.pal.call_pal('setAppData', appData).then((data) => ([null, data]))
-            .catch((err) => ([err, null]));
-        return err;
-    }
+    // /**
+    //  *  Overload method
+    //  * @param dataId
+    //  * @returns {Promise<*>}
+    //  */
+    // async getAppDataAsync( dataId ){
+    //      const data = await this.pal.call_pal('getAppData', { data_id: dataId });
+    //      return data;
+    // }
 
-    /**
-     *  overload method
-     * @param tenant
-     */
-    getNoteNamesPromise(tenant, filter) {
-        const options ={
-            tenant:tenant
-        };
-        if( filter !== undefined ){
-            options["filter"] = filter;
-        }
+    // async getContactListAsync( options ) {
+    //     const res = await this.pal.call_pal("getContactList", options );
+    //     return res;
+    // }
 
-        return this.pal.call_pal('getNoteNames', options  );
-    }
+    // async getContactAsync( options ) {
+    //     const res = await this.pal.call_pal("getContact", options );
+    //     return res;
+    // }
 
-    /**
-     *  overload method
-     * @param tenant
-     * @param name
-     * @returns {*}
-     */
-    getNote( tenant, name ){
-        return this.pal.call_pal('getNote', {
-            tenant: tenant,
-            name,
-        })
-    }
+    //     /**
+    //  *  overload method
+    //  * @param tenant
+    //  */
+    // getNoteNamesPromise(tenant, filter) {
+    //     const options ={
+    //         tenant:tenant
+    //     };
+    //     if( filter !== undefined ){
+    //         options["filter"] = filter;
+    //     }
+    //
+    //     return this.pal.call_pal('getNoteNames', options  );
+    // }
 
-    /**
-     *  overload method
-     * @param name
-     * @param content
-     */
-    setNoteByPhoneClient( tenant, name, content ){
-        this.pal.call_pal('setNote', {
-            tenant: tenant,
-            name,
-            note: content,
-        });
-    }
+    // /**
+    //  *  overload method
+    //  * @param tenant
+    //  * @param name
+    //  * @returns {*}
+    //  */
+    // getNote( tenant, name ){
+    //     return this.pal.call_pal('getNote', {
+    //         tenant: tenant,
+    //         name,
+    //     })
+    // }
+
+    // /**
+    //  *  overload method
+    //  * @param name
+    //  * @param content
+    //  */
+    // async setNoteByPhoneClient( tenant, name, content ){
+    //     const p = this.pal.call_pal('setNote', {
+    //         tenant: tenant,
+    //         name,
+    //         note: content,
+    //     });
+    //     return p;
+    // }
 
     lineEvents = [];
     flushLineEvents = debounce(() => {

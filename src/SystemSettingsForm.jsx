@@ -1,4 +1,4 @@
-import {Checkbox, Form} from "antd";
+import {Checkbox, Form, Select} from "antd";
 import ShortDialSettings from "./ShortDialSettings";
 import React from "react";
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,7 @@ import {CallHistory} from "./CallHistory";
 import Campon from "./Campon";
 import TextArea from "antd/es/input/TextArea";
 import RingtoneSettings from "./RingtoneSettings";
+import {CallHistory2} from "./CallHistory2";
 
 //const [ systemSettingsUseForm ] = Form.useForm();
 let systemSettingsUseForm = null;
@@ -40,6 +41,15 @@ const SystemSettingsForm = ( props ) => {
             <Form.Item label={i18n.t("maxDisplayCount")} name="autoDialMaxDisplayCount">
                 <InputNumber style={{width:100}} />
             </Form.Item>
+            <Form.Item label={i18n.t("RecentDisplayOrder")} name={"autoDialRecentDisplayOrder"}>
+                <Select>
+                    <Select.Option value={CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC}>{i18n.t("CallOrIncomingCountDesc")}</Select.Option>
+                    <Select.Option value={CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC}>{i18n.t("StartDatetimeDesc")}</Select.Option>
+                </Select>
+            </Form.Item>
+            <Form.Item label={i18n.t("PhonebookName")} name={"autoDialPhonebookName"}>
+				<Input maxLength={300} style={{width:"240px"}}/>
+			</Form.Item>
             <h1>{i18n.t("ringtoneSettings")}</h1>
             <RingtoneSettings />
             <h1>{i18n.t("ucSettings")}</h1>

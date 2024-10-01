@@ -90,7 +90,6 @@ const PBX_APP_DATA_VERSION = '2.0.0';
 
 
 import { CallHistory } from './CallHistory';
-import AutoDialView from "./AutoDialView";
 import DropDownMenu from "./DropDownMenu";
 import QuickBusy from "./QuickBusy";
 import LineTableSettings from "./LineTableSettings"
@@ -121,6 +120,8 @@ import ScreenData from "./data/ScreenData";
 import ShowScreenView_ver2 from "./runtime/ShowScreenView_ver2";
 import PaneData from "./data/PaneData";
 import WidgetData from "./data/widgetData/WidgetData";
+import {CallHistory2} from "./CallHistory2";
+import PalRestApi from "./PalRestApi";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -2777,8 +2778,11 @@ export default class BrekekeOperatorConsole extends React.Component {
     constructor(props) {
         super(props);
         BREKEKE_OPERATOR_CONSOLE = this;
+        this._DefaultPbxDirectoryName = "pbx";
         //this.callById = {};
         //this._callIds = new Array();
+		this._disableKeydownToDialingCounter = 0;
+		this._disablePasteToDialingCounter = 0;
         this._isDTMFInput = false;
         this._OnBackspaceKeypadValueCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
@@ -2786,9 +2790,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
         this.state = window.structuredClone(INIT_STATE);
-
+        this._PalRestApi = new PalRestApi();
         //this.state.operatorConsole = this;
         this._CallHistory = new CallHistory(this);
+        this._CallHistory2 = new CallHistory2( this );
         this._OnBeginSaveEditingScreenFunctions = [];
         // this._OnSelectWidgetFuncs = [];
         // this._OnDeselectWidgetFuncs =
@@ -2956,8 +2961,13 @@ export default class BrekekeOperatorConsole extends React.Component {
     //     return call;
     // }
 
+    getCallHistory2(){
+        return this._CallHistory2;
+    }
+
     onSavingSystemSettings(systemSettingsAsCaller) {
         this.getCallHistory().onSavingSystemSettings(this);
+        this._CallHistory2.onSavingSystemSettingsForCallHistory2(this);
     }
 
     onBeginSetSystemSettingsData( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction  ){
@@ -3063,17 +3073,25 @@ export default class BrekekeOperatorConsole extends React.Component {
         window.removeEventListener( "keydown", this._onKeydown);
     }
 
-    setEnableKeydownToDialing(b){
-        this._enableKeydownToDialing = b;
+    addDisableKeydownToDialingCounter(){
+        this._disableKeydownToDialingCounter++;
     }
 
-    setEnablePasteToDialing(b){
-        this._enablePasteToDialing = b;
+    subtractDisableKeydownToDialingCounter(){
+        this._disableKeydownToDialingCounter--;
     }
 
+
+    addDisablePasteToDialingCounter(){
+        this._disablePasteToDialingCounter++;
+    }
+
+    subtractDisablePasteToDialingCounter(){
+        this._disablePasteToDialingCounter--;
+    }
 
     _onKeydown(e){
-        if( this._enableKeydownToDialing === false ){
+        if( this._disableKeydownToDialingCounter > 0  ){
             return;
         }
 
@@ -3340,7 +3358,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     _onPaste(e) {
 
-        if( this._enablePasteToDialing === false ){
+        if( this._disablePasteToDialingCounter > 0 ){
             return;
         }
 
@@ -3461,7 +3479,13 @@ export default class BrekekeOperatorConsole extends React.Component {
         const info = this._getLastLoginAccount();
         // const lastLoginAccount = localStorage.getItem('lastLoginAccount');
         // const info = JSON.parse( lastLoginAccount );
-        const key = info.hostname + '\t' + info.port + '\t' + info.tenant + '\t' + info.username;
+
+        let pbxDirectoryName = info["pbxDirectoryName"];
+        if( !pbxDirectoryName || pbxDirectoryName.length === 0 ){
+            pbxDirectoryName = this._DefaultPbxDirectoryName;
+        }
+
+        const key = info.hostname + '\t' + info.port + '\t' + info.tenant + '\t' + info.username + "\t" + pbxDirectoryName;
         return key;
     }
 
@@ -4155,14 +4179,6 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             {/*</Carousel>*/}
                                         </div>
                                         <DropDownMenu operatorConsole={this}></DropDownMenu>
-                                        <AutoDialView
-                                            operatorConsoleAsParent={this}
-                                            sortedCallNos={this._CallHistory.getSortedCallNos()}
-                                            //currentCallIndex={this._getCurrentCallIndex()}
-                                            //callIds={this._callIds}
-                                            //callById={this.callById}
-                                            isVisible={this.state.showAutoDialWidgets && this.state.showAutoDialWidgets.length !== 0}
-                                        />
                                         {/*<QuickBusy operatorConsoleAsParent={this}/>*/}
                                     </>)
                         )
@@ -4192,6 +4208,11 @@ export default class BrekekeOperatorConsole extends React.Component {
         if( sLastLoginAccount ){
             try {
                 const lastLoginAccount = JSON.parse(sLastLoginAccount);
+
+                if( !lastLoginAccount["pbxDirectoryName"] || lastLoginAccount["pbxDirectoryName"].length === 0  ){
+                    lastLoginAccount["pbxDirectoryName"] = this._DefaultPbxDirectoryName;
+                }
+
                 return lastLoginAccount;
             }
             catch( err ){
@@ -4199,7 +4220,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         }
         //const lastLoginAccount = this.state.lastLoginAccount;
-        const lastLoginAccount = {hostname:location.hostname, port:location.port };
+        const lastLoginAccount = {hostname:location.hostname, port:location.port,pbxDirectoryName: this._DefaultPbxDirectoryName };
         console.log("set lastLoginAccount from location info.");
         return lastLoginAccount;
     }
@@ -4314,13 +4335,20 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({showAutoDialWidgets: widgets});  //for rerender
     }
 
+    // isShowAutoDialView_ver2(){
+    //     const b = this.getShowAutoDialWidgetSubDatas_ver2().length !== 0;
+    //     return b;
+    // }
+
     onClickAutoDialButton_ver2 = (legacyButtonRuntimeSubWidget_autoDialButton) => {
-        console.log("onClick LegacyButtonRuntimeSubWidget_autoDialButton=" + legacyButtonRuntimeSubWidget_autoDialButton);
+        //console.log("onClick LegacyButtonRuntimeSubWidget_autoDialButton=" + legacyButtonRuntimeSubWidget_autoDialButton);
         const subDatas = this.getShowAutoDialWidgetSubDatas_ver2();
         const subData = legacyButtonRuntimeSubWidget_autoDialButton.getLegacyButtonSubWidgetData();
         const index = BrekekeOperatorConsole._getIndexFromArray(subDatas, subData);
         if (index === -1) {
-            //visible autoDialView
+            //visible autoDialView_ver2
+            const sort = this.getSystemSettingsData().getAutoDialRecentDisplayOrder();
+            this._CallHistory2.sortIfNeed(sort);
             subDatas.push(subData);
         } else {
             subDatas.splice(index, 1);
@@ -4459,35 +4487,51 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const shortname = this.getLastLayoutShortname();
         const noteContent = JSON.stringify( layoutsAndSettingsData );
-        let error;
-        await this.setOCNoteByPal( shortname, noteContent ).
-        then( () => {
-            Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
-            //this.setLastSystemSettingsDataData( systemSettingsDataData );
-            if( onSuccessFunction ){
-                onSuccessFunction();
-            }
-        }).catch( (err) => {
-            error =err;
-        });
+        const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
 
-        if (error) {
-            console.error(error);
-            Notification.error({
-                key: 'sync',
-                message: i18n.t("failed_to_save_data_to_pbx"),
-                btn: (
-                    <Button type="primary" size="small" onClick={() => {
-                        this._syncUp();
-                        //Notification.close('sync');
-                    }}>
-                        {i18n.t('retry')}
-                    </Button>
-                ),
-                duration: 0,
-            });
-            return;
-        }
+        const setNoteOptions = {
+            methodName : "setNote",
+            methodParams : JSON.stringify({
+                    tenant : this.getLoggedinTenant(),
+                    name:noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    note : noteContent
+            }),
+            onSuccessFunction : ( res ) =>{
+                Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+                //this.setLastSystemSettingsDataData( systemSettingsDataData );
+                if( onSuccessFunction ){
+                    onSuccessFunction();
+                }
+            },
+            onFailFunction : ( errorOrResponse ) =>{
+                console.error("Failed to save data to PBX.",errorOrResponse);
+                Notification.error({
+                    key: 'sync',
+                    message: i18n.t("failed_to_save_data_to_pbx"),
+                    btn: (
+                        <Button type="primary" size="small" onClick={() => {
+                            this._syncUp();
+                            //Notification.close('sync');
+                        }}>
+                            {i18n.t('retry')}
+                        </Button>
+                    ),
+                    duration: 0,
+                });
+            }
+        };
+
+
+        //     const setNoteOptions = {
+        //         tenant : tenant,
+        //         name:name,
+        //         description : "",
+        //         useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+        //         note : content
+        //     };
+        this.getPalRestApi().callPalRestApiMethod( setNoteOptions );
 
 
         //this.operatorConsoleAsParent.abortSystemSettings();
@@ -4495,10 +4539,6 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     abortEditingScreen = () => {
         this.setDisplayState(brOcDisplayStates.showScreen);
-    }
-
-    abortAutoDialView = () => {
-        this.setState({showAutoDialWidgets: []});  //for rerender
     }
 
     abortAutoDialView_ver2 = () => {
@@ -5168,6 +5208,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
         this.setState({refresh:true} );
 
+        this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo );
+
         const options = {
             callInfo : callInfo
         };
@@ -5215,7 +5257,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnHoldCallInfoEventListeners.splice(0);
     }
 
-    onAnswerIncomingCallByPalCallInfo( callInfoAsCaller ){
+    onAnswerIncomingCallByCallInfo( callInfoAsCaller ){
         this._CallHistory.addCallNoAndSave( callInfoAsCaller.getPartyNumber() );
     }
 
@@ -5226,6 +5268,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
         this.setState({refresh:true});
+
+        this._CallHistory2.onAddCallInfoForCallHistory2( this, callInfo );
+
 
         const options = {
             callInfo : callInfo
@@ -5431,6 +5476,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     onUpdateCallInfoByCallInfo = (callInfoAsCaller) => {
         this._resetCallInput();
         this.setState({refresh:true} );
+
+        this._CallHistory2.onUpdateCallInfoForCallHistory2( this, callInfoAsCaller );
 
         const options = {
             callInfo:callInfoAsCaller
@@ -5812,6 +5859,11 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
+    isAphoneNull(){
+        const b = this._aphone === null;
+        return b;
+    }
+
     handlePark = async (number) => {
         if (!number) return;
 
@@ -5845,7 +5897,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     //
     // }
 
-    _onBeforeUnload(event){
+    _onBeforeUnloadMain( event ){
         const phoneClient = this.getPhoneClient();
         let hasCall;
         if( phoneClient ){
@@ -5858,6 +5910,11 @@ export default class BrekekeOperatorConsole extends React.Component {
             event.preventDefault();
             event.returnValue = i18n.t("areYouSureLeaveThePage");
         }
+    }
+
+    _onBeforeUnload(event){
+        this._CallHistory2.onBeforeUnloadForCallHistory2( this, event );
+        this._onBeforeUnloadMain(event);
     }
 
     _onUnload(event){
@@ -5969,10 +6026,23 @@ export default class BrekekeOperatorConsole extends React.Component {
                     //     screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
                     // }
                     this_.setOCNote( layoutShortname, oNote, function(){
-                            //this_.setState( { _downedLayoutAndSystemSettings:true, screenData_ver2: screenData_ver2, displayState:brOcDisplayStates.showScreen_ver2  }, ()=> {
-                            this_.setState( { _downedLayoutAndSystemSettings:true, displayState:brOcDisplayStates.showScreen_ver2  }, ()=> {
+                            this_.setState({
+                                _downedLayoutAndSystemSettings: true,
+                                displayState: brOcDisplayStates.showScreen_ver2
+                            }, () => {
                                 downLayoutAndSystemSettingsSuccessFunction();
-                            } );
+                            });
+
+                            //this_.setState( { _downedLayoutAndSystemSettings:true, screenData_ver2: screenData_ver2, displayState:brOcDisplayStates.showScreen_ver2  }, ()=> {
+                            // this_._CallHistory2.loadAsync().then( (v) => {
+                            //         this_.setState({
+                            //             _downedLayoutAndSystemSettings: true,
+                            //             displayState: brOcDisplayStates.showScreen_ver2
+                            //         }, () => {
+                            //             downLayoutAndSystemSettingsSuccessFunction();
+                            //         });
+                            //     }
+                            // );
                         },
                         function(e) {
                             this_._setOCNoteFailAtDownLayoutAndSystemSettings(e, downLayoutAndSystemSettingsFailFunction);
@@ -6133,7 +6203,6 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
             };
             this._DefaultButtonImageFileInfos.load( loadDefaultButtonImageFileInfosOptions  );
-
         });
 
     }
@@ -6208,14 +6277,14 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({isAdmin:bool});
     }
 
-    getOCNoteNamesPromise(){
-        const loginUser = this.state.loginUser;
-        const tenant = loginUser?.pbxTenant;
-        const filter = BrekekeOperatorConsole.LAYOUT_NOTE_NAME_FILTER;
-
-        const promise = this._aphone.getNoteNamesPromise( tenant, filter );
-        return promise;
-    }
+    // getOCNoteNamesPromise(){
+    //     const loginUser = this.state.loginUser;
+    //     const tenant = loginUser?.pbxTenant;
+    //     const filter = BrekekeOperatorConsole.LAYOUT_NOTE_NAME_FILTER;
+    //
+    //     const promise = this._aphone.getNoteNamesPromise( tenant, filter );
+    //     return promise;
+    // }
 
     getLoginPalWrapper(){
         return this._LoginPalWrapper;
@@ -6227,6 +6296,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     getExtensions(){
         return this.state.extensions; //!check use cache
+    }
+
+    getPalRestApi(){
+        return this._PalRestApi;
     }
 
     logout = () => {
@@ -6245,6 +6318,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._onUnloadExtensionScript();
         this._UccacWrapper.deinitUccacWrapper();
         this._deinitPalWrapper();
+        this._PalRestApi.deinitPalRestApi();
 
         this.setState({
             ...window.structuredClone(INIT_STATE),
@@ -6273,14 +6347,9 @@ export default class BrekekeOperatorConsole extends React.Component {
     //     this.setState({screens:screens});
     // }
 
+    //!testit
     syncUp = async () => {
-        if( !this._aphone){
-            return;
-        }
-
         const oScreen_ver2 = this.state.screenData_ver2.getDataAsObject();
-
-
 
         const dataId = PBX_APP_DATA_NAME;
         //!old Do not use.
@@ -6289,26 +6358,37 @@ export default class BrekekeOperatorConsole extends React.Component {
             screens : this.state.screens,
             screen_ver2 : oScreen_ver2
         };
-        const [err] = await this._aphone.setAppDataAsync( dataId, data );
-        if (err) {
-            console.error(err);
-            Notification.error({
-                key: 'sync',
-                message: i18n.t("failed_to_save_data_to_pbx"),
-                btn: (
-                    <Button type="primary" size="small" onClick={() => {
-                        this.syncUp();
-                        Notification.destroy('sync');
-                    }}>
-                        {i18n.t('retry')}
-                    </Button>
-                ),
-                duration: 0,
-            });
-            return;
-        }
 
-        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+        const setAppDataOptions = {
+            methodName : "setAppData",
+            methodParams : JSON.stringify({
+                data_id : dataId,
+                data : data
+            }),
+            onSuccessFunction : ( res ) =>{
+                Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+            },
+            onFailFunction : ( errorOrResponse ) =>{
+                console.error(errorOrResponse);
+                Notification.error({
+                    key: 'sync',
+                    message: i18n.t("failed_to_save_data_to_pbx"),
+                    btn: (
+                        <Button type="primary" size="small" onClick={() => {
+                            this.syncUp();
+                            Notification.destroy('sync');
+                        }}>
+                            {i18n.t('retry')}
+                        </Button>
+                    ),
+                    duration: 0,
+                });
+
+            }
+
+        }
+        this.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
+
     }
 
     //!old
@@ -6469,39 +6549,39 @@ export default class BrekekeOperatorConsole extends React.Component {
     //
     // }
 
-    getNoteNames = () => {
-        const tenant = this.state.loginUser?.pbxTenant;
-        return this._aphone.getNoteNamesPromise( tenant );
-    }
+    // getNoteNames = () => {
+    //     const tenant = this.state.loginUser?.pbxTenant;
+    //     return this._aphone.getNoteNamesPromise( tenant );
+    // }
 
-    getNote = (name) => {
-        const tenant = this.state.loginUser?.pbxTenant;
-        return this._aphone.getNote( tenant, name );
-    }
+    // getNote = (name) => {
+    //     const tenant = this.state.loginUser?.pbxTenant;
+    //     return this._aphone.getNote( tenant, name );
+    // }
 
-    getNoteByLoggedinPal( name, onSuccessFunction, onErrorFunction ){
-        const tenant = this.state.loginUser.pbxTenant;
-        this._loggedinPal.getNote({tenant:tenant,name:name}, onSuccessFunction, onErrorFunction );
-    }
+    // getNoteByLoggedinPal( name, onSuccessFunction, onErrorFunction ){
+    //     const tenant = this.state.loginUser.pbxTenant;
+    //     this._loggedinPal.getNote({tenant:tenant,name:name}, onSuccessFunction, onErrorFunction );
+    // }
 
 
 
-    setNote = async(name, content) => {
-        const tenant = this.state.loginUser?.pbxTenant;
-        return this._aphone.setNoteByPhoneClient( tenant, name, content );
-    }
+    // setNote = async(name, content) => {
+    //     const tenant = this.state.loginUser?.pbxTenant;
+    //     return this._aphone.setNoteByPhoneClient( tenant, name, content );
+    // }
 
-    getOCNote = ( shortName ) => {
-        const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
-        const note = this.getNote( noteName );
-        return note;
-    }
+    // getOCNote = ( shortName ) => {
+    //     const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
+    //     const note = this.getNote( noteName );
+    //     return note;
+    // }
 
-    setOCNoteByPal = async (shortName, content ) =>{
-        const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
-        const noteResultPromise = this.setNote(noteName, content);
-        return noteResultPromise;
-    }
+    // setOCNoteByPal = async (shortName, content ) =>{
+    //     const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
+    //     const noteResultPromise = this.setNote(noteName, content);
+    //     return noteResultPromise;
+    // }
 
     setNoteByLoggedinPal( noteName, content, successFunction, errorFunction  ){
         const tenant = this.state.loginUser.pbxTenant;
@@ -6569,6 +6649,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 const oldWidget = oldWidgets[i];
 
                 const widgetTypeId = WidgetData.getWidgetTypeIdByWidgetTypeName( oldWidget.type );
+                if( widgetTypeId === -1 ){
+                    console.warn("Unable to convert due to unknown widget type.. type=" + oldWidget.type );
+                }
 
                 const editingScreenGrid = screenDataVer2.getEditingScreenGrid();
                 //const widgetRelativePositionX = oldWidget.x - oldWidget.x  % editingScreenGrid + ( WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 - WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 % editingScreenGrid );
@@ -6589,7 +6672,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return oContent;
     }
 
-    _onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction){
+    _onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction){
         let screenData_ver2;
         if( !oScreen_ver2 ){
             screenData_ver2 = new ScreenData();
@@ -6599,13 +6682,27 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
         this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
             //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
-            this.reloadSystemSettingsExtensionScript();
-            //this._BusylightStatusChanger.init();    //!dev
-            if( setLastLayoutShortName ) {
-                this.setLastLayoutShortname(shortName);
-            }
-            setOCNoteSuccessFunction();
+            this._CallHistory2. loadCallHistory2(
+                () =>{
+                    this._toSetNoteSuccess(setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
+                },
+                (errorOrResponse) =>{
+                    if( setOCNoteFailFunction ) {
+                        setOCNoteFailFunction(errorOrResponse);
+                    }
+                }
+            );
+
         } );
+    }
+
+    _toSetNoteSuccess( setLastLayoutShortName, shortName, setOCNoteSuccessFunction ){
+        this.reloadSystemSettingsExtensionScript();
+        //this._BusylightStatusChanger.init();    //!dev
+        if (setLastLayoutShortName) {
+            this.setLastLayoutShortname(shortName);
+        }
+        setOCNoteSuccessFunction();
     }
 
     /**
@@ -6660,7 +6757,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             const this_ = this;
             const bStartInit = systemSettingsData.setSystemSettingsDataData(systemSettingsDataData,
                 function(){
-                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction );
+                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction  );
                 },
                 function(e){
                     setOCNoteFailFunction(e);
@@ -6668,7 +6765,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             return bStartInit;
         }
         else{
-            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
+            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction );
             return false;
         }
 

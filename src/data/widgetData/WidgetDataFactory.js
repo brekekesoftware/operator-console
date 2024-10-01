@@ -21,7 +21,7 @@ export default class WidgetDataFactory{
 
     newWidgetDataInstance( options ){
         let widgetTypeId=  options["widgetTypeId"];
-        if( !widgetTypeId ){
+        if( widgetTypeId === undefined ){
             const oWidgetData = options.oWidgetData;
             if( oWidgetData ) {
                 widgetTypeId = oWidgetData["widgetTypeId"];

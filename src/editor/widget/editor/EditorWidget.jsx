@@ -24,11 +24,6 @@ export default class EditorWidget extends React.Component {
         //!empty for subclass
     }
 
-
-    getWidgetNumber(){
-        return this.getWidgetData().getWidgetNumber();
-    }
-
     getEditorPaneAsParent(){
         return this._EditorPaneAsParent;
     }

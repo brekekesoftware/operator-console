@@ -60,6 +60,10 @@ button{
     margin-top:var(--defaultItemVSpace);
 }
 
+.brOC .brOCReset .defaultItemPaddingTopImportant {
+    padding-top:var(--defaultItemVSpace) !important;
+}
+
 .brOC .brOCReset table .defaultInsideTable{
     background-color:var(--defaultInsideBgColor);
 }

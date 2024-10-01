@@ -7,7 +7,6 @@ import WidgetData from "./widgetData/WidgetData";
 export default class WidgetDatas{
   constructor( cloneSrcWidgetDatas, oWidgetDatas  ) {
     this._WidgetDataArray = new Array();    //WidgetData
-    this._latestWidgetDataNo = -1;
     if( cloneSrcWidgetDatas ) {    //clone
       const srcWidgetDataArray = cloneSrcWidgetDatas._WidgetDataArray;
       for( let i = 0; i < srcWidgetDataArray.length; i++ ){
@@ -17,7 +16,6 @@ export default class WidgetDatas{
 
         // const options = {
         //     widgetDatasAsParent: this,
-        //     widgetNumber:srcWidgetData.getWidgetNumber(),
         //     widgetTypeId:srcWidgetData.getWidgetTypeId(),
         //     widgetRelativePositionX: srcWidgetData.getWidgetRelativePositionX(),
         //     widgetRelativePositionY:srcWidgetData.getWidgetRelativePositionY(),
@@ -26,14 +24,7 @@ export default class WidgetDatas{
         // }
 
         const dstWidgetData = WidgetDataFactory.getStaticWidgetDataFactoryInstance().newWidgetDataInstance( options );
-
-        const widgetNumber = dstWidgetData.getWidgetNumber();
-        if(  widgetNumber > this._latestWidgetDataNo ){
-          this._latestWidgetDataNo = widgetNumber;
-          this._WidgetDataArray.length = this._latestWidgetDataNo + 1;
-        }
-
-        this._WidgetDataArray[ widgetNumber ] = dstWidgetData;
+        this._WidgetDataArray.push( dstWidgetData );
       }
     }
     else if( oWidgetDatas ) {
@@ -48,11 +39,7 @@ export default class WidgetDatas{
         options["widgetDatasAsParent"] = this;
 
         const widgetData = WidgetDataFactory.getStaticWidgetDataFactoryInstance().newWidgetDataInstance( options );
-        const widgetNumber = widgetData.getWidgetNumber();
         this._WidgetDataArray.push( widgetData );
-        if(  widgetNumber > this._latestWidgetDataNo ){
-          this._latestWidgetDataNo = widgetNumber;
-        }
       }
     }
   }
@@ -71,10 +58,6 @@ export default class WidgetDatas{
     if( index === -1 ){
       return false;
     }
-    const widgetNumber = widgetData.getWidgetNumber();
-    if(  widgetNumber ==  this._latestWidgetDataNo ){
-      this._latestWidgetDataNo = widgetNumber - 1;
-    }
     this._WidgetDataArray.splice( index, 1 );
     return true;
   }
@@ -85,13 +68,11 @@ export default class WidgetDatas{
   }
 
   _addWidgetData( widgetDatasAsParent, widgetTypeId, widgetRelativePositionX, widgetRelativePositionY, widgetWidth, widgetHeight  ){
-    this._latestWidgetDataNo++;
 
     const options = {
       widgetDatasAsParent:widgetDatasAsParent,
       widgetUuid : uuidv4(),
       widgetTypeId:widgetTypeId,
-      widgetNumber:this._latestWidgetDataNo,
       widgetRelativePositionX:widgetRelativePositionX,
       widgetRelativePositionY:widgetRelativePositionY,
       widgetWidth:widgetWidth,
@@ -117,11 +98,7 @@ export default class WidgetDatas{
   removeWidgetDataAt( index ){
     //update latestWidgetDataNo
     const widgetData =this._WidgetDataArray[ index ];
-    const widgetNumber = widgetData.getWidgetNumber();
     this._WidgetDataArray.splice( index, 1 );
-    if( widgetNumber === this._latestWidgetDataNo ){
-      this._latestWidgetDataNo = widgetNumber;
-    }
   }
 
   getWidgetDataCount(){
@@ -147,7 +124,6 @@ export default class WidgetDatas{
 
 
   _setWidgetDatasToObject(o){
-    o["latestWidgetDataNo"] = this._latestWidgetDataNo;
     const dstWidgetDataArray = new Array( this._WidgetDataArray.length );
     o["widgetDataArray"] = dstWidgetDataArray;
     for( let i = 0; i < this._WidgetDataArray.length; i++ ){

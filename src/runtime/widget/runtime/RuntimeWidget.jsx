@@ -6,15 +6,10 @@ export default class RuntimeWidget extends React.Component {
     constructor(props) {
         super(props);
         this._RuntimePaneAsParent = props["runtimePane"]; //tabs or noTabs
-        this._WidgetData = props["widgetData"];
     }
 
     getWidgetData(){
-        return this._WidgetData;
-    }
-
-    getWidgetNumber(){
-        return this._WidgetData.getWidgetNumber();
+        return this.props["widgetData"];
     }
 
     getRuntimePaneAsParent(){
@@ -34,12 +29,12 @@ export default class RuntimeWidget extends React.Component {
     }
 
     render(){
-        const runtimetScreenView = this._RuntimePaneAsParent.getRuntimeScreenView();
+        const widgetData = this.getWidgetData();
 
-        const relativePositionX = this._WidgetData.getWidgetRelativePositionX();
-        const relativePositionY = this._WidgetData.getWidgetRelativePositionY();
-        const widgetWidth = this._WidgetData.getWidgetWidth();
-        const widgetHeight  = this._WidgetData.getWidgetHeight();
+        const relativePositionX = widgetData.getWidgetRelativePositionX();
+        const relativePositionY = widgetData.getWidgetRelativePositionY();
+        const widgetWidth = widgetData.getWidgetWidth();
+        const widgetHeight  = widgetData.getWidgetHeight();
         //const backgroundColor = this.getBackgroundColor();
         //const widgetTypeId = this._WidgetData.getWidgetTypeId();
         const widgetIndex = this.props["widgetIndex"];

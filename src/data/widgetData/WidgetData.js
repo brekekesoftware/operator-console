@@ -34,11 +34,9 @@ export default class WidgetData{
         //     this._widgetWidth = oWidgetData["widgetWidth"];
         //     this._widgetHeight = oWidgetData["widgetHeight"];
         //     this._WidgetTypeId= oWidgetData["widgetTypeId"];
-        //     this._WidgetNumber = oWidgetData["widgetNumber"];
         // }
         // else {
             this._widgetUuid = options["widgetUuid"];
-            this._WidgetNumber = options["widgetNumber"];
             this._WidgetTypeId = options["widgetTypeId"];
             this._widgetRelativePositionX = options["widgetRelativePositionX"];
             this._widgetRelativePositionY = options["widgetRelativePositionY"];
@@ -67,7 +65,6 @@ export default class WidgetData{
         o["widgetWidth"] = this._widgetWidth;
         o["widgetHeight"] = this._widgetHeight;
         o["widgetTypeId"] = this._WidgetTypeId;
-        o["widgetNumber"] = this._WidgetNumber;
 
         this.setWidgetDataToObjectMain( o );
     }
@@ -124,10 +121,6 @@ export default class WidgetData{
 
     setWidgetHeight( h ){
         this._widgetHeight = h;
-    }
-
-    getWidgetNumber(){
-        return this._WidgetNumber;
     }
 
     getWidgetWidth(){

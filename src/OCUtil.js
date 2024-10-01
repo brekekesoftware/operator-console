@@ -1,4 +1,6 @@
 import Util from "./Util";
+import Notification from "antd/lib/notification";
+import i18n from "./i18n";
 
 export default class OCUtil{
 
@@ -28,12 +30,38 @@ export default class OCUtil{
         return b;
     }
 
-    static getExtensionStatusClassName( extensionId, extensionsStatus ){
+    static getExtensionStatusClassName( extensionId, extensionsStatus ) {
         const status = Object.values(extensionsStatus?.[extensionId]?.callStatus || {});
         const statusClassName = (status.find(s => s === 'talking') && 'led-red') ||
             (status.find(s => ['holding', 'calling', 'ringing'].includes(s)) && 'led-yellow') ||
             (extensionsStatus?.[extensionId]?.registered ? 'led-green' : 'led-grey');
         return statusClassName;
+    }
+
+    static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage,  oErr, duration=0){
+        if( consoleErrorMessage ) {
+            console.error(consoleErrorMessage, oErr);
+        }
+        else{
+            console.error( oErr );
+        }
+
+        let obj;
+        if( oErr instanceof Error ) { // true
+            obj = oErr.toString();
+        }
+        else {
+            try {
+                obj = JSON.stringify(oErr);
+            } catch (errJsonStringify) {
+                obj = oErr;
+            }
+        }
+
+        if( notificationErrorMessage ) {
+            Notification.error({message: notificationErrorMessage + "\r\n" + obj, duration: duration});
+        }
+
     }
 
     static indexOfArrayFromExtensions( extensions, extId ){

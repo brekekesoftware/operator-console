@@ -149,7 +149,7 @@ export default class WebphoneCallInfo extends ACallInfo {
             if (!wasAnsweredAt || wasAnsweredAt === 0) {
                 if (this._answeredAt && this._answeredAt !== 0) {
                     //answered incoming call.
-                    this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByPalCallInfo( this );
+                    this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByCallInfo( this );
                 }
             }
         }

@@ -23,19 +23,35 @@ export default class NoteEditorWidget extends EditorWidget{
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
         if( noteName ) {
-            oc.getNote(noteName)
-                .then(({note, useraccess}) => {
-                    this._readonly = useraccess != 2;
-                    this._lastNoteName = noteName;
-                    this.setState({loading:false, content:note});
-                })
-                .catch((err) => {
-                    console.log('Failed  to getNote.', err);
+            const getNoteOptions = {
+                methodName : "getNote",
+                methodParams : JSON.stringify({
+                    tenant : oc.getLoggedinTenant(),
+                    name : noteName
+                }),
+                onSuccessFunction : (res) =>{
+                    if( res ) {
+                        const note = res["note"];
+                        const useraccess = res["useraccess"];
+                        this._readonly = useraccess != 2;
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false, content: note});
+                    }
+                    else{
+                        //Note not found.
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false});
+                    }
+                },
+                onFailFunction : ( errorOrResponse ) =>{
+                    console.log('Failed  to getNote.', errorOrResponse );
                     this._lastNoteName = noteName;
                     //this._readonly = true;
                     //throw err;
                     this.setState({loading:false,content:"",error:true});
-                });
+                }
+            }
+            oc.getPalRestApi().callPalRestApiMethod( getNoteOptions  );
             this.setState({loading:true,saving:false,error:false});
         }
     }
@@ -48,19 +64,35 @@ export default class NoteEditorWidget extends EditorWidget{
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
         if( this.state.loading === false && noteName  && this._lastNoteName !== noteName ) {
-            oc.getNote(noteName)
-                .then(({note, useraccess}) => {
-                    this._readonly = useraccess != 2;
-                    this._lastNoteName = noteName;
-                    this.setState({loading:false, content:note});
-                })
-                .catch((err) => {
-                    console.log('Failed  to getNote.', err);
+            const getNoteOptions = {
+                methodName : "getNote",
+                methodParams : JSON.stringify({
+                    tenant:oc.getLoggedinTenant(),
+                    name:noteName
+                }),
+                onSuccessFunction: (res) =>{
+                    if( res ){
+                        const note = res["note"];
+                        const useraccess = res["useraccess"];
+                        this._readonly = useraccess != 2;
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false, content: note});
+                    }
+                    else {
+                        //Note not found.
+                        this._lastNoteName = noteName;
+                        this.setState({loading: false});
+                    }
+                },
+                onFailFunction : ( errorOrResponse ) => {
+                    console.log('Failed  to getNote.', errorOrResponse);
                     this._lastNoteName = noteName;
                     this._readonly = false;
                     //throw err;
                     this.setState({loading:false,content:"",error:true});
-                });
+                }
+            }
+            oc.getPalRestApi().callPalRestApiMethod( getNoteOptions );
             this.setState({loading:true});
         }
     }
@@ -71,9 +103,23 @@ export default class NoteEditorWidget extends EditorWidget{
         const noteName = widgetData.getNoteName();
 
         if( noteName ){
-            oc.setNote(noteName, this.state.content )
-                .then(() => this.setState({saving:false}))
-                .catch(() => this.setState({error: true}))
+            const setNoteOptions ={
+                methodName : "setNote",
+                methodParams : JSON.stringify({
+                    tenant : oc.getLoggedinTenant(),
+                    name:noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    note : this.state.content
+                }),
+                onSuccessFunction : ( res ) =>{
+                    this.setState({saving:false} );
+                },
+                onFailFunction : ( errOrResponse ) =>{
+                    this.setState({error: true});
+                }
+            }
+            oc.getPalRestApi().callPalRestApiMethod( setNoteOptions );
         }
     }, 500);
 

@@ -5,6 +5,7 @@ import Spin from "antd/lib/spin";
 import i18n from "./i18n";
 import BrekekeOperatorConsole from "./index";
 import Notification from "antd/lib/notification";
+import OCUtil from "./OCUtil";
 
 
 export default function OpenLayoutModalForDropDownMenu(props  ) {
@@ -47,67 +48,103 @@ export default function OpenLayoutModalForDropDownMenu(props  ) {
 }
 
 export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFunc, setOpenLayoutModalOpenFunc, setIsLoading   ) {
-    const selectOCNoteByShortname = ( operatorConsole, shortname ) =>{
-        const promise = operatorConsole.getOCNote(  shortname );
-        promise.then( (noteInfo) => {
-            const sNote = noteInfo.note;
-            const oNote = JSON.parse(sNote);
-            operatorConsole.setOCNote(shortname, oNote, function () {
-                    //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
-                    setIsLoading(false);
-                    setOpenLayoutModalOpenFunc(false);
-                },
-                function (e) {
-                    // const message = eventArg.message;
-                    // console.error("Failed to setOCNote.", message);
-                    // Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message,duration:0});
-                    //!testit
-                    setIsLoading(false);
-                    if( Array.isArray(e)){
-                        for( let i = 0; i < e.length; i++ ){
-                            const err = e[i];
-                            console.error("setOCNote failed. errors[" + i + "]=" , err );
-                        }
-                    }
-                    else{
-                        console.error("setOCNote failed. error=" , e );
-                    }
-
+    const selectOCNoteByShortname = ( operatorConsole, shortname ) => {
+        const noteName = BrekekeOperatorConsole.getOCNoteName(shortname);
+        const getNoteOptions = {
+            methodName: "getNote",
+            methodParams: JSON.stringify({
+                tenant: operatorConsole.getLoggedinTenant(),
+                name: noteName
+            }),
+            onSuccessFunction: (res) => {
+                if (res) {
+                    const sNote = res.note;
+                    let oNote;
                     try {
-                        const sError = JSON.stringify(e);
-                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                        oNote = JSON.parse(sNote);
+                    } catch (err) {
+                        console.error(err);
+                        setIsLoading(false);
+                        setOpenLayoutModalOpenFunc(false);
+                        Notification.error({message: i18n.t('Failed_to_get_note') + "\r\n" + err, duration: 0});
+                        return;
                     }
-                    catch( err ){
-                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
-                    }
-                    //Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
 
-                    setOpenLayoutModalOpenFunc(false);
-                });
-        });
-        setIsLoading(true);
-        // }).catch( (err) =>{
-        // });
+                    operatorConsole.setOCNote(shortname, oNote, function () {
+                            //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
+                            setIsLoading(false);
+                            setOpenLayoutModalOpenFunc(false);
+                        },
+                        function (e) {
+                            // const message = eventArg.message;
+                            // console.error("Failed to setOCNote.", message);
+                            // Notification.error({message: i18n.t("failed_to_load_data_from_pbx") + " " + message,duration:0});
+                            //!testit
+                            setIsLoading(false);
+                            if (Array.isArray(e)) {
+                                for (let i = 0; i < e.length; i++) {
+                                    const err = e[i];
+                                    console.error("setOCNote failed. errors[" + i + "]=", err);
+                                }
+                            } else {
+                                console.error("setOCNote failed. error=", e);
+                            }
+
+                            try {
+                                const sError = JSON.stringify(e);
+                                Notification.error({
+                                    message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" + sError,
+                                    duration: 0
+                                });
+                            } catch (err) {
+                                Notification.error({
+                                    message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" + e,
+                                    duration: 0
+                                });
+                            }
+                            //Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+
+                            setOpenLayoutModalOpenFunc(false);
+                        });
+                } else {
+                    setIsLoading(false);
+                    //setOpenLayoutModalOpenFunc(false);
+                    Notification.warning({message: i18n.t('The_note_does_not_exist')});
+                }
+            },
+            onFailFunction: (errorOrResponse) => {
+                OCUtil.logErrorWithNotification("Failed to get note.", i18n.t("Failed_to_get_note"), errorOrResponse)
+                setIsLoading(false);
+            }
+        }
+        operatorConsole.getPalRestApi().callPalRestApiMethod( getNoteOptions );
+
     };
 
+
     setNoteNamesContentFunc(<Spin />);
-    const promise = operatorConsole.getOCNoteNamesPromise();
-    promise.then((noteNames) => {
-        if (!noteNames || noteNames.length == 0) {
-            setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));
-        } else {
-            let jsxContents = [];
-            for (let i = 0; i < noteNames.length; i++) {
-                const noteName = noteNames[i];
-                const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
-                const sNoteShortname = <div key={i}><a className="test" onClick={ () => selectOCNoteByShortname( operatorConsole, noteShortname ) } >{noteShortname}</a><br /></div>;
-                jsxContents.push( sNoteShortname );
+
+    const getNoteNamesOptions ={
+        methodName : "getNoteNames",
+        methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
+        onSuccessFunction : ( noteNames ) => {
+            if (!noteNames || noteNames.length == 0) {
+                setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));
+            } else {
+                let jsxContents = [];
+                for (let i = 0; i < noteNames.length; i++) {
+                    const noteName = noteNames[i];
+                    const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                    const sNoteShortname = <div key={i}><a className="test" onClick={ () => selectOCNoteByShortname( operatorConsole, noteShortname ) } >{noteShortname}</a><br /></div>;
+                    jsxContents.push( sNoteShortname );
+                }
+                setNoteNamesContentFunc(jsxContents);
             }
-            setNoteNamesContentFunc(jsxContents);
+        },
+        onFailFunction : ( errOrResponse ) =>{
+            OCUtil.logErrorWithNotification( "Failed to get note names.",i18n.t("Failed_to_get_note_names"), errOrResponse );
         }
-    }).catch((err) => {
-        console.error(err);
-        const sErr = i18n.t("failed_to_load_data_from_pbx") + " " + err;
-        Notification.error( { message:sErr, duration:0 } );
-    });
+    }
+    operatorConsole.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
+
 }

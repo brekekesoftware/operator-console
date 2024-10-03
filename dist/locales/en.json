@@ -1,5 +1,6 @@
 {
   "en": {
+	"Add_item" : "Add item",
   	"The_note_does_not_exist" : "The note does not exist.",
 	"Failed_to_get_note" : "Failed to get note.",
 	"Failed_to_get_note_names" : "Failed to get note names.",

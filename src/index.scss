@@ -32,6 +32,11 @@ body{
   --defaultTHBackgroundColor : #FFFFFF;
   --defaultCellBackgroundColor : #FFFFFF;
   --defaultCellHoverBackgroundColor : #F5F5F5;
+  --defaultDisabledTextColor : #D8D8D8;
+}
+
+.brOC .defaultDisabledTextColor{
+  color : var(--defaultDisabledTextColor);
 }
 
 #brOCPhone {

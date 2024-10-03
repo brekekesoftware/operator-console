@@ -3090,7 +3090,275 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._disablePasteToDialingCounter--;
     }
 
+    // _onKeydown(e){
+	// 	console.log("onKeydown.e=" , e );
+    //     if( this._disableKeydownToDialingCounter > 0  ){
+    //         return;
+    //     }
+    //
+    //     const isDowned = this.state._downedLayoutAndSystemSettings;
+    //     if( !isDowned ){
+    //         return;
+    //     }
+    //     const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
+    //     const isShowScreenView_ver2 = this.state.displayState === brOcDisplayStates.showScreen_ver2;
+    //     if( !isScreenView && !isShowScreenView_ver2 ){
+    //         return;
+    //     }
+    //
+    //     //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+    //     const newLayoutModalOpen = this.state.newLayoutModalOpen;
+    //     if( newLayoutModalOpen === true ){
+    //         return;
+    //     }
+    //
+    //     if (
+    //         e.getModifierState("Hyper") ||
+    //         e.getModifierState("Fn") ||
+    //         e.getModifierState("Super") ||
+    //         e.getModifierState("OS") ||
+    //         e.getModifierState("Win") ||  /* hack for IE */
+    //         e.getModifierState("Copilot") /* //!todo //!check //!forbug  work? */
+    //     ) {
+    //         return;
+    //     }
+    //
+    //     if (
+    //         e.getModifierState("Alt") +
+    //         e.getModifierState("Control") +
+    //         e.getModifierState("Meta") >
+    //         1
+    //     ) {
+    //         return;
+    //     }
+    //
+    //     if (
+    //         (e.getModifierState("ScrollLock") ||
+    //             e.getModifierState("Scroll")) /* hack for IE */ &&
+    //         !e.getModifierState("Control") &&
+    //         !e.getModifierState("Alt") &&
+    //         !e.getModifierState("Meta")
+    //     ) {
+    //         switch (e.key) {
+    //             case "ArrowDown":
+    //             case "Down":
+    //                 //e.preventDefault();
+    //                 //break;
+    //                 return;
+    //             case "ArrowLeft":
+    //             case "Left":
+    //                 //e.preventDefault();
+    //                 //break;
+    //                 return;
+    //             case "ArrowRight":
+    //             case "Right":
+    //                 //e.preventDefault();
+    //                 //break;
+    //                 return;
+    //             case "ArrowUp":
+    //             case "Up":
+    //                 //e.preventDefault();
+    //                 //break;
+    //                 return;
+    //             case "Process":
+    //                 //e.preventDefault()();
+    //                 //break;
+    //                 return;
+    //         }
+    //     }
+    //
+    //
+    //     const keyCode = e.keyCode;
+    //     switch( keyCode ) {
+    //         case 13:    //enter key
+    //             if( this._isDTMFInput === true ) {
+    //                 return;
+    //             }
+    //             this.makeCall();
+    //             this._clearDialing();
+    //             return;
+    //         case 8: //backspace
+    //         {
+    //             if( this._isDTMFInput === true ){
+    //                 return;
+    //             }
+    //             let dialing = this.state.dialing;
+    //             if (!dialing || dialing.length === 0) {
+    //                 return;
+    //             }
+    //             dialing = dialing.substring(0, dialing.length - 1);
+    //             this.setDialing(dialing);
+    //             return;
+    //         }
+    //             break;
+    //         case 46:    //delete
+    //         {
+    //             if( this._isDTMFInput === true ){
+    //                 return;
+    //             }
+    //
+    //             let dialing = this.state.dialing;
+    //             if (!dialing || dialing.length === 0) {
+    //                 return;
+    //             }
+    //             dialing = dialing.substring(1, dialing.length);
+    //             this.setDialing(dialing);
+    //             return;
+    //         }
+    //             break;
+    //         case 9: //tab
+    //         //case 32: //space
+    //         case 16: //shift
+    //         case 17: //control
+    //         case 18: //alt
+    //         case 112: //F1
+    //         case 113: //F2
+    //         case 114: //F3
+    //         case 115: //F4
+    //         case 116: //F5
+    //         case 117: //F6
+    //         case 118: //F7
+    //         case 119: //F8
+    //         case 120: //F9
+    //         case 121: //F10
+    //         case 122: //F11
+    //         case 123: //F12
+    //         case 37:    //Left arrow
+    //         case 39:    //Right arrow
+    //         case 38: //Up arrow
+    //         case 40: //Down arrow
+    //         case 93:    //menu
+    //         case 144: //Numlock
+    //         case 33: //pageup
+    //         case 34: //pagedown
+    //         case 38: //end
+    //         case 36: //home
+    //         case 45: //insert
+    //         case 145: //scroll lock
+    //         case 19: //pause
+    //         case 44: //print screen
+    //         //case ***; //copilot //!check //!todo //!check //!forbug
+    //         case 91: //meta
+    //         case 29: //NonConvert
+    //         case 0: //char key ( with F12?) //for Firefox
+    //         case 229: //char key ( with F12?)
+    //             return;
+    //             break;
+    //     }
+    //
+    //     //modify keychar
+    //     let keychar;
+    //     switch(keyCode) {
+    //         case 96:    //Num 0
+    //             keychar = '0';
+    //             break;
+    //         case 97:    //Num 1
+    //             keychar = '1';
+    //             break;
+    //         case 98: //Num 2
+    //             keychar = '2';
+    //             break;
+    //         case 99: //Num 3
+    //             keychar = '3';
+    //             break;
+    //         case 100: //Num 4
+    //             keychar = '4';
+    //             break;
+    //         case 101: //Num 5
+    //             keychar =  '5';
+    //             break;
+    //         case 102: //Num 6
+    //             keychar = '6';
+    //             break;
+    //         case 103: //Num 7
+    //             keychar = '7';
+    //             break;
+    //         case 104: //Num 8
+    //             keychar = '8';
+    //             break;
+    //         case 105: //Num 9
+    //             keychar = '9';
+    //             break;
+    //         case 111: //Num divide
+    //             keychar = '/';
+    //             break;
+    //         case 106: //Num multiply
+    //             keychar = '*';
+    //             break;
+    //         case 109: //Num subtract
+    //             keychar = '-';
+    //             break;
+    //         case 107: //Num add
+    //             keychar = '+'
+    //             break;
+    //         case 110: //Num decimal
+    //             keychar = '.';
+    //             break;
+    //         default:
+    //             keychar  = String.fromCharCode(keyCode);
+    //             break;
+    //     }
+    //     if( !keychar ){
+    //         return;
+    //     }
+    //     const isCaplockOn =  e.getModifierState( "CapsLock" );
+    //     if( isCaplockOn ){
+    //         if( e.shiftKey ){
+    //             keychar = keychar.toLowerCase();
+    //         }
+    //         else {
+    //             keychar = keychar.toUpperCase();
+    //         }
+    //     }
+    //     else{
+    //         if( e.shiftKey ) {
+    //             keychar = keychar.toUpperCase();
+    //         }
+    //         else{
+    //             keychar = keychar.toLowerCase();
+    //         }
+    //     }
+    //
+    //     if( this._isDTMFInput === true ){
+    //         if(  this._isSendDTMFChar( keychar ) !== true ) {
+    //             return;
+    //         }
+    //         let  dialing = this.state.dialing;
+    //         if( !dialing ){
+    //             dialing = keychar;
+    //         }
+    //         else {
+    //             dialing += keychar;
+    //         }
+    //
+    //         if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+    //             dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
+    //         }
+    //         this.setDialing( dialing );
+    //
+    //         this.sendDTMFIfNeed(keychar);
+    //
+    //     }
+    //     else{
+    //         let  dialing = this.state.dialing;
+    //         if( dialing.length >= BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+    //             return;
+    //         }
+    //
+    //         if( !dialing ){
+    //             dialing = keychar;
+    //         }
+    //         else {
+    //             dialing += keychar;
+    //         }
+    //         this.setDialing( dialing );
+    //
+    //     }
+    //
+    // }
+
     _onKeydown(e){
+        console.log("onKeydown.e=" , e );
         if( this._disableKeydownToDialingCounter > 0  ){
             return;
         }
@@ -3245,89 +3513,21 @@ export default class BrekekeOperatorConsole extends React.Component {
                 break;
         }
 
-        //modify keychar
-        let keychar;
-        switch(keyCode) {
-            case 96:    //Num 0
-                keychar = '0';
-                break;
-            case 97:    //Num 1
-                keychar = '1';
-                break;
-            case 98: //Num 2
-                keychar = '2';
-                break;
-            case 99: //Num 3
-                keychar = '3';
-                break;
-            case 100: //Num 4
-                keychar = '4';
-                break;
-            case 101: //Num 5
-                keychar =  '5';
-                break;
-            case 102: //Num 6
-                keychar = '6';
-                break;
-            case 103: //Num 7
-                keychar = '7';
-                break;
-            case 104: //Num 8
-                keychar = '8';
-                break;
-            case 105: //Num 9
-                keychar = '9';
-                break;
-            case 111: //Num divide
-                keychar = '/';
-                break;
-            case 106: //Num multiply
-                keychar = '*';
-                break;
-            case 109: //Num subtract
-                keychar = '-';
-                break;
-            case 107: //Num add
-                keychar = '+'
-                break;
-            case 110: //Num decimal
-                keychar = '.';
-                break;
-            default:
-                keychar  = String.fromCharCode(keyCode);
-                break;
-        }
-        if( !keychar ){
+        let sKey = e.key;
+        if( !sKey || sKey.length === 0 ){
             return;
-        }
-        const isCaplockOn =  e.getModifierState( "CapsLock" );
-        if( isCaplockOn ){
-            if( e.shiftKey ){
-                keychar = keychar.toLowerCase();
-            }
-            else {
-                keychar = keychar.toUpperCase();
-            }
-        }
-        else{
-            if( e.shiftKey ) {
-                keychar = keychar.toUpperCase();
-            }
-            else{
-                keychar = keychar.toLowerCase();
-            }
         }
 
         if( this._isDTMFInput === true ){
-            if(  this._isSendDTMFChar( keychar ) !== true ) {
+            if(  this._isSendDTMFChar( sKey ) !== true ) {
                 return;
             }
             let  dialing = this.state.dialing;
             if( !dialing ){
-                dialing = keychar;
+                dialing = sKey;
             }
             else {
-                dialing += keychar;
+                dialing += sKey;
             }
 
             if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
@@ -3335,7 +3535,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
             this.setDialing( dialing );
 
-            this.sendDTMFIfNeed(keychar);
+            this.sendDTMFIfNeed(sKey);
 
         }
         else{
@@ -3345,10 +3545,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
 
             if( !dialing ){
-                dialing = keychar;
+                dialing = sKey;
             }
             else {
-                dialing += keychar;
+                dialing += sKey;
             }
             this.setDialing( dialing );
 

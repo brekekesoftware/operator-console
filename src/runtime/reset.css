@@ -94,7 +94,7 @@ button{
     padding-left:var(--defaultOutsideSpace);
 }
 
-.brOC .brOCReset table .defaultContentTable tr:first-child th {
+.brOC .brOCReset table.defaultContentTable > thead > tr:first-child th {
     padding-top:var(--defaultOutsideSpace);
 }
 

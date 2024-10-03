@@ -53,3 +53,7 @@
 .brOC .brOCReset table.PhonebookContactInfozInfoTelsTable > tbody > tr > td:hover{
     background-color:unset;
 }
+
+.brOC .unsetBackgroundColor_important_PhonebookContactInfozInfoView:hover{
+    background-color:unset !important;
+}

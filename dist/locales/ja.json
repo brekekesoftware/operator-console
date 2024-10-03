@@ -1,5 +1,6 @@
 {
   "ja": {
+	"Add_item" : "項目の追加",
 	"The_note_does_not_exist" : "ノートが存在しません。",
   	"Failed_to_get_note" : "ノートの取得に失敗しました.",
   	"Failed_to_get_note_names" : "全ノート名の取得に失敗しました。",

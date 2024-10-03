@@ -22,6 +22,19 @@ export default class OCUtil{
     //     return -1;
     // }
 
+    static removeChar( s , c ){
+        let bContinue = true;
+        let sRemoved = s;
+        while( bContinue) {
+            const index = sRemoved.indexOf(c);
+            bContinue = index !== -1;
+            if( bContinue ){
+                sRemoved = sRemoved.substring(0, index) + sRemoved.substring(index + 1);
+            }
+        }
+        return sRemoved;
+    }
+
     static isExtensionBusy( extensionId, extensionsStatus ){
         const status = Object.values(extensionsStatus?.[extensionId]?.callStatus || {});
         const b = (status.find(s => s === 'talking') && true) ||
@@ -38,28 +51,36 @@ export default class OCUtil{
         return statusClassName;
     }
 
-    static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage,  oErr, duration=0){
-        if( consoleErrorMessage ) {
-            console.error(consoleErrorMessage, oErr);
+    static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
+        if( oErr ){
+            if( consoleErrorMessage ) {
+                console.error(consoleErrorMessage, oErr);
+            }
+            else{
+                console.error( oErr );
+            }
         }
         else{
-            console.error( oErr );
-        }
-
-        let obj;
-        if( oErr instanceof Error ) { // true
-            obj = oErr.toString();
-        }
-        else {
-            try {
-                obj = JSON.stringify(oErr);
-            } catch (errJsonStringify) {
-                obj = oErr;
-            }
+            console.error( consoleErrorMessage );
         }
 
         if( notificationErrorMessage ) {
-            Notification.error({message: notificationErrorMessage + "\r\n" + obj, duration: duration});
+            if( !oErr ){
+                Notification.error({message: notificationErrorMessage, duration: duration});
+            }
+            else {
+                let obj;
+                if (oErr instanceof Error) { // true
+                    obj = oErr.toString();
+                } else {
+                    try {
+                        obj = JSON.stringify(oErr);
+                    } catch (errJsonStringify) {
+                        obj = oErr;
+                    }
+                }
+                Notification.error({message: notificationErrorMessage + "\r\n" + obj, duration: duration});
+            }
         }
 
     }

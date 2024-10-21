@@ -112,3 +112,11 @@
     padding-top:0 !important;;
 }
 
+
+.brOC .addContact_AutoDialView_ver2 {
+    background-color:unset !important;
+}
+
+.brOC .addContact_AutoDialView_ver2:hover{
+    background-color:unset !important;
+}

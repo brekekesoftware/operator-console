@@ -11,7 +11,7 @@ import "./AutoDialView_ver2.css"
 import BrekekeOperatorConsole from "../index";
 import OCUtil from "../OCUtil";
 import {CallHistory2} from "../CallHistory2";
-import {Input, Switch} from "antd";
+import {Checkbox, Input, Switch} from "antd";
 import Spin from "antd/lib/spin";
 import Empty from "antd/lib/empty";
 import PhonebookContactInfozTelsView from "./PhonebookContactInfozTelsView";
@@ -25,6 +25,7 @@ export default class AutoDialView_ver2 extends React.Component {
     constructor( props ){
         super(props);
         this.state = {
+            recentShowDetailChecked : false
         };
         // const oc = BrekekeOperatorConsole.getStaticInstance();
         // oc.getCallHistory2().sortIfNeed();
@@ -60,10 +61,24 @@ export default class AutoDialView_ver2 extends React.Component {
     //     this._PhonebookScrollableDiv = document.getElementById("phonebookScrollableDiv_brOC_AutoDialView_ver2");
     // }
 
-    _resetPhonebookContactInfoArrayAsync( pbKeywords, pbShared ){
+    // componentDidUpdate(prevProps, prevState, snapshot) {
+    //     const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
+    //     if( eRecentShowDetail ){
+    //         if( eRecentShowDetail.checked !== this.state.recentShowDetailChecked ){
+    //             eRecentShowDetail.checked = this.state.recentShowDetailChecked;
+    //             this.setState({recentShowDetailChecked:this.state.recentShowDetailChecked});
+    //         }
+    //     }
+    //
+    // }
+
+    _resetPhonebookContactInfoArrayAsync( pbKeywords, pbShared, pbName ){
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const systemSettingsData = oc.getSystemSettingsData();
-        const pbName = systemSettingsData.getAutoDialPhonebookName();
+        if( !pbName ) {
+            pbName = systemSettingsData.getAutoDialPhonebookName();
+        }
+
         this._latestSearchPhonebookName = pbName;
         this._latestSearchPhonebookShared = pbShared;
         this._latestSearchPhonebookKeywords = pbKeywords;
@@ -417,6 +432,84 @@ export default class AutoDialView_ver2 extends React.Component {
         });
     }
 
+    _deleteContact(  pbContactInfo ){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const isShared = pbContactInfo.getIsShared() === true;
+        const isAdmin = oc.getIsAdmin();
+        const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
+        if( isDeletable !== true  ){
+            console.warn("You do not have permission to delete phone book contact.. aid=" + aid);
+            Notification.warning({
+                message: i18n.t("You_do_not_have_permission_to_delete_phone_book_contact"),
+            });
+            return;
+        }
+
+
+        const aid = pbContactInfo.getAid();
+
+        const failFunc = ( resOrError ) =>{
+            if( Array.isArray( resOrError ) ) {
+                const aid = resOrError[0];
+                console.error("Failed to delete phone book contact. aid=" + aid);
+                Notification.error({
+                    message: i18n.t("failed_to_save_data_to_pbx"),
+                    duration: 0
+                });
+            }
+            else{
+                OCUtil.logErrorWithNotification("Failed to delete phone book contact.", i18n.t("failed_to_save_data_to_pbx"), resOrError );
+            }
+            this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+        };
+
+        const deleteContactOptions = {
+            methodName : "deleteContact",
+            methodParams : JSON.stringify({
+                aid : aid
+            }),
+            onSuccessFunction : (ret) =>{
+                let bSuccess = false;
+                const arSucceeded = ret["succeeded"];
+                if( Array.isArray( arSucceeded ) ) {
+                    if( arSucceeded.length !== 0 ) {
+                        const iAidRet = arSucceeded[0];
+                        let aidIntegerOrString = aid;
+                        if( Number.isInteger( iAidRet ) && OCUtil.isString(aid)){
+                            aidIntegerOrString = parseInt( aid );
+                        }
+                        bSuccess = aidIntegerOrString  === iAidRet;
+                    }
+                }
+                if( bSuccess === true ){
+                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                    this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+                }
+                else{
+                    //const arFailed = ret["failed"];
+                    failFunc();
+                }
+            },
+            onFailFunction : (resOrError) => failFunc( resOrError )
+        };
+        oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
+
+    }
+
+    _openAddContactView(){
+        const pbContactInfozInfoView = PhonebookContactInfozInfoView.getStaticPhonebookContactInfozInfoViewInstance();
+        const pbContactInfozTelsView = PhonebookContactInfozTelsView.getStaticPhonebookContactInfozTelsViewInstance();
+        pbContactInfozTelsView.closePhonebookContactInfozTelsView( () => {
+            pbContactInfozInfoView.closePhonebookContactInfozInfoView(  () => pbContactInfozInfoView.openPhonebookContactInfozInfoView() );
+        });
+    }
+
+    _onRecentShowDetailChange(e){
+        const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
+        const checked = eRecentShowDetail.checked;
+        this.setState({recentShowDetailChecked:checked});
+    }
+
     render() {
         if (!this.props.isVisible) {
             return (null);
@@ -428,6 +521,8 @@ export default class AutoDialView_ver2 extends React.Component {
         callHistory2.sortIfNeed( systemSettingsData.getAutoDialRecentDisplayOrder()  ); //!bad Not a render logic
         const recentDisplayOrder = systemSettingsData.getAutoDialRecentDisplayOrder();
         const recentDisplayCount = systemSettingsData.getAutoDialMaxDisplayCount();
+        // const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
+        // const bRecentShowDetail = eRecentShowDetail.checked;
         return (<>
             <PhonebookContactInfozInfoView />
             <PhonebookContactInfozTelsView />
@@ -449,8 +544,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                             <Button>{i18n.t("ClearRecent")}</Button>
                                         </Popconfirm>
                                     </td>
-                                    <td style={{textAlign: "right", verticalAlign: "top"}}
-                                        onClick={this._onClickClose.bind(this)} className="linkDeco">[X]
+                                    <td style={{textAlign: "right", verticalAlign: "top"}}>
+                                        <FontAwesomeIcon icon="far fa-window-close" onClick={this._onClickClose.bind(this)} className="closeFontAwesomeIcon" />
                                     </td>
                                 </tr>
                                 </tbody>
@@ -535,65 +630,71 @@ export default class AutoDialView_ver2 extends React.Component {
                                                         </div>
                                                     )}
                                                     {recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC && (
-                                                        <div className={"autoDialView_ver2_tableParent"}>
-                                                            <table style={{border: "0"}}
-                                                                   className={"defaultContentTable"}>
-                                                                <thead>
-                                                                <tr className="defaultItemPaddingForTr">
-                                                                    <th style={{width: "1%"}}>{i18n.t("CallNo")}</th>
-                                                                    <th style={{width: 20}}>{i18n.t("Status")}</th>
-                                                                    <th></th>
-                                                                    <th>{i18n.t("Incoming")}</th>
-                                                                    <th>{i18n.t("StartedAt")}</th>
-                                                                    <th>{i18n.t("AnsweredAt")}</th>
-                                                                    <th>{i18n.t("EndedAt")}</th>
-                                                                </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                {callHistory2.getCallHistory2CallInfoArray().slice(0, recentDisplayCount).map((callHistory2CallInfo, i) => {
-                                                                    const partyNumber = callHistory2CallInfo.getPartyNumber();
-                                                                    const isExtension = OCUtil.indexOfArrayFromExtensions(oc.state.extensions, partyNumber) !== -1;
-                                                                    const extensionsStatus = oc.state.extensionsStatus;
-                                                                    const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(partyNumber, extensionsStatus) : "";
-                                                                    const sIsIncoming = callHistory2CallInfo.getIsIncoming() ? "✓" : "";
-                                                                    const sStartedAt = new Date(callHistory2CallInfo.getAddCallMillisTime()).toLocaleString();
-                                                                    const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? new Date(callHistory2CallInfo.getAnsweredAt()).toLocaleString() : "";
-                                                                    const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? new Date(callHistory2CallInfo.getEndCallMillisTime()).toLocaleString() : "";
-                                                                    return (
-                                                                        <tr key={i}>
-                                                                            <td style={{width: "1%"}}>{partyNumber}</td>
-                                                                            <td>
-                                                                                <div className={statusClassName}></div>
-                                                                            </td>
-                                                                            <td>
-                                                                                {partyNumber && (<div style={{
-                                                                                    display: "flex",
-                                                                                    justifyContent: "center"
-                                                                                }}>
-                                                                                    <button
-                                                                                        title={i18n.t(`Call`)}
-                                                                                        className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                        onClick={() => {
-                                                                                            oc.abortAutoDialView_ver2();
-                                                                                            //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
-                                                                                            oc.setDialingAndMakeCall2(partyNumber);
-                                                                                        }
-                                                                                        }>
-                                                                                        {<FontAwesomeIcon size="lg"
-                                                                                                          icon="fas fa-phone"/>}
-                                                                                    </button>
-                                                                                </div>)}
-                                                                            </td>
-                                                                            <td style={{textAlign: "center"}}>{sIsIncoming}</td>
-                                                                            <td>{sStartedAt}</td>
-                                                                            <td>{sAnsweredAt}</td>
-                                                                            <td>{sEndedAt}</td>
-                                                                        </tr>
-                                                                    )
-                                                                })}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                        <>
+                                                            <div style={{display:"flex",alignItems:"center",margin:"4px"}}>
+                                                                <Checkbox id="recentShowDetail_brOC_AutoDialView_ver2"  checked={this.state.recentShowDetailChecked} onChange={ (e) => this._onRecentShowDetailChange(e) } />
+                                                                <label style={{marginLeft:"2px"}} htmlFor="recentShowDetail_brOC_AutoDialView_ver2">{i18n.t("Show_detail")}</label>
+                                                            </div>
+                                                            <div className={"autoDialView_ver2_tableParent"}>
+                                                                <table style={{border: "0"}}
+                                                                       className={"defaultContentTable"}>
+                                                                    <thead>
+                                                                    <tr className="defaultItemPaddingForTr">
+                                                                        <th style={{width: "1%"}}>{i18n.t("Tel")}</th>
+                                                                        <th style={{width: 20}}>{i18n.t("Status")}</th>
+                                                                        <th></th>
+                                                                        <th>{i18n.t("Incoming")}</th>
+                                                                        <th>{i18n.t("StartedAt")}</th>
+                                                                        { this.state.recentShowDetailChecked && <th>{i18n.t("AnsweredAt")}</th> }
+                                                                        { this.state.recentShowDetailChecked && <th>{i18n.t("EndedAt")}</th> }
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {callHistory2.getCallHistory2CallInfoArray().slice(0, recentDisplayCount).map((callHistory2CallInfo, i) => {
+                                                                        const partyNumber = callHistory2CallInfo.getPartyNumber();
+                                                                        const isExtension = OCUtil.indexOfArrayFromExtensions(oc.state.extensions, partyNumber) !== -1;
+                                                                        const extensionsStatus = oc.state.extensionsStatus;
+                                                                        const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(partyNumber, extensionsStatus) : "";
+                                                                        const sIsIncoming = callHistory2CallInfo.getIsIncoming() ? "✓" : "";
+                                                                        const sStartedAt = new Date(callHistory2CallInfo.getAddCallMillisTime()).toLocaleString();
+                                                                        const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? new Date(callHistory2CallInfo.getAnsweredAt()).toLocaleString() : "";
+                                                                        const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? new Date(callHistory2CallInfo.getEndCallMillisTime()).toLocaleString() : "";
+                                                                        return (
+                                                                            <tr key={i}>
+                                                                                <td style={{width: "1%"}}>{partyNumber}</td>
+                                                                                <td>
+                                                                                    <div className={statusClassName}></div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    {partyNumber && (<div style={{
+                                                                                        display: "flex",
+                                                                                        justifyContent: "center"
+                                                                                    }}>
+                                                                                        <button
+                                                                                            title={i18n.t(`Call`)}
+                                                                                            className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
+                                                                                            onClick={() => {
+                                                                                                oc.abortAutoDialView_ver2();
+                                                                                                //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+                                                                                                oc.setDialingAndMakeCall2(partyNumber);
+                                                                                            }
+                                                                                            }>
+                                                                                            {<FontAwesomeIcon size="lg"
+                                                                                                              icon="fas fa-phone"/>}
+                                                                                        </button>
+                                                                                    </div>)}
+                                                                                </td>
+                                                                                <td style={{textAlign: "center"}}>{sIsIncoming}</td>
+                                                                                <td>{sStartedAt}</td>
+                                                                                { this.state.recentShowDetailChecked && <td>{sAnsweredAt}</td> }
+                                                                                { this.state.recentShowDetailChecked && <td>{sEndedAt}</td> }
+                                                                            </tr>
+                                                                        )
+                                                                    })}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </>
                                                     )}
                                                 </div>
                                                 <div className="panel tab-B">
@@ -715,13 +816,16 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <thead>
                                                                             <tr>
                                                                                 <th>{i18n.t("DisplayName")}</th>
-                                                                                <th style={{textAlign:"center"}}>{i18n.t("Call")}</th>
-                                                                                <th style={{textAlign:"center"}}>{i18n.t("Info")}</th>
+                                                                                <th style={{textAlign: "center"}}>{i18n.t("Call")}</th>
+                                                                                <th style={{textAlign: "center"}}>{i18n.t("Info")}</th>
+                                                                                <th style={{textAlign: "center"}}>{i18n.t("Delete")}</th>
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
                                                                             { this._phonebookContactInfoArray.map((pbContactInfo,i) => {
-                                                                                const pbContactInfozTelInfoArray = pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray();
+                                                                                const isShared = pbContactInfo.getIsShared();
+                                                                                const isAdmin = oc.getIsAdmin();
+                                                                                const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
                                                                                 return (
                                                                                     <tr key={i} style={{height:"42px"}}>
                                                                                         <td>{pbContactInfo.getDisplayName()}</td>
@@ -736,8 +840,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                         <FontAwesomeIcon size="lg" icon="fas fa-phone" />
                                                                                                     </button>
                                                                                                 )}
-                                                                                                { pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray().length > 1 && (<FontAwesomeIcon size="lg"
-                                                                                                                                                                                              icon="fas fa-phone" onClick={(e) => this._openPhonebookCallInfozTelsView( pbContactInfo ) }/> ) }
+                                                                                                { pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray().length > 1 && (
+                                                                                                    <a onClick={(e) => this._openPhonebookCallInfozTelsView( pbContactInfo ) }>
+                                                                                                        <FontAwesomeIcon size="lg" icon="fas fa-phone" />
+                                                                                                    </a>
+                                                                                                )}
                                                                                             </div>
                                                                                         </td>
                                                                                         <td>
@@ -746,15 +853,32 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 alignItems: "center",
                                                                                                 justifyContent: "center"
                                                                                             }}>
-                                                                                                <svg height="24"
-                                                                                                     viewBox="0 0 24 24"
-                                                                                                     width="24"
-                                                                                                     onClick={(e) => this._openPhonebookCallInfozInfoView( pbContactInfo )}>
-                                                                                                    <path
-                                                                                                        d="M13,9H11V7H13M13,17H11V11H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"
-                                                                                                        fill="black"></path>
-                                                                                                </svg>
+                                                                                                <a onClick={(e) => this._openPhonebookCallInfozInfoView( pbContactInfo )}>
+                                                                                                    {<FontAwesomeIcon
+                                                                                                        size="lg"
+                                                                                                        icon="fas fa-info-circle"/>}
+                                                                                                </a>
                                                                                             </div>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            { isDeletable && (
+                                                                                                <div style={{
+                                                                                                    display: "flex",
+                                                                                                    alignItems: "center",
+                                                                                                    justifyContent: "center"
+                                                                                                }}>
+                                                                                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteContact( pbContactInfo ) }
+                                                                                                                okText={i18n.t("yes")}
+                                                                                                                cancelText={i18n.t("no")}
+                                                                                                    >
+                                                                                                        <a>
+                                                                                                            {<FontAwesomeIcon
+                                                                                                                size="lg"
+                                                                                                                icon="fa fa-trash"/>}
+                                                                                                        </a>
+                                                                                                    </Popconfirm>
+                                                                                                </div>
+                                                                                            )}
                                                                                         </td>
                                                                                     </tr>
                                                                                 );
@@ -763,6 +887,18 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             </tbody>
                                                                         </table>
                                                                     )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr className="addContact_AutoDialView_ver2">
+                                                            <td colSpan="3" className="addContact_AutoDialView_ver2" style={{paddingRight:"4px",paddingTop:"4px"}}>
+                                                                <div style={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "end"
+                                                                }}>
+                                                                    <Button
+                                                                        onClick={(e) => this._openAddContactView()}>{i18n.t("Add_contact")}</Button>
                                                                 </div>
                                                             </td>
                                                         </tr>

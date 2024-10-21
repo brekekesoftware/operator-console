@@ -373,10 +373,10 @@ function TransferButton({ context, lineInfo, callInfo, title,
                     <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>
                         {i18n.t("blindTransfer")}
                     </Button>
-                    <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow}>
+                    <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow} className="brOCMarginLeftButtonToButton">
                         {i18n.t("activateAndStartBlindTransfer")}
                     </Button>
-                    <Button key="back" onClick={handleModalCancel}>
+                    <Button key="back" onClick={handleModalCancel} className="brOCMarginLeftButtonToButton">
                         {i18n.t("cancel")}
                     </Button>
                 </div>
@@ -395,10 +395,10 @@ function TransferButton({ context, lineInfo, callInfo, title,
                         <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponAuto}>
                             {i18n.t("campOnAuto")}
                         </Button>
-                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual}>
+                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual} className="brOCMarginLeftButtonToButton">
                             {i18n.t("campOn")}
                         </Button>
-                        <Button key="backForBusy" onClick={handleModalForBusyCancel}>
+                        <Button key="backForBusy" onClick={handleModalForBusyCancel} className="brOCMarginLeftButtonToButton">
                             {i18n.t("cancel")}
                         </Button>
                     </div>

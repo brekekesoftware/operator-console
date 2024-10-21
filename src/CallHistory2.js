@@ -6,7 +6,7 @@ import OCUtil from "./OCUtil";
 import i18n from "./i18n";
 import BrekekeOperatorConsole from "./index";    //!bad Cross References
 
-const CALLHISTORY2_CALL_HISTORIES_DATA_ID = "OperatorConsole-CallHistory2-callHistories";
+const CALLHISTORY2_CALL_HISTORIES_DATA_ID = "OperatorConsole-CallHistory2-callHistories-test2";
 const CALLHISTORY2_RECENT_DISPLAY_ORDERS = Object.freeze( {
     CALL_OR_INCOMING_COUNT_DESC : "0",
     ADD_DATETIME_DESC : "1"
@@ -17,6 +17,7 @@ class CallHistory2FoTInfo{  //FoT is FREQUENCY_OF_TRANSMISSION
     constructor( ch2CallInfo ) {
         this._ch2CallInfo = ch2CallInfo;
         this._hitCount = 0;
+        this._isLoadedEvenOnce = false;
     }
 
     getHitCount(){
@@ -64,7 +65,7 @@ export class CallHistory2 {
 
                     },
                     ( errorOrResponse ) =>{
-                        OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("failed_to_save_data_to_pbx"), errorOrResponse );
+                        OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse );
                     }
                 );
             },
@@ -196,22 +197,43 @@ export class CallHistory2 {
                 data_id: CALLHISTORY2_CALL_HISTORIES_DATA_ID
             }),
             onSuccessFunction : ( sJsonData ) => {
+                if( !sJsonData || sJsonData.length === 0 ){
+                    this._isLoadedEvenOnce = true;
+                    console.log("The CallHistory2Data(Json response) is empty.");
+                    if( onSuccessFunction ){
+                        onSuccessFunction();
+                    }
+                    return false;
+                }
+
                 const oData = JSON.parse( sJsonData );
                 const sLines = oData["lines"];
                 if( !sLines ){
+                    this._isLoadedEvenOnce = true;
                     //console.log("The CallHIstory2Data  is empty(Line property's value is null) so it will not be read.")
+                    if( onSuccessFunction ){
+                        onSuccessFunction();
+                    }
                     return false;
                 }
 
                 const lines = sLines.split("\n");
                 if( lines.length === 0 ){
+                    this._isLoadedEvenOnce = true;
                     //console.log("The CallHIstory2Data  is empty so it will not be read.")
+                    if( onSuccessFunction ){
+                        onSuccessFunction();
+                    }
                     return false;
                 }
                 let  headerLine = lines[0];
                 const headerLineLength = headerLine.length;
                 if( headerLineLength === 0 ){
+                    this._isLoadedEvenOnce = true;
                     console.warn("The CallHistory2Data's header is not defined so it will not be read.")
+                    if( onSuccessFunction ){
+                        onSuccessFunction();
+                    }
                     return false;
                 }
                 if( headerLine[ headerLineLength - 1 ] === '\r'){
@@ -256,7 +278,11 @@ export class CallHistory2 {
                 }
 
                 if( uuidColumnIndex === -1 ){
+                    this._isLoadedEvenOnce = true;
                     console.warn("Call history will not load because the 'uuid' column does not exist.");
+                    if( onSuccessFunction ){
+                        onSuccessFunction();
+                    }
                     return false;
                 }
 
@@ -301,9 +327,11 @@ export class CallHistory2 {
 
                 }
                 this._syncSaveCount();
+                this._isLoadedEvenOnce = true;
                 if( onSuccessFunction ){
                     onSuccessFunction();
                 }
+                return true;
             },
             onFailFunction: (errorOrResponse) =>{
                 if( onFailFunction ){
@@ -465,15 +493,31 @@ export class CallHistory2 {
         this._FlushSave();
     }
 
-    onBeforeUnloadForCallHistory2( operatorConsoleAsCaller, event ){
-        this._save(
-            () =>{
+    onBeginLogoutForCallHistory2( operatorConsoleAsCaller ){
+        if( this._isLoadedEvenOnce === true ) {
+            this._isLoadedEvenOnce = false;
+            this._save(
+                () => {
 
-            },
-            ( errorOrResponse ) =>{
-                OCUtil.logErrorWithNotification("Failed to save call histories." , null, errorOrResponse );
-            }
-        );
+                },
+                (errorOrResponse) => {
+                    OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse);
+                }
+            );
+        }
+    }
+
+    onUnloadForCallHistory2( operatorConsoleAsCaller, event ){
+        if( this._isLoadedEvenOnce === true ) {
+            this._save(
+                () => {
+
+                },
+                (errorOrResponse) => {
+                    OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse);
+                }
+            );
+        }
     }
 
     onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){

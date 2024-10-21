@@ -87,7 +87,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.0.0';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-
+const VERSION = "2.1.3";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -99,7 +99,7 @@ import ExtensionsStatus from "./ExtensionsStatus";
 import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
 import NoScreensView from "./NoScreensView";
-import {Select, Modal, Tabs} from "antd";
+import {Select, Modal, Tabs, Divider} from "antd";
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";
 import LegacyUccacWidgetSettings from "./LegacyUccacWidgetSettings";
 import CallTableSettings from "./CallTableSettings";
@@ -878,23 +878,25 @@ function LegacyHoldCallButton({ operatorConsoleAsParent, subtype, icon, label, b
     //const currentCall = callById[callIds[currentCallIndex]];
     const currentCallInfo = operatorConsoleAsParent.getPhoneClient().getCallInfos().getCurrentCallInfo();
 
-    const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
-    const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
-    const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
-        "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
-    const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
-    const iconJsx = getIconJsx( icon, label );
+    const color = Util.isAntdRgbaProperty(buttonFgColor) ? Util.getRgbaCSSStringFromAntdColor(buttonFgColor) : "";
+    const backgroundColor = Util.isAntdRgbaProperty(buttonBgColor) ? Util.getRgbaCSSStringFromAntdColor(buttonBgColor) : "";
+    const border = Util.isNumeric(buttonOuterBorderThickness) && Util.isAntdRgbaProperty(buttonOuterBorderColor) ?
+        "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor(buttonOuterBorderColor) : "";
+    const borderRadius = Util.isNumber(buttonOuterBorderRadius) ? buttonOuterBorderRadius + "px" : "";
+    const iconJsx = getIconJsx(icon, label);
     return (
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+        <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent"
                 style={{
-                    border:border,
-                    borderRadius:borderRadius,
-                    color:color,
-                    backgroundColor:backgroundColor
+                    border: border,
+                    borderRadius: borderRadius,
+                    color: color,
+                    backgroundColor: backgroundColor
                 }}
-                onClick={(!currentCallInfo || !currentCallInfo.getIsAnswered() || currentCallInfo.getIsHolding() ) ? undefined : context.holdCall}>{iconJsx}</button>
+                onClick={(!currentCallInfo || !currentCallInfo.getIsAnswered() || currentCallInfo.getIsHolding()) ? undefined : context.holdCall}>{iconJsx}</button>
     );
 }
+
+//Not used since version 2.0
 function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     //const { currentCallIndex, callIds = [], callById = {} } = context;
     //const currentCall = callById[callIds[currentCallIndex]];
@@ -906,6 +908,7 @@ function LegacyPickUpCallButton({ operatorConsoleAsParent, subtype, icon, label,
         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
     const iconJsx = getIconJsx( icon, label );
+
     return (
         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
                 style={{
@@ -2103,8 +2106,8 @@ class NoteSettings extends React.Component {
                 ]}>
                     <InputNumber min="0" />
                 </Form.Item>
-                <divider>{i18n.t("noteName_settings")}</divider>
-                <Form.Item label={i18n.t("name")} name="noteName">
+                <Divider>{i18n.t("Note_name_settings")}</Divider>
+                <Form.Item label={i18n.t("Name")} name="noteName">
                     <AutoComplete options={this.state.nameOptions} />
                 </Form.Item>
                 <Form.Item label={i18n.t("fgColor")} name={"noteNameFgColor" } rules={[
@@ -2770,7 +2773,8 @@ const INIT_STATE = {
     //isSaveEditingScreenButtonDisabled: false
     currentScreenTabIndex : 0,
     isSelectingTabInEditLayout : false,
-    editingTabDatas : new Array()
+    editingTabDatas : new Array(),
+    isAboutOCModalOpen : false
 };
 
 
@@ -2825,6 +2829,24 @@ export default class BrekekeOperatorConsole extends React.Component {
         window.addEventListener("unload", this._OnUnloadFunc );
         this._defaultSystemSettingsData = new SystemSettingsData( this );
     }
+
+    static get BREKEKE_OPERATOR_CONSOLE_VERSION(){
+        return VERSION;
+    }
+
+    getIsOpenAboutOCModalByState(){
+        const b = this.state.isAboutOCModalOpen;
+        return b;
+    }
+
+    openAboutOCModalByState(){
+        this.setState({isAboutOCModalOpen:true});
+    }
+
+    closeAboutOCModalByState(){
+        this.setState({isAboutOCModalOpen:false});
+    }
+
 
     getDefaultButtonImageFileInfos(){
         return this._DefaultButtonImageFileInfos;
@@ -3358,7 +3380,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
     _onKeydown(e){
-        console.log("onKeydown.e=" , e );
+        //console.log("onKeydown.e=" , e );
         if( this._disableKeydownToDialingCounter > 0  ){
             return;
         }
@@ -3379,61 +3401,62 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
 
-        if (
-            e.getModifierState("Hyper") ||
-            e.getModifierState("Fn") ||
-            e.getModifierState("Super") ||
-            e.getModifierState("OS") ||
-            e.getModifierState("Win") ||  /* hack for IE */
-            e.getModifierState("Copilot") /* //!todo //!check //!forbug  work? */
-        ) {
-            return;
-        }
+        if( e.getModifierState ) {   //check for datalist input
+            if (
+                e.getModifierState("Hyper") ||
+                e.getModifierState("Fn") ||
+                e.getModifierState("Super") ||
+                e.getModifierState("OS") ||
+                e.getModifierState("Win") ||  /* hack for IE */
+                e.getModifierState("Copilot") /* //!todo //!check //!forbug  work? */
+            ) {
+                return;
+            }
 
-        if (
-            e.getModifierState("Alt") +
-            e.getModifierState("Control") +
-            e.getModifierState("Meta") >
-            1
-        ) {
-            return;
-        }
+            if (
+                e.getModifierState("Alt") +
+                e.getModifierState("Control") +
+                e.getModifierState("Meta") >
+                1
+            ) {
+                return;
+            }
 
-        if (
-            (e.getModifierState("ScrollLock") ||
-                e.getModifierState("Scroll")) /* hack for IE */ &&
-            !e.getModifierState("Control") &&
-            !e.getModifierState("Alt") &&
-            !e.getModifierState("Meta")
-        ) {
-            switch (e.key) {
-                case "ArrowDown":
-                case "Down":
-                    //e.preventDefault();
-                    //break;
-                    return;
-                case "ArrowLeft":
-                case "Left":
-                    //e.preventDefault();
-                    //break;
-                    return;
-                case "ArrowRight":
-                case "Right":
-                    //e.preventDefault();
-                    //break;
-                    return;
-                case "ArrowUp":
-                case "Up":
-                    //e.preventDefault();
-                    //break;
-                    return;
-                case "Process":
-                    //e.preventDefault()();
-                    //break;
-                    return;
+            if (
+                (e.getModifierState("ScrollLock") ||
+                    e.getModifierState("Scroll")) /* hack for IE */ &&
+                !e.getModifierState("Control") &&
+                !e.getModifierState("Alt") &&
+                !e.getModifierState("Meta")
+            ) {
+                switch (e.key) {
+                    case "ArrowDown":
+                    case "Down":
+                        //e.preventDefault();
+                        //break;
+                        return;
+                    case "ArrowLeft":
+                    case "Left":
+                        //e.preventDefault();
+                        //break;
+                        return;
+                    case "ArrowRight":
+                    case "Right":
+                        //e.preventDefault();
+                        //break;
+                        return;
+                    case "ArrowUp":
+                    case "Up":
+                        //e.preventDefault();
+                        //break;
+                        return;
+                    case "Process":
+                        //e.preventDefault()();
+                        //break;
+                        return;
+                }
             }
         }
-
 
         const keyCode = e.keyCode;
         switch( keyCode ) {
@@ -6098,27 +6121,29 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
     _onBeforeUnloadMain( event ){
-        const phoneClient = this.getPhoneClient();
-        let hasCall;
-        if( phoneClient ){
-            hasCall = phoneClient.getCallInfos().getCallInfoCount() !== 0;
-        }
-        else{
-            hasCall = false;
-        }
-        if( hasCall ) {
-            event.preventDefault();
-            event.returnValue = i18n.t("areYouSureLeaveThePage");
-        }
+        // const phoneClient = this.getPhoneClient();
+        // let hasCall;
+        // if( phoneClient ){
+        //     hasCall = phoneClient.getCallInfos().getCallInfoCount() !== 0;
+        // }
+        // else{
+        //     hasCall = false;
+        // }
+        // if( hasCall ) {
+        //     event.preventDefault();
+        //     event.returnValue = i18n.t("areYouSureLeaveThePage");
+        // }
+        event.preventDefault();
+        event.returnValue = i18n.t("areYouSureLeaveThePage");
     }
 
     _onBeforeUnload(event){
-        this._CallHistory2.onBeforeUnloadForCallHistory2( this, event );
         this._onBeforeUnloadMain(event);
     }
 
     _onUnload(event){
         console.log("OperatorConsole:onUnload. this.aphone=" + this._aphone );
+        this._CallHistory2.onUnloadForCallHistory2( this, event );
         this._deinitAphoneClient();
         this._deinitPalWrapper();
     }
@@ -6503,8 +6528,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     logout = () => {
+        this._CallHistory2.onBeginLogoutForCallHistory2(this);
         this._Campon.onBeginLogout(this);
-
         window.removeEventListener("beforeunload", this._OnBeforeUnloadFunc  );
         if( this._OnUnloadFunc ) {
             window.removeEventListener("unload", this._OnUnloadFunc);

@@ -27,6 +27,7 @@ export default class LegacyButtonEditorSubWidget_callTalkingButton extends Legac
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -56,6 +57,7 @@ export default class LegacyButtonEditorSubWidget_callTalkingButton extends Legac
                 )
             }
                    style={{
+                       fontSize:sButtonFontSize,
                        border:border,
                        borderRadius:borderRadius,
                        color:color,

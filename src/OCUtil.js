@@ -51,6 +51,11 @@ export default class OCUtil{
         return statusClassName;
     }
 
+    static isString( o ){
+        const b = typeof o === 'string';
+        return b;
+    }
+
     static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
         if( oErr ){
             if( consoleErrorMessage ) {

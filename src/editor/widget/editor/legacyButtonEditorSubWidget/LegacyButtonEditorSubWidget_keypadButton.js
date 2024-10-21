@@ -12,6 +12,7 @@ export default class LegacyButtonEditorSubWidget_keypadButton extends LegacyButt
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -29,6 +30,7 @@ export default class LegacyButtonEditorSubWidget_keypadButton extends LegacyButt
         const iconJsx = this._getIconJsx(null,symbol);
         return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
                        style={{
+                           fontSize:sButtonFontSize,
                            border:border,
                            borderRadius:borderRadius,
                            color:color,

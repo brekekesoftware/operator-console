@@ -10,7 +10,7 @@ import OCUtil from "../../../OCUtil";
 import Dropdown from "antd/lib/dropdown";
 import {Button, Modal} from "antd";
 
-function LineButton({ label, line, width, height, color,  backgroundColor,  border,  borderRadius }) {
+function LineButton({ label, line, width, height, color,  backgroundColor,  border,  borderRadius, fontSize }) {
     const oc = BrekekeOperatorConsole.getStaticInstance();
     return (
         <button style={{
@@ -22,7 +22,8 @@ function LineButton({ label, line, width, height, color,  backgroundColor,  bord
             border:border,
             borderRadius:borderRadius,
             width:width,
-            height:height
+            height:height,
+            fontSize:fontSize + "px"
         }} title={i18n.t(`legacy_button_description.LegacyLineButton`)}
                 className={"kbc-button kbc-button-fill-parent"}
                 onClick={() => oc.handleLine(line)}
@@ -33,13 +34,14 @@ function LineButton({ label, line, width, height, color,  backgroundColor,  bord
 }
 
 function TransferCancelButton({  callInfo,
+                                  transferCancelButtonWidth,
+                                  transferCancelButtonHeight,
                                   transferCancelButtonFgColor,
                                   transferCancelButtonBgColor,
                                   transferCancelButtonOuterBorderColor,
                                   transferCancelButtonOuterBorderRadius,
                                   transferCancelButtonOuterBorderThickness,
-                                  transferCancelButtonWidth,
-                                  transferCancelButtonHeight
+                                  transferCancelButtonFontSize
                               }){
     const confirm = (e) => {
         const oc = BrekekeOperatorConsole.getStaticInstance();
@@ -79,7 +81,8 @@ function TransferCancelButton({  callInfo,
             border:transferCancelButtonBorder,
             borderRadius:transferCancelButtonBorderRadius,
             width:transferCancelButtonWidth,
-            height:transferCancelButtonHeight
+            height:transferCancelButtonHeight,
+            fontSize : transferCancelButtonFontSize + "px"
         }} title={i18n.t(`transferCancelButtonDesc`)}
                 className={"kbc-button kbc-button-fill-parent"}
             //onClick={() => alert("onClick campon button!") }
@@ -97,6 +100,7 @@ function TransferButton({ callInfo, title,
                             transferButtonOuterBorderColor,
                             transferButtonOuterBorderRadius,
                             transferButtonOuterBorderThickness,
+                            transferButtonFontSize
                         }) {
     const [open, setOpen] = useState(false);
 
@@ -274,7 +278,8 @@ function TransferButton({ callInfo, title,
                     border:transferButtonBorder,
                     borderRadius:transferButtonBorderRadius,
                     width:transferButtonWidth,
-                    height:transferButtonHeight
+                    height:transferButtonHeight,
+                    fontSize : transferButtonFontSize + "px"
                 }} title={i18n.t(`transferButtonDesc`)}
                         className={"kbc-button kbc-button-fill-parent"}
                     //onClick={() => alert("onClick campon button!") }
@@ -294,10 +299,10 @@ function TransferButton({ callInfo, title,
                         <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>
                             {i18n.t("blindTransfer")}
                         </Button>
-                        <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow}>
+                        <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow} className="brOCMarginLeftButtonToButton">
                             {i18n.t("activateAndStartBlindTransfer")}
                         </Button>
-                        <Button key="back" onClick={handleModalCancel}>
+                        <Button key="back" onClick={handleModalCancel} className="brOCMarginLeftButtonToButton">
                             {i18n.t("cancel")}
                         </Button>
                     </div>
@@ -316,10 +321,10 @@ function TransferButton({ callInfo, title,
                         <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponAuto}>
                             {i18n.t("campOnAuto")}
                         </Button>
-                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual}>
+                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual} className="brOCMarginLeftButtonToButton">
                             {i18n.t("campOn")}
                         </Button>
-                        <Button key="backForBusy" onClick={handleModalForBusyCancel}>
+                        <Button key="backForBusy" onClick={handleModalForBusyCancel} className="brOCMarginLeftButtonToButton">
                             {i18n.t("cancel")}
                         </Button>
                     </div>
@@ -353,8 +358,12 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                            transferCancelButtonOuterBorderColor,
                            transferCancelButtonOuterBorderRadius,
                            transferCancelButtonOuterBorderThickness,
-                       }){
-    const lightClassname = _getLightClassname( lineInfo.line  );
+                            bodyFontSize,
+                            lineButtonFontSize,
+                            transferButtonFontSize,
+                            transferCancelButtonFontSize
+                           }){
+    const lightClassname =   _getLightClassname( lineInfo.line );
     const title = lineInfo.lineLabel ? lineInfo.lineLabel : lineInfo.line;
     const oc = BrekekeOperatorConsole.getStaticInstance();
     const callInfo = lineInfo.room_id ? oc.getPhoneClient().getCallInfos().getCallInfoWherePbxRoomIdEqual( lineInfo.room_id ) : null;
@@ -370,9 +379,12 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
         borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
     }}>
         <td style={{
+            fontSize: bodyFontSize + "px",
             borderRadius:"0 " + outerBorderRadius +  "px 0 0",
         }}>{title}</td>
-        <td>{lineInfo.talker}</td>
+        <td style={{
+            fontSize: bodyFontSize + "px"
+        }}>{lineInfo.talker}</td>
         {/*<td style={{width:70,height:70}}>*/}
         <td>
             <LineButton
@@ -384,6 +396,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                 backgroundColor={ lineButtonBackgroundColor }
                 border={ lineButtonBorder }
                 borderRadius={ lineButtonBorderRadius }
+                fontSize={ lineButtonFontSize }
             ></LineButton>
         </td>
         {/*<td style={{width:100,height:70}}>*/}
@@ -398,6 +411,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                                           transferCancelButtonOuterBorderColor ={transferCancelButtonOuterBorderColor}
                                           transferCancelButtonOuterBorderRadius ={transferCancelButtonOuterBorderRadius}
                                           transferCancelButtonOuterBorderThickness = {transferCancelButtonOuterBorderThickness}
+                                          transferCancelButtonFontSize = {transferCancelButtonFontSize}
                     ></TransferCancelButton>
                     :
                     <TransferButton callInfo={callInfo} title={title}
@@ -408,9 +422,11 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                                     transferButtonOuterBorderColor ={transferButtonOuterBorderColor}
                                     transferButtonOuterBorderRadius ={transferButtonOuterBorderRadius}
                                     transferButtonOuterBorderThickness = {transferButtonOuterBorderThickness}
+                                    transferButtonFontSize = {transferButtonFontSize}
                     ></TransferButton> : "" }
         </td>
         <td style={{
+            fontSize : bodyFontSize + "px",
             borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
         }}>
             { callInfo && callInfo.camponDstExtensionId ?  callInfo.camponDstExtensionId : "" }
@@ -500,6 +516,11 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
         const lineButtonWidth = ( widgetData.getLineButtonWidth() || widgetData.getLineButtonWidth() === 0 ) ? widgetData.getLineButtonWidth() : 40; //!default
         const lineButtonHeight = ( widgetData.getLineButtonHeight() || widgetData.getLineButtonHeight() === 0 ) ? widgetData.getLineButtonHeight() : 40;  //!default
 
+        const headerFontSize = widgetData.getLinetableHeaderFontSize() ? widgetData.getLinetableHeaderFontSize() : 14;  //!default
+        const bodyFontSize = widgetData.getLinetableBodyFontSize() ? widgetData.getLinetableBodyFontSize() : 14;  //!default
+        const lineButtonFontSize = widgetData.getLineButtonFontSize() ? widgetData.getLineButtonFontSize() : 14;  //!default
+        const transferButtonFontSize = widgetData.getTransferButtonFontSize() ? widgetData.getTransferButtonFontSize() : 14;    //!default
+        const transferCancelButtonFontSize = widgetData.getTransferCancelButtonFontSize() ? widgetData.getTransferCancelButtonFontSize() : 14;    //!default
 
         return (
             <table className="brOCLinetable" style={{
@@ -513,14 +534,22 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
                     borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
+                        fontSize : headerFontSize + "px",
                         borderRadius:outerBorderRadius +  "px 0 0 0",
                     }}>{i18n.t("name")}</th>
-                    <th>{i18n.t("responder")}</th>
-                    {/*<th style={{width:70}}>{i18n.t("line")}</th>*/}
-                    <th>{i18n.t("line")}</th>
-                    {/*<th style={{width:120}}>{i18n.t("transfer")}</th>*/}
-                    <th>{i18n.t("transfer")}</th>
                     <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("responder")}</th>
+                    {/*<th style={{width:70}}>{i18n.t("line")}</th>*/}
+                    <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("line")}</th>
+                    {/*<th style={{width:120}}>{i18n.t("transfer")}</th>*/}
+                    <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("transfer")}</th>
+                    <th style={{
+                        fontSize : headerFontSize + "px",
                         borderRadius:"0 " + outerBorderRadius + "px 0 0",
                     }}>{i18n.t("camponDest")}</th>
                 </tr>
@@ -558,6 +587,10 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
                         transferCancelButtonOuterBorderColor = {widgetData.getTransferCancelButtonOuterBorderColor()}
                         transferCancelButtonOuterBorderRadius = {widgetData.getTransferCancelButtonOuterBorderRadius()}
                         transferCancelButtonOuterBorderThickness = {widgetData.getTransferCancelButtonOuterBorderThickness()}
+                        bodyFontSize={bodyFontSize}
+                        lineButtonFontSize={lineButtonFontSize}
+                        transferButtonFontSize={transferButtonFontSize}
+                        transferCancelButtonFontSize={transferCancelButtonFontSize}
                     />
                 ))}
                 </tbody>

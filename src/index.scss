@@ -18,6 +18,7 @@ body{
 :root{
   --broc_dividerHalfWidth: 3px;
   --broc_dividerHalfHeight: 3px;
+  --broc_defaultElementToElementHorizontalSpace : 6px;
 }
 
 .brOC {
@@ -32,11 +33,27 @@ body{
   --defaultTHBackgroundColor : #FFFFFF;
   --defaultCellBackgroundColor : #FFFFFF;
   --defaultCellHoverBackgroundColor : #F5F5F5;
+  --defaultLinkHoverColor : #4BC5DE;
   --defaultDisabledTextColor : #D8D8D8;
 }
 
+//.brOC .defaultHoverForIcon:hover {
+//  color:var(--defaultLinkHoverColor);
+//  /* text-decoration:underline; */
+//  /* text-decoration-color:#4BC5DE; */
+//  cursor:pointer;
+//}
+
 .brOC .defaultDisabledTextColor{
   color : var(--defaultDisabledTextColor);
+}
+
+.brOC .closeFontAwesomeIcon{
+  font-size:20px;
+  color:#584937;
+}
+.brOC .closeFontAwesomeIcon:hover{
+  cursor:pointer;
 }
 
 #brOCPhone {
@@ -188,10 +205,10 @@ $kbc-btn-size-map: (
 ////////////////////////////////////////////////////////////////
 
 .led-box {
-  height: 4rem;
-  width: 4rem;
-  margin: 10px 0;
-  float: left;
+  /* height: 4rem; */
+  /* width: 4rem; */
+  /* margin: 10px 0 0 0; */
+  /* float: left; */
 }
 
 .led-box p {
@@ -523,6 +540,7 @@ table.brOCCalltable thead{
 	top:0;
 	left:0;
 	background-color:#f8f8f8;
+    z-index:1;
 }
 
 table.brOCExtensiontable{
@@ -585,6 +603,10 @@ table.brOCLinetable tbody tr td
 		border-collapse: separate;
 	}
 */
+
+.brOCMarginLeftButtonToButton{
+  margin-left:var(--broc_defaultElementToElementHorizontalSpace);
+}
 
 .brOC .ant-form-item {
   margin-bottom: 13px;

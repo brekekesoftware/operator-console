@@ -55,7 +55,7 @@ export default class PhonebookContactInfozTelsView extends React.Component {
                     <tbody>
                     <tr>
                         <td style={{textAlign: "right", verticalAlign: "top"}}>
-                            <span onClick={(e) => this.closePhonebookContactInfozTelsView()} className="linkDeco">[X]</span>
+                            <FontAwesomeIcon icon="far fa-window-close" onClick={(e) => this.closePhonebookContactInfozTelsView()} className="closeFontAwesomeIcon" />
                         </td>
                     </tr>
                     <tr>

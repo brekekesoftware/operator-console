@@ -233,6 +233,36 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeLinetableHeaderFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setLinetableHeaderFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeLinetableBodyFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setLinetableBodyFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeLineButtonFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setLineButtonFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeTransferButtonFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setTransferButtonFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeTransferCancelButtonFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setTransferCancelButtonFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     //!override
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
@@ -267,6 +297,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <InputNumber min="0" value={widgetData.getLinetableOuterBorderRadius()}
                              onChange={(n) => this._onChangeLinetableOuterBorderRadius(n)}/>
                 <Divider>{i18n.t("header_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getLinetableHeaderFontSize()}
+                             onChange={(n) => this._onChangeLinetableHeaderFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getLinetableHeaderFgColor()}
                              onChange={(color) => this._onChangeLinetableHeaderFgColor(color)}/>
@@ -277,6 +310,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <Colorpicker format="rgb" value={widgetData.getLinetableHeaderRowUnderlineColor()}
                              onChange={(color) => this._onChangeLinetableHeaderRowUnderlineColor(color)}/>
                 <Divider>{i18n.t("body_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getLinetableBodyFontSize()}
+                             onChange={(n) => this._onChangeLinetableBodyFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getLinetableBodyFgColor()}
                              onChange={(color) => this._onChangeLinetableBodyFgColor(color)}/>
@@ -287,6 +323,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <Colorpicker format="rgb" value={widgetData.getLinetableBodyRowUnderlineColor()}
                              onChange={(color) => this._onChangeLinetableBodyRowUnderlineColor(color)}/>
                 <Divider>{i18n.t("lineButtonSettings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getLineButtonFontSize()}
+                             onChange={(n) => this._onChangeLineButtonFontSize(n)}/>
                 <p>{i18n.t("width")}</p>
                 <InputNumber min="1" value={widgetData.getLineButtonWidth()}
                              onChange={(n) => this._onChangeLineButtonWidth(n)}/>
@@ -309,6 +348,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <InputNumber min="1" value={widgetData.getLineButtonOuterBorderThickness()}
                              onChange={(n) => this._onChangeLineButtonOuterBorderThickness(n)}/>
                 <Divider>{i18n.t("transferButtonSettings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getTransferButtonFontSize()}
+                             onChange={(n) => this._onChangeTransferButtonFontSize(n)}/>
                 <p>{i18n.t("width")}</p>
                 <InputNumber min="1" value={widgetData.getTransferButtonWidth()}
                              onChange={(n) => this._onChangeTransferButtonWidth(n)}/>
@@ -331,6 +373,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <InputNumber min="1" value={widgetData.getTransferButtonOuterBorderThickness()}
                              onChange={(n) => this._onChangeTransferButtonOuterBorderThickness(n)}/>
                 <Divider>{i18n.t("transferCancelButtonSettings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getTransferCancelButtonFontSize()}
+                             onChange={(n) => this._onChangeTransferCancelButtonFontSize(n)}/>
                 <p>{i18n.t("width")}</p>
                 <InputNumber min="1" value={widgetData.getTransferCancelButtonWidth()}
                              onChange={(n) => this._onChangeTransferCancelButtonWidth(n)}/>

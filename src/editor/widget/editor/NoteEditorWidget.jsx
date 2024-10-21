@@ -133,7 +133,8 @@ export default class NoteEditorWidget extends EditorWidget{
     _getRenderMainJsx() {
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
-
+        const noteTitleFontSize = widgetData.getNoteTitleFontSize() ? widgetData.getNoteTitleFontSize() : 14;
+        const noteBodyFontSize = widgetData.getNoteBodyFontSize() ? widgetData.getNoteBodyFontSize() : 14;
         const noteNameFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameFgColor() , "" );
         const noteNameBackground = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameBgColor(), "" );
 
@@ -149,6 +150,7 @@ export default class NoteEditorWidget extends EditorWidget{
                 background:background
             }}>
                 <div className="brOCStickyNoteName" style={{
+                    fontSize:noteTitleFontSize,
                     color:noteNameFgColor,
                     backgroundColor:noteNameBackground
                 }}>{noteName}</div>
@@ -161,6 +163,7 @@ export default class NoteEditorWidget extends EditorWidget{
                         readOnly={this._readonly}
                         maxLength={10000000}
                         style={{
+                            fontSize:noteBodyFontSize,
                             color:noteTextForegroundColor
                         }}
                     />

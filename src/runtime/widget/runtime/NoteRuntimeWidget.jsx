@@ -131,7 +131,8 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
     _getRenderMainJsx() {
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
-
+        const noteTitleFontSize = widgetData.getNoteTitleFontSize() ? widgetData.getNoteTitleFontSize() : 14;
+        const noteBodyFontSize = widgetData.getNoteBodyFontSize() ? widgetData.getNoteBodyFontSize() : 14;
         const noteNameFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameFgColor() , "" );
         const noteNameBackground = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameBgColor(), "" );
 
@@ -147,6 +148,7 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
                 background:background
             }}>
                 <div className="brOCStickyNoteName" style={{
+                    fontSize:noteTitleFontSize,
                     color:noteNameFgColor,
                     backgroundColor:noteNameBackground
                 }}>{noteName}</div>
@@ -169,6 +171,7 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
                         readOnly={this._readonly}
                         maxLength={10000000}
                         style={{
+                            fontSize:noteBodyFontSize,
                             color:noteTextForegroundColor
                         }}
                     />

@@ -4,7 +4,7 @@ import LegacyButtonRuntimeSubWidgetFactory from "./legacyButtonRuntimeSubWidget/
 import i18n from "../../../i18n";
 import BrekekeOperatorConsole from "../../../index";
 import Util from "../../../Util";
-
+const CELL_MARGIN = 4;
 export default class CallTableRuntimeWidget extends RuntimeWidget{
 
     constructor( props ) {
@@ -19,7 +19,13 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         const currentCallIndex = callInfos.getCurrentCallIndex();
 
         const widgetData = this.getWidgetData();
-
+        const callTableThFontSize = widgetData.getCalltableHeaderFontSize() ?  widgetData.getCalltableHeaderFontSize() : 10;
+        const callTableTdFontSize = widgetData.getCalltableBodyFontSize() ? widgetData.getCalltableBodyFontSize() : 12;
+        // const callTableTheadRowHeight = 44;
+        // const callTableTbodyRowHeight = 44;
+        const callTableTheadRowHeight = callTableThFontSize + CELL_MARGIN;
+        const callTableTbodyRowHeight = callTableTdFontSize + CELL_MARGIN;
+        
         let idKey = 0;
 
         const CallTableColumns = [  //!overhead
@@ -33,9 +39,12 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
             {key: 'getAnsweredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
         ]
 
-        const callTableThFontSize = 10;
-        const callTableTdFontSize = 12;
-        const activeButtonFontSize = 9;
+        const activeButtonWidth = widgetData.getCalltableActiveButtonWidth() ?  widgetData.getCalltableActiveButtonWidth() : 42;   //!default
+        const activeButtonHeight = widgetData.getCalltableActiveButtonHeight() ?  widgetData.getCalltableActiveButtonHeight() : 42;   //!default
+        //const activeButtonCellWidth = activeButtonWidth + CELL_MARGIN;
+        //const activeButtonCellWidth = 50;
+        const activeButtonCellHeight = activeButtonHeight + CELL_MARGIN;;
+        const activeButtonFontSize = widgetData.getCalltableActiveButtonFontSize() ? widgetData.getCalltableActiveButtonFontSize() :  9;
 
         const outerBorderRadius = ( widgetData.getCalltableOuterBorderRadius() || widgetData.getCalltableOuterBorderRadius() === 0 ) ? widgetData.getCalltableOuterBorderRadius() : 0; //!default
         const outerBorderThickness = ( widgetData.getCalltableOuterBorderThickness() || widgetData.getCalltableOuterBorderThickness() === 0 ) ? widgetData.getCalltableOuterBorderThickness() : 0; //!default
@@ -49,8 +58,6 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         const bodyRowUnderlineThickness = ( widgetData.getCalltableBodyRowUnderlineThickness() || widgetData.getCalltableBodyRowUnderlineThickness() === 0 ) ? widgetData.getCalltableBodyRowUnderlineThickness() : 1; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyRowUnderlineColor(), "#e0e0e0" );   //!default
 
-        const callTableTheadRowHeight = 44;
-        const callTableTbodyRowHeight = 44;
         const cellCount = CallTableColumns.length + 1;   //1 is active botton
 
         return (
@@ -90,6 +97,8 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                                        }}>{title}</th>;})
                         }
                         <th style={{
+                            // width:activeButtonCellWidth,
+                            height:activeButtonCellHeight,
                             paddingTop:0,
                             paddingBottom:0,
                             borderRadius:"0 " + outerBorderRadius + "px 0 0",
@@ -107,7 +116,7 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                             tdActive = "\u00A0";
                         }
                         else{
-                            tdActive = <div style={{width:42,height:42,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
+                            tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
                         }
                         return (<tr key={idKey++} style={{
                             color: bodyFgColor,
@@ -150,7 +159,8 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                                 }
                             )}
                             <td style={{
-                                width:80,paddingTop:0,paddingBottom:0,
+                                //width:activeButtonCellWidth,
+                                paddingTop:0,paddingBottom:0,
                                 borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
                             }}>
                                 {tdActive}

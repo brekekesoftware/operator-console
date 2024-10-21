@@ -14,6 +14,7 @@ export default class LegacyButtonRuntimeSubWidget_hangUpCallButton extends Legac
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -28,24 +29,25 @@ export default class LegacyButtonRuntimeSubWidget_hangUpCallButton extends Legac
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
-        // let bDisabled;
-        // if( currentCallInfo ){
-        //     const callStatus = currentCallInfo.getCallStatus();
-        //     const bHolding = callStatus === ACallInfo.CALL_STATUSES.holding;
-        //     if( bHolding === true ){
-        //         bDisabled = true;
-        //     }
-        //     else{
-        //         bDisabled = false;
-        //     }
-        // }
-        // else{
-        //     bDisabled = false;
-        // }
+        let bDisabled;
+        if( currentCallInfo ){
+            const callStatus = currentCallInfo.getCallStatus();
+            const bHolding = callStatus === ACallInfo.CALL_STATUSES.holding;
+            if( bHolding === true ){
+                bDisabled = true;
+            }
+            else{
+                bDisabled = false;
+            }
+        }
+        else{
+            bDisabled = false;
+        }
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
         return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
                        style={{
+                           fontSize:sButtonFontSize,
                            border:border,
                            borderRadius:borderRadius,
                            color:color,
@@ -59,7 +61,7 @@ export default class LegacyButtonRuntimeSubWidget_hangUpCallButton extends Legac
                                oc.hangUpCall();
                            }
                        }
-                       //disabled={bDisabled}
+                       disabled={bDisabled}
         >{iconJsx}</button>
     }
 

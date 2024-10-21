@@ -61,9 +61,9 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div style={signOutStyle} onClick={signOutOnClick}>
+                                <a style={signOutStyle} onClick={signOutOnClick}>
                                     {i18n.t("signout")}
-                                </div>
+                                </a>
                             )
                         }
                     ]
@@ -76,17 +76,17 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <div onClick={operatorConsole.startEditingScreen_ver2}>
+                    <a onClick={operatorConsole.startEditingScreen_ver2}>
                         {i18n.t("editLayout")}
-                    </div>
+                    </a>
                 ),
             },
             {
                 key: '2',
                 label: (
-                    <div onClick={operatorConsole.startShowScreen_ver2}>
+                    <a onClick={operatorConsole.startShowScreen_ver2}>
                         {i18n.t("show_screen")}
-                    </div>
+                    </a>
                 ),
             },
             // {
@@ -132,30 +132,37 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '3',
                 label: (
-                    <div onClick={showNewLayoutModalFunc}>
+                    <a onClick={showNewLayoutModalFunc}>
                         {i18n.t("newLayout")}
-                    </div>
+                    </a>
                 ),
             },
             {
                 key: '4',
                 label: (
-                    <div onClick={showOpenLayoutModalFunc}>
+                    <a onClick={showOpenLayoutModalFunc}>
                         {i18n.t("openLayout")}
-                    </div>
+                    </a>
                 ),
             },,
             {
                 key: '5',
                 label: (
-                    <div onClick={operatorConsole.startSettingsScreen}>
+                    <a onClick={operatorConsole.startSettingsScreen}>
                         {i18n.t("settings_screen")}
-                    </div>
+                    </a>
+                ),
+            },
+            {
+                key: '6',
+                label: (
+                    <a onClick={ () => operatorConsole.openAboutOCModalByState() }>
+                        {i18n.t("About_OperatorConsole")}
+                    </a>
                 ),
             },
         ];
-    }
-    else{   //user menu(not admin)
+    } else {   //user menu(not admin)
         items = [
             {
                 key: '100',
@@ -168,9 +175,9 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div style={signOutStyle} onClick={signOutOnClick}>
-                                    {i18n.t("signout")}
-                                </div>
+                                <a onClick={showOpenLayoutModalFunc}>
+                                    {i18n.t("openLayout")}
+                                </a>
                             )
                         }
                     ]
@@ -191,17 +198,25 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <div onClick={showOpenLayoutModalFunc}>
+                    <a onClick={showOpenLayoutModalFunc}>
                         {i18n.t("openLayout")}
-                    </div>
+                    </a>
                 ),
             },
             {
                 key: '2',
                 label: (
-                    <div onClick={operatorConsole.startSettingsScreen}>
+                    <a onClick={operatorConsole.startSettingsScreen}>
                         {i18n.t("settings_screen")}
-                    </div>
+                    </a>
+                ),
+            },
+            {
+                key: '3',
+                label: (
+                    <a onClick={() => operatorConsole.openAboutOCModalByState()}>
+                        {i18n.t("About_OperatorConsole")}
+                    </a>
                 ),
             },
         ];
@@ -576,6 +591,21 @@ export default function DropDownMenu( { operatorConsole } ){
         };
         return (
             <>
+                <Modal
+                    open={ operatorConsole.getIsOpenAboutOCModalByState() }
+                    title={i18n.t("About_Brekeke_OperatorConsole")}
+                    onOk={  () => operatorConsole.closeAboutOCModalByState() }
+                    onCancel={ () => operatorConsole.closeAboutOCModalByState() }
+                    footer={[
+                            <Button key="submit" type="primary" onClick={()=>{
+                                operatorConsole.closeAboutOCModalByState();
+                            }}>
+                                {i18n.t("Close")}
+                            </Button>
+                    ]}
+                >
+                    <div>Brekeke Operator Console, {i18n.t("Version")} {BrekekeOperatorConsole.BREKEKE_OPERATOR_CONSOLE_VERSION }</div>
+                </Modal>
                 {/*<Button type="primary" onClick={showNewLayoutModalFunc}>*/}
                 {/*    Open Modal with customized footer*/}
                 {/*</Button>*/}

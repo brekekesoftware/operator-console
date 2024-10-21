@@ -1,29 +1,54 @@
 import React from 'react';
+import i18n from "../../../i18n";
 import EditorWidget from "./EditorWidget";
 import BrekekeOperatorConsole from "../../../index";
-import i18n from "../../../i18n";
 import Util from "../../../Util";
-
-const CALL_TABLE_TH_HEIGHT = 50;
-const CALL_TABLE_TD_HEIGHT = 45;
-
+import DummyCallInfo from "../../../DummyCallInfo";
+const CELL_MARGIN = 4;
+const CURRENT_CALL_INDEX = 1;
 export default class CallTableEditorWidget extends EditorWidget{
 
     constructor( props ) {
         super( props );
+        this._CallInfoArray = Object.freeze([
+            new DummyCallInfo({
+                partyNumber : "12345678",
+                partyName : i18n.t("DummyPartyName") + "(1)",
+                isIncoming: true,
+                isAnswered: true,
+                isHolding : true,
+                isRecording : true,
+                isMuted : true,
+                answeredAt : new Date(2024, 0, 10, 12, 30, 0, 0).getTime()
+            }),
+            new DummyCallInfo({
+                partyNumber : "87654321",
+                partyName : i18n.t("DummyPartyName") + "(2)",
+                isIncoming: false,
+                isAnswered: false,
+                isHolding : false,
+                isRecording : false,
+                isMuted : false,
+                answeredAt : null,
+            })
+        ]);
     }
 
     //!overload
     _getRenderMainJsx() {
-        const widgetData = this.getWidgetData();
-        const tableHeight = widgetData.getWidgetHeight();
-        const rowCount = Math.ceil( ( tableHeight - CALL_TABLE_TH_HEIGHT ) / CALL_TABLE_TD_HEIGHT  );
-        const callInfoArray = new Array(rowCount);
-        for( let i = 0; i < rowCount; i++ ){
-            callInfoArray[i] = null;
-        }
-        const currentCallIndex = -1;
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        //const callInfos = oc.getPhoneClient().getCallInfos();
+        const callInfoArray = this._CallInfoArray;
+        const currentCallIndex = CURRENT_CALL_INDEX;
 
+        const widgetData = this.getWidgetData();
+        const callTableThFontSize = widgetData.getCalltableHeaderFontSize() ?  widgetData.getCalltableHeaderFontSize() : 10;
+        const callTableTdFontSize = widgetData.getCalltableBodyFontSize() ? widgetData.getCalltableBodyFontSize() : 12;
+        // const callTableTheadRowHeight = 44;
+        // const callTableTbodyRowHeight = 44;
+        const callTableTheadRowHeight = callTableThFontSize + CELL_MARGIN;
+        const callTableTbodyRowHeight = callTableTdFontSize + CELL_MARGIN;
+        
         let idKey = 0;
 
         const CallTableColumns = [  //!overhead
@@ -37,9 +62,12 @@ export default class CallTableEditorWidget extends EditorWidget{
             {key: 'getAnsweredAt',  title:  i18n.t("AnsweredAt") , formatter: (v) => (v ? new Date(v).toLocaleTimeString() : '')},
         ]
 
-        const callTableThFontSize = 10;
-        const callTableTdFontSize = 12;
-        const activeButtonFontSize = 9;
+        const activeButtonWidth = widgetData.getCalltableActiveButtonWidth() ?  widgetData.getCalltableActiveButtonWidth() : 42;   //!default
+        const activeButtonHeight = widgetData.getCalltableActiveButtonHeight() ?  widgetData.getCalltableActiveButtonHeight() : 42;   //!default
+        //const activeButtonCellWidth = activeButtonWidth + CELL_MARGIN;
+        //const activeButtonCellWidth = 50;
+        const activeButtonCellHeight = activeButtonHeight + CELL_MARGIN;
+        const activeButtonFontSize = widgetData.getCalltableActiveButtonFontSize() ? widgetData.getCalltableActiveButtonFontSize() :  9;
 
         const outerBorderRadius = ( widgetData.getCalltableOuterBorderRadius() || widgetData.getCalltableOuterBorderRadius() === 0 ) ? widgetData.getCalltableOuterBorderRadius() : 0; //!default
         const outerBorderThickness = ( widgetData.getCalltableOuterBorderThickness() || widgetData.getCalltableOuterBorderThickness() === 0 ) ? widgetData.getCalltableOuterBorderThickness() : 0; //!default
@@ -53,8 +81,6 @@ export default class CallTableEditorWidget extends EditorWidget{
         const bodyRowUnderlineThickness = ( widgetData.getCalltableBodyRowUnderlineThickness() || widgetData.getCalltableBodyRowUnderlineThickness() === 0 ) ? widgetData.getCalltableBodyRowUnderlineThickness() : 1; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyRowUnderlineColor(), "#e0e0e0" );   //!default
 
-        const callTableTheadRowHeight = 44;
-        const callTableTbodyRowHeight = 44;
         const cellCount = CallTableColumns.length + 1;   //1 is active botton
 
         return (
@@ -94,6 +120,7 @@ export default class CallTableEditorWidget extends EditorWidget{
                                        }}>{title}</th>;})
                         }
                         <th style={{
+                            //width:activeButtonCellWidth,
                             paddingTop:0,
                             paddingBottom:0,
                             borderRadius:"0 " + outerBorderRadius + "px 0 0",
@@ -106,7 +133,13 @@ export default class CallTableEditorWidget extends EditorWidget{
                         display:"table-row-group"
                     }}>
                     {callInfoArray.map((callInfo, i) => {
-                        const tdActive = "\u00A0";
+                        let tdActive;
+                        if( i === currentCallIndex ){
+                            tdActive = "\u00A0";
+                        }
+                        else{
+                            tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} disabled={true}>{i18n.t("active")}</button></div>;
+                        }
                         return (<tr key={idKey++} style={{
                             color: bodyFgColor,
                             backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
@@ -148,7 +181,9 @@ export default class CallTableEditorWidget extends EditorWidget{
                                 }
                             )}
                             <td style={{
-                                width:80,paddingTop:0,paddingBottom:0,
+                                //width:activeButtonCellWidth,
+                                height:activeButtonCellHeight,
+                                paddingTop:0,paddingBottom:0,
                                 borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
                             }}>
                                 {tdActive}

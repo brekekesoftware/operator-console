@@ -56,10 +56,29 @@ export default class LegacyButtonEditorSubWidget  {
                 alt = icon;
             }
             const src = icon.substring(5,icon.length);   //5 is path:
-            iconJsx = (<img src={src} alt={alt} width={32} heigth={32} />);
+            const iconWidth = widgetData.getIconWidth() ? widgetData.getIconWidth() : 32;
+            const iconHeight = widgetData.getIconHeight() ? widgetData.getIconHeight() : 32;
+            iconJsx = (<img src={src} alt={alt} width={iconWidth} height={iconHeight} />);
         }
         else {
-            iconJsx = (<FontAwesomeIcon size="lg" icon={icon}/>);
+            const iconWidth = widgetData.getIconWidth();
+            const iconHeight = widgetData.getIconHeight();
+            const oStyle = {};
+            let size = "lg";
+            if( iconWidth !== undefined && iconWidth !== null ){
+                oStyle["width"]  = iconWidth + "px";
+                size = null;
+            }
+            if( iconHeight !== undefined && iconHeight !== null ){
+                oStyle["height"]  = iconHeight + "px";
+                size = null;
+            }
+            if( size === null ) {
+                iconJsx = (<FontAwesomeIcon style={oStyle} icon={icon}/>);
+            }
+            else{
+                iconJsx = (<FontAwesomeIcon size={size} icon={icon}/>);
+            }
         }
         return iconJsx;
     }

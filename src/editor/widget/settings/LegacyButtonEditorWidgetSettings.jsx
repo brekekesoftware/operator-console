@@ -55,6 +55,7 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
                 value={sIcon}
                 defaultValue={sIcon}
                 onSelect={ (e) => this._onFormIconSelected(e) }
+                style={{width:"100%"}}
             >
                 <Select.Option value={''}></Select.Option>
                 {[...Object.values(fas), ...Object.values(far), ...Object.values(fab)].map((icon, i) => {
@@ -133,6 +134,23 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeIconWidth( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setIconWidth(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeIconHeight( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setIconHeight(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
 
     getEditScreenViewAsParent(){
         return this._EditScreenViewAsParent;
@@ -174,7 +192,16 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
                 }}>{i18n.t(`legacy_button_description.${editingWidgetSubtypeName}`)}</p>
                 <p>{i18n.t("icon")}</p>
                 {iconSelectJsx}
+                <p>{i18n.t("Icon_width")}</p>
+                <InputNumber min="0" value={widgetData.getIconWidth()}
+                             onChange={(n) => this._onChangeIconWidth(n)}/>
+                <p>{i18n.t("Icon_height")}</p>
+                <InputNumber min="0" value={widgetData.getIconHeight()}
+                             onChange={(n) => this._onChangeIconHeight(n)}/>
                 {subWidgetSettingsJsx}
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getFontSize()}
+                             onChange={(n) => this._onChangeFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getFgColor()}
                              onChange={(color) => this._onChangeFgColor(color)}/>
@@ -185,9 +212,11 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
                 <Colorpicker format="rgb" value={widgetData.getOuterBorderColor()}
                              onChange={(color) => this._onChangeOuterBorderColor(color)}/>
                 <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={ widgetData.getOuterBorderRadius() } onChange={(n) => this._onChangeOuterBorderRadius(n)}/>
+                <InputNumber min="0" value={widgetData.getOuterBorderRadius()}
+                             onChange={(n) => this._onChangeOuterBorderRadius(n)}/>
                 <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={ widgetData.getOuterBorderThickness() } onChange={(n) => this._onChangeOuterBorderThickness(n)}/>
+                <InputNumber min="1" value={widgetData.getOuterBorderThickness()}
+                             onChange={(n) => this._onChangeOuterBorderThickness(n)}/>
             </>
         );
         return jsx;

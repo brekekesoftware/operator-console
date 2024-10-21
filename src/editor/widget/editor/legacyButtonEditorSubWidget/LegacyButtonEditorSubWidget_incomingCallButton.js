@@ -14,6 +14,7 @@ export default class LegacyButtonEditorSubWidget_incomingCallButton extends Lega
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -31,7 +32,8 @@ export default class LegacyButtonEditorSubWidget_incomingCallButton extends Lega
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
 
-        const isDanger = currentCallInfo?.getIsIncoming() && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding();
+        //const isDanger = currentCallInfo?.getIsIncoming() && currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding();
+        const isDanger = currentCallInfo?.getIsIncoming() && currentCallInfo?.getIsAnswered();
         if( isDanger ){
             color = null;
             backgroundColor = null;
@@ -39,6 +41,7 @@ export default class LegacyButtonEditorSubWidget_incomingCallButton extends Lega
 
         return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger')}
                        style={{
+                           fontSize:sButtonFontSize,
                            border:border,
                            borderRadius:borderRadius,
                            color:color,

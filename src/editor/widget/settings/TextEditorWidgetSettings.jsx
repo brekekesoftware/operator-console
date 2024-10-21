@@ -19,6 +19,12 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
     //     this._latestWidgetData = widgetData;
     // }
 
+    _onChangeTextFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setTextFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     _onChangeTextFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTextFgColor(color);
@@ -53,7 +59,10 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
         const jsx =   (
             <>
                 <p>{i18n.t("text")}</p>
-                <Input.TextArea rows={6} value={widgetData.getText() } onChange={(e) => this._onChangeTextArea(e)}/>
+                <Input.TextArea style={{width:"100%",height:"160px"}} value={widgetData.getText()} onChange={(e) => this._onChangeTextArea(e)}/>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getTextFontSize()}
+                             onChange={(n) => this._onChangeTextFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getTextFgColor()}
                              onChange={(color) => this._onChangeTextFgColor(color)}/>

@@ -70,6 +70,18 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
         oc.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
     }
 
+    _onChangeNoteTitleFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setNoteTitleFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeNoteBodyFontSize( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setNoteBodyFontSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     getEditScreenViewAsParent(){
         return this._EditScreenViewAsParent;
     }
@@ -119,10 +131,13 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
                 <p>{i18n.t("borderRadius")}</p>
                 <InputNumber min="0" value={widgetData.getNoteBorderRadius()}
                              onChange={(n) => this._onChangeNoteBorderRadius(n)}/>
-                <Divider>{i18n.t("noteName_settings")}</Divider>
-                <p>{i18n.t("name")}</p>
+                <Divider>{i18n.t("Note_name_settings")}</Divider>
+                <p>{i18n.t("Name")}</p>
                 <AutoComplete value={noteName} options={this.state.nameOptions}
-                              onChange={(noteName) => this._onChangeNoteName(noteName)}/>
+                              onChange={(noteName) => this._onChangeNoteName(noteName)} style={{width: "100%"}}/>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getNoteTitleFontSize()}
+                             onChange={(n) => this._onChangeNoteTitleFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getNoteNameFgColor()}
                              onChange={(color) => this._onChangeNoteNameFgColor(color)}/>
@@ -130,6 +145,9 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
                 <Colorpicker format="rgb" value={widgetData.getNoteNameBgColor()}
                              onChange={(color) => this._onChangeNoteNameBgColor(color)}/>
                 <Divider>{i18n.t("noteText_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getNoteBodyFontSize()}
+                             onChange={(n) => this._onChangeNoteBodyFontSize(n)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getNoteTextFgColor()}
                              onChange={(color) => this._onChangeNoteTextFgColor(color)}/>

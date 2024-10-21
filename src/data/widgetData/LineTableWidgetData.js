@@ -30,6 +30,7 @@ export default class LineTableWidgetData extends WidgetData {
         this._linetableBodyRowUnderlineThickness = options["linetableBodyRowUnderlineThickness"];
         this._linetableBodyRowUnderlineColor = options["linetableBodyRowUnderlineColor"];
 
+        this._lineButtonFontSize = options["lineButtonFontSize"];
         this._lineButtonWidth = options["lineButtonWidth"];
         this._lineButtonHeight = options["lineButtonHeight"];
         this._lineButtonFgColor = options["lineButtonFgColor"];
@@ -38,6 +39,7 @@ export default class LineTableWidgetData extends WidgetData {
         this._lineButtonOuterBorderRadius = options["lineButtonOuterBorderRadius"];
         this._lineButtonOuterBorderThickness = options["lineButtonOuterBorderThickness"];
 
+        this._transferButtonFontSize = options["transferButtonFontSize"];
         this._transferButtonWidth = options["transferButtonWidth"];
         this._transferButtonHeight = options["transferButtonHeight"];
         this._transferButtonFgColor = options["transferButtonFgColor"];
@@ -46,6 +48,7 @@ export default class LineTableWidgetData extends WidgetData {
         this._transferButtonOuterBorderRadius = options["transferButtonOuterBorderRadius"];
         this._transferButtonOuterBorderThickness = options["transferButtonOuterBorderThickness"];
 
+        this._transferCancelButtonFontSize = options["transferCancelButtonFontSize"];
         this._transferCancelButtonWidth = options["transferCancelButtonWidth"];
         this._transferCancelButtonHeight = options["transferCancelButtonHeight"];
         this._transferCancelButtonFgColor = options["transferCancelButtonFgColor"];
@@ -54,6 +57,8 @@ export default class LineTableWidgetData extends WidgetData {
         this._transferCancelButtonOuterBorderRadius = options["transferCancelButtonOuterBorderRadius"];
         this._transferCancelButtonOuterBorderThickness = options["transferCancelButtonOuterBorderThickness"];
 
+        this._linetableHeaderFontSize = options["linetableHeaderFontSize"];
+        this._linetableBodyFontSize = options["linetableBodyFontSize"];
     }
 
     //!override
@@ -291,6 +296,41 @@ export default class LineTableWidgetData extends WidgetData {
             delete o["transferCancelButtonOuterBorderThickness"];
         }
 
+        if( this._linetableHeaderFontSize ){
+            o["linetableHeaderFontSize"] = this._linetableHeaderFontSize;
+        }
+        else{
+            delete o["linetableHeaderFontSize"];
+        }
+
+        if( this._linetableBodyFontSize ){
+            o["linetableBodyFontSize"] = this._linetableBodyFontSize;
+        }
+        else{
+            delete o["linetableBodyFontSize"];
+        }
+
+        if( this._lineButtonFontSize ){
+            o["lineButtonFontSize"] = this._lineButtonFontSize;
+        }
+        else{
+            delete o["lineButtonFontSize"];
+        }
+
+        if( this._transferButtonFontSize ){
+            o["transferButtonFontSize"] = this._transferButtonFontSize;
+        }
+        else{
+            delete o["transferButtonFontSize"];
+        }
+
+        if( this._transferCancelButtonFontSize ){
+            o["transferCancelButtonFontSize"] = this._transferCancelButtonFontSize;
+        }
+        else{
+            delete o["transferCancelButtonFontSize"];
+        }
+
     }
 
     static _resizeLineDatasArray(arr, newSize) {
@@ -302,6 +342,46 @@ export default class LineTableWidgetData extends WidgetData {
             arr.push( lineData );
         }
         arr.length = newSize;
+    }
+
+    getLineButtonFontSize(){
+        return this._lineButtonFontSize;
+    }
+
+    setLineButtonFontSize(n){
+        this._lineButtonFontSize = n;
+    }
+
+    getTransferButtonFontSize(){
+        return this._transferButtonFontSize;
+    }
+
+    setTransferButtonFontSize(n){
+        this._transferButtonFontSize = n;
+    }
+
+    getTransferCancelButtonFontSize(){
+        return this._transferCancelButtonFontSize;
+    }
+
+    setTransferCancelButtonFontSize(n){
+        this._transferCancelButtonFontSize = n;
+    }
+
+    getLinetableHeaderFontSize(){
+        return this._linetableHeaderFontSize;
+    }
+
+    setLinetableHeaderFontSize( n ){
+        this._linetableHeaderFontSize = n;
+    }
+
+    getLinetableBodyFontSize(){
+        return this._linetableBodyFontSize;
+    }
+
+    setLinetableBodyFontSize( n ){
+        this._linetableBodyFontSize = n;
     }
 
     setLineDataArrayCount( count ){

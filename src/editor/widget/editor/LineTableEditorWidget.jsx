@@ -40,7 +40,7 @@ function _getEditorLightClassname_ver2( line ={} ){
 
 }
 
-function EditorLineButton_ver2({ label, line, width, height, color,  backgroundColor,  border,  borderRadius }) {
+function EditorLineButton_ver2({ label, line, width, height, color,  backgroundColor,  border,  borderRadius, fontSize }) {
     return (
         <button style={{
             display:"inline-block",
@@ -51,7 +51,8 @@ function EditorLineButton_ver2({ label, line, width, height, color,  backgroundC
             border:border,
             borderRadius:borderRadius,
             width:width,
-            height:height
+            height:height,
+            fontSize:fontSize + "px"
         }} title={i18n.t(`legacy_button_description.LegacyLineButton`)}
                 className={"kbc-button kbc-button-fill-parent"}
                 //onClick={() => oc.handleLine(line)}
@@ -69,7 +70,8 @@ function EditorTransferCancelButton_ver2({ lineInfo, callInfo,
                                   transferCancelButtonOuterBorderRadius,
                                   transferCancelButtonOuterBorderThickness,
                                   transferCancelButtonWidth,
-                                  transferCancelButtonHeight
+                                  transferCancelButtonHeight,
+                                    transferCancelButtonFontSize
                               }){
 
     const transferCancelButtonColor = Util.isAntdRgbaProperty( transferCancelButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( transferCancelButtonFgColor ) : "";
@@ -86,7 +88,8 @@ function EditorTransferCancelButton_ver2({ lineInfo, callInfo,
             border:transferCancelButtonBorder,
             borderRadius:transferCancelButtonBorderRadius,
             width:transferCancelButtonWidth,
-            height:transferCancelButtonHeight
+            height:transferCancelButtonHeight,
+            fontSize : transferCancelButtonFontSize + "px"
         }} title={i18n.t(`transferCancelButtonDesc`)}
                 className={"kbc-button kbc-button-fill-parent"}
             //onClick={() => alert("onClick campon button!") }
@@ -104,6 +107,7 @@ function EditorTransferButton_ver2({ lineInfo, callInfo, title,
                             transferButtonOuterBorderColor,
                             transferButtonOuterBorderRadius,
                             transferButtonOuterBorderThickness,
+                            transferButtonFontSize
                         }) {
     const transferButtonColor = Util.isAntdRgbaProperty( transferButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( transferButtonFgColor ) : "";
     const transferButtonBackgroundColor = Util.isAntdRgbaProperty( transferButtonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( transferButtonBgColor ) : "";
@@ -122,7 +126,8 @@ function EditorTransferButton_ver2({ lineInfo, callInfo, title,
                     border:transferButtonBorder,
                     borderRadius:transferButtonBorderRadius,
                     width:transferButtonWidth,
-                    height:transferButtonHeight
+                    height:transferButtonHeight,
+                    fontSize : transferButtonFontSize + "px"
                 }} title={i18n.t(`transferButtonDesc`)}
                         className={"kbc-button kbc-button-fill-parent"}
                     //onClick={() => alert("onClick campon button!") }
@@ -156,6 +161,10 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
                            transferCancelButtonOuterBorderColor,
                            transferCancelButtonOuterBorderRadius,
                            transferCancelButtonOuterBorderThickness,
+                            bodyFontSize,
+                            lineButtonFontSize,
+                            transferButtonFontSize,
+                            transferCancelButtonFontSize
                            }){
     const lightClassname = _getEditorLightClassname_ver2( lineInfo.line );
     const title = lineInfo.lineLabel ? lineInfo.lineLabel : lineInfo.line;
@@ -173,9 +182,12 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
         borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
     }}>
         <td style={{
+            fontSize: bodyFontSize + "px",
             borderRadius:"0 " + outerBorderRadius +  "px 0 0",
         }}>{title}</td>
-        <td>{lineInfo.talker}</td>
+        <td style={{
+            fontSize: bodyFontSize + "px"
+        }}>{lineInfo.talker}</td>
         {/*<td style={{width:70,height:70}}>*/}
         <td>
             <EditorLineButton_ver2
@@ -187,34 +199,39 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
                 backgroundColor={ lineButtonBackgroundColor }
                 border={ lineButtonBorder }
                 borderRadius={ lineButtonBorderRadius }
+                fontSize={ lineButtonFontSize }
             ></EditorLineButton_ver2>
         </td>
         {/*<td style={{width:100,height:70}}>*/}
         <td>
-            { callInfo && ( ( callInfo.getIsIncoming() && !callInfo.getIsAnswered() ) === false ) && lineInfo.talker ?
-                callInfo.camponDstExtensionId ?
-                    <EditorTransferCancelButton_ver2 lineInfo={lineInfo} callInfo={callInfo}
-                                          transferCancelButtonWidth = {transferCancelButtonWidth}
-                                          transferCancelButtonHeight = {transferCancelButtonHeight}
-                                          transferCancelButtonFgColor={transferCancelButtonFgColor}
-                                          transferCancelButtonBgColor={transferCancelButtonBgColor}
-                                          transferCancelButtonOuterBorderColor ={transferCancelButtonOuterBorderColor}
-                                          transferCancelButtonOuterBorderRadius ={transferCancelButtonOuterBorderRadius}
-                                          transferCancelButtonOuterBorderThickness = {transferCancelButtonOuterBorderThickness}
-                    ></EditorTransferCancelButton_ver2>
-                    :
+            {
+                index % 2 === 0 ?
                     <EditorTransferButton_ver2 lineInfo={lineInfo} callInfo={callInfo} title={title}
-                                    transferButtonWidth = {transferButtonWidth}
-                                    transferButtonHeight = {transferButtonHeight}
-                                    transferButtonFgColor={transferButtonFgColor}
-                                    transferButtonBgColor={transferButtonBgColor}
-                                    transferButtonOuterBorderColor ={transferButtonOuterBorderColor}
-                                    transferButtonOuterBorderRadius ={transferButtonOuterBorderRadius}
-                                    transferButtonOuterBorderThickness = {transferButtonOuterBorderThickness}
-                    ></EditorTransferButton_ver2> : "" }
+                                               transferButtonWidth = {transferButtonWidth}
+                                               transferButtonHeight = {transferButtonHeight}
+                                               transferButtonFgColor={transferButtonFgColor}
+                                               transferButtonBgColor={transferButtonBgColor}
+                                               transferButtonOuterBorderColor ={transferButtonOuterBorderColor}
+                                               transferButtonOuterBorderRadius ={transferButtonOuterBorderRadius}
+                                               transferButtonOuterBorderThickness = {transferButtonOuterBorderThickness}
+                                               transferButtonFontSize = {transferButtonFontSize}
+                    ></EditorTransferButton_ver2>
+                    :
+                    <EditorTransferCancelButton_ver2 lineInfo={lineInfo} callInfo={callInfo}
+                                                     transferCancelButtonWidth = {transferCancelButtonWidth}
+                                                     transferCancelButtonHeight = {transferCancelButtonHeight}
+                                                     transferCancelButtonFgColor={transferCancelButtonFgColor}
+                                                     transferCancelButtonBgColor={transferCancelButtonBgColor}
+                                                     transferCancelButtonOuterBorderColor ={transferCancelButtonOuterBorderColor}
+                                                     transferCancelButtonOuterBorderRadius ={transferCancelButtonOuterBorderRadius}
+                                                     transferCancelButtonOuterBorderThickness = {transferCancelButtonOuterBorderThickness}
+                                                     transferCancelButtonFontSize = {transferCancelButtonFontSize}
+                    ></EditorTransferCancelButton_ver2>
+            }
         </td>
         <td style={{
-            borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
+            fontSize : bodyFontSize + "px",
+            borderRadius:"0 " + outerBorderRadius + "px 0 0 "
         }}>
             { callInfo && callInfo.camponDstExtensionId ?  callInfo.camponDstExtensionId : "" }
         </td>
@@ -268,7 +285,11 @@ export default class LineTableEditorWidget extends EditorWidget{
         const lineButtonWidth = ( widgetData.getLineButtonWidth() || widgetData.getLineButtonWidth() === 0 ) ? widgetData.getLineButtonWidth() : 40; //!default
         const lineButtonHeight = ( widgetData.getLineButtonHeight() || widgetData.getLineButtonHeight() === 0 ) ? widgetData.getLineButtonHeight() : 40;  //!default
 
-
+        const headerFontSize = widgetData.getLinetableHeaderFontSize() ? widgetData.getLinetableHeaderFontSize() : 14;  //!default
+        const bodyFontSize = widgetData.getLinetableBodyFontSize() ? widgetData.getLinetableBodyFontSize() : 14;  //!default
+        const lineButtonFontSize = widgetData.getLineButtonFontSize() ? widgetData.getLineButtonFontSize() : 14;  //!default
+        const transferButtonFontSize = widgetData.getTransferButtonFontSize() ? widgetData.getTransferButtonFontSize() : 14;    //!default
+        const transferCancelButtonFontSize = widgetData.getTransferCancelButtonFontSize() ? widgetData.getTransferCancelButtonFontSize() : 14;    //!default
 
         return (
             <table className="brOCLinetable" style={{
@@ -282,14 +303,22 @@ export default class LineTableEditorWidget extends EditorWidget{
                     borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
+                        fontSize : headerFontSize + "px",
                         borderRadius:outerBorderRadius +  "px 0 0 0",
                     }}>{i18n.t("name")}</th>
-                    <th>{i18n.t("responder")}</th>
-                    {/*<th style={{width:70}}>{i18n.t("line")}</th>*/}
-                    <th>{i18n.t("line")}</th>
-                    {/*<th style={{width:120}}>{i18n.t("transfer")}</th>*/}
-                    <th>{i18n.t("transfer")}</th>
                     <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("responder")}</th>
+                    {/*<th style={{width:70}}>{i18n.t("line")}</th>*/}
+                    <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("line")}</th>
+                    {/*<th style={{width:120}}>{i18n.t("transfer")}</th>*/}
+                    <th style={{
+                        fontSize : headerFontSize + "px"
+                    }}>{i18n.t("transfer")}</th>
+                    <th style={{
+                        fontSize : headerFontSize + "px",
                         borderRadius:"0 " + outerBorderRadius + "px 0 0",
                     }}>{i18n.t("camponDest")}</th>
                 </tr>
@@ -327,6 +356,10 @@ export default class LineTableEditorWidget extends EditorWidget{
                         transferCancelButtonOuterBorderColor = {widgetData.getTransferCancelButtonOuterBorderColor()}
                         transferCancelButtonOuterBorderRadius = {widgetData.getTransferCancelButtonOuterBorderRadius()}
                         transferCancelButtonOuterBorderThickness = {widgetData.getTransferCancelButtonOuterBorderThickness()}
+                        bodyFontSize={bodyFontSize}
+                        lineButtonFontSize={lineButtonFontSize}
+                        transferButtonFontSize={transferButtonFontSize}
+                        transferCancelButtonFontSize={transferCancelButtonFontSize}
                     />
                 ))}
                 </tbody>

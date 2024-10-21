@@ -78,6 +78,8 @@ export default class CallPanelRuntimeWidget extends RuntimeWidget{
             dialing = "";
         }
 
+        const partyName = currentCallInfo?.getPartyName();
+        const hasPartyName = partyName && partyName.length !== 0;
         return (
             <div className="brOCCallPanel" style={{
                 borderRadius: callpanelBorderRadius,
@@ -90,7 +92,8 @@ export default class CallPanelRuntimeWidget extends RuntimeWidget{
                         {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
                     </div>
                     <div className="brOCCallPanelMain">
-                        <div className="brOCCallPanelPartyNumber">{currentCallInfo?.getPartyNumber()}</div>
+                        { hasPartyName && <div className="brOCCallPanelPartyName">{partyName}</div> }
+                        <div className={ hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber" }>{currentCallInfo?.getPartyNumber()}</div>
                         <div className="brOCCallPanelDuration">{this.state.duration}</div>
                     </div>
                 </div>

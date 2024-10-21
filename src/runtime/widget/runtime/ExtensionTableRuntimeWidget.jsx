@@ -37,6 +37,8 @@ export default class ExtensionTableRuntimeWidget extends RuntimeWidget{
         const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableHeaderRowUnderlineColor() , "'#e0e0e0'" );   //!default
         const bodyRowUnderlineThickness = ( widgetData.getExtensiontableBodyRowUnderlineThickness() || widgetData.getExtensiontableBodyRowUnderlineThickness() === 0 ) ? widgetData.getExtensiontableBodyRowUnderlineThickness() : 1; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableBodyRowUnderlineColor() , "'#e0e0e0'" );   //!default
+        const headerFontSize = widgetData.getExtensiontableHeaderFontSize() ? widgetData.getExtensiontableHeaderFontSize() :  14;
+        const bodyFontSize = widgetData.getExtensiontableBodyFontSize() ? widgetData.getExtensiontableBodyFontSize() :  14;
 
         let key = 0;
         return (
@@ -51,17 +53,20 @@ export default class ExtensionTableRuntimeWidget extends RuntimeWidget{
                     borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
+                        fontSize:headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                         borderRadius:outerBorderRadius +  "px 0 0 0",
                     }}>{i18n.t("id")}</th>
                     <th style={{
+                        fontSize:headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                     }}>{i18n.t("name")}</th>
                     <th style={{
+                        fontSize:headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                         borderRadius:"0 " + outerBorderRadius + "px 0 0",
                     }}>{i18n.t("status")}</th>
                 </tr>
@@ -77,14 +82,17 @@ export default class ExtensionTableRuntimeWidget extends RuntimeWidget{
                         }}
                     >
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT,
+                            fontSize:bodyFontSize + "px",
+                           //height:EXTENSION_TABLE_TD_HEIGHT,
                             borderRadius:"0 " + outerBorderRadius +  "px 0 0",
                         }}>{ext?.id}</td>
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT
+                            fontSize:bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT
                         }}>{ext?.name}</td>
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT,
+                            fontSize:bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT,
                             borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
                         }}>{Object.values(extensionsStatus?.[ext?.id]?.callStatus || {}).join(',')}</td>
                     </tr>

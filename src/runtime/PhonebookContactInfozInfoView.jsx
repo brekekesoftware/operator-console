@@ -5,11 +5,14 @@ import i18n from "../i18n";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BrekekeOperatorConsole from "../index";
 import OCUtil from "../OCUtil";
-import {Button, Input} from "antd";
+import {Button, Checkbox, Input} from "antd";
 import Popconfirm from "antd/lib/popconfirm";
 import Notification from "antd/lib/notification";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
 
+const BUILTIN_CUSTOM_ITEM_KEYNAMES = Object.freeze([
+    "Address(Work)","Email(Work)","Ext.","Fax","Job title","Middle name","Nickname","Other","Prefix","Suffix","Website"
+]);
 class PbContactInfozCustomItem{
     constructor( options ) {
         const pbContactInfozItem = options["pbContactInfozItem"];
@@ -56,7 +59,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             pbContactInfo : null,
         }
         this._PbContactInfozCustomItemArray = new Array();
-
+        this._PbSummaryArray = new Array();
         _INSTANCE = this;
     }
 
@@ -67,6 +70,22 @@ export default class PhonebookContactInfozInfoView extends React.Component {
     getPhonebookContactInfoFromState(){
         return this.state.pbContactInfo;
     }
+
+    // componentDidUpdate() {
+    //     const  pbContactInfo = this.state.pbContactInfo;
+    //     if( !pbContactInfo ){
+    //         return;
+    //     }
+    //
+    //     if( this.state.renderOnce !== true ) {
+    //         setTimeout(() => {
+    //             const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+    //             const bShared = pbContactInfo.getIsShared();
+    //             eShared.checked = bShared;
+    //             this.setState({renderOnce: true});
+    //         }, 1000);
+    //     }
+    // }
 
     _onInputFocus(){
         const oc = BrekekeOperatorConsole.getStaticInstance();
@@ -114,6 +133,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
     _reloadContactInfo( aid ){
         this._PbContactInfozCustomItemArray.length = 0;
+        this._PbSummaryArray.length = 0;
         const getContactOptions = {
             methodName : "getContact",
             methodParams : JSON.stringify({
@@ -138,7 +158,8 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
                         //Did not work
                         // //Refresh custom item element's value
-                        // const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
+                        //// const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
+                        // const eCustomItemName = document.getElementById("brOC_PhonebookContactInfozInfoView_customItemName_" + i );
                         // if( eCustomItemName ){
                         //     eCustomItemName.value = infozCustomItem.getName();
                         //     const eCustomItemValue = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemValue_' + i + '"]');
@@ -149,21 +170,25 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                     }
                 }
 
-                this.setState({pbContactInfo:pbGotContactInfo}, () =>{
-                        //Refresh custom item element's name&value
-                        for (let i = 0; i < this._PbContactInfozCustomItemArray.length; i++) {
-                            const customItem = this._PbContactInfozCustomItemArray[i];
-                            const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
-                            const name = customItem.getName();
-                            //eCustomItemName.defaultValue = name;
-                            eCustomItemName.value = name;
-                            //eCustomItemName.setAttribute("value", name );
-                            const eCustomItemValue = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemValue_' + i + '"]');
-                            const value = customItem.getValue();
-                            //eCustomItemValue.defaultValue = value;
-                            eCustomItemValue.value = value;
-                            //eCustomItemName.setAttribute("value", value  );
-                        }
+                //const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+                const bShared = pbGotContactInfo.getIsShared();
+                //eShared.checked = bShared;
+                this.setState({pbContactInfo:pbGotContactInfo, sharedChecked:bShared }, () =>{
+                    //Refresh custom item element's name&value
+                    for (let i = 0; i < this._PbContactInfozCustomItemArray.length; i++) {
+                        const customItem = this._PbContactInfozCustomItemArray[i];
+                        //const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
+                        const eCustomItemName = document.getElementById("brOC_PhonebookContactInfozInfoView_customItemName_" + i );
+                        const name = customItem.getName();
+                        //eCustomItemName.defaultValue = name;
+                        eCustomItemName.value = name;
+                        //eCustomItemName.setAttribute("value", name );
+                        const eCustomItemValue = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemValue_' + i + '"]');
+                        const value = customItem.getValue();
+                        //eCustomItemValue.defaultValue = value;
+                        eCustomItemValue.value = value;
+                        //eCustomItemName.setAttribute("value", value  );
+                    }
                 });
             }
         }).catch((rej) => {
@@ -171,15 +196,44 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         });
     }
 
+    async _reloadEmptyContactInfo(){
+        this._PbContactInfozCustomItemArray.length = 0;
+        this._PbSummaryArray.length = 0;
+
+        const getPhonebooksOptions ={
+            methodName : "getPhonebooks",
+            // methodParams : JSON.stringify({
+            // }),
+        }
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const pbSummaryArray = await oc.getPalRestApi().callPalRestApiMethodAsync( getPhonebooksOptions ).catch( (resOrError) =>{
+            OCUtil.logErrorWithNotification("Failed to get phone books.", i18n.t("Failed_to_get_phone_books"), resOrError );
+            return;
+        });
+        if( Array.isArray( pbSummaryArray) ){
+            this._PbSummaryArray.length = pbSummaryArray.length;
+            for( let i = 0; i < pbSummaryArray.length; i++ ){   //!optimize. copy
+                this._PbSummaryArray[i] = pbSummaryArray[i];
+            }
+        }
+        const pbContactInfo = new PhonebookContactInfo_AutoDialView_ver2(); //empty
+        this.setState({pbContactInfo:pbContactInfo} );
+    }
+
     openPhonebookContactInfozInfoView( pbContactInfo ){
-        this.setState( { pbContactInfo: null }, ()=>
+        this.setState( { pbContactInfo:null,sharedChecked:null }, ()=>
         {
-            this._reloadContactInfo(pbContactInfo.getAid());
+            if( pbContactInfo ) {
+                this._reloadContactInfo(pbContactInfo.getAid());
+            }
+            else{
+                this._reloadEmptyContactInfo();
+            }
         });
     }
 
     closePhonebookContactInfozInfoView( thenFunc ){
-        this.setState({pbContactInfo:null}, () =>{
+        this.setState({pbContactInfo:null,sharedChecked:null}, () =>{
             this._PbContactInfozCustomItemArray.length = 0;
             if( thenFunc ){
                 thenFunc();
@@ -194,6 +248,27 @@ export default class PhonebookContactInfozInfoView extends React.Component {
     }
 
     _save(){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        //validation
+        const phonebookName = document.getElementById("phonebookName_PhonebookContactInfozInfoView").value;
+        if( !phonebookName || phonebookName.length === 0 ){
+            Notification.warning({message:i18n.t("No_phonebook_assigned")});
+            return;
+        }
+
+        const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+        const isShared = eShared.checked === true;
+        const isAdmin = oc.getIsAdmin();
+        const isSaveable = isShared === false || ( isShared === true && isAdmin === true );
+        if( isSaveable !== true  ){
+            console.warn("You do not have permission to save phone book contact.");
+            Notification.warning({
+                message: i18n.t("You_do_not_have_permission_to_save_phone_book_contact"),
+            });
+            return;
+        }
+
+
         const iInfoKeyWithinnameStartIndex = "PhonebookContactInfozInfoView_infoItem_".length;
 
         const eInfoParams = document.querySelectorAll('[data-br-isinfoparam="true"]');
@@ -216,25 +291,40 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             oInfo[ name ] = customItem.getValue();
         }
 
-        const aid = this.state.pbContactInfo.getAid();
-        const phonebookName = this.state.pbContactInfo.getPhonebookName();
-        const sIsShared = this.state.pbContactInfo.getIsShared().toString();
+        let aid = null; //add
+        if(  this.state.pbContactInfo ) {
+            aid = this.state.pbContactInfo.getAid();
+        }
+        //const sIsShared = this.state.pbContactInfo.getIsShared().toString();
+
+
+
+        const oMethodParams = {
+            phonebook : phonebookName,
+            shared: isShared.toString(),
+            info: oInfo,
+        };
+        if( aid ){
+            oMethodParams["aid"] =  aid;
+        }
 
         const setContactOptions = {
             methodName : "setContact",
-            methodParams : JSON.stringify({
-                aid: aid,
-                phonebook: phonebookName,
-                shared: sIsShared,
-                info: oInfo
-            })
+            methodParams : JSON.stringify(oMethodParams)
         };
 
-        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+
         const promise = oc.getPalRestApi().callPalRestApiMethodAsync( setContactOptions  );
-        promise.then( (res) =>{
-            Notification.success({ message: i18n.t("saved_data_to_pbx_successfully") });
-            this._reloadContactInfo( aid );
+        promise.then( (result) =>{
+            if( result == null ){
+                OCUtil.logErrorWithNotification("Failed to set contact(PAL rest API).", i18n.t("failed_to_save_data_to_pbx") );
+            }
+            else {
+                Notification.success({message: i18n.t("saved_data_to_pbx_successfully")});
+                let sAid = result["aid"];
+                this._reloadContactInfo(sAid);
+            }
         }).catch( (errorOrResponse) =>{
             OCUtil.logErrorWithNotification("Failed to set contact(PAL rest API).", i18n.t("failed_to_save_data_to_pbx"), errorOrResponse );
         } );
@@ -247,7 +337,8 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             //Refresh custom item element's name&value
             for (let i = 0; i < this._PbContactInfozCustomItemArray.length; i++) {
                 const customItem = this._PbContactInfozCustomItemArray[i];
-                const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
+                //const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
+                const eCustomItemName = document.getElementById("brOC_PhonebookContactInfozInfoView_customItemName_" + i );
                 const name = customItem.getName();
                 //eCustomItemName.defaultValue = name;
                 eCustomItemName.value = name;
@@ -271,6 +362,91 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         customItem.setValue( value );
     }
 
+    _isAddContact(){
+        return !this.state.pbContactInfo || !this.state.pbContactInfo.getAid();
+    }
+
+    _deleteContact(){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const isShared = this.state.pbContactInfo.getIsShared() === true;
+        const isAdmin = oc.getIsAdmin();
+        const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
+        if( isDeletable !== true  ){
+            console.warn("You do not have permission to delete phone book contact.. aid=" + aid);
+            Notification.warning({
+                message: i18n.t("You_do_not_have_permission_to_delete_phone_book_contact"),
+            });
+            return;
+        }
+
+        const failFunc = ( resOrError ) =>{
+            if( Array.isArray( resOrError ) ) {
+                const aid = resOrError[0];
+                console.error("Failed to delete phone book contact. aid=" + aid);
+                Notification.error({
+                    message: i18n.t("failed_to_save_data_to_pbx"),
+                    duration: 0
+                });
+            }
+            else{
+                OCUtil.logErrorWithNotification("Failed to delete phone book contact.", i18n.t("failed_to_save_data_to_pbx"), resOrError );
+            }
+        };
+
+        const aid = this.state.pbContactInfo.getAid();
+        const deleteContactOptions = {
+            methodName : "deleteContact",
+            methodParams : JSON.stringify({
+                aid : aid
+            }),
+            onSuccessFunction : (ret) =>{
+                let bSuccess = false;
+                const arSucceeded = ret["succeeded"];
+                if( Array.isArray( arSucceeded ) ) {
+                    if( arSucceeded.length !== 0 ) {
+                        const iAidRet = arSucceeded[0];
+                        let aidIntegerOrString = aid;
+                        if( Number.isInteger( iAidRet ) && OCUtil.isString(aid)){
+                            aidIntegerOrString = parseInt( aid );
+                        }
+                        bSuccess = aidIntegerOrString  === iAidRet;
+                    }
+                }
+                if( bSuccess === true ){
+                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                    this.closePhonebookContactInfozInfoView();
+                }
+                else{
+                    //const arFailed = ret["failed"];
+                    failFunc();
+                }
+            },
+            onFailFunction : (resOrError) => failFunc( resOrError )
+        };
+        oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
+    }
+
+    //!DIdNotWork
+    // _toggleShared(){
+    //     const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+    //     const isChecked = eShared.checked;
+    //     eShared.checked = !isChecked;
+    //     this.setState({sharedDefaultChecked:!isChecked});
+    // }
+
+    // _toggleShared(){
+    //     const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+    //     const isChecked = eShared.checked;
+    //     eShared.checked = !isChecked;
+    //     this._rerenderShared();
+    // }
+
+    _rerenderShared(){
+        const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
+        const isChecked = eShared.checked;
+        this.setState({sharedChecked:isChecked});
+    }
+
     render(){
         if( !this.state.pbContactInfo ){
             return (null);
@@ -278,53 +454,124 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const extensionsStatus = oc.state.extensionsStatus;
         const extensions = oc.state.extensions;
-        const isSaveable = this.state.pbContactInfo.getIsShared() === false;
+        const isShared = this.state.pbContactInfo.getIsShared();
+        const isAdmin = oc.getIsAdmin();
+        const isSaveable = isShared  === false || ( isShared === true && isAdmin === true );
 
-        const telKeyNames = this.state.pbContactInfo.getFreezedTelInfoKeyNameArray();
+        // let sharedDefaultChecked;
+        // if( this.state.sharedDefaultChecked === undefined || this.state.sharedDefaultChecked === null ){
+        //     sharedDefaultChecked = isShared;
+        // }
+        // else{
+        //     sharedDefaultChecked = this.state.sharedDefaultChecked;
+        // }
+
+        let sharedChecked;
+        if( this.state.sharedChecked === undefined || this.state.sharedChecked === null ){
+            sharedChecked = isShared;
+        }
+        else{
+            sharedChecked = this.state.sharedChecked;
+        }
+
         return (<>
             <div className="brOCReset phonebookContactInfozInfoView ">
                 <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>
                     <tbody>
                     <tr>
                         <td style={{textAlign: "right", verticalAlign: "top"}}>
-                            <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this.closePhonebookContactInfozInfoView() }
-                                        okText={i18n.t("yes")}
-                                        cancelText={i18n.t("no")}
-                            >
-                                <span className="linkDeco">[X]</span>
-                            </Popconfirm>
+                            { isSaveable && (
+                                <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this.closePhonebookContactInfozInfoView() }
+                                            okText={i18n.t("yes")}
+                                            cancelText={i18n.t("no")}
+                                >
+                                    <FontAwesomeIcon icon="far fa-window-close" className="closeFontAwesomeIcon" />
+                                </Popconfirm>
+                            )}
+                            { !isSaveable && (
+                                <FontAwesomeIcon icon="far fa-window-close" onClick={(e) => this.closePhonebookContactInfozInfoView()} className="closeFontAwesomeIcon" />
+                            )}
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <div className={"autoDialView_ver2_tableParent"}>
+                            <div className={"autoDialView_ver2_tableParent"} style={{maxHeight:"500px"}}>
                                 <table className="defaultContentTable">
                                     <thead>
                                     <tr>
-                                        <th colSpan="2" className="displayNameTitleTh" style={{textTransform: "unset"}}>
+                                        <th colSpan="2" className="displayNameTitleTh" style={{textTransform: "unset",height:"19px"}}>
                                             {this.state.pbContactInfo.getDisplayName()}
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    <tr>
+                                        <th>
+                                            <label htmlFor="phonebookName_PhonebookContactInfozInfoView">{i18n.t("Phonebook")}</label>
+                                        </th>
+                                        <td>
+                                            { !this._isAddContact() && (
+                                                <Input
+                                                    id="phonebookName_PhonebookContactInfozInfoView"
+                                                    defaultValue={ this.state.pbContactInfo.getPhonebookName()}
+                                                    style={{width: "300px",cursor:"not-allowed"}} disabled={true}
+                                                />
+                                            )}
+                                            {
+                                                this._isAddContact() && ( <>
+                                                        <Input type="text" id="phonebookName_PhonebookContactInfozInfoView" list="phonebookName_datalist_PhonebookContactInfozInfoView"
+                                                               maxLength={100}
+                                                               onFocus={(e) => this._onInputFocus()}
+                                                               onBlur={(e) => this._onInputBlur()}
+                                                               style={{width:"300px"}}
+                                                        />
+                                                        <datalist id="phonebookName_datalist_PhonebookContactInfozInfoView">
+                                                            {
+                                                                this._PbSummaryArray.map( ( pbSummary, i ) =>{
+                                                                    const phonebookName = pbSummary["phonebook"];
+                                                                    return <option key={i} value={phonebookName} >{phonebookName}</option>
+                                                                })
+                                                            }
+                                                        </datalist>
+                                                    </>
+                                                )
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            <label htmlFor="shared_PhonebookContactInfozInfoView_brOC" style={{cursor:"pointer"}}>
+                                                {i18n.t("Shared")}
+                                            </label>
+                                        </th>
+                                        <td>
+                                            <Checkbox id="shared_PhonebookContactInfozInfoView_brOC"
+                                                //defaultChecked={sharedDefaultChecked}
+                                                      checked={sharedChecked}
+                                                      onClick={(e)=>this._rerenderShared()}
+                                                      disabled={isAdmin !== true }/>
+                                        </td>
+                                    </tr>
                                     {
-                                        this.state.pbContactInfo.getFreezedPhonebookContactInfozInfoArray().map(
-                                            (info, i) => {
+                                        PhonebookContactInfo_AutoDialView_ver2.BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES.map(
+                                            ( key, i) => {
+                                                const info = this.state.pbContactInfo.getPhonebookContactInfoByKeyname( key );
                                                 if (info.isTelKey()) {
                                                     return (null);
                                                 }
-                                                if (info.getInfoKeyName() === "$lang") { //!comment Not editable
-                                                    return (null);
-                                                }
-                                                if( info.isCustomKey() === true ){
-                                                    return (null);
-                                                }
+                                                // if (info.getInfoKeyName() === "$lang") { //!comment Not editable
+                                                //     return (null);
+                                                // }
+                                                // if( info.isCustomKey() === true ){
+                                                //     return (null);
+                                                // }
+                                                const infoKeyName = info.getInfoKeyName();
                                                 return (
                                                     <tr key={i}>
                                                         <th>{info.getTitle()}</th>
                                                         <td>
                                                             <Input data-br-isinfoparam="true"
-                                                                   data-br-name={"PhonebookContactInfozInfoView_infoItem_" + info.getInfoKeyName()}
+                                                                   data-br-name={"PhonebookContactInfozInfoView_infoItem_" + infoKeyName }
                                                                    defaultValue={info.getValue()}
                                                                    style={{width: "300px"}} disabled={!isSaveable}
                                                                    maxLength="1000"
@@ -354,7 +601,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {telKeyNames.map((telKeyName, i) => {
+                                                {PhonebookContactInfo_AutoDialView_ver2.BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_TEL_ITEM_KEYNAMES.map((telKeyName, i) => {
                                                     const telInfo = this.state.pbContactInfo.getPhonebookContactInfozInfoByInfoKeyName(telKeyName);
                                                     let tel;
                                                     if (telInfo) {
@@ -417,14 +664,24 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                 <tr key={i}>
                                                     <th>
                                                         <Input
-                                                            data-br-name={"PhonebookContactInfozInfoView_customItemName_" + i }
+                                                            id={"brOC_PhonebookContactInfozInfoView_customItemName_" + i}
+                                                            list={"brOC_PhonebookContactInfozInfoView_datalist_customItemName_" + i }
                                                             //defaultValue={customItem.getName()}
                                                             style={{width: "200px"}} disabled={!isSaveable}
                                                             maxLength="1000"
                                                             onChange={(e) => this._onChangeCustomItemInputName(customItem, e)}
-                                                            onFocus={(e) => this._onCustomItemNameInputFocus( customItem, e )}
-                                                            onBlur={(e) => this._onCustomItemNameInputBlur( customItem, e )}
+                                                            onFocus={(e) => this._onCustomItemNameInputFocus(customItem, e)}
+                                                            onBlur={(e) => this._onCustomItemNameInputBlur(customItem, e)}
                                                         />
+                                                        <datalist
+                                                            id={"brOC_PhonebookContactInfozInfoView_datalist_customItemName_" + i }>
+                                                            {
+                                                                BUILTIN_CUSTOM_ITEM_KEYNAMES.map(( keyname, i) => {
+                                                                    return <option key={i}
+                                                                                   value={keyname}>{keyname}</option>
+                                                                })
+                                                            }
+                                                        </datalist>
                                                     </th>
                                                     <td>
                                                         <Input
@@ -433,7 +690,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                             style={{width: "300px"}} disabled={!isSaveable}
                                                             maxLength="1000"
                                                             onChange={(e) => this._onChangeCustomItemInputValue(customItem, e)}
-                                                            onFocus={(e) => this._onCustomItemValueInputFocus( customItem, e )}
+                                                            onFocus={(e) => this._onCustomItemValueInputFocus(customItem, e )}
                                                             onBlur={(e) => this._onCustomItemValueInputBlur( customItem, e )}
                                                         />
                                                     </td>
@@ -446,7 +703,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                             className="unsetBackgroundColor_important_PhonebookContactInfozInfoView"
                                             style={{paddingTop: "4px", paddingRight: "4px"}}>
                                             { isSaveable && <span onClick={(e) => this._addItem()}
-                                                  style={{textDecoration: "underline", cursor: "pointer"}}>
+                                                                  style={{textDecoration: "underline", cursor: "pointer"}}>
                                                 &gt;&gt;{i18n.t("Add_item")}
                                             </span> }
                                             { !isSaveable && <span className="defaultDisabledTextColor" style={{textDecoration:"underline", cursor:"not-allowed"}}>
@@ -463,6 +720,14 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                     <tr>
                         <td colSpan={2} style={{paddingTop: "4px", paddingRight: "4px"}}>
                             <div style={{display: "flex", alignItems: "center", justifyContent: "end"}}>
+                                { ( isSaveable && this._isAddContact() !== true ) &&
+                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteContact() }
+                                                okText={i18n.t("yes")}
+                                                cancelText={i18n.t("no")}
+                                    >
+                                        <Button style={{marginRight:"4px"}} disabled={!isSaveable}>{i18n.t("Delete")}</Button>
+                                    </Popconfirm>
+                                }
                                 <Button type="success" onClick={(e) => this._save()} disabled={!isSaveable}>
                                     {i18n.t("save")}
                                 </Button>

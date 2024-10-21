@@ -230,7 +230,7 @@ button{
 
 /* .brOC .brOCReset a:hover { */
 .brOCReset a:hover {
-    color:#4BC5DE;
+    color:var(--defaultLinkHoverColor);
     text-decoration:underline;
     /* text-decoration-color:#4BC5DE; */
     cursor:pointer;
@@ -238,12 +238,12 @@ button{
 
 .brOC .brOCReset .linkDeco:hover {
     text-decoration:underline;
-    text-decoration-color:#4BC5DE;
+    text-decoration-color:var(--defaultLinkHoverColor);
     cursor:pointer;
 }
 
 .brOC .brOCReset .linkDeco:hover td {
-    color:#4BC5DE;
+    color:var(--defaultLinkHoverColor);
 }
 
 /*

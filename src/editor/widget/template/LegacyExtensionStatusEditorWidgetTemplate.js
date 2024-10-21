@@ -16,7 +16,7 @@ export default class LegacyExtensionStatusEditorWidgetTemplate extends EditorWid
 
     //!overload
     getHeight(){
-        return 84;
+        return 64;
     }
 
     //!overload

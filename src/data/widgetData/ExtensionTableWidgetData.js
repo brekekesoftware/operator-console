@@ -13,7 +13,8 @@ export default class ExtensionTableWidgetData extends WidgetData{
         this._extensiontableBodyFgColor = options["extensiontableBodyFgColor"];
         this._extensiontableBodyRowUnderlineThickness = options["extensiontableBodyRowUnderlineThickness"];
         this._extensiontableBodyRowUnderlineColor = options["extensiontableBodyRowUnderlineColor"];
-
+        this._extensiontableBodyFontSize = options["extensiontableBodyFontSize"];
+        this._extensiontableHeaderFontSize = options["extensiontableHeaderFontSize"];
     }
 
     //!override
@@ -87,6 +88,36 @@ export default class ExtensionTableWidgetData extends WidgetData{
         else{
             delete o["extensiontableBodyRowUnderlineColor"];
         }
+
+        if( this._extensiontableBodyFontSize ){
+            o["extensiontableBodyFontSize"] = this._extensiontableBodyFontSize;
+        }
+        else{
+            delete o["extensiontableBodyFontSize"];
+        }
+
+        if( this._extensiontableHeaderFontSize ){
+            o["extensiontableHeaderFontSize"] = this._extensiontableHeaderFontSize;
+        }
+        else{
+            delete o["extensiontableHeaderFontSize"];
+        }
+    }
+
+    getExtensiontableBodyFontSize(){
+        return this._extensiontableBodyFontSize;
+    }
+
+    setExtensiontableBodyFontSize( n ){
+        this._extensiontableBodyFontSize = n;
+    }
+
+    getExtensiontableHeaderFontSize(){
+        return this._extensiontableHeaderFontSize;
+    }
+
+    setExtensiontableHeaderFontSize( n ){
+        this._extensiontableHeaderFontSize = n;
     }
 
     getExtensiontableBgColor(){

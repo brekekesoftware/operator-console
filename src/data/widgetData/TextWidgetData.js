@@ -4,6 +4,7 @@ export default class TextWidgetData extends WidgetData {
     constructor( options ) {
         super(options);
         this._text = options["text"];
+        this._textFontSize = options["textFontSize"];
         this._textFgColor = options["textFgColor"];
         this._textBgColor = options["textBgColor"];
         this._textBorderRadius = options["textBorderRadius"];
@@ -17,6 +18,13 @@ export default class TextWidgetData extends WidgetData {
         }
         else{
             delete o["text"];
+        }
+
+        if( this._textFontSize ){
+            o["textFontSize"] = this._textFontSize;
+        }
+        else{
+            delete o["textFontSize"];
         }
 
         if( this._textFgColor ){
@@ -48,6 +56,14 @@ export default class TextWidgetData extends WidgetData {
 
     getText(){
         return this._text;
+    }
+
+    setTextFontSize( n ){
+        this._textFontSize = n;
+    }
+
+    getTextFontSize(){
+        return this._textFontSize;
     }
 
     getTextFgColor(){

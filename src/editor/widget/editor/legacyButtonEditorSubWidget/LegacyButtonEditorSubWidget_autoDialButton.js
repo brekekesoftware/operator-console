@@ -28,6 +28,7 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -56,6 +57,7 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
         const iconJsx = this._getIconJsx();
         return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger')}
                        style={{
+                           fontSize:sButtonFontSize,
                            border:border,
                            borderRadius:borderRadius,
                            color:color,

@@ -5,6 +5,9 @@ export default class LegacyExtensionStatusWidgetData extends WidgetData {
         super(options);
         this._extension = options["extension"];
         this._extensionStatusFgColor = options["extensionStatusFgColor"];
+        this._extensionStatusLampSize = options["extensionStatusLampSize"];
+        this._extensionStatusExtensionTextTopMargin = options["extensionStatusExtensionTextTopMargin"];
+        this._extensionStatusExtensionFontSize = options["extensionStatusExtensionFontSize"];
     }
 
     //!override
@@ -22,6 +25,26 @@ export default class LegacyExtensionStatusWidgetData extends WidgetData {
             delete o["extensionStatusFgColor"];
         }
 
+        if( !!this._extensionStatusLampSize ){
+            o["extensionStatusLampSize"] = this._extensionStatusLampSize;
+        }
+        else{
+            delete o["extensionStatusLampSize"];
+        }
+
+        if( !!this._extensionStatusExtensionTextTopMargin ){
+            o["extensionStatusExtensionTextTopMargin"] = this._extensionStatusExtensionTextTopMargin;
+        }
+        else{
+            delete o["extensionStatusExtensionTextTopMargin"];
+        }
+
+        if( !!this._extensionStatusExtensionFontSize ){
+            o["extensionStatusExtensionFontSize"] = this._extensionStatusExtensionFontSize;
+        }
+        else{
+            delete o["extensionStatusExtensionFontSize"];
+        }
     }
 
     setExtension(extension) {
@@ -38,6 +61,30 @@ export default class LegacyExtensionStatusWidgetData extends WidgetData {
 
     getExtensionStatusFgColor() {
         return this._extensionStatusFgColor;
+    }
+
+    setExtensionStatusLampSize( size ){
+        this._extensionStatusLampSize = size;
+    }
+
+    getExtensionStatusLampSize(){
+        return this._extensionStatusLampSize;
+    }
+
+    setExtensionStatusExtensionFontSize( size ){
+        this._extensionStatusExtensionFontSize = size;
+    }
+
+    getExtensionStatusExtensionFontSize(){
+        return this._extensionStatusExtensionFontSize;
+    }
+
+    setExtensionStatusExtensionTextTopMargin( margin ){
+        this._extensionStatusExtensionTextTopMargin = margin;
+    }
+
+    getExtensionStatusExtensionTextTopMargin(){
+        return this._extensionStatusExtensionTextTopMargin;
     }
 
     //!override

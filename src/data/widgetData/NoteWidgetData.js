@@ -4,6 +4,8 @@ export default class NoteWidgetData extends WidgetData {
     constructor( options ) {
         super(options);
         this._noteName = options["noteName"];
+        this._noteTitleFontSize = options["noteTitleFontSize"];
+        this._noteBodyFontSize = options["noteBodyFontSize"];
         this._noteBorderRadius = options["noteBorderRadius"];
         this._noteNameFgColor = options["noteNameFgColor"];
         this._noteNameBgColor = options["noteNameBgColor"];
@@ -20,6 +22,20 @@ export default class NoteWidgetData extends WidgetData {
         }
         else{
             delete o["noteName"];
+        }
+
+        if( this._noteTitleFontSize ){
+            o["noteTitleFontSize"] = this._noteTitleFontSize;
+        }
+        else{
+            delete o["noteTitleFontSize"];
+        }
+
+        if( this._noteBodyFontSize ){
+            o["noteBodyFontSize"] = this._noteBodyFontSize;
+        }
+        else{
+            delete o["noteBodyFontSize"];
         }
 
         if( this._noteBorderRadius || this._noteBorderRadius === 0 ){
@@ -72,6 +88,22 @@ export default class NoteWidgetData extends WidgetData {
 
     getNoteName(){
         return this._noteName;
+    }
+
+    setNoteTitleFontSize( n ){
+        this._noteTitleFontSize = n;
+    }
+
+    getNoteTitleFontSize(){
+        return this._noteTitleFontSize;
+    }
+
+    setNoteBodyFontSize( n ){
+        this._noteBodyFontSize = n;
+    }
+
+    getNoteBodyFontSize(){
+        return this._noteBodyFontSize;
     }
 
     getNoteBorderRadius(){

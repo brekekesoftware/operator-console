@@ -15,6 +15,11 @@ export default class CallTableWidgetData extends WidgetData{
         this._calltableBodyRowUnderlineThickness = options["calltableBodyRowUnderlineThickness"];
         this._calltableBodyRowUnderlineColor = options["calltableBodyRowUnderlineColor"];
         this._calltableBodyActiveRowBgColor = options["calltableBodyActiveRowBgColor"];
+		this._calltableHeaderFontSize = options["calltableHeaderFontSize"];
+		this._calltableBodyFontSize = options["calltableBodyFontSize"];
+        this._calltableActiveButtonFontSize = options["calltableActiveButtonFontSize"];
+        this._calltableActiveButtonWidth = options["calltableActiveButtonWidth"];
+        this._calltableActiveButtonHeight = options["calltableActiveButtonHeight"];
     }
 
     //!override
@@ -102,6 +107,42 @@ export default class CallTableWidgetData extends WidgetData{
         else{
             delete o["calltableBodyActiveRowBgColor"];
         }
+		
+		if( this._calltableHeaderFontSize ){
+			o["calltableHeaderFontSize"] = this._calltableHeaderFontSize;
+		}
+		else{
+			delete o["calltableHeaderFontSize"];
+		}
+
+		if( this._calltableBodyFontSize ){
+			o["calltableBodyFontSize"] = this._calltableBodyFontSize;
+		}
+		else{
+			delete o["calltableBodyFontSize"];
+		}
+
+        if( this._calltableActiveButtonFontSize ){
+            o["calltableActiveButtonFontSize"] = this._calltableActiveButtonFontSize;
+        }
+        else{
+            delete o["calltableActiveButtonFontSize"];
+        }
+
+        if( this._calltableActiveButtonWidth ){
+            o["calltableActiveButtonWidth"] = this._calltableActiveButtonWidth;
+        }
+        else{
+            delete o["calltableActiveButtonWidth"];
+        }
+
+        if( this._calltableActiveButtonHeight ){
+            o["calltableActiveButtonHeight"] = this._calltableActiveButtonHeight;
+        }
+        else{
+            delete o["calltableActiveButtonHeight"];
+        }
+
     }
 
     getCalltableBgColor(){
@@ -190,6 +231,46 @@ export default class CallTableWidgetData extends WidgetData{
 
     setCalltableBodyActiveRowBgColor( color ){
         this._calltableBodyActiveRowBgColor = color;
+    }
+	
+	getCalltableHeaderFontSize(){
+		return this._calltableHeaderFontSize;
+	}
+	
+	setCalltableHeaderFontSize( size ){
+		this._calltableHeaderFontSize = size;
+	}
+
+	getCalltableBodyFontSize(){
+		return this._calltableBodyFontSize;
+	}
+	
+	setCalltableBodyFontSize( size ){
+		this._calltableBodyFontSize = size;
+	}
+
+    getCalltableActiveButtonFontSize(){
+        return this._calltableActiveButtonFontSize;
+    }
+
+    setCalltableActiveButtonFontSize( size ){
+        this._calltableActiveButtonFontSize = size;
+    }
+
+    getCalltableActiveButtonWidth(){
+        return this._calltableActiveButtonWidth;
+    }
+
+    setCalltableActiveButtonWidth( n ){
+        this._calltableActiveButtonWidth = n;
+    }
+
+    getCalltableActiveButtonHeight(){
+        return this._calltableActiveButtonHeight;
+    }
+
+    setCalltableActiveButtonHeight( n ){
+        this._calltableActiveButtonHeight = n;
     }
 
     //!override

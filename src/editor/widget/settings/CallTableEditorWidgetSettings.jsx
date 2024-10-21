@@ -73,6 +73,36 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeCalltableHeaderFontSize( size ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableHeaderFontSize(size);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCalltableBodyFontSize( size ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableBodyFontSize(size);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCalltableActiveButtonWidth( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableActiveButtonWidth(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCalltableActiveButtonHeight( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableActiveButtonHeight(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCalltableActiveButtonFontSize( size ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableActiveButtonFontSize(size);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     //!override
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
@@ -91,6 +121,9 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
                 <InputNumber min="0" value={widgetData.getCalltableOuterBorderRadius()}
                              onChange={(n) => this._onChangeCalltableOuterBorderRadius(n)}/>
                 <Divider>{i18n.t("header_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getCalltableHeaderFontSize()}
+                             onChange={(size) => this._onChangeCalltableHeaderFontSize(size)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableHeaderFgColor()}
                              onChange={(color) => this._onChangeCalltableHeaderFgColor(color)}/>
@@ -101,6 +134,9 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
                 <Colorpicker format="rgb" value={widgetData.getCalltableHeaderRowUnderlineColor()}
                              onChange={(color) => this._onChangeCalltableHeaderRowUnderlineColor(color)}/>
                 <Divider>{i18n.t("body_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getCalltableBodyFontSize()}
+                             onChange={(size) => this._onChangeCalltableBodyFontSize(size)}/>
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableBodyFgColor()}
                              onChange={(color) => this._onChangeCalltableBodyFgColor(color)}/>
@@ -113,6 +149,16 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
                 <p>{i18n.t("activeRowBgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableBodyActiveRowBgColor()}
                              onChange={(color) => this._onChangeCalltableBodyActiveRowBgColor(color)}/>
+                <Divider>{i18n.t("Active_button_settings")}</Divider>
+                <p>{i18n.t("Text_size")}</p>
+                <InputNumber min="0" value={widgetData.getCalltableActiveButtonFontSize()}
+                             onChange={(n) => this._onChangeCalltableActiveButtonFontSize(n)}/>
+                <p>{i18n.t("width")}</p>
+                <InputNumber min="0" value={widgetData.getCalltableActiveButtonWidth()}
+                             onChange={(n) => this._onChangeCalltableActiveButtonWidth(n)}/>
+                <p>{i18n.t("height")}</p>
+                <InputNumber min="0" value={widgetData.getCalltableActiveButtonHeight()}
+                             onChange={(n) => this._onChangeCalltableActiveButtonHeight(n)}/>
             </>
         );
         return jsx;

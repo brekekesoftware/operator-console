@@ -239,9 +239,13 @@ export default class EditorPane extends BasePane {
                     widgetWidth = 640;
                     widgetHeight = 128;
                 break;
+            case WidgetData.WIDGET_TYPE_IDS.text:
+                    widgetWidth = 160;
+                    widgetHeight = 160;
+                break;
             case WidgetData.WIDGET_TYPE_IDS.note:
-                    widgetWidth = 320;
-                    widgetHeight = 320;
+                    widgetWidth = 160;
+                    widgetHeight = 160;
                 break;
             case WidgetData.WIDGET_TYPE_IDS.lineTable:
                     widgetWidth = 640;

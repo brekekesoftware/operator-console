@@ -27,6 +27,9 @@ export default class LegacyButtonWidgetData extends WidgetData{
         //
         // this._icon = currentOptions["icon"];
         this._icon = options["icon"];
+        this._iconWidth = options["iconWidth"];
+        this._iconHeight = options["iconHeight"];
+        this._fontSize = options["fontSize"];
         this._fgColor = options["fgColor"];
         this._bgColor = options["bgColor"];
         this._outerBorderColor = options["outerBorderColor"];
@@ -52,6 +55,27 @@ export default class LegacyButtonWidgetData extends WidgetData{
         }
         else{
             delete o["icon"];
+        }
+
+        if( this._iconWidth ){
+            o["iconWidth"] = this._iconWidth;
+        }
+        else{
+            delete o["iconWidth"];
+        }
+
+        if( this._iconHeight ){
+            o["iconHeight"] = this._iconHeight;
+        }
+        else{
+            delete o["iconHeight"];
+        }
+
+        if( this._fontSize ){
+            o["fontSize"] = this._fontSize;
+        }
+        else{
+            delete o["fontSize"];
         }
 
         if( this._fgColor ){
@@ -97,6 +121,30 @@ export default class LegacyButtonWidgetData extends WidgetData{
 
     getIcon(){
         return this._icon;
+    }
+
+    getIconWidth(){
+        return this._iconWidth;
+    }
+
+    setIconWidth( n ){
+        this._iconWidth = n;
+    }
+
+    getIconHeight(){
+        return this._iconHeight;
+    }
+
+    setIconHeight( n ){
+        this._iconHeight = n;
+    }
+
+    setFontSize( fontSize ){
+        this._fontSize = fontSize;
+    }
+
+    getFontSize(){
+        return this._fontSize;
     }
 
     getFgColor(){

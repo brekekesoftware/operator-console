@@ -1,53 +1,92 @@
+
+//!modify PBX
+const BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES = [
+    "$firstname","$lastname","$company","$tel_home","$tel_work","$tel_mobile","$email","$address","$notes"
+]
+const BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_TEL_ITEM_KEYNAMES = [
+    "$tel_home","$tel_work","$tel_mobile"
+]
 export default class PhonebookContactInfo_AutoDialView_ver2{
 
     constructor( contact ) {
-        this._Aid = contact["aid"];
-        this._DisplayName = contact["display_name"];
-        this._PhonebookName = contact["phonebook"];
-
-        const shared = contact["shared"];
-        if (typeof shared == "boolean") {
-            this._IsShared = shared;
-        }
-        else{
-            if (typeof shared === 'string' || shared instanceof String){
-                this._IsShared = shared.toLowerCase() === "true";
-            }
-            else{
-                this._IsShared = false;
-            }
-        }
-
         this._PhonebookContactInfozTelInfoArray = new Array();
         this._PhonebookContactInfozInfoArray = new Array();
         this._TelInfoKeyNameArray = new Array();
         this._TelInfoTitleArray = new Array();
-        //!collect phonebook tel info
-        const info = contact["info"];
-        const infoEntries = Object.entries(info);
-        for( const [key, value] of infoEntries ){
-            const pbContactInfozInfo = PhonebookContactInfozInfo_AutoDialView_ver2.createTry( key, value );
-            if( !pbContactInfozInfo ){
-                continue;
-            }
-            if( pbContactInfozInfo instanceof  PhonebookContactInfozTelInfo_AutoDialView_ver2 ){
-                this._TelInfoKeyNameArray.push( pbContactInfozInfo.getInfoKeyName() );
-                this._TelInfoTitleArray.push( pbContactInfozInfo.getTitle() );
-                if( pbContactInfozInfo.getValue() && pbContactInfozInfo.getValue().length !== 0 )
-                {
-                    this._PhonebookContactInfozTelInfoArray.push(pbContactInfozInfo);
+
+        if( contact ) {
+            this._Aid = contact["aid"];
+            this._DisplayName = contact["display_name"];
+            this._PhonebookName = contact["phonebook"];
+
+            const shared = contact["shared"];
+            if (typeof shared == "boolean") {
+                this._IsShared = shared;
+            } else {
+                if (typeof shared === 'string' || shared instanceof String) {
+                    this._IsShared = shared.toLowerCase() === "true";
+                } else {
+                    this._IsShared = false;
                 }
             }
-            // const pbTel = PhonebookContactInfozTel_AutoDialView_ver2.createPhonebookContactInfozTel_AutoDialView_ver2Try( pbContactInfozInfo  );
-            // if( pbTel ){
-            //     this._PhonebookContactInfozTelInfoArray.push( pbTel );
-            // }
-            this._PhonebookContactInfozInfoArray.push( pbContactInfozInfo );
+
+
+            //!collect phonebook tel info
+            const info = contact["info"];
+            const infoEntries = Object.entries(info);
+            for (const [key, value] of infoEntries) {
+                const pbContactInfozInfo = PhonebookContactInfozInfo_AutoDialView_ver2.createTry(key, value);
+                if (!pbContactInfozInfo) {
+                    continue;
+                }
+                if (pbContactInfozInfo instanceof PhonebookContactInfozTelInfo_AutoDialView_ver2) {
+                    this._TelInfoKeyNameArray.push(pbContactInfozInfo.getInfoKeyName());
+                    this._TelInfoTitleArray.push(pbContactInfozInfo.getTitle());
+                    if (pbContactInfozInfo.getValue() && pbContactInfozInfo.getValue().length !== 0) {
+                        this._PhonebookContactInfozTelInfoArray.push(pbContactInfozInfo);
+                    }
+                }
+                // const pbTel = PhonebookContactInfozTel_AutoDialView_ver2.createPhonebookContactInfozTel_AutoDialView_ver2Try( pbContactInfozInfo  );
+                // if( pbTel ){
+                //     this._PhonebookContactInfozTelInfoArray.push( pbTel );
+                // }
+                this._PhonebookContactInfozInfoArray.push(pbContactInfozInfo);
+            }
         }
+        else{
+            this._Aid = null;
+            this._DisplayName = null;
+            this._PhonebookName = null;
+            this._IsShared = false;
+
+            //add builtin items
+            const initialValue = "";
+            for( let i = 0; i < BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES.length; i++ ){
+                const key = BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES[i];
+                const pbContactInfozInfo = PhonebookContactInfozInfo_AutoDialView_ver2.createTry(key, initialValue);
+                if (pbContactInfozInfo instanceof PhonebookContactInfozTelInfo_AutoDialView_ver2) {
+                    this._TelInfoKeyNameArray.push(pbContactInfozInfo.getInfoKeyName());
+                    this._TelInfoTitleArray.push(pbContactInfozInfo.getTitle());
+                    if (pbContactInfozInfo.getValue() && pbContactInfozInfo.getValue().length !== 0) {
+                        this._PhonebookContactInfozTelInfoArray.push(pbContactInfozInfo);
+                    }
+                }
+                this._PhonebookContactInfozInfoArray.push(pbContactInfozInfo);
+            }
+
+        }
+
         Object.freeze(this._TelInfoKeyNameArray);
         Object.freeze(this._TelInfoTitleArray);
         Object.freeze(this._PhonebookContactInfozTelInfoArray);
         Object.freeze(this._PhonebookContactInfozInfoArray);
+    }
+
+    static get BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES(){
+        return BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES;
+    }
+    static get BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_TEL_ITEM_KEYNAMES(){
+        return BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_TEL_ITEM_KEYNAMES;
     }
 
     getFreezedTelInfoKeyNameArray(){
@@ -64,6 +103,13 @@ export default class PhonebookContactInfo_AutoDialView_ver2{
 
     getFreezedPhonebookContactInfozInfoArray(){
         return this._PhonebookContactInfozInfoArray;
+    }
+
+    getPhonebookContactInfoByKeyname( keyname ){
+        const foundInfo = this._PhonebookContactInfozInfoArray.find( (info) =>{
+            return info.getInfoKeyName() === keyname;
+        } );
+        return foundInfo;
     }
 
     getPhonebookContactInfozInfoByInfoKeyName( infoKeyName ){

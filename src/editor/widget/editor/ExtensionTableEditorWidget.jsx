@@ -10,18 +10,32 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
 
     constructor( props ) {
         super( props );
+        this._Extensions  = Object.freeze([
+            {"id" : "12345678",
+                "name" : i18n.t("DummyExtensionName") + "(1)"},
+            {"id" : "87654321",
+                "name" : i18n.t("DummyExtensionName") + "(2)"},
+        ]);
+        this._ExtensionsStatus = Object.freeze({
+            "12345678": "calling",
+            "87654321":"ringing"
+        });
     }
 
     //!overload
     _getRenderMainJsx() {
         const widgetData = this.getWidgetData();
-        const tableHeight = widgetData.getWidgetHeight();
-        const rowCount = Math.ceil( ( tableHeight - EXTENSION_TABLE_TH_HEIGHT ) / EXTENSION_TABLE_TD_HEIGHT  );
-        const extensions =  new Array( rowCount );
-        for( let i = 0; i < extensions.length; i++ ){
-            extensions[i] = {name:"\u00A0"};
-        }
-        const extensionsStatus = {};
+        //const tableHeight = widgetData.getWidgetHeight();
+        //const rowCount = Math.ceil( ( tableHeight - EXTENSION_TABLE_TH_HEIGHT ) / EXTENSION_TABLE_TD_HEIGHT  );
+        //const extensions =  new Array( rowCount );
+        // for( let i = 0; i < extensions.length; i++ ){
+        //     extensions[i] = {name:"\u00A0"};
+        // }
+        //const extensionsStatus = {};
+
+        //const rowCount = EXTENSIONS.length;
+        const extensions =  this._Extensions;
+        const extensionsStatus = this._ExtensionsStatus;
 
         const outerBorderRadius = ( widgetData.getExtensiontableOuterBorderRadius() || widgetData.getExtensiontableOuterBorderRadius() === 0 ) ? widgetData.getExtensiontableOuterBorderRadius() : 0; //!default
         const outerBorderThickness = ( widgetData.getExtensiontableOuterBorderThickness() || widgetData.getExtensiontableOuterBorderThickness() === 0 ) ? widgetData.getExtensiontableOuterBorderThickness()  : 0; //!default
@@ -34,6 +48,8 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
         const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableHeaderRowUnderlineColor() , "'#e0e0e0'" );   //!default
         const bodyRowUnderlineThickness = ( widgetData.getExtensiontableBodyRowUnderlineThickness() || widgetData.getExtensiontableBodyRowUnderlineThickness() === 0 ) ? widgetData.getExtensiontableBodyRowUnderlineThickness() : 1; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableBodyRowUnderlineColor() , "'#e0e0e0'" );   //!default
+        const headerFontSize = widgetData.getExtensiontableHeaderFontSize() ? widgetData.getExtensiontableHeaderFontSize() :  14;
+        const bodyFontSize = widgetData.getExtensiontableBodyFontSize() ? widgetData.getExtensiontableBodyFontSize() :  14;
 
         let key = 0;
         return (
@@ -48,17 +64,20 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
                     borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
+                        fontSize : headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                         borderRadius:outerBorderRadius +  "px 0 0 0",
                     }}>{i18n.t("id")}</th>
                     <th style={{
+                        fontSize : headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                     }}>{i18n.t("name")}</th>
                     <th style={{
+                        fontSize : headerFontSize + "px",
                         textTransform:"uppercase",
-                        height:EXTENSION_TABLE_TH_HEIGHT,
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
                         borderRadius:"0 " + outerBorderRadius + "px 0 0",
                     }}>{i18n.t("status")}</th>
                 </tr>
@@ -74,16 +93,19 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
                         }}
                     >
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT,
+                            fontSize : bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT,
                             borderRadius:"0 " + outerBorderRadius +  "px 0 0",
                         }}>{ext?.id}</td>
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT
+                            fontSize : bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT
                         }}>{ext?.name}</td>
                         <td style={{
-                            height:EXTENSION_TABLE_TD_HEIGHT,
+                            fontSize : bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT,
                             borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
-                        }}>{Object.values(extensionsStatus?.[ext?.id]?.callStatus || {}).join(',')}</td>
+                        }}>{extensionsStatus[ext.id]}</td>
                     </tr>
                 ))}
                 </tbody>

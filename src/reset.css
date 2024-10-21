@@ -226,7 +226,7 @@ button{
 
 /* .brOC .brOCReset a:hover { */
 .brOCReset a:hover {
-    color:#4BC5DE;
+    color:var(--defaultHrefHoverColor);
     text-decoration:underline;
     /* text-decoration-color:#4BC5DE; */
     cursor:pointer;

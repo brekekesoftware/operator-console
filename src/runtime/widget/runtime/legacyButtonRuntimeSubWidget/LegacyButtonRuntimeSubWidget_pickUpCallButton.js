@@ -3,6 +3,8 @@ import i18n from "../../../../i18n";
 import LegacyButtonRuntimeSubWidget from "./LegacyButtonRuntimeSubWidget";
 import BrekekeOperatorConsole from "../../../../index";
 import Util from "../../../../Util";
+import ACallInfo from "../../../../ACallInfo";
+import clsx from "clsx";
 
 export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends LegacyButtonRuntimeSubWidget  {
 
@@ -13,6 +15,7 @@ export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends Legac
     //!override
     getRenderJsx() {
         const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
         const buttonFgColor = widgetData.getFgColor();
         const buttonBgColor = widgetData.getBgColor();
         const buttonOuterBorderColor = widgetData.getOuterBorderColor();
@@ -29,8 +32,24 @@ export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends Legac
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+
+        // const callInfos = oc.getPhoneClient().getCallInfos();
+        // const callInfoCount = callInfos.getCallInfoCount();
+        // let isFlash = false;
+        // for( let i = 0; i < callInfoCount; i++ ){
+        //     const callInfo = callInfos.getCallInfoAt( i );
+        //     const isIncoming = callInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming;
+        //     if( isIncoming === true  ){
+        //         isFlash = true;
+        //         break;
+        //     }
+        // }
+
+        const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash")}
                        style={{
+                           fontSize:sButtonFontSize,
                            border:border,
                            borderRadius:borderRadius,
                            color:color,

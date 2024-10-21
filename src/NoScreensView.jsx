@@ -339,13 +339,13 @@ export default function NoScreensView( props ){
             <Button key="back" onClick={ () => handleCancel( operatorConsoleAsParent ) }>
                 {i18n.t("cancel")}
             </Button>,
-            <Button key="submit" type="primary" onClick={ () =>{
+            <Button key="submit" type="primary" className="brOCMarginLeftButtonToButton" onClick={ () =>{
                 setOpen(false);
                 operatorConsoleAsParent.setState({newLayoutModalOpen:true});
             } }>
                 {i18n.t("newLayout")}
             </Button>,
-            <Button key="submit2" type="primary" onClick={handleOpenLayoutOpen}>
+            <Button key="submit2" type="primary" className="brOCMarginLeftButtonToButton" onClick={handleOpenLayoutOpen}>
                 {i18n.t("openLayout")}
             </Button>
         ];
@@ -357,7 +357,7 @@ export default function NoScreensView( props ){
             <Button key="back" onClick={ () => handleCancel( operatorConsoleAsParent ) }>
                 {i18n.t("cancel")}
             </Button>,
-            <Button key="submit2" type="primary" onClick={handleOpenLayoutOpen}>
+            <Button key="submit2" type="primary" onClick={handleOpenLayoutOpen} className="brOCMarginLeftButtonToButton">
                 {i18n.t("openLayout")}
             </Button>
         ];
@@ -401,7 +401,7 @@ export default function NoScreensView( props ){
                     >
                         {/*<Button type="link">Delete a task</Button>*/}
                         {/*<Button key="submit" type="primary" onClick={handleOk}>*/}
-                        <Button key="submit" type="primary" onClick={handleNewLayoutOk}>
+                        <Button key="submit" type="primary" onClick={handleNewLayoutOk} className="brOCMarginLeftButtonToButton">
                             {i18n.t("ok")}
                         </Button>
                     </Popconfirm>

@@ -42,11 +42,12 @@ export default class PaneData {
             else{
                 this._dividerData = null;
             }
+            const dataVersion = options["dataVersion"];
             const oWidgetDatasForNoTab = paneDataObject["widgetDatasForNoTab"];
-            this._WidgetDatasForNoTabs = new WidgetDatasForNoTabs( this, null, oWidgetDatasForNoTab );
+            this._WidgetDatasForNoTabs = new WidgetDatasForNoTabs( this, null, oWidgetDatasForNoTab, dataVersion );
 
             const oTabsData = paneDataObject["tabsData"];
-            this._TabsData = new TabsData( this, null,  oTabsData );
+            this._TabsData = new TabsData( this, null,  oTabsData, dataVersion );
 
         }
         else {

@@ -33,7 +33,8 @@ const _LEGACY_BUTTON_WIDGET_SUBTYPE_IDS = Object.freeze({   //[ subtypeKey : sub
     pickUpCall:29,
     quickCall:30,
     autoDial:31,
-    oneTouchDial:32
+    oneTouchDial:32,
+    toggleHoldCall:33
 });
 const _LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES = Object.freeze({ //[ subtypeId : subtypeName ]
     0 : "LegacyDummyButton",
@@ -68,20 +69,21 @@ const _LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES = Object.freeze({ //[ subtypeId : subt
     29 : "LegacyPickUpCallButton",
     30 : "LegacyQuickCallButton",
     31 : "LegacyAutoDialButton",
-    32 : "LegacyOneTouchDialButton"
+    32 : "LegacyOneTouchDialButton",
+    33 : "LegacyToggleHoldCallButton"
 });
 export default class LegacyButtonWidgetSubData{
 
-    constructor( options ) {
-        this._LegacyButtonWidgetDataAsParent = options["legacyButtonWidgetDataAsParent"];
+    constructor( options = null, subDataOptions, dataVersion = null  ) {
+        this._LegacyButtonWidgetDataAsParent = subDataOptions["legacyButtonWidgetDataAsParent"];
 
         let currentOptions;
-        const oSubData = options["legacyButtonWidgetSubDataObject"];
+        const oSubData = subDataOptions["legacyButtonWidgetSubDataObject"];
         if( oSubData  ){
             currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
         }
         else {
-            currentOptions = options;
+            currentOptions = subDataOptions;
         }
         this._SubTypeId = currentOptions["legacyButtonWidgetSubTypeId"];
 

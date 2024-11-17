@@ -1,5 +1,6 @@
 import React from 'react';
 import {Rnd} from "react-rnd";
+import clsx from "clsx";
 
 export default class EditorWidget extends React.Component {
 
@@ -181,7 +182,9 @@ export default class EditorWidget extends React.Component {
         //         //translate : relativePositionX + "px " + relativePositionY + "px"
         //     }}
         // ></div>;
+        const bIsThisWidgetSelecting = editScreenView.getSelectingEditorWidgetDataFromState() === widgetData;
         const jsx = <Rnd
+            className={clsx("brOCEditingWidget", bIsThisWidgetSelecting && "brOCSelectingWidget")}
             size={{width:widgetWidth,height:widgetHeight}}
             position={{x:relativePositionX,y:relativePositionY}}
             //bounds="parent"

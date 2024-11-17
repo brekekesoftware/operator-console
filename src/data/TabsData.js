@@ -3,7 +3,7 @@ import i18n from "../i18n";
 
 export default class TabsData{
 
-    constructor( paneDataAsParent, cloneSrcTabsData, oTabsData  ) {
+    constructor( paneDataAsParent, cloneSrcTabsData, oTabsData, dataVersion = null  ) {
         this._PaneDataAsParent = paneDataAsParent;
         this._TabDataArray = new Array();
 
@@ -20,7 +20,7 @@ export default class TabsData{
             const tabDataArray = oTabsData["tabDataArray"];
             for( let i = 0; i < tabDataArray.length; i++ ){
                 const tabData = tabDataArray[i];
-                this._addTabForObject( tabData );
+                this._addTabForObject( tabData, dataVersion );
             }
             this.setSelectedTabKeyAsInt( oTabsData["selectedTabKeyAsInt"] );
         }
@@ -146,8 +146,8 @@ export default class TabsData{
         return tabData;
     }
 
-    _addTabForObject( oTab ){
-        const tabData = new TabData( this, null, null, null, oTab );
+    _addTabForObject( oTab, dataVersion = null ){
+        const tabData = new TabData( this, null, null, null, oTab, dataVersion );
         this._TabDataArray.push( tabData );
         return tabData;
     }

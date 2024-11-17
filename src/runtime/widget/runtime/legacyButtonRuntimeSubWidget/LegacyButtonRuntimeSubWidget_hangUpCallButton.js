@@ -13,13 +13,14 @@ export default class LegacyButtonRuntimeSubWidget_hangUpCallButton extends Legac
 
     //!override
     getRenderJsx() {
-        const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
-        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
-        const buttonFgColor = widgetData.getFgColor();
-        const buttonBgColor = widgetData.getBgColor();
-        const buttonOuterBorderColor = widgetData.getOuterBorderColor();
-        const buttonOuterBorderThickness = widgetData.getOuterBorderThickness();
-        const buttonOuterBorderRadius = widgetData.getOuterBorderRadius();
+        const subWidgetData = this.getLegacyButtonSubWidgetData();
+        //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
+        const buttonFgColor = subWidgetData.getFgColor();
+        const buttonBgColor = subWidgetData.getBgColor();
+        const buttonOuterBorderColor = subWidgetData.getOuterBorderColor();
+        const buttonOuterBorderThickness = subWidgetData.getOuterBorderThickness();
+        const buttonOuterBorderRadius = subWidgetData.getOuterBorderRadius();
 
         const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
         const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -31,13 +32,18 @@ export default class LegacyButtonRuntimeSubWidget_hangUpCallButton extends Legac
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
         let bDisabled;
         if( currentCallInfo ){
-            const callStatus = currentCallInfo.getCallStatus();
-            const bHolding = callStatus === ACallInfo.CALL_STATUSES.holding;
-            if( bHolding === true ){
-                bDisabled = true;
-            }
-            else{
+            const bIsTransffering = currentCallInfo.getIsTransferring();
+            if( bIsTransffering ) {
                 bDisabled = false;
+            }
+            else {
+                const callStatus = currentCallInfo.getCallStatus();
+                const bHolding = callStatus === ACallInfo.CALL_STATUSES.holding;
+                if (bHolding === true) {
+                    bDisabled = true;
+                } else {
+                    bDisabled = false;
+                }
             }
         }
         else{

@@ -308,6 +308,9 @@ export default function NoScreensView( props ){
                     for (let i = 0; i < noteNames.length; i++) {
                         const noteName = noteNames[i];
                         const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                        if( noteShortname.length === 0 ){    //Skip. Because can not click
+                            continue;
+                        }
                         const sNoteShortname = <div key={i}><a onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
                         jsxContents.push( sNoteShortname );
                     }

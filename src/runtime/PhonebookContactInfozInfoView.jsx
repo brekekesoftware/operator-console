@@ -556,7 +556,10 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                         PhonebookContactInfo_AutoDialView_ver2.BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES.map(
                                             ( key, i) => {
                                                 const info = this.state.pbContactInfo.getPhonebookContactInfoByKeyname( key );
-                                                if (info.isTelKey()) {
+                                                if( !info ){    //!bug //!comment An unlikely case
+                                                    return (null);
+                                                }
+                                                if ( info.isTelKey()) {
                                                     return (null);
                                                 }
                                                 // if (info.getInfoKeyName() === "$lang") { //!comment Not editable

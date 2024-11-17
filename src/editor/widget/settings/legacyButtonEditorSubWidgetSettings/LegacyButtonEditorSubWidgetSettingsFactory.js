@@ -46,6 +46,8 @@ import LegacyButtonEditorSubWidgetSettings_quickCallButton from "./LegacyButtonE
 import LegacyButtonEditorSubWidgetSettings_autoDialButton from "./LegacyButtonEditorSubWidgetSettings_autoDialButton";
 import LegacyButtonEditorSubWidgetSettings_oneTouchDialButton
     from "./LegacyButtonEditorSubWidgetSettings_oneTouchDialButton";
+import LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton
+    from "./LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton";
 
 export default class LegacyButtonEditorSubWidgetSettingsFactory  {
 
@@ -164,6 +166,9 @@ export default class LegacyButtonEditorSubWidgetSettingsFactory  {
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.oneTouchDial:
                 legacyButtonEditorSubWidgetSettings = new LegacyButtonEditorSubWidgetSettings_oneTouchDialButton( legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleHoldCall:
+                legacyButtonEditorSubWidgetSettings = new LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton( legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData );
                 break;
             default:
                 throw new Error("The legacy button editor sub widget settings was not present. legacyButtonWidgetSubTypeId=" +widgetSubTypeId  );

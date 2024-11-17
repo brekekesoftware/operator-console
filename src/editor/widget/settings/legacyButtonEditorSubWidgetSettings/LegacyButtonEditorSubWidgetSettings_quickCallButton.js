@@ -2,6 +2,8 @@ import React from 'react';
 import LegacyButtonEditorSubWidgetSettings from "./LegacyButtonEditorSubWidgetSettings";
 import i18n from "../../../../i18n";
 import Input from "antd/lib/input";
+import InputNumber from "antd/lib/input-number";
+import {Colorpicker} from "antd-colorpicker";
 
 export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -110,48 +112,76 @@ export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends
         const  sKeypadAsterisk = this._LegacyButtonEditorSubWidgetData.getKeypadAsterisk() ? this._LegacyButtonEditorSubWidgetData.getKeypadAsterisk() : "";
         const  sKeypadSharp = this._LegacyButtonEditorSubWidgetData.getKeypadSharp() ? this._LegacyButtonEditorSubWidgetData.getKeypadSharp() : "";
 
+        const iconSelectJsx = this._getIconSelectJsx();
+        const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
-            <>
-                <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
-                       defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
-                <p>0</p>
-                <Input allowClear value={sKeypadZero} defaultValue={sKeypadZero}
-                       onChange={(e) => this._onChangeKeypadZero(e)}/>
-                <p>1</p>
-                <Input allowClear value={sKeypadOne} defaultValue={sKeypadOne}
-                       onChange={(e) => this._onChangeKeypadOne(e)}/>
-                <p>2</p>
-                <Input allowClear value={sKeypadTwo} defaultValue={sKeypadTwo}
-                       onChange={(e) => this._onChangeKeypadTwo(e)}/>
-                <p>3</p>
-                <Input allowClear value={sKeypadThree} defaultValue={sKeypadThree}
-                       onChange={(e) => this._onChangeKeypadThree(e)}/>
-                <p>4</p>
-                <Input allowClear value={sKeypadFour} defaultValue={sKeypadFour}
-                       onChange={(e) => this._onChangeKeypadFour(e)}/>
-                <p>5</p>
-                <Input allowClear value={sKeypadFive} defaultValue={sKeypadFive}
-                       onChange={(e) => this._onChangeKeypadFive(e)}/>
-                <p>6</p>
-                <Input allowClear value={sKeypadSix} defaultValue={sKeypadSix}
-                       onChange={(e) => this._onChangeKeypadSix(e)}/>
-                <p>7</p>
-                <Input allowClear value={sKeypadSeven} defaultValue={sKeypadSeven}
-                       onChange={(e) => this._onChangeKeypadSeven(e)}/>
-                <p>8</p>
-                <Input allowClear value={sKeypadEight} defaultValue={sKeypadEight}
-                       onChange={(e) => this._onChangeKeypadEight(e)}/>
-                <p>9</p>
-                <Input allowClear value={sKeypadNine} defaultValue={sKeypadNine}
-                       onChange={(e) => this._onChangeKeypadNine(e)}/>
-                <p>*</p>
-                <Input allowClear value={sKeypadAsterisk} defaultValue={sKeypadAsterisk}
-                       onChange={(e) => this._onChangeKeypadAsterisk(e)}/>
-                <p>#</p>
-                <Input allowClear value={sKeypadSharp} defaultValue={sKeypadSharp}
-                       onChange={(e) => this._onChangeKeypadSharp(e)}/>
-            </>
+                <>
+                    <p>{i18n.t("icon")}</p>
+                    {iconSelectJsx}
+                    <p>{i18n.t("Icon_width")}</p>
+                    <InputNumber min="0" value={subWidgetData.getIconWidth()}
+                                 onChange={(n) => this._onChangeIconWidth(n)}/>
+                    <p>{i18n.t("Icon_height")}</p>
+                    <InputNumber min="0" value={subWidgetData.getIconHeight()}
+                                 onChange={(n) => this._onChangeIconHeight(n)}/>
+                    <p>{i18n.t("label")}</p>
+                    <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
+                           defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
+                    <p>0</p>
+                    <Input allowClear value={sKeypadZero} defaultValue={sKeypadZero}
+                           onChange={(e) => this._onChangeKeypadZero(e)}/>
+                    <p>1</p>
+                    <Input allowClear value={sKeypadOne} defaultValue={sKeypadOne}
+                           onChange={(e) => this._onChangeKeypadOne(e)}/>
+                    <p>2</p>
+                    <Input allowClear value={sKeypadTwo} defaultValue={sKeypadTwo}
+                           onChange={(e) => this._onChangeKeypadTwo(e)}/>
+                    <p>3</p>
+                    <Input allowClear value={sKeypadThree} defaultValue={sKeypadThree}
+                           onChange={(e) => this._onChangeKeypadThree(e)}/>
+                    <p>4</p>
+                    <Input allowClear value={sKeypadFour} defaultValue={sKeypadFour}
+                           onChange={(e) => this._onChangeKeypadFour(e)}/>
+                    <p>5</p>
+                    <Input allowClear value={sKeypadFive} defaultValue={sKeypadFive}
+                           onChange={(e) => this._onChangeKeypadFive(e)}/>
+                    <p>6</p>
+                    <Input allowClear value={sKeypadSix} defaultValue={sKeypadSix}
+                           onChange={(e) => this._onChangeKeypadSix(e)}/>
+                    <p>7</p>
+                    <Input allowClear value={sKeypadSeven} defaultValue={sKeypadSeven}
+                           onChange={(e) => this._onChangeKeypadSeven(e)}/>
+                    <p>8</p>
+                    <Input allowClear value={sKeypadEight} defaultValue={sKeypadEight}
+                           onChange={(e) => this._onChangeKeypadEight(e)}/>
+                    <p>9</p>
+                    <Input allowClear value={sKeypadNine} defaultValue={sKeypadNine}
+                           onChange={(e) => this._onChangeKeypadNine(e)}/>
+                    <p>*</p>
+                    <Input allowClear value={sKeypadAsterisk} defaultValue={sKeypadAsterisk}
+                           onChange={(e) => this._onChangeKeypadAsterisk(e)}/>
+                    <p>#</p>
+                    <Input allowClear value={sKeypadSharp} defaultValue={sKeypadSharp}
+                           onChange={(e) => this._onChangeKeypadSharp(e)}/>
+                    <p>{i18n.t("Text_size")}</p>
+                    <InputNumber min="0" value={subWidgetData.getFontSize()}
+                                 onChange={(n) => this._onChangeFontSize(n)}/>
+                    <p>{i18n.t("fgColor")}</p>
+                    <Colorpicker format="rgb" value={subWidgetData.getFgColor()}
+                                 onChange={(color) => this._onChangeFgColor(color)}/>
+                    <p>{i18n.t("bgColor")}</p>
+                    <Colorpicker format="rgb" value={subWidgetData.getBgColor()}
+                                 onChange={(color) => this._onChangeBgColor(color)}/>
+                    <p>{i18n.t("outerBorderColor")}</p>
+                    <Colorpicker format="rgb" value={subWidgetData.getOuterBorderColor()}
+                                 onChange={(color) => this._onChangeOuterBorderColor(color)}/>
+                    <p>{i18n.t("outerBorderRadius")}</p>
+                    <InputNumber min="0" value={subWidgetData.getOuterBorderRadius()}
+                                 onChange={(n) => this._onChangeOuterBorderRadius(n)}/>
+                    <p>{i18n.t("outerBorderThickness")}</p>
+                    <InputNumber min="1" value={subWidgetData.getOuterBorderThickness()}
+                                 onChange={(n) => this._onChangeOuterBorderThickness(n)}/>
+                </>
         );
     }
 

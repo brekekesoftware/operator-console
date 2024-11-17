@@ -5,6 +5,7 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import "./login.scss"
 import WebphonePhoneClient from "./WebphonePhoneClient";
+import BrekekeOperatorConsole from "./index";
 
 export default class Login extends React.Component {
     constructor( props ) {
@@ -179,13 +180,13 @@ export default class Login extends React.Component {
                     <div className="brOCLoginHeaderLogoProduct">Operator Console</div>
                 </div>
                 <div className={"brOCLoginBody"}>
-                    <div className="brOCLoginTitle">Sign In</div>
-                    <div ref={this._LoginMessageElementRef} className="brOCLoginMessageDiv" style={{display:"none"}}>
+                    <div className="brOCLoginTitle">{i18n.t("signin")}</div>
+                    <div ref={this._LoginMessageElementRef} className="brOCLoginMessageDiv" style={{display: "none"}}>
                     </div>
                     <Form
                         name="login"
-                        initialValues={ this.props.initialValues}
-                        onFinish={  this._login }
+                        initialValues={this.props.initialValues}
+                        onFinish={this._login}
                     >
                         <Form.Item
                             name="hostname"
@@ -196,7 +197,7 @@ export default class Login extends React.Component {
                                 },
                             ]}
                         >
-                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("hostname")} />
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("hostname")}/>
                         </Form.Item>
                         <Form.Item
                             name="port"
@@ -207,7 +208,7 @@ export default class Login extends React.Component {
                                 },
                             ]}
                         >
-                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("port")} />
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("port")}/>
                         </Form.Item>
                         <Form.Item
                             name="tenant"
@@ -218,7 +219,7 @@ export default class Login extends React.Component {
                                 },
                             ]}
                         >
-                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("tenant")} />
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("tenant")}/>
                         </Form.Item>
                         <Form.Item
                             name="username"
@@ -229,7 +230,7 @@ export default class Login extends React.Component {
                                 },
                             ]}
                         >
-                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")} />
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")}/>
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -240,7 +241,7 @@ export default class Login extends React.Component {
                                 },
                             ]}
                         >
-                            <Input className="ant-input-forBrOCLogin" type="password" placeholder={i18n.t("password")} />
+                            <Input className="ant-input-forBrOCLogin" type="password" placeholder={i18n.t("password")}/>
                         </Form.Item>
                         <Form.Item
                             name="pbxDirectoryName"
@@ -250,17 +251,20 @@ export default class Login extends React.Component {
                                     message: i18n.t("username_is_required"),
                                 },
                             ]}
-                            style={{display:"none"}}
+                            style={{display: "none"}}
                         >
-                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")}  type="hidden"  />
+                            <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")} type="hidden"/>
                         </Form.Item>
                         <Form.Item>
-                            <Button type="success" htmlType="submit" className="brOCLoginButton" disabled={this.state.isSigningin}>
+                            <Button type="success" htmlType="submit" className="brOCLoginButton"
+                                    disabled={this.state.isSigningin}>
                                 {i18n.t("signin")}
                             </Button>
                         </Form.Item>
                     </Form>
                 </div>
+                <div
+                    style={{textAlign: "right"}}>{i18n.t("Version")} {BrekekeOperatorConsole.BREKEKE_OPERATOR_CONSOLE_VERSION}</div>
             </div>
         )
     }

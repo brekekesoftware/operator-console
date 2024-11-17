@@ -2,7 +2,7 @@ import WidgetDatasForTabs from "./WidgetDatasForTabs";
 
 export default class TabData{
 
-    constructor( tabDatasAsParent, tabKeyAsInt, tabTitle, srcTabData, oTab   ) {
+    constructor( tabDatasAsParent, tabKeyAsInt, tabTitle, srcTabData, oTab, dataVersion = null   ) {
         if( srcTabData ){
             this._tabLabel = srcTabData.getTabLabel();
             this._TabKeyAsInt = srcTabData.getTabKeyAsInt();
@@ -13,7 +13,7 @@ export default class TabData{
             this._tabLabel = oTab["tabLabel"];
             this._TabKeyAsInt = oTab["tabKeyAsInt"];
             this._TabKeyAsString = this._TabKeyAsInt.toString();
-            this._WidgetDatas = new WidgetDatasForTabs(this, null, oTab["widgetDatas"]);
+            this._WidgetDatas = new WidgetDatasForTabs(this, null, oTab["widgetDatas"], dataVersion );
         }
         else {
             this._tabLabel = tabTitle;

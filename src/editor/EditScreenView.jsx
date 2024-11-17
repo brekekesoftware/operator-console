@@ -79,6 +79,11 @@ export default class EditScreenView extends React.Component {
     this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget}, onSetStateFunc );
   }
 
+  getSelectingEditorWidgetDataFromState(){
+    const widgetData = this.state.selectingEditorWidgetData;
+    return widgetData;
+  }
+
   _abortEditingScreen(){
     this._OperatorConsoleAsParent.setDisplayState(brOcDisplayStates.showScreen_ver2);
   }

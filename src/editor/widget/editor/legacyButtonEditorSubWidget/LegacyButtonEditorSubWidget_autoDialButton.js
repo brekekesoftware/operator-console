@@ -27,13 +27,14 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
 
     //!override
     getRenderJsx() {
-        const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
-        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
-        const buttonFgColor = widgetData.getFgColor();
-        const buttonBgColor = widgetData.getBgColor();
-        const buttonOuterBorderColor = widgetData.getOuterBorderColor();
-        const buttonOuterBorderThickness = widgetData.getOuterBorderThickness();
-        const buttonOuterBorderRadius = widgetData.getOuterBorderRadius();
+        const subWidgetData = this.getLegacyButtonSubWidgetData();
+        //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
+        const buttonFgColor = subWidgetData.getFgColor();
+        const buttonBgColor = subWidgetData.getBgColor();
+        const buttonOuterBorderColor = subWidgetData.getOuterBorderColor();
+        const buttonOuterBorderThickness = subWidgetData.getOuterBorderThickness();
+        const buttonOuterBorderRadius = subWidgetData.getOuterBorderRadius();
 
         let color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
         let backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -43,7 +44,6 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
 
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        const subWidgetData = this.getLegacyButtonSubWidgetData();
         const subWidgetDatas = oc.getShowAutoDialWidgetSubDatas_ver2();
         const isRedColor =  subWidgetDatas && this._findWidgetUuidIndex( subWidgetDatas, subWidgetData ) !== -1;
 

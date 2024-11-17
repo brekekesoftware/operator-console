@@ -1,6 +1,8 @@
 import ACallInfos from "./ACallInfos";
 import WebphoneCallInfo from "./WebphoneCallInfo";
 import {reaction} from "mobx";
+import PalPhoneClient from "./PalPhoneClient";
+import ACallInfo from "./ACallInfo";
 
 export default class WebphoneCallInfos extends ACallInfos{
     constructor( options ) {
@@ -103,5 +105,41 @@ export default class WebphoneCallInfos extends ACallInfos{
 
     getWebphonePhoneClientAsParent(){
         return this._WebphonePhoneClientAsParent;
+    }
+
+    onFlushPalNofityStatusEventByWebphonePhoneClient(e){
+        // const status = parseInt( e.status );
+        // const phoneIdx = e["phone_idx"]
+        //
+        // if( status === PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.callSuccess && phoneIdx == PalPhoneClient.PHONE_INDEX) {
+        //     const role = e.role;
+        //     const roomId = e.room_id;
+        //     if (role === 's') {
+        //         const callInfoCount = this.getCallInfoCount();
+        //         for (let i = 0; i < callInfoCount; i++) {
+        //             const callInfo = this.getCallInfoAt(i);
+        //             const bRoom = roomId === callInfo.getPbxRoomId();
+        //             if (bRoom) {
+        //                 if (callInfo.getCallStatus() === ACallInfo.CALL_STATUSES.calling) {
+        //                     callInfo.onCallSuccessByPalCallInfos(e);
+        //                     return;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        const username = this._WebphonePhoneClientAsParent.getOperatorConsoleAsParent().getLoggedinUsername();
+        if( e["user"] !== username  ){
+            return;
+        }
+
+        const talkerId = e.talker_id;
+        const callInfoIndex = this._getCallInfoIndexByTalkerId( talkerId );
+        if( callInfoIndex !== -1 ){
+            const webphoneCallInfo = this.getCallInfoAt( callInfoIndex );
+            webphoneCallInfo.onFlushPalNotifyStatusEventByWebphoneCallInfos( e );
+            return;
+        }
     }
 }

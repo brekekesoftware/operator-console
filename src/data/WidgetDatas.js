@@ -5,7 +5,7 @@ import WidgetData from "./widgetData/WidgetData";
 
 //!abstract class
 export default class WidgetDatas{
-  constructor( cloneSrcWidgetDatas, oWidgetDatas  ) {
+  constructor( cloneSrcWidgetDatas, oWidgetDatas, dataVersion = null  ) {
     this._WidgetDataArray = new Array();    //WidgetData
     if( cloneSrcWidgetDatas ) {    //clone
       const srcWidgetDataArray = cloneSrcWidgetDatas._WidgetDataArray;
@@ -37,7 +37,7 @@ export default class WidgetDatas{
         // }
         const options = {...oWidgetData };
         options["widgetDatasAsParent"] = this;
-
+        options["dataVersion"] = dataVersion;
         const widgetData = WidgetDataFactory.getStaticWidgetDataFactoryInstance().newWidgetDataInstance( options );
         this._WidgetDataArray.push( widgetData );
       }

@@ -135,6 +135,9 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                 for (let i = 0; i < noteNames.length; i++) {
                     const noteName = noteNames[i];
                     const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                    if( noteShortname.length === 0 ){   //Skip. Because can not select.
+                        continue;
+                    }
                     const sNoteShortname = <div key={i}><a className="test" onClick={ () => selectOCNoteByShortname( operatorConsole, noteShortname ) } >{noteShortname}</a><br /></div>;
                     jsxContents.push( sNoteShortname );
                 }

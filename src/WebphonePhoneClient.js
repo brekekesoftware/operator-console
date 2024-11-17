@@ -245,6 +245,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
     statusEvents = [];
     flushStatusEvents = debounce(() => {
         console.log('pal.notify_status', this.statusEvents);
+        this._flushStatusEvents();
         this._flushExtensionStatusEvents();
         //this._flushLineStatusEvents();
         this.statusEvents = [];
@@ -256,6 +257,13 @@ export default class WebphonePhoneClient  extends APhoneClient {
     //     //this._flushLineStatusEvents();
     //     this.statusEvents = [];
     // };
+
+    _flushStatusEvents(){
+        for (const e of this.statusEvents) {
+            this._webphoneCallInfos.onFlushPalNofityStatusEventByWebphonePhoneClient(e);
+        }
+
+    }
 
     _flushExtensionStatusEvents(){
         let extensionsStatus = {...this._OperatorConsoleAsParent.getExtensionsStatus()};
@@ -534,7 +542,8 @@ export default class WebphonePhoneClient  extends APhoneClient {
      */
     async transferAsync( tenant, dialing, talkerId, mode ){
         const transferOptions =  {
-            user: dialing,
+            //user: dialing,  //to : dialing, //!check //!forBug https://docs.brekeke.com/pbx/transfer
+            to: dialing,
             tid: talkerId,
             mode:mode
         };
@@ -542,6 +551,22 @@ export default class WebphonePhoneClient  extends APhoneClient {
             transferOptions["tenant"] = tenant;
         }
         return  this.pal.call_pal("transfer", transferOptions );
+    }
+
+    /**
+     *  overload method
+     * @param tenant
+     * @param talkerId
+     * @returns {Promise<*>}
+     */
+    async cancelTransferAsync( tenant, talkerId ){
+        const options =  {
+            tid: talkerId
+        };
+        if( tenant !== undefined && tenant !== null ){
+            options["tenant"] = tenant;
+        }
+        return  this.pal.call_pal("cancelTransfer", options );
     }
 
     /**

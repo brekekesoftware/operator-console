@@ -8,7 +8,7 @@ import LegacyButtonRuntimeSubWidget_toggleRecordingButton from "./LegacyButtonRu
 import LegacyButtonRuntimeSubWidget_alarmButton from "./LegacyButtonRuntimeSubWidget_alarmButton";
 import LegacyButtonRuntimeSubWidget_prevCallButton from "./LegacyButtonRuntimeSubWidget_prevCallButton";
 import LegacyButtonRuntimeSubWidget_monitorDialingExtensionButton
-    from "./LegacyButtonRuntimeSubWidget_minitorDialingExtensionButton";
+    from "./LegacyButtonRuntimeSubWidget_monitorDialingExtensionButton";
 import LegacyButtonRuntimeSubWidget_stationLineDesignationButton
     from "./LegacyButtonRuntimeSubWidget_stationLineDesignationButton";
 import LegacyButtonRuntimeSubWidget_parkCallButton from "./LegacyButtonRuntimeSubWidget_parkCallButton";
@@ -34,6 +34,7 @@ import LegacyButtonRuntimeSubWidget_pickUpCallButton from "./LegacyButtonRuntime
 import LegacyButtonRuntimeSubWidget_quickCallButton from "./LegacyButtonRuntimeSubWidget_quickCallButton";
 import LegacyButtonRuntimeSubWidget_autoDialButton from "./LegacyButtonRuntimeSubWidget_autoDialButton";
 import LegacyButtonRuntimeSubWidget_oneTouchDialButton from "./LegacyButtonRuntimeSubWidget_oneTouchDialButton";
+import LegacyButtonRuntimeSubWidget_toggleHoldCallButton from "./LegacyButtonRuntimeSubWidget_toggleHoldCallButton";
 
 export default class LegacyButtonRuntimeSubWidgetFactory  {
 
@@ -152,6 +153,9 @@ export default class LegacyButtonRuntimeSubWidgetFactory  {
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.oneTouchDial:
                 legacyButtonRuntimeSubWidget = new LegacyButtonRuntimeSubWidget_oneTouchDialButton( legacyButtonRuntimeWidgetAsParent, widgetSubData );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleHoldCall:
+                legacyButtonRuntimeSubWidget = new LegacyButtonRuntimeSubWidget_toggleHoldCallButton( legacyButtonRuntimeWidgetAsParent, widgetSubData );
                 break;
             default:
                 throw new Error("The legacy button runtime  sub widget was not present. legacyButtonWidgetSubTypeId=" +widgetSubTypeId  );

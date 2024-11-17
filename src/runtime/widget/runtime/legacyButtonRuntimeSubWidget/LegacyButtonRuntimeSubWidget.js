@@ -26,14 +26,15 @@ export default class LegacyButtonRuntimeSubWidget  {
         throw new Error("Not implemented.");
     }
 
-    _getIconJsx( icon, label  ){
-        const widgetData = this._LegacyButtonRuntimeSubWidgetData.getLegacyButtonWidgetDataAsParent();
-        if( !icon ){
-            icon = widgetData.getIcon();
+    _getIconJsx( icon, label, nIconWidth, nIconHeight  ){
+        const subWidgetData = this._LegacyButtonRuntimeSubWidgetData;
+        //const widgetData = subWidgetData.getLegacyButtonWidgetDataAsParent();
+        if( !icon && subWidgetData.getIcon ){
+            icon = subWidgetData.getIcon();
         }
 
-        if( !label && this._LegacyButtonRuntimeSubWidgetData.getLabel ){
-            label = this._LegacyButtonRuntimeSubWidgetData.getLabel();
+        if( !label && subWidgetData.getLabel ){
+            label = subWidgetData.getLabel();
         }
 
         if( !label ){
@@ -54,13 +55,48 @@ export default class LegacyButtonRuntimeSubWidget  {
                 alt = icon;
             }
             const src = icon.substring(5,icon.length);   //5 is path:
-            const iconWidth = widgetData.getIconWidth() ? widgetData.getIconWidth() : 32;
-            const iconHeight = widgetData.getIconHeight() ? widgetData.getIconHeight() : 32;
+            let iconWidth;
+            if( nIconWidth ){
+                iconWidth = nIconWidth;
+            }
+            else{
+                if( subWidgetData.getIconWidth ) {
+                    iconWidth = subWidgetData.getIconWidth();
+                }
+                if( !iconWidth ){
+                    iconWidth = 32;
+                }
+            }
+            let iconHeight;
+            if( nIconHeight ){
+                iconHeight = nIconHeight;
+            }
+            else {
+                if( subWidgetData.getIconHeight ) {
+                    iconHeight = subWidgetData.getIconHeight();
+                }
+                if( !iconHeight ){
+                    iconHeight = 32;
+                }
+            }
             iconJsx = (<img src={src} alt={alt} width={iconWidth} height={iconHeight} />);
         }
         else {
-            const iconWidth = widgetData.getIconWidth();
-            const iconHeight = widgetData.getIconHeight();
+            let iconWidth;
+            if( nIconWidth ){
+                iconWidth = nIconWidth;
+            }
+            else{
+                iconWidth = subWidgetData.getIconWidth();
+            }
+            let iconHeight;
+            if( nIconHeight ){
+                iconHeight = nIconHeight;
+            }
+            else {
+                iconHeight = subWidgetData.getIconHeight();
+            }
+
             const oStyle = {};
             let size = "lg";
             if( iconWidth !== undefined && iconWidth !== null ){

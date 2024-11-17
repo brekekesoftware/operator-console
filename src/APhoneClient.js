@@ -113,6 +113,16 @@ export default class APhoneClient {
     }
 
     /**
+     *  overload method
+     * @param tenant
+     * @param talkerId
+     * @returns {Promise<*>}
+     */
+    async cancelTransferAsync( tenant, talkerId ){
+        throw new Error("Not implemented.");
+    }
+
+    /**
      *  abstract method
      * @param tenant
      * @param talkerId

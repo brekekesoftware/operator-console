@@ -35,6 +35,7 @@ import LegacyButtonWidgetSubData_pickUpCallButton from "./LegacyButtonWidgetSubD
 import LegacyButtonWidgetSubData_quickCallButton from "./LegacyButtonWidgetSubData_quickCallButton";
 import LegacyButtonWidgetSubData_autoDialButton from "./LegacyButtonWidgetSubData_autoDialButton";
 import LegacyButtonWidgetSubData_oneTouchDialButton from "./LegacyButtonWidgetSubData_oneTouchDialButton";
+import LegacyButtonWidgetSubData_toggleHoldCallButton from "./LegacyButtonWidgetSubData_toggleHoldCallButton";
 
 class LegacyButtonWidgetSubData_pickUpCallCallButton {
     constructor(options) {
@@ -52,10 +53,10 @@ export default class LegacyButtonWidgetSubDataFactory{
         return _INSTANCE;
     }
 
-    newLegacyButtonWidgetSubDataInstance( options ){
-        let  subDataTypeId = options["legacyButtonWidgetSubTypeId"];
+    newLegacyButtonWidgetSubDataInstance( dataOptions = null, subDataOptions, dataVersion = null  ){
+        let  subDataTypeId = subDataOptions["legacyButtonWidgetSubTypeId"];
         if( !subDataTypeId && subDataTypeId !== 0 ){
-            const oSubData = options["legacyButtonWidgetSubDataObject"];
+            const oSubData = subDataOptions["legacyButtonWidgetSubDataObject"];
             subDataTypeId = oSubData["legacyButtonWidgetSubTypeId"];
         }
 
@@ -66,103 +67,106 @@ export default class LegacyButtonWidgetSubDataFactory{
         let subData;
         switch( subDataTypeId ){
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.dummy:
-                subData = new LegacyButtonWidgetSubData_dummyButton( options );
+                subData = new LegacyButtonWidgetSubData_dummyButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.callTalking:
-                subData = new LegacyButtonWidgetSubData_callTalkingButton( options );
+                subData = new LegacyButtonWidgetSubData_callTalkingButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.noAnswer:
-                subData = new LegacyButtonWidgetSubData_noAnswerButton( options );
+                subData = new LegacyButtonWidgetSubData_noAnswerButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.callback:
-                subData = new LegacyButtonWidgetSubData_callbackButton( options );
+                subData = new LegacyButtonWidgetSubData_callbackButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.transfer:
-                subData = new LegacyButtonWidgetSubData_transferButton( options );
+                subData = new LegacyButtonWidgetSubData_transferButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleRecording:
-                subData = new LegacyButtonWidgetSubData_toggleRecordingButton( options );
+                subData = new LegacyButtonWidgetSubData_toggleRecordingButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.alarm:
-                subData = new LegacyButtonWidgetSubData_alarmButton( options );
+                subData = new LegacyButtonWidgetSubData_alarmButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.prevCall:
-                subData = new LegacyButtonWidgetSubData_prevCallButton( options );
+                subData = new LegacyButtonWidgetSubData_prevCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.monitorDialingExtension:
-                subData = new LegacyButtonWidgetSubData_monitorDialingExtensionButton( options );
+                subData = new LegacyButtonWidgetSubData_monitorDialingExtensionButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.stationLineDesignation:
-                subData = new LegacyButtonWidgetSubData_stationLineDesignationButton( options );
+                subData = new LegacyButtonWidgetSubData_stationLineDesignationButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.parkCall:
-                subData = new LegacyButtonWidgetSubData_parkCallButton( options );
+                subData = new LegacyButtonWidgetSubData_parkCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.seriesSet:
-                subData = new LegacyButtonWidgetSubData_seriesSetButton( options );
+                subData = new LegacyButtonWidgetSubData_seriesSetButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.monitoringCall:
-                subData = new LegacyButtonWidgetSubData_monitoringCallButton( options );
+                subData = new LegacyButtonWidgetSubData_monitoringCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.start:
-                subData = new LegacyButtonWidgetSubData_startButton( options );
+                subData = new LegacyButtonWidgetSubData_startButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleMuted:
-                subData = new LegacyButtonWidgetSubData_toggleMutedButton( options );
+                subData = new LegacyButtonWidgetSubData_toggleMutedButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.leavingSeat:
-                subData = new LegacyButtonWidgetSubData_leavingSeatButton( options );
+                subData = new LegacyButtonWidgetSubData_leavingSeatButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.nightTime:
-                subData = new LegacyButtonWidgetSubData_nightTimeButton( options );
+                subData = new LegacyButtonWidgetSubData_nightTimeButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.available:
-                subData = new LegacyButtonWidgetSubData_availableButton( options );
+                subData = new LegacyButtonWidgetSubData_availableButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.nextCall:
-                subData = new LegacyButtonWidgetSubData_nextCallButton( options );
+                subData = new LegacyButtonWidgetSubData_nextCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.line:
-                subData = new LegacyButtonWidgetSubData_lineButton( options );
+                subData = new LegacyButtonWidgetSubData_lineButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.keypad:
-                subData = new LegacyButtonWidgetSubData_keypadButton( options );
+                subData = new LegacyButtonWidgetSubData_keypadButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.makeCall:
-                subData = new LegacyButtonWidgetSubData_makeCallButton( options );
+                subData = new LegacyButtonWidgetSubData_makeCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.backspace:
-                subData = new LegacyButtonWidgetSubData_backspaceButton( options );
+                subData = new LegacyButtonWidgetSubData_backspaceButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.incomingCall:
-                subData = new LegacyButtonWidgetSubData_incomingCallButton( options );
+                subData = new LegacyButtonWidgetSubData_incomingCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.threeWayCall:
-                subData = new LegacyButtonWidgetSubData_threeWayCallButton( options );
+                subData = new LegacyButtonWidgetSubData_threeWayCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.outgoingCall:
-                subData = new LegacyButtonWidgetSubData_outgoingCallButton( options );
+                subData = new LegacyButtonWidgetSubData_outgoingCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.hangUpCall:
-                subData = new LegacyButtonWidgetSubData_hangUpCallButton( options );
+                subData = new LegacyButtonWidgetSubData_hangUpCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.unholdCall:
-                subData = new LegacyButtonWidgetSubData_unholdCallButton( options );
+                subData = new LegacyButtonWidgetSubData_unholdCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.holdCall:
-                subData = new LegacyButtonWidgetSubData_holdCallButton( options );
+                subData = new LegacyButtonWidgetSubData_holdCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.pickUpCall:
-                subData = new LegacyButtonWidgetSubData_pickUpCallButton( options );
+                subData = new LegacyButtonWidgetSubData_pickUpCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.quickCall:
-                subData = new LegacyButtonWidgetSubData_quickCallButton( options );
+                subData = new LegacyButtonWidgetSubData_quickCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.autoDial:
-                subData = new LegacyButtonWidgetSubData_autoDialButton( options );
+                subData = new LegacyButtonWidgetSubData_autoDialButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.oneTouchDial:
-                subData = new LegacyButtonWidgetSubData_oneTouchDialButton( options );
+                subData = new LegacyButtonWidgetSubData_oneTouchDialButton( dataOptions, subDataOptions, dataVersion  );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleHoldCall:
+                subData = new LegacyButtonWidgetSubData_toggleHoldCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             default:
                 throw new Error("Cannot create an instance of the Button widget because the subtype is unknown.subTypeId=" + subDataTypeId );

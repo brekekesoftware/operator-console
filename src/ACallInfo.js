@@ -7,6 +7,7 @@ export default class ACallInfo {
     constructor( callInfosAsParent ) {
         this._CallInfosAsParent = callInfosAsParent;
         this._CallInfoUuid = uuidv4();
+        this._isTransferring = false;
     }
 
     /**
@@ -114,6 +115,17 @@ export default class ACallInfo {
     getIsHolding(){
         throw new Error("Not implemented.");
         return false;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    getIsTransferring(){
+        return this._isTransferring;
+    }
+
+    setIsTransferring(b){
+        this._isTransferring = b;
     }
 
     /**

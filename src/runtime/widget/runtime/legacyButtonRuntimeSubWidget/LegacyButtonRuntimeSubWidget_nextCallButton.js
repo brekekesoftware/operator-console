@@ -13,13 +13,14 @@ export default class LegacyButtonRuntimeSubWidget_nextCallButton extends LegacyB
 
     //!override
     getRenderJsx() {
-        const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
-        const sButtonFontSize = widgetData.getFontSize() ? widgetData.getFontSize() + "px" : "1rem";    //!default
-        const buttonFgColor = widgetData.getFgColor();
-        const buttonBgColor = widgetData.getBgColor();
-        const buttonOuterBorderColor = widgetData.getOuterBorderColor();
-        const buttonOuterBorderThickness = widgetData.getOuterBorderThickness();
-        const buttonOuterBorderRadius = widgetData.getOuterBorderRadius();
+        const subWidgetData = this.getLegacyButtonSubWidgetData();
+        //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
+        const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
+        const buttonFgColor = subWidgetData.getFgColor();
+        const buttonBgColor = subWidgetData.getBgColor();
+        const buttonOuterBorderColor = subWidgetData.getOuterBorderColor();
+        const buttonOuterBorderThickness = subWidgetData.getOuterBorderThickness();
+        const buttonOuterBorderRadius = subWidgetData.getOuterBorderRadius();
 
         const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
         const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
@@ -33,6 +34,16 @@ export default class LegacyButtonRuntimeSubWidget_nextCallButton extends LegacyB
         const callInfoCount = callInfos.getCallInfoCount();
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
+        let onClick;
+        if( currentCallIndex === callInfoCount - 1 ){
+            onClick = (ev) => oc.switchToNewCall();
+        }
+        else if( currentCallIndex < callInfoCount - 1 ){
+            onClick = (ev) => oc.switchCallDown();
+        }
+        else{
+            onClick = undefined;
+        }
         return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", (currentCallIndex < callInfoCount - 1) && "kbc-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
@@ -41,7 +52,8 @@ export default class LegacyButtonRuntimeSubWidget_nextCallButton extends LegacyB
                            color:color,
                            backgroundColor:backgroundColor
                        }}
-                       onClick={(!callInfoCount || currentCallIndex === callInfoCount - 1) ? undefined : oc.switchCallDown}
+                       //onClick={(!callInfoCount || currentCallIndex === callInfoCount - 1) ? undefined : oc.switchCallDown}
+                        onClick = { onClick }
         >{iconJsx}</button>
     }
 

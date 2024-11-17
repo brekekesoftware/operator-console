@@ -12,6 +12,18 @@ export default class ACallInfos{
         return this._PhoneClientAsParent;
     }
 
+    _getCallInfoIndexByTalkerId( talkerId ){
+        const callInfoArray = this.getCallInfoArray();
+        for( let i = 0; i < callInfoArray.length; i++ ){
+            const ci = callInfoArray[i];
+            const b = ci.getPbxTalkerId() === talkerId;
+            if( b ){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     //!callme after add callinfo
     onAddCallInfoByCallInfosSubclass( webphoneCallInfosAsCaller, callInfo ){
         const callStatus = callInfo.getCallStatus();

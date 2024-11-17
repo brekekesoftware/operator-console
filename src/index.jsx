@@ -84,10 +84,10 @@ import i18n, { DEFAULT_LOCALE, isValidLocale, loadTranslations } from "./i18n";
 import SystemSettingsView, {OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID,OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION} from "./SystemSettingsView";
 const PBX_APP_DATA_NAME = 'operator_console';
 //const PBX_APP_DATA_VERSION = '0.1';
-const PBX_APP_DATA_VERSION = '2.0.0';
+const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.3";
+const VERSION = "2.1.5";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -122,6 +122,7 @@ import PaneData from "./data/PaneData";
 import WidgetData from "./data/widgetData/WidgetData";
 import {CallHistory2} from "./CallHistory2";
 import PalRestApi from "./PalRestApi";
+import ScreenPaneDatas from "./data/ScreenPaneDatas";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -3013,7 +3014,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             const initOptions = {...this._getLastLoginAccount()}
 
             initOptions.onInitSuccessFunction = function( oExtensions ){
-                console.log('extensions', oExtensions);
+                //console.log('extensions', oExtensions);
                 this_.setState({ extensions: oExtensions },
                     () =>{
                         const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
@@ -4444,7 +4445,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
         //const lastLoginAccount = this.state.lastLoginAccount;
         const lastLoginAccount = {hostname:location.hostname, port:location.port,pbxDirectoryName: this._DefaultPbxDirectoryName };
-        console.log("set lastLoginAccount from location info.");
+        console.log("Set lastLoginAccount from location info.");
         return lastLoginAccount;
     }
 
@@ -4508,7 +4509,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     toggleQuickCallScreen = (quickCallButtonWidget) => {
-        console.log("quickCallButtonWidget=" + quickCallButtonWidget);
+        //console.log("quickCallButtonWidget=" + quickCallButtonWidget);
 
         if (this.state.currentScreenQuickCallWidget === quickCallButtonWidget) {
             this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});   //toggle off
@@ -4518,7 +4519,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     toggleQuickCallButton_ver2 = (quickCallButtonWidgetSubData) => {
-        console.log("quickCallButtonWidgetSubData=" + quickCallButtonWidgetSubData);
+        //console.log("quickCallButtonWidgetSubData=" + quickCallButtonWidgetSubData);
 
         if (this.state.currentScreenQuickCallWidgetSubData === quickCallButtonWidgetSubData) {
             this.setState({currentScreenQuickCallWidgetSubData: null});   //toggle off
@@ -4543,7 +4544,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     onClickAutoDial = (autoDialButtonWidget) => {
-        console.log("autoDialButtonWidget=" + autoDialButtonWidget);
+        //console.log("autoDialButtonWidget=" + autoDialButtonWidget);
         const widgets = this.state.showAutoDialWidgets;
         const index = BrekekeOperatorConsole._getIndexFromArray(widgets, autoDialButtonWidget);
         if (index === -1) {
@@ -4657,7 +4658,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             foreground:this.state.editingScreenForeground,
             tabDatas : newTabDatas
         }
-        console.log('saving screen', screens[this.state.currentScreenIndex]);
+        //console.log('saving screen', screens[this.state.currentScreenIndex]);
 
         this.setState(
             {screens:screens}, ()=> {
@@ -4845,7 +4846,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     onDragStart = (ev, i) => {
-        console.log('onDragStart', ev);
+        //console.log('onDragStart', ev);
         // ev.preventDefault();
         ev.dataTransfer.clearData();
         ev.dataTransfer.setData('index', i + "");
@@ -4857,7 +4858,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         ev.preventDefault();
     }
     onDrop = (ev) => {
-        console.log('onDrop', ev);
+        //console.log('onDrop', ev);
         ev.preventDefault();
         ev.stopPropagation();
 
@@ -5225,10 +5226,33 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     switchCallUp = () => {
         const currentCallIndex = this._getCurrentCallIndex();
-        if ( currentCallIndex > 0) {
+        if( currentCallIndex === -1 ){
+            const callInfoCount = this._aphone.getCallInfos().getCallInfoCount();
+            if( callInfoCount !== 0 ) {
+                const newCallIndex = callInfoCount - 1;
+                this.holdCall();
+                this.setCurrentCallIndex(newCallIndex);
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{ // ( currentCallIndex >= 0) {
             this.holdCall();
             this.setCurrentCallIndex( currentCallIndex - 1 );
+            return true;
         }
+    }
+
+    switchToNewCall = () => {
+        const currentCallIndex = this._getCurrentCallIndex();
+        if( currentCallIndex === -1 ){
+            return false;
+        }
+        this.holdCall();
+        this.setCurrentCallIndex(-1);
+        return true;
     }
 
     setCurrentCallIndex( index ){
@@ -5872,7 +5896,34 @@ export default class BrekekeOperatorConsole extends React.Component {
                         callInfo.hangup();
                     }
                 }
+                else{
+                    callInfo.setIsTransferring(true);
+                }
             }
+        );
+
+        return true;
+    }
+
+    cancelTransferCall = async ( callInfo ) => {
+        if( !callInfo ){
+            callInfo = this._aphone.getCallInfos().getCurrentCallInfo();
+        }
+        if (!callInfo) {
+            return false;
+        }
+        //const tenant = callInfo.pbxTenant;
+        const tenant = undefined;   //!testit
+        const talkerId = callInfo.getPbxTalkerId();
+        await this.cancelTransferCallCore( talkerId, tenant,
+            function( this_, message ){
+                if (message && message.toLowerCase().startsWith("fail")) {
+                    //!fail
+                } else {
+                    callInfo.setIsTransferring(false);
+                }
+
+             }
         );
 
         return true;
@@ -5882,20 +5933,42 @@ export default class BrekekeOperatorConsole extends React.Component {
         if ( this._aphone.isPalReady() && dialing ) {
             const promise = this._aphone.transferAsync( tenant, dialing, talkerId, mode );
             await promise.then((message) => {
-                console.log("transferCallCore. result message=" + message );
+                //console.log("transferCallCore. result message=" + message );
                 if( onDoneFunc ){
                     onDoneFunc( this, message );
                 }
             }).catch((err) => {
-                console.error("Failed to transfer call.", err );
+                console.error("Failed to transfer the call.", err );
                 Notification.error({message: i18n.t('failed_to_transfer_call'),duration:0});
                 throw err;
             });
         }
         else {
             //!testit
-            console.error("Failed to transfer call. isPalReady=" + this._aphone.isPalReady() + ",dialing=" + dialing );
+            console.error("Failed to transfer the call. isPalReady=" + this._aphone.isPalReady() + ",dialing=" + dialing );
             Notification.error({message: i18n.t('failed_to_transfer_call'), duration: 0});
+        }
+
+    }
+
+    cancelTransferCallCore = async ( talkerId, tenant, onDoneFunc  ) => {
+        if ( this._aphone.isPalReady()  ) {
+            const promise = this._aphone.cancelTransferAsync( tenant, talkerId );
+            await promise.then((message) => {
+                //console.log("transferCallCore. result message=" + message );
+                if( onDoneFunc ){
+                    onDoneFunc( this, message );
+                }
+            }).catch((err) => {
+                console.error("Failed to cancel transfer the call.", err );
+                Notification.error({message: i18n.t('Failed_to_cancel_transfer_call'),duration:0});
+                throw err;
+            });
+        }
+        else {
+            //!testit
+            console.error("Failed to cancel transfer the call. isPalReady=" + this._aphone.isPalReady() + ",talkerId=" + talkerId );
+            Notification.error({message: i18n.t('Failed_to_cancel_transfer_call'), duration: 0});
         }
 
     }
@@ -5966,7 +6039,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         if (!sDialing) {
             return false;
         }
-        console.log("makeCall: sDialing=" + sDialing);
+        //console.log("makeCall: sDialing=" + sDialing);
         //this._CallHistory.addCallNoAndSave(sDialing);
 
         const bUsingLine = this.state.usingLine;
@@ -6142,7 +6215,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _onUnload(event){
-        console.log("OperatorConsole:onUnload. this.aphone=" + this._aphone );
+        //console.log("OperatorConsole:onUnload. this.aphone=" + this._aphone );
         this._CallHistory2.onUnloadForCallHistory2( this, event );
         this._deinitAphoneClient();
         this._deinitPalWrapper();
@@ -6840,7 +6913,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return shortname;
     }
 
-    _convertAppData_version_0_1To2_0_0( oOldContent ){
+    _convertAppData_from_version_0_1( oOldContent ){
         const oContent = {};
         oContent.version = PBX_APP_DATA_VERSION;
         const oldScreens = oOldContent.screens;
@@ -6897,6 +6970,24 @@ export default class BrekekeOperatorConsole extends React.Component {
         return oContent;
     }
 
+    _convertAppData_from_version_2_0_0( oOldContent ){
+        const oContent = {};
+        oContent.version = PBX_APP_DATA_VERSION;
+        oContent.screens = oOldContent.screens; //!forBug array reference
+        //oContent.screens = new Array( 1 + oOldContent.screens.length );
+        // oContent.screens[0] = oOldContent.screen_ver2;
+        // for( let i = 0; i < oOldContent.screens.length; i++ ){
+        //     const setIndex = i + 1;
+        //     oContent.screens[setIndex] = oOldContent.screens[i];
+        // }
+        oContent.systemSettings = oOldContent.systemSettings;  //!forBug. Need deep copy?
+
+        const screenDataVer2_1_5 = ScreenData.createScreenDataFromObject_dataVersion_2_0_0( oOldContent.screen_ver2  );
+        const oScreen_ver2_1_5 = screenDataVer2_1_5.getDataAsObject();
+        oContent.screen_ver2 = oScreen_ver2_1_5;
+        return oContent;
+    }
+
     _onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction){
         let screenData_ver2;
         if( !oScreen_ver2 ){
@@ -6944,13 +7035,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         const version = oContent.version;
         if( version !== PBX_APP_DATA_VERSION ){
             if( version === "0.1" ){
-                oContent = this._convertAppData_version_0_1To2_0_0(oContent);
-                //!dev
-                if( !oContent ){
-                    setOCNoteFailFunction({message: i18n.t("DataVersionMismatch")});
-                    return false;
-                }
-
+                oContent = this._convertAppData_from_version_0_1(oContent);
+            }
+            else if( version === "2.0.0"){
+                oContent = this._convertAppData_from_version_2_0_0(oContent);
             }
             else {
                 //return i18n.t("DataVersionMismatch");

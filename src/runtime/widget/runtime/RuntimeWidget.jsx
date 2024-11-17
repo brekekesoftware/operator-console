@@ -1,5 +1,4 @@
 import React from 'react';
-import {Rnd} from "react-rnd";
 
 export default class RuntimeWidget extends React.Component {
 

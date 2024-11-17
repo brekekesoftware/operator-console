@@ -1,6 +1,7 @@
 import ACallInfo from "./ACallInfo";
 import Notification from "antd/lib/notification";
 import i18n from "./i18n";
+import PalCallInfos from "./PalCallInfos";
 
 export default class WebphoneCallInfo extends ACallInfo {
 
@@ -276,5 +277,17 @@ export default class WebphoneCallInfo extends ACallInfo {
 
         this._OnHoldFunctions.splice(index, 1);
         return true;
+    }
+
+    onFlushPalNotifyStatusEventByWebphoneCallInfos(e){
+        const status = parseInt( e["status"] );
+        switch( status ){
+            case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferFail:
+                this.setIsTransferring(false);
+                break;
+            // case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:
+            //     this.setIsTransferring(false);
+            //     break;
+        }
     }
 }

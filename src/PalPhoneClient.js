@@ -529,7 +529,8 @@ export default class PalPhoneClient  extends APhoneClient {
     async transferAsync( tenant, dialing, talkerId, mode ){
         //!testit
         const options =  {
-            user: dialing,
+            //user: dialing,  //to : dialing, //!check //!forBug https://docs.brekeke.com/pbx/transfer
+            to: dialing,
             tid: talkerId,
             mode:mode
         };
@@ -538,6 +539,35 @@ export default class PalPhoneClient  extends APhoneClient {
         }
         const promise = new Promise( (resolve, reject ) =>{
             this._pal.transfer(
+                options,
+                function( res, obj ){
+                    //!forbug //!check //!testit error message
+                    resolve(res);
+                },
+                function( err ){
+                    reject( err );
+                }
+            );
+        });
+        return promise;
+    }
+
+    /**
+     *  overload method
+     * @param tenant
+     * @param talkerId
+     * @returns {Promise<*>}
+     */
+    async cancelTransferAsync( tenant, talkerId ){
+        //!testit
+        const options =  {
+            tid: talkerId
+        };
+        if( tenant !== undefined && tenant !== null ){
+            options["tenant"] = tenant;
+        }
+        const promise = new Promise( (resolve, reject ) =>{
+            this._pal.cancelTransfer(
                 options,
                 function( res, obj ){
                     //!forbug //!check //!testit error message

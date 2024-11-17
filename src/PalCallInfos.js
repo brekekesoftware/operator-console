@@ -163,17 +163,6 @@ export default class PalCallInfos extends ACallInfos{
         callInfo.onUpdateWebphoneCallObject( call );
     }
 
-    _getCallInfoIndexByTalkerId( talkerId ){
-        for( let i = 0; i < this._PalCallInfoArray.length; i++ ){
-            const ci = this._PalCallInfoArray[i];
-            const b = ci.getPbxTalkerId() === talkerId;
-            if( b ){
-                return i;
-            }
-        }
-        return -1;
-    }
-
     // onDisconnectByPalCallInfo( palCallInfo ){
     //     const removeCallIndex = this.getCallInfoIndexByCallInfo( palCallInfo );
     //     let currentCallIndex = this.getCurrentCallIndex();
@@ -224,7 +213,9 @@ export default class PalCallInfos extends ACallInfos{
         hold : 35,
         unhold : 36,
         disconnect : -1,
-        answerCallee : 16
+        answerCallee : 16,
+        transferResponse : 47,
+        transferFail : 48,
     };
 }
 // PalCallInfos.PAL_NOTIFY_STATUS_STATUSES ={

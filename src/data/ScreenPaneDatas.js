@@ -39,6 +39,39 @@ export default class ScreenPaneDatas extends PaneDatas {
         return screenPaneDatas;
     }
 
+    static createScreenPaneDatasFromObject_dataVersion_2_0_0( screenDataAsParent, o )
+    {
+        const screenPaneDatas = new ScreenPaneDatas( screenDataAsParent );
+        screenPaneDatas._setScreenPaneDatasFromObject_dataVersion_2_0_0( o );
+        return screenPaneDatas;
+    }
+
+    _setScreenPaneDatasFromObject_dataVersion_2_0_0( o ){
+        const oPaneDataArray = o["paneDataArray"];
+
+        //clear object
+        for (const prop of Object.getOwnPropertyNames(this._PaneDatas)) {
+            delete this._PaneDatas[prop];
+        }
+
+        for( let i = 0; i < oPaneDataArray.length; i++ ){
+            const srcScreenPaneDataObject = oPaneDataArray[i];
+            const options ={
+                paneDatasAsParent:this,
+                paneDataObject: srcScreenPaneDataObject,
+                dataVersion : "2.0.0"
+            }
+            const screenPaneData = new ScreenPaneData( options );
+            const paneNumber = screenPaneData.getPaneNumber();
+            this._PaneDatas[ paneNumber ] =  screenPaneData;
+            if( paneNumber > this._latestPaneNumber ){
+                this._latestPaneNumber = paneNumber;
+            }
+        }
+
+        //this._latestPaneNumber = o["latestPaneNumber"];
+    }
+
     _setScreenPaneDatasFromObject( o ){
         const oPaneDataArray = o["paneDataArray"];
 

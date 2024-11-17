@@ -163,9 +163,11 @@ function TransferButton({ callInfo, title,
         const camponExtension = modalOpen.camponExtension;
         const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
+        callInfo.setIsTransferring(true);
         oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
+                    callInfo.setIsTransferring(false);
                     Notification.error({message: i18n.t("failed_to_transfer_call")});
                 }
                 else {
@@ -190,9 +192,11 @@ function TransferButton({ callInfo, title,
         const camponExtension = modalOpen.camponExtension;
         const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
+        callInfo.setIsTransferring(true);
         oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
+                    callInfo.setIsTransferring(false);
                     Notification.error({message: i18n.t("failed_to_transfer_call")});
                 }
                 else {

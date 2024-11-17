@@ -98,6 +98,12 @@ export default class PalCallInfo extends ACallInfo {
                 this._answeredAt = e["time"];
                 this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerCalleeByPalCallInfo( this );
                 break;
+            case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferFail:
+                this.setIsTransferring(false);
+                break;
+            // case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:
+            //     this.setIsTransferring(false);
+            //     break;
         }
         this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUpdateCallInfoByCallInfo(this);
     }

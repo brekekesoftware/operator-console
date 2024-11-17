@@ -78,4 +78,16 @@ export default class ScreenData{
         return screenData;
     }
 
+    static createScreenDataFromObject_dataVersion_2_0_0( oScreenData ){
+        const screenData = new ScreenData();
+        //!modify
+        const oScreenPaneDatas = oScreenData["screenPaneDatas"];
+        const screenPaneDatas = ScreenPaneDatas.createScreenPaneDatasFromObject_dataVersion_2_0_0( screenData, oScreenPaneDatas );
+        screenData._ScreenPaneDatas = screenPaneDatas;
+        screenData._editingScreenGrid = oScreenData["editingScreenGrid"];
+        screenData._screenBackgroundColor = oScreenData["screenBackgroundColor"];
+        screenData._screenForegroundColor = oScreenData["screenForegroundColor"];
+
+        return screenData;
+    }
 }

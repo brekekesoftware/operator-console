@@ -1,5 +1,14 @@
 {
   "en": {
+	"Transfer_button_settings" : "Transfer button settings",
+	"Cancel_transfer_button_settings" : "Cancel transfer button settings",
+	"Cancel" : "Cancel",
+	"Transfer" : "Transfer",
+	"Cancel_transfer" : "Cancel transfer",
+	"Hold_button_settings" : "Hold button settings",
+	"Unhold_button_settings" : "Unhold button settings",
+	"Hold" : "Hold",
+	"Unhold" : "Unhold",
 	"Icon_width" : "Icon width",
 	"Icon_height" : "Icon height",
 	"Active_button_settings" : "Active button settings",
@@ -146,6 +155,7 @@
     "failed_to_hold_line": "Failed to hold the line",
     "failed_to_unhold_line": "Failed to unhold the line",
     "failed_to_monitor_extension": "Failed to monitor extension",
+	"Failed_to_cancel_transfer_call": "Failed to cancel transfer the call",
 	"failed_to_transfer_call": "Failed to transfer the call",
     "talking_monitored_extension_required": "You need to dial a talking extension",
 	"anExtensionScriptExecutingErrorHasOccurred" :  "An error occurred while executing the extension script.",
@@ -371,14 +381,15 @@
       "LegacyPickUpCallButton": "Pick Up",
 	  "LegacyQuickCallButton": "Quick Call",
 	  "LegacyAutoDialButton": "Auto Dial",
-	  "LegacyOneTouchDialButton": "One touch dial"
+	  "LegacyOneTouchDialButton": "One touch dial",
+	  "LegacyToggleHoldCallButton": "Toggle hold"
     },
     "legacy_button_description": {
       "LegacyDummyButton": "A dummy button that has no function.",
       "LegacyCallTalkingButton": "It lights red when the user is in a talking call (not holding/ringing)",
       "LegacyNoAnswerButton": "To automatically reject incoming calls. It lights red when enabled",
       "LegacyCallbackButton": "It blinks red if a callback is available. It lights red when the callback is active (This function is under construction)",
-      "LegacyTransferButton": "Transfer active call to the number you are dialing",
+      "LegacyTransferButton": "Transfer or cancel transfer active call to the number you are dialing",
       "LegacyToggleRecordingButton": "To start/stop call recording. It lights red if started",
       "LegacyAlarmButton": "(This function is under construction)",
       "LegacyPrevCallButton": "To switch to the previous call. It blinks red if there's a previous call",
@@ -406,7 +417,8 @@
       "LegacyPickUpCallButton": "To pick up the current call",
       "LegacyQuickCallButton": "To call a shortening dial number",  
       "LegacyAutoDialButton": "To show/hide a auto dial view",
-	  "LegacyOneTouchDialButton": "To Call the specified number."
+	  "LegacyOneTouchDialButton": "To Call the specified number.",
+	  "LegacyToggleHoldCallButton": "To toggle hold the current call."
     },
     "widget_description": {
       "LegacyButton": "This widget shows a button that you can assign a preset function to it.",

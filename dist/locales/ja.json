@@ -1,5 +1,14 @@
 {
   "ja": {
+	"Transfer_button_settings" : "転送ボタンの設定",
+	"Cancel_transfer_button_settings" : "転送キャンセルボタンの設定",
+	"Cancel" : "キャンセル",
+	"Transfer" : "転送",
+	"Cancel_transfer" : "転送キャンセル",
+	"Hold_button_settings" : "保留ボタンの設定",
+	"Unhold_button_settings" : "保留解除ボタンの設定",
+	"Hold" : "保留",
+	"Unhold" : "保留解除",
 	"Icon_width" : "アイコンの幅",
 	"Icon_height" : "アイコンの高さ",
 	"Active_button_settings" : "アクティブボタンの設定",
@@ -146,6 +155,7 @@
     "failed_to_hold_line": "ラインの保留に失敗しました。",
     "failed_to_unhold_line": "ラインの保留解除に失敗しました。",
     "failed_to_monitor_extension": "内線のモニタに失敗しました。",
+	"Failed_to_cancel_transfer_call": "転送のキャンセルに失敗しました。",
 	"failed_to_transfer_call": "通話の転送に失敗しました。",
     "talking_monitored_extension_required": "通話中の内線番号をダイヤルする必要があります。",
 	  "anExtensionScriptExecutingErrorHasOccurred" :  "拡張スクリプトの実行でエラーが発生しました。",
@@ -369,14 +379,15 @@
       "LegacyPickUpCallButton": "応答",
 	  "LegacyQuickCallButton": "クイックコール",
 	  "LegacyAutoDialButton": "オートダイヤル",
-	  "LegacyOneTouchDialButton": "ワンタッチダイヤル"
+	  "LegacyOneTouchDialButton": "ワンタッチダイヤル",
+	  "LegacyToggleHoldCallButton" : "保留切替"
     },
     "legacy_button_description": {
       "LegacyDummyButton": "機能のないダミーボタンです。",
       "LegacyCallTalkingButton": "ユーザーが通話中(保留/呼び出し中ではない)の場合に、赤く点灯します。",
       "LegacyNoAnswerButton": "着信を自動的に拒否します。 有効にすると赤色に点灯します。",
       "LegacyCallbackButton": "コールバックが利用可能なときは赤く点滅し、コールバックがアクティブなときには赤く点灯します(この機能は開発中です)。",
-      "LegacyTransferButton": "アクティブな通話をダイヤルしている番号に転送します。",
+      "LegacyTransferButton": "アクティブな通話をダイヤルしている番号に、転送をするか転送をキャンセルします。",
       "LegacyToggleRecordingButton": "通話録音を開始/停止します。 起動すると赤く点灯します。",
       "LegacyAlarmButton": "(この機能は開発中です)",
       "LegacyPrevCallButton": "アクティブな通話を前の通話に切り替えます。 前の通話がある場合は赤く点滅します。",
@@ -404,7 +415,8 @@
       "LegacyPickUpCallButton": "現在の通話に応答します。",
       "LegacyQuickCallButton": "短縮ダイヤルに発信します。",
       "LegacyAutoDialButton": "オートダイヤルビューを表示/非表示します。",
-	  "LegacyOneTouchDialButton": "指定された番号に発信します。"
+	  "LegacyOneTouchDialButton": "指定された番号に発信します。",
+	  "LegacyToggleHoldCallButton": "現在の通話の保留/保留解除を切り替えます。"
     },
     "widget_description": {
       "LegacyButton": "このコンポーネントには、プリセット機能を割り当てることができるボタンが表示されます。",

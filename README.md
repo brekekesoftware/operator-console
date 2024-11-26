@@ -44,9 +44,11 @@ Below are the steps.
 3.Place the renamed operator-console directory in the (pbx_home)/etc directory.
 4.As an example, open https://xxx.xxx.xxx.xxx:8443/pbx/etc/operator-console/operator-console.html in a browser. 
 
+
 To create or edit layouts in the OperatorConsole,
 you need a tenant in the PBX and a user with administrator privileges for the tenant.
 Log in to the PBX administration screen and create a tenant and a user with administrator privileges.
+
 
 For the operator-console to work properly, the following settings are also required on the PBX:
 

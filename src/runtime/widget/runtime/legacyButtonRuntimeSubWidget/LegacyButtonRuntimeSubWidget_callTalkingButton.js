@@ -55,7 +55,7 @@ export default class LegacyButtonRuntimeSubWidget_callTalkingButton extends Lega
             {
                 clsx(
                     "kbc-button kbc-button-fill-parent",
-                    isDanger && 'kbc-button-danger'
+                    isDanger && 'kbc-button-danger  kbc-callTalking-button-danger'
                 )
             }
            style={{

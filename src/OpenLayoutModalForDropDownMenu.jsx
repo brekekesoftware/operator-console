@@ -132,13 +132,33 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                 setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));
             } else {
                 let jsxContents = [];
+                const lastLayoutShortname = operatorConsole.getLastLayoutShortname();
+                let currentLayoutBolded = false;
                 for (let i = 0; i < noteNames.length; i++) {
                     const noteName = noteNames[i];
                     const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
                     if( noteShortname.length === 0 ){   //Skip. Because can not select.
                         continue;
                     }
-                    const sNoteShortname = <div key={i}><a className="test" onClick={ () => selectOCNoteByShortname( operatorConsole, noteShortname ) } >{noteShortname}</a><br /></div>;
+                    let isFontBold = false;
+                    if( currentLayoutBolded === false ){
+                        isFontBold = noteShortname === lastLayoutShortname;
+                        if( isFontBold === true ){
+                            currentLayoutBolded = true;
+                        }
+                    }
+
+                    let sNoteShortname;
+                    if( isFontBold === true ){
+                        sNoteShortname = <div key={i}><a style={{fontWeight:"bold"}} className="test"
+                                                         onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
+                        </div>;
+                    }
+                    else {
+                        sNoteShortname = <div key={i}><a className="test"
+                                                         onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
+                        </div>;
+                    }
                     jsxContents.push( sNoteShortname );
                 }
                 setNoteNamesContentFunc(jsxContents);

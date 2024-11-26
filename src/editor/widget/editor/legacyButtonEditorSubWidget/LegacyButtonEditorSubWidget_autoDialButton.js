@@ -55,7 +55,7 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
 
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger')}
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger kbc-autoDial-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

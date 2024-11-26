@@ -49,6 +49,8 @@ export default class PhonebookContactInfozTelsView extends React.Component {
         const extensions = oc.state.extensions;
 
         const telInfoArray = this.state.pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray();
+        const lang = oc.getLoggedinLanguage();
+        const phonebook = Brekeke.Phonebook.getManager(lang);
         return (<>
             <div className="brOCReset phonebookContactInfozTelsView">
                 <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>
@@ -75,14 +77,24 @@ export default class PhonebookContactInfozTelsView extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                { telInfoArray.map( ( telInfo, i ) => {
+                                { phonebook.item.map( ( phonebookItem, i ) => {
+                                    if( phonebookItem.type !== "phone" ){
+                                        return (null);
+                                    }
+                                    const telInfo = telInfoArray.find( (telInfo) => telInfo.getInfoKeyName() === phonebookItem.id );
+                                    if( !telInfo ){
+                                        return (null);
+                                    }
                                     const tel = telInfo.getValue();
+                                    if( !tel || tel.length === 0 ){
+                                        return (null);
+                                    }
                                     const isExtension = OCUtil.indexOfArrayFromExtensions(extensions, tel) !== -1;
                                     const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(tel, extensionsStatus) : "";
                                     return (
                                         <tr key={i}>
                                             <td>{telInfo.getTitle()}</td>
-                                            <td>{telInfo.getValue()}</td>
+                                            <td>{tel}</td>
                                             <td>
                                                 <div className={statusClassName}></div>
                                             </td>
@@ -90,7 +102,7 @@ export default class PhonebookContactInfozTelsView extends React.Component {
                                                 <button
                                                     title={i18n.t(`Call`)}
                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding"
-                                                    onClick={(e) => this._makeCall(telInfo.getValue()) }
+                                                    onClick={(e) => this._makeCall(tel) }
                                                 >
                                                     <FontAwesomeIcon size="lg" icon="fas fa-phone"/>
                                                 </button>

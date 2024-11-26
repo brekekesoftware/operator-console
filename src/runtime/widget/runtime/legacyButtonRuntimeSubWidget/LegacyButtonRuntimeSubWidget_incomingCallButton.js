@@ -39,7 +39,7 @@ export default class LegacyButtonRuntimeSubWidget_incomingCallButton extends Leg
             backgroundColor = null;
         }
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger')}
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-incomingCall-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

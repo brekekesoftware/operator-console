@@ -48,7 +48,7 @@ export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends Legac
 
         const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash")}
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

@@ -305,12 +305,24 @@ export default function NoScreensView( props ){
                     setNoteNamesContent(i18n.t("Layout_does_not_exist"));
                 } else {
                     let jsxContents = [];
+                    // const lastLayoutShortname = operatorConsoleAsParent.getLastLayoutShortname();
+                    // let isFontWeightBolded = false;
                     for (let i = 0; i < noteNames.length; i++) {
                         const noteName = noteNames[i];
                         const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
                         if( noteShortname.length === 0 ){    //Skip. Because can not click
                             continue;
                         }
+
+                        // let fontWeight = "normal";
+                        // if( isFontWeightBolded === false ){
+                        //     const isFontBold = noteShortname === lastLayoutShortname;
+                        //     if( isFontBold === true ){
+                        //         isFontWeightBolded = true;
+                        //         fontWeight = "bold";
+                        //     }
+                        // }
+                        //const sNoteShortname = <div key={i}><a style={{fontWeight:fontWeight}} onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
                         const sNoteShortname = <div key={i}><a onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
                         jsxContents.push( sNoteShortname );
                     }

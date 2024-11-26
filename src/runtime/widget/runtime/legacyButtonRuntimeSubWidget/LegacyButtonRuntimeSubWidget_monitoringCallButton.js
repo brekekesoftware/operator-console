@@ -38,7 +38,7 @@ export default class LegacyButtonRuntimeSubWidget_monitoringCallButton extends L
             backgroundColor = null;
         }
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger')} //!todo implement
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-monitoringCall-button-danger')} //!todo implement
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

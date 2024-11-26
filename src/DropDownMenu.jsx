@@ -17,8 +17,9 @@ import OCUtil from "./OCUtil";
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
 export default function DropDownMenu( { operatorConsole } ){
-    let loginLabel = operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : ''
+    let loginLabel = operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + " / " : ''
     loginLabel += operatorConsole.state.loginUser.pbxUsername;
+    loginLabel += " / " + operatorConsole.getLastLayoutShortname();
     //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
     const showNewLayoutModalFunc = () => {
         operatorConsole.setState({newLayoutModalOpen:true});

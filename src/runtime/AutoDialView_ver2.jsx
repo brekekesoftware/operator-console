@@ -35,6 +35,8 @@ export default class AutoDialView_ver2 extends React.Component {
         this._latestSearchPhonebookName = null;
         this._latestSearchPhonebookShared = null;
         this._latestSearchPhonebookKeywords = null;
+        //this._AutoDialViewRef = React.createRef();
+
     }
 
     _getPhonebookScrollableDivElement(){
@@ -56,6 +58,41 @@ export default class AutoDialView_ver2 extends React.Component {
         return b;
     }
 
+    _loadJavascript(src , parentElement) {
+        const eScript = document.createElement("script");
+        eScript.type = "application/javascript";
+        eScript.src = src;
+        parentElement.appendChild(eScript);
+    }
+
+     componentDidMount(){
+         //const eAutoDialView_ver2 = document.getElementById("brOC_AutoDialView_Ver2");
+         //const autoDialViewRef = this._AutoDialViewRef;
+         //const eAutoDialView_ver2 = autoDialViewRef.current;
+         //const eAutoDialView_ver2 = this._AutoDialViewElement;
+         const oc = BrekekeOperatorConsole.getStaticInstance();
+
+         const port = oc.getLoggedinPbxPort();
+         let portString;
+         if( port !== null && port !== undefined && (port + "").length !== 0  ){
+             portString = ":" + port;
+         }
+         else{
+             portString = "";
+         }
+
+         let pbxDirString;
+         const pbxDirecotryname = oc.getLoginPbxDirectoryName();
+         if( pbxDirecotryname ){
+             pbxDirString = "/" + pbxDirecotryname;
+         }
+         else{
+             pbxDirString = "";
+         }
+
+        const phoneBookJsSrc = "https://" + oc.getLoggedinPbxHost() + portString + pbxDirString + "/common/js/brekeke/phonebook/phonebook.js";  //!hardcode https
+         this._loadJavascript( phoneBookJsSrc, document.body );
+     }
 
     // componentDidMount(){
     //     this._PhonebookScrollableDiv = document.getElementById("phonebookScrollableDiv_brOC_AutoDialView_ver2");
@@ -526,6 +563,7 @@ export default class AutoDialView_ver2 extends React.Component {
         return (<>
             <PhonebookContactInfozInfoView />
             <PhonebookContactInfozTelsView />
+            {/*<div ref={this._AutoDialViewRef} className="brOCReset autoDialView">*/}
             <div className="brOCReset autoDialView">
                 {/*<table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} data-br-name="brOC_AutoDialView_ver2_rootTable">*/}
                 <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>

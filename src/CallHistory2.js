@@ -206,7 +206,14 @@ export class CallHistory2 {
                     return false;
                 }
 
-                const oData = JSON.parse( sJsonData );
+                let oData;
+                try {
+                    oData = JSON.parse(sJsonData);
+                }
+                catch( err ){
+                    OCUtil.logErrorWithNotification("Failed to parse CallHistory(json).", i18n.t("Failed_to_parse_call_history"), err );
+                    oData = {};
+                }
                 const sLines = oData["lines"];
                 if( !sLines ){
                     this._isLoadedEvenOnce = true;

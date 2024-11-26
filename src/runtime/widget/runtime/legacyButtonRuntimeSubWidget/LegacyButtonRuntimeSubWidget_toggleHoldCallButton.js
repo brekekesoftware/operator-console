@@ -42,7 +42,7 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
                 unholdLabel = i18n.t("Unhold");
             }
             const unholdIconJsx = this._getIconJsx( subWidgetData.getUnholdIcon(), unholdLabel, subWidgetData.getUnholdIconWidth(), subWidgetData.getUnholdIconHeight() );
-            return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash"
+            return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash-slow kbc-toggleHoldCall-button-danger-flash"
                            style={{
                                fontSize:sUnholdButtonFontSize,
                                border:unholdBorder,

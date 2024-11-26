@@ -96,22 +96,31 @@ export default class WebphoneCallInfo extends ACallInfo {
         return this._partyName;
     }
 
+    _onHold(){
+        this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onHoldByCallInfo(this);
+
+        const onHoldFunctions = [...this._OnHoldFunctions];
+        for( let i = 0; i < onHoldFunctions.length; i++ ) {
+            const func = onHoldFunctions[i];
+            func( this );   //!forBug needs try catch?
+        }
+
+    }
+
+    _onUnhold(){
+        this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUnholdByCallInfo(this);
+    }
+
     onUpdateWebphoneCallObjectProperty(field, val) {
         const propertyName = "_" + field;
         this[propertyName] = val;
 
         if( field === "holding" ){
             if( val === true ){
-                this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onHoldByCallInfo(this);
-
-                const onHoldFunctions = [...this._OnHoldFunctions];
-                for( let i = 0; i < onHoldFunctions.length; i++ ) {
-                    const func = onHoldFunctions[i];
-                    func( this );   //!forBug needs try catch?
-                }
+                this._onHold();
             }
             else if( val === false ){
-                this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUnholdByCallInfo(this);
+                this._onUnhold();
             }
         }
 

@@ -40,7 +40,7 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
                 cancelTransferLabel = i18n.t("Cancel_transfer");
             }
             const cancelTransferIconJsx = this._getIconJsx( subWidgetData.getCancelTransferIcon(), cancelTransferLabel, subWidgetData.getCancelTransferIconWidth(), subWidgetData.getCancelTransferIconHeight() );
-            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash"
+            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash kbc-transfer-button-danger-flash"
                                    style={{
                                        fontSize:sCancelTransferButtonFontSize,
                                        border:cancelTransferBorder,

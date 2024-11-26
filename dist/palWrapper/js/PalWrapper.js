@@ -38,7 +38,7 @@ class PalWrapper{
         this._pbxHost = options["pbxHost"];
         this._pbxPort = options["pbxPort"];
 
-        let  pbxUrl = "https://" + this._pbxHost;
+        let  pbxUrl = "https://" + this._pbxHost;   //!hardcode https
         if( this._pbxPort !== undefined ){
             pbxUrl += ":" + this._pbxPort;
         }

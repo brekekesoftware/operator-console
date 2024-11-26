@@ -1,5 +1,6 @@
 {
   "ja": {
+  	"Failed_to_parse_call_history" : "通話履歴の解析に失敗しました。",
 	"Transfer_button_settings" : "転送ボタンの設定",
 	"Cancel_transfer_button_settings" : "転送キャンセルボタンの設定",
 	"Cancel" : "キャンセル",

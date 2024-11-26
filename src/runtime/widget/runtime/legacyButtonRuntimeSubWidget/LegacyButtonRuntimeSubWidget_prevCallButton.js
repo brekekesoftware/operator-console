@@ -47,7 +47,7 @@ export default class LegacyButtonRuntimeSubWidget_prevCallButton extends LegacyB
         else{
             onClick = (ev) => oc.switchCallUp();
         }
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash")}
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash kbc-prevCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

@@ -87,7 +87,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.5";
+const VERSION = "2.1.7";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -3745,14 +3745,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         return pbxPort;
     }
 
-    getLoggedinPbxPort(){
-        if( !this.state.loginUser ){
-            return null;
-        }
-        const pbxPort = this.state.loginUser.pbxPort;
-        return pbxPort;
-    }
-
     getLoggedinPassword(){
         if( !this.state.loginUser ){
             return null;
@@ -7087,6 +7079,11 @@ export default class BrekekeOperatorConsole extends React.Component {
     getLoginPassword(){
         const password = this._getLastLoginAccount().password;
         return password;
+    }
+
+    getLoginPbxDirectoryName(){
+        const dir = this._getLastLoginAccount().pbxDirectoryName;
+        return dir;
     }
 
     getLoginUsername(){

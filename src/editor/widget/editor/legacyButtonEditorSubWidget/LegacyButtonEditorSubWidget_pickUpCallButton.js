@@ -2,6 +2,9 @@ import React from 'react';
 import LegacyButtonEditorSubWidget from "./LegacyButtonEditorSubWidget";
 import i18n from "../../../../i18n";
 import Util from "../../../../Util";
+import ACallInfo from "../../../../ACallInfo";
+import BrekekeOperatorConsole from "../../../../index";
+import clsx from "clsx";
 
 export default class LegacyButtonEditorSubWidget_pickUpCallButton extends LegacyButtonEditorSubWidget  {
 
@@ -26,9 +29,14 @@ export default class LegacyButtonEditorSubWidget_pickUpCallButton extends Legacy
             "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+
+        const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

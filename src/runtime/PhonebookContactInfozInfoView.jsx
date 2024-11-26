@@ -9,10 +9,8 @@ import {Button, Checkbox, Input} from "antd";
 import Popconfirm from "antd/lib/popconfirm";
 import Notification from "antd/lib/notification";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
+import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfozInfo_AutoDialView_ver2";
 
-const BUILTIN_CUSTOM_ITEM_KEYNAMES = Object.freeze([
-    "Address(Work)","Email(Work)","Ext.","Fax","Job title","Middle name","Nickname","Other","Prefix","Suffix","Website"
-]);
 class PbContactInfozCustomItem{
     constructor( options ) {
         const pbContactInfozItem = options["pbContactInfozItem"];
@@ -42,11 +40,16 @@ class PbContactInfozCustomItem{
         this._value = val;
     }
 
-    setName( name ){
+    setName( name, isBuiltin  ){
         //let validName = name.replace("$", "");
-        let validName = OCUtil.removeChar( name, '$');
-        validName = validName.trim();
-        this._name = validName;
+        if( isBuiltin !== true ) {
+            let validName = OCUtil.removeChar(name, '$');
+            validName = validName.trim();
+            this._name = validName;
+        }
+        else{
+           this._name = name;
+        }
     }
 }
 
@@ -60,6 +63,9 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         }
         this._PbContactInfozCustomItemArray = new Array();
         this._PbSummaryArray = new Array();
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const lang = oc.getLoggedinLanguage();
+        this._Phonebook = Brekeke.Phonebook.getManager(lang);
         _INSTANCE = this;
     }
 
@@ -100,11 +106,41 @@ export default class PhonebookContactInfozInfoView extends React.Component {
     }
 
     _onCustomItemNameInputFocus( customItem, e ){
-        setTimeout( () => {
-            const name = customItem.getName();
-            e.target.value = name;
-        }, 1 );
+        // setTimeout( () => {
+        //     const name = customItem.getName();
+        //     const itmTitle = this._Phonebook.item.find( (itm) =>{
+        //         return itm.id === name;
+        //     } );
+        //     let val;
+        //     if( itmTitle ){
+        //         val = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( itmTitle );
+        //     }
+        //     else{
+        //         val = name;
+        //     }
+        //     e.target.value = val;
+        //     //e.target.value = name;
+        // }, 1 );
         this._onInputFocus();
+    }
+
+    _onCustomItemNameInputBlur( customItem, e ){
+        // setTimeout( () => {
+        //     const name = customItem.getName();
+        //     const itmTitle = this._Phonebook.item.find( (itm) =>{
+        //         return itm.id === name;
+        //     } );
+        //     let val;
+        //     if( itmTitle ){
+        //         val = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( itmTitle );
+        //     }
+        //     else{
+        //         val = name;
+        //     }
+        //     e.target.value = val;
+        //     //e.target.value = name;
+        // }, 1 );
+        this._onInputBlur();
     }
 
     _onCustomItemValueInputFocus( customItem, e ){
@@ -113,14 +149,6 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             e.target.value = value;
         }, 1 );
         this._onInputFocus();
-    }
-
-    _onCustomItemNameInputBlur( customItem, e ){
-        setTimeout( () => {
-            const name = customItem.getName();
-            e.target.value = name;
-        }, 1 );
-        this._onInputBlur();
     }
 
     _onCustomItemValueInputBlur( customItem, e ){
@@ -153,7 +181,20 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                 const pbContactInfozInfoArray = pbGotContactInfo.getFreezedPhonebookContactInfozInfoArray();
                 for( let i = 0; i < pbContactInfozInfoArray.length; i++ ){
                     const infozItem = pbContactInfozInfoArray[i];
-                    if( infozItem.isCustomKey() ){
+                    const phonebookItem = this._Phonebook.item.find( (phonebookItem) =>{
+                        const b =  phonebookItem.id === infozItem.getInfoKeyName();
+                        return b;
+                    });
+                    if( phonebookItem ){
+                        if( phonebookItem.onscreen === true ){
+                            continue;
+                        }
+                        if( phonebookItem.type === "phone"){
+                            continue;
+                        }
+                    }
+
+                    //if( infozItem.isCustomKey() ){
                         const infozCustomItem = new PbContactInfozCustomItem( { pbContactInfozItem : infozItem} );
 
                         //Did not work
@@ -167,7 +208,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                         // }
 
                         this._PbContactInfozCustomItemArray.push( infozCustomItem );
-                    }
+                    //}
                 }
 
                 //const eShared = document.getElementById("shared_PhonebookContactInfozInfoView_brOC");
@@ -180,9 +221,20 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                         //const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
                         const eCustomItemName = document.getElementById("brOC_PhonebookContactInfozInfoView_customItemName_" + i );
                         const name = customItem.getName();
+                        const phonebookItem = this._Phonebook.item.find( (phonebookItem) =>{
+                            return name === phonebookItem.id;
+                        });
+                        let title;
+                        if( phonebookItem ){
+                            title = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( phonebookItem );
+                        }
+                        else{
+                            title = name;
+                        }
+
                         //eCustomItemName.defaultValue = name;
-                        eCustomItemName.value = name;
-                        //eCustomItemName.setAttribute("value", name );
+                        eCustomItemName.value = title;
+                        //eCustomItemName.setAttribute("value", title );
                         const eCustomItemValue = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemValue_' + i + '"]');
                         const value = customItem.getValue();
                         //eCustomItemValue.defaultValue = value;
@@ -340,9 +392,22 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                 //const eCustomItemName = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemName_' + i + '"]');
                 const eCustomItemName = document.getElementById("brOC_PhonebookContactInfozInfoView_customItemName_" + i );
                 const name = customItem.getName();
-                //eCustomItemName.defaultValue = name;
-                eCustomItemName.value = name;
-                //eCustomItemName.setAttribute("value", name );
+
+                const phonebookItem = this._Phonebook.item.find( (phonebookItem) =>{
+                    const b = phonebookItem.id === name;
+                    return b;
+                });
+                let title;
+                if( phonebookItem ){
+                    title = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( phonebookItem );
+                }
+                else{
+                    title = name;
+                }
+
+                //eCustomItemName.defaultValue = title;
+                eCustomItemName.value = title;
+                //eCustomItemName.setAttribute("value", title );
                 const eCustomItemValue = document.querySelector('[data-br-name="PhonebookContactInfozInfoView_customItemValue_' + i + '"]');
                 const value = customItem.getValue();
                 //eCustomItemValue.defaultValue = value;
@@ -353,8 +418,14 @@ export default class PhonebookContactInfozInfoView extends React.Component {
     }
 
     _onChangeCustomItemInputName( customItem, e ){
-        const name = e.target.value;
-        customItem.setName( name );
+        const phonebookItem = this._Phonebook.item.find( (phonebookItem) =>{
+            const title = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( phonebookItem );
+            const b = title === e.target.value;
+            return b;
+        } );
+        const name = phonebookItem ? phonebookItem.id : e.target.value;
+        const isCustomItem = !phonebookItem || phonebookItem.type === "phone";
+        customItem.setName( name, !isCustomItem );
     }
 
     _onChangeCustomItemInputValue( customItem, e ){
@@ -553,29 +624,38 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                         </td>
                                     </tr>
                                     {
-                                        PhonebookContactInfo_AutoDialView_ver2.BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_ITEM_KEYNAMES.map(
-                                            ( key, i) => {
-                                                const info = this.state.pbContactInfo.getPhonebookContactInfoByKeyname( key );
-                                                if( !info ){    //!bug //!comment An unlikely case
+                                        this._Phonebook.item.map(
+                                            ( item, i) => {
+                                                if ( item.type === "phone" ) {
                                                     return (null);
                                                 }
-                                                if ( info.isTelKey()) {
+                                                if( item.onscreen !== true  ){
                                                     return (null);
                                                 }
+
                                                 // if (info.getInfoKeyName() === "$lang") { //!comment Not editable
                                                 //     return (null);
                                                 // }
                                                 // if( info.isCustomKey() === true ){
                                                 //     return (null);
                                                 // }
-                                                const infoKeyName = info.getInfoKeyName();
+                                                const info = this.state.pbContactInfo.getPhonebookContactInfoByKeyname( item.id );
+                                                let val;
+                                                if( info ){
+                                                    val = info.getValue();
+                                                }
+                                                else{
+                                                    val = null;
+                                                }
+                                                const title = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem(item);
+
                                                 return (
                                                     <tr key={i}>
-                                                        <th>{info.getTitle()}</th>
+                                                        <th>{title}</th>
                                                         <td>
                                                             <Input data-br-isinfoparam="true"
-                                                                   data-br-name={"PhonebookContactInfozInfoView_infoItem_" + infoKeyName }
-                                                                   defaultValue={info.getValue()}
+                                                                   data-br-name={"PhonebookContactInfozInfoView_infoItem_" + item.id  }
+                                                                   defaultValue={val}
                                                                    style={{width: "300px"}} disabled={!isSaveable}
                                                                    maxLength="1000"
                                                                    onFocus={(e) => this._onInputFocus()}
@@ -604,7 +684,11 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {PhonebookContactInfo_AutoDialView_ver2.BUILTIN_DEFAULT_PHONEBOOK_CONTACTINFO_TEL_ITEM_KEYNAMES.map((telKeyName, i) => {
+                                                {this._Phonebook.item.map((phonebookItem, i) => {
+                                                    if( phonebookItem.type !== "phone" ){
+                                                        return (null);
+                                                    }
+                                                    const telKeyName = phonebookItem.id;
                                                     const telInfo = this.state.pbContactInfo.getPhonebookContactInfozInfoByInfoKeyName(telKeyName);
                                                     let tel;
                                                     if (telInfo) {
@@ -612,7 +696,11 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                     } else {
                                                         tel = "";
                                                     }
-                                                    const telTitle = this.state.pbContactInfo.getFreezedTelInfoTitleArray()[i];
+                                                    //const telTitle = this.state.pbContactInfo.getFreezedTelInfoTitleArray()[i];
+                                                    let  telTitle = phonebookItem.caption;
+                                                    if( !telTitle || telTitle.length === 0 ){
+                                                        telTitle = PhonebookContactInfozInfo_AutoDialView_ver2.getTelTitle( phonebookItem.id );
+                                                    }
 
                                                     const isExtension = OCUtil.indexOfArrayFromExtensions(extensions, tel) !== -1;
                                                     const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(tel, extensionsStatus) : "";
@@ -679,9 +767,16 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                         <datalist
                                                             id={"brOC_PhonebookContactInfozInfoView_datalist_customItemName_" + i }>
                                                             {
-                                                                BUILTIN_CUSTOM_ITEM_KEYNAMES.map(( keyname, i) => {
+                                                                this._Phonebook.item.map(( itm, i) => {
+                                                                    if( itm.onscreen === true ){
+                                                                        return (null);
+                                                                    }
+                                                                    if( itm.type === "phone" ){
+                                                                        return (null);
+                                                                    }
+                                                                    const title = PhonebookContactInfozInfo_AutoDialView_ver2.getTitleByPhonebookItem( itm );
                                                                     return <option key={i}
-                                                                                   value={keyname}>{keyname}</option>
+                                                                                   value={title}>{title}</option>
                                                                 })
                                                             }
                                                         </datalist>

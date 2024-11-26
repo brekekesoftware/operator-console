@@ -22,17 +22,17 @@ function _getEditorLightClassname_ver2( line ={} ){
         const park = parksStatus[line];
 
         if (line_talker === loginUser?.pbxUsername) {
-            lightClassname = 'kbc-button-success-flash';
+            lightClassname = 'kbc-button-success-flash kbc-lineTable-button-loginUser-success-flash';
         } else if (park) {
-            lightClassname = myParksStatus[line] ? 'kbc-button-success-flash-slow' : 'kbc-button-danger-flash-slow';
+            lightClassname = myParksStatus[line] ? 'kbc-button-success-flash-slow kbc-lineTable-button-park-success-flash-slow' : 'kbc-button-danger-flash-slow kbc-lineTable-button-park-danger-flash-slow';
         } else if (callInfo) {
             if (callInfo.getIsIncoming() && !callInfo.getIsAnswered()) {
-                lightClassname = 'kbc-button-danger-flash'
+                lightClassname = 'kbc-button-danger-flash kbc-lineTable-button-callInfo-danger-flash';
             } else {
-                lightClassname = 'kbc-button-success'
+                lightClassname = 'kbc-button-success kbc-lineTable-button-callInfo-success';
             }
         } else {
-            lightClassname = 'kbc-button-danger'
+            lightClassname = 'kbc-button-danger kbc-lineTable-button-danger';
         }
     }
 

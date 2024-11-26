@@ -34,7 +34,7 @@ export default class LegacyButtonEditorSubWidget_prevCallButton extends LegacyBu
 
         const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash")}
+        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash kbc-prevCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

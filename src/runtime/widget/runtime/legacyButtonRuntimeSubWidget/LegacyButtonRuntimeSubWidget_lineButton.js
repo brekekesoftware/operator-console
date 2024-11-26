@@ -44,17 +44,17 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
             const park = parksStatus[line];
 
             if (line_talker === loginUser?.pbxUsername) {
-                light = 'kbc-button-success-flash';
+                light = 'kbc-button-success-flash kbc-line-button-loginUser-success-flash';
             } else if (park) {
-                light = myParksStatus[line] ? 'kbc-button-success-flash-slow' : 'kbc-button-danger-flash-slow';
+                light = myParksStatus[line] ? 'kbc-button-success-flash-slow kbc-line-button-park-success-flash-slow' : 'kbc-line-button-park-danger-flash-slow';
             } else if (callInfo) {
                 if (callInfo?.getIsIncoming() && !callInfo?.getIsAnswered() ) {
-                    light = 'kbc-button-danger-flash'
+                    light = 'kbc-button-danger-flash kbc-line-button-callInfo-danger-flash'
                 } else {
-                    light = 'kbc-button-success'
+                    light = 'kbc-button-success kbc-line-button-callInfo-success'
                 }
             } else {
-                light = 'kbc-button-danger'
+                light = 'kbc-button-danger kbc-line-button-danger'
             }
         }
 

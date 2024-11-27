@@ -52,7 +52,7 @@ Log in to the PBX administration screen and create a tenant and a user with admi
   
 For the operator-console to work properly, the following settings are also required on the PBX:  
   
-1. Select Tenant from the side menu > TENANT > Options > General > Phone book (Set to yes) , Web Phone (Set to yes)  
+1. Select Tenant from the side menu > TENANT > Options > Features > Phone book (Set to yes) , Web Phone (Set to yes)  
 2. Select Tenant from the side menu > Select User from the side menu > USER > Phones > Set the Type of Phone4 to Web Phone  
 3. SIP SERVER > Configuration > Key and Certificate (TLS, WSS, Apple LPC) (Upload the JKS file etc. and set the password.)  
 4. PBX > Options > PAL Settings > PAL WebSocket (Set to Yes),Valid WebSocket client IP Pattern(For example:.*)  

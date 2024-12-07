@@ -804,3 +804,10 @@ table.brOCLinetable tbody tr td
   padding:unset;
   margin:0 0 0 8px;
 }
+
+.brOC .menuIcon {
+  position: absolute;
+  top: 4px;
+  right: 20px;
+  z-index: 15;
+}

@@ -243,7 +243,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 }}
                 trigger="click"
             >
-                <Button style={{position: 'absolute', top: 4, right: 4, zIndex: 15}} shape="circle"
+                <Button className="menuIcon menuIcon_custom" shape="circle"
                         icon={<MoreOutlined/>}></Button>
                 {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
             </Dropdown>

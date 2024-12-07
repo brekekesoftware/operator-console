@@ -31,12 +31,17 @@ export default class AutoDialView_ver2 extends React.Component {
         // oc.getCallHistory2().sortIfNeed();
         AUTO_DIAL_VIEW_VER2 = this;
         this._phonebookContactInfoArray = null;
+        this.clearLatestSearchInfo();
         //this._PhonebookScrollableDivElement = null;
+        //this._AutoDialViewRef = React.createRef();
+
+    }
+
+    clearLatestSearchInfo(){
         this._latestSearchPhonebookName = null;
         this._latestSearchPhonebookShared = null;
         this._latestSearchPhonebookKeywords = null;
-        //this._AutoDialViewRef = React.createRef();
-
+        this._latestSearchPhonebookDate = null;
     }
 
     _getPhonebookScrollableDivElement(){
@@ -116,6 +121,7 @@ export default class AutoDialView_ver2 extends React.Component {
             pbName = systemSettingsData.getAutoDialPhonebookName();
         }
 
+        this._latestSearchPhonebookDate = new Date();
         this._latestSearchPhonebookName = pbName;
         this._latestSearchPhonebookShared = pbShared;
         this._latestSearchPhonebookKeywords = pbKeywords;
@@ -301,10 +307,26 @@ export default class AutoDialView_ver2 extends React.Component {
         PhonebookContactInfozTelsView.getStaticPhonebookContactInfozTelsViewInstance().closePhonebookContactInfozTelsView();
     }
 
-    _onClickGetContactList(e){
+    _onClickGetContactList(){
         const keywords = this._getPhonebookKeywordsValue();
         const bOnlySharedContacts = this._getPhonebookSharedValue();
+        this._getContactList( keywords, bOnlySharedContacts );
+    }
+
+    _getContactList( keywords, bOnlySharedContacts ){
         this._resetPhonebookContactInfoArrayAsync( keywords, bOnlySharedContacts );
+    }
+
+    reshowContactList(){
+        // const canShow = ( !this._latestSearchPhonebookKeywords === undefined || !this._latestSearchPhonebookKeywords !== null  ) &&
+        //     ( this._latestSearchPhonebookShared !== undefined || this._latestSearchPhonebookShared !== null ) &&
+        //     !!this._latestSearchPhonebookName
+        // ;
+        const canShow = !!this._latestSearchPhonebookDate;
+        if( canShow ){
+            this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+        }
+        return canShow;
     }
 
     _getPhonebookKeywordsValue(){
@@ -547,6 +569,11 @@ export default class AutoDialView_ver2 extends React.Component {
         this.setState({recentShowDetailChecked:checked});
     }
 
+    _onChangeOnlySharedContacts( checked, ev ){
+        const keywords = this._getPhonebookKeywordsValue();
+        this._getContactList( keywords, checked );
+    }
+
     render() {
         if (!this.props.isVisible) {
             return (null);
@@ -605,9 +632,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                 <li className="tab tab-C"
                                                     onClick={ (e) => {
                                                         this.tabSwitch(e);
-                                                        if( this._phonebookContactInfoArray === null ){
-                                                            this._resetPhonebookContactInfoArrayAsync();
-                                                        }
+                                                        //if( this._phonebookContactInfoArray === null ){
+                                                            if( this.reshowContactList() === false ) {
+                                                                this._resetPhonebookContactInfoArrayAsync();
+                                                            }
+                                                        //}
                                                     }}>{i18n.t("Phonebook")}</li>
                                             </ul>
 
@@ -802,7 +831,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <button
                                                                     title={i18n.t(`Search`)}
                                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                    onClick={(e) => this._onClickGetContactList(e)}
+                                                                    onClick={(e) => this._onClickGetContactList()}
                                                                 >
                                                                     <svg height="24" viewBox="0 0 24 24" width="24">
                                                                         <path
@@ -812,7 +841,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     </svg>
                                                                 </button>
                                                                 {/*<svg height="24" viewBox="0 0 24 24" width="24"*/}
-                                                                {/*     onClick={(e) => this._onClickGetContactList(e)}>*/}
+                                                                {/*     onClick={(e) => this._onClickGetContactList()}>*/}
                                                                 {/*    <path*/}
                                                                 {/*        d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"*/}
                                                                 {/*        fill="black">*/}
@@ -829,6 +858,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <Switch
                                                                     id="brOC_autoDialView_ver2_phonebook_onlySharedContacts"
                                                                     // defaultChecked={false}   //!bug? Sometimes it stops working.
+                                                                    onChange={ ( checked, ev ) => this._onChangeOnlySharedContacts( checked, ev )  }
                                                                 />
                                                             </td>
                                                             <td style={{width:"99%"}}></td>

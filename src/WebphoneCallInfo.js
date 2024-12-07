@@ -26,7 +26,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleHoldWithCheck = callObject.toggleHoldWithCheck;
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
-
+        this._setHolding = callObject.setHolding;
 
 
     }
@@ -45,6 +45,14 @@ export default class WebphoneCallInfo extends ACallInfo {
     }
 
     /**
+     * overload method
+     */
+    setHolding( b ){
+        this._setHolding(b);
+    }
+
+
+        /**
      *  overload method
      */
     toggleHoldWithCheck() {
@@ -154,6 +162,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleHoldWithCheck = callObject.toggleHoldWithCheck;
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
+        this._setHolding = callObject.setHolding;
 
         if( this._incoming ) {
             if (!wasAnsweredAt || wasAnsweredAt === 0) {
@@ -293,6 +302,14 @@ export default class WebphoneCallInfo extends ACallInfo {
         switch( status ){
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferFail:
                 this.setIsTransferring(false);
+                break;
+            //It is not enough to just monitor UNHOLD for callObject, so monitor it and make it UNHOLD as well.
+            case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.unhold:
+                const bHolding = this.getIsHolding();
+                if( bHolding ){
+                    this._holding = false;
+                    this._setHolding(false);
+                }
                 break;
             // case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:
             //     this.setIsTransferring(false);

@@ -12,6 +12,7 @@ export default class NoteWidgetData extends WidgetData {
         this._noteTextFgColor = options["noteTextFgColor"];
         this._noteBgStartColor = options["noteBgStartColor"];
         this._noteBgEndColor = options["noteBgEndColor"];
+        this._noteLabel = options["noteLabel"];
     }
 
     //!override
@@ -80,6 +81,12 @@ export default class NoteWidgetData extends WidgetData {
             delete o["noteBgEndColor"];
         }
 
+        if( this._noteLabel  ){
+            o["noteLabel"] = this._noteLabel;
+        }
+        else{
+            delete o["noteLabel"];
+        }
     }
 
     setNoteName( noteName ){
@@ -152,6 +159,14 @@ export default class NoteWidgetData extends WidgetData {
 
     setNoteBgEndColor( color ){
         this._noteBgEndColor = color;
+    }
+
+    setNoteLabel( noteLabel  ){
+        this._noteLabel = noteLabel;
+    }
+
+    getNoteLabel(){
+        return this._noteLabel;
     }
 
     //!override

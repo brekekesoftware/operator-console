@@ -163,7 +163,14 @@ export default class ACallInfo {
     /**
      *  abstract method
      */
-    toggleHoldWihtCheck( okFunc, ngFunc ){
+    setHolding(b){
+        throw new Error("Not implemented.");
+    }
+
+    /**
+     *  abstract method
+     */
+    toggleHoldWithCheck(){
         throw new Error("Not implemented.");
     }
 

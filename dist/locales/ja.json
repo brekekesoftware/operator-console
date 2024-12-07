@@ -1,5 +1,6 @@
 {
   "ja": {
+	"Label" : "ラベル",
   	"Failed_to_parse_call_history" : "通話履歴の解析に失敗しました。",
 	"Transfer_button_settings" : "転送ボタンの設定",
 	"Cancel_transfer_button_settings" : "転送キャンセルボタンの設定",
@@ -22,7 +23,7 @@
 	"Close" : "閉じる",
 	"Version" : "バージョン",
   	"About_Brekeke_OperatorConsole" : "Brekeke Operator Consoleについて",
-  	"About_OperatorConsole" : "Operator　Consoleについて",
+  	"About_OperatorConsole" : "Operator Consoleについて",
 	"Show_detail" : "詳細を表示",
 	"You_do_not_have_permission_to_save_phone_book_contact" : "電話帳のコンタクトを保存する権限がありません。",
   	"You_do_not_have_permission_to_delete_phone_book_contact" : "電話帳のコンタクトを削除する権限がありません。",

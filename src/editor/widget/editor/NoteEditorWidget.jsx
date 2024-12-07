@@ -132,7 +132,11 @@ export default class NoteEditorWidget extends EditorWidget{
     //!overload
     _getRenderMainJsx() {
         const widgetData = this.getWidgetData();
-        const noteName = widgetData.getNoteName();
+        let  sNoteLabel = widgetData.getNoteLabel();
+        if( !sNoteLabel || sNoteLabel.trim().length === 0  ){
+            sNoteLabel = widgetData.getNoteName();
+        }
+
         const noteTitleFontSize = widgetData.getNoteTitleFontSize() ? widgetData.getNoteTitleFontSize() : 14;
         const noteBodyFontSize = widgetData.getNoteBodyFontSize() ? widgetData.getNoteBodyFontSize() : 14;
         const noteNameFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameFgColor() , "" );
@@ -153,7 +157,7 @@ export default class NoteEditorWidget extends EditorWidget{
                     fontSize:noteTitleFontSize,
                     color:noteNameFgColor,
                     backgroundColor:noteNameBackground
-                }}>{noteName}</div>
+                }}>{sNoteLabel}</div>
                 {this.state.loading ? (
                     <Empty image={null} description={<Spin/>}/>
                 ) : (

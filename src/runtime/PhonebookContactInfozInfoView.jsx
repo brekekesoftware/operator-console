@@ -10,6 +10,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import Notification from "antd/lib/notification";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
 import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfozInfo_AutoDialView_ver2";
+import AutoDialView_ver2 from "./AutoDialView_ver2";
 
 class PbContactInfozCustomItem{
     constructor( options ) {
@@ -376,6 +377,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                 Notification.success({message: i18n.t("saved_data_to_pbx_successfully")});
                 let sAid = result["aid"];
                 this._reloadContactInfo(sAid);
+                AutoDialView_ver2.getStaticInstance().reshowContactList();  //Refresh Contact list
             }
         }).catch( (errorOrResponse) =>{
             OCUtil.logErrorWithNotification("Failed to set contact(PAL rest API).", i18n.t("failed_to_save_data_to_pbx"), errorOrResponse );
@@ -751,13 +753,28 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                     </tr>
                                     {
                                         this._PbContactInfozCustomItemArray.map( (customItem, i ) =>{
+                                            const bHidden = PhonebookContactInfozInfo_AutoDialView_ver2.isHiddenCustomKey( customItem.getName() );
+                                            if( bHidden ){
+                                                return <>
+                                                    <Input
+                                                        type="hidden"
+                                                        id={"brOC_PhonebookContactInfozInfoView_customItemName_" + i}
+                                                        value={customItem.getName()}
+                                                    />
+                                                    <Input
+                                                        type="hidden"
+                                                        data-br-name={"PhonebookContactInfozInfoView_customItemValue_" + i}
+                                                        value={customItem.getValue()}
+                                                    />
+                                                </>
+                                            }
                                             return (
                                                 <tr key={i}>
                                                     <th>
                                                         <Input
                                                             id={"brOC_PhonebookContactInfozInfoView_customItemName_" + i}
                                                             list={"brOC_PhonebookContactInfozInfoView_datalist_customItemName_" + i }
-                                                            //defaultValue={customItem.getName()}
+                                                            defaultValue={customItem.getName()}
                                                             style={{width: "200px"}} disabled={!isSaveable}
                                                             maxLength="1000"
                                                             onChange={(e) => this._onChangeCustomItemInputName(customItem, e)}
@@ -784,7 +801,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                     <td>
                                                         <Input
                                                             data-br-name={"PhonebookContactInfozInfoView_customItemValue_" + i}
-                                                            //defaultValue={customItem.getValue()}
+                                                            defaultValue={customItem.getValue()}
                                                             style={{width: "300px"}} disabled={!isSaveable}
                                                             maxLength="1000"
                                                             onChange={(e) => this._onChangeCustomItemInputValue(customItem, e)}

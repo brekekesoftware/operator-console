@@ -1,5 +1,6 @@
 {
   "en": {
+	"Label" : "Label",
 	"Failed_to_parse_call_history" : "Failed to parse call history.",
 	"Transfer_button_settings" : "Transfer button settings",
 	"Cancel_transfer_button_settings" : "Cancel transfer button settings",

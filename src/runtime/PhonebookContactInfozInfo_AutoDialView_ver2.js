@@ -92,6 +92,11 @@ export default class PhonebookContactInfozInfo_AutoDialView_ver2{
         return b;
     }
 
+    static isHiddenCustomKey( key ){
+        const b =  key.startsWith("$");
+        return b;
+    }
+
     getInfoKeyName(){
         return this._InfoKeyName;
     }

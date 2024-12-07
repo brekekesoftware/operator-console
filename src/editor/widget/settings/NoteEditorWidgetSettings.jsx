@@ -122,10 +122,25 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeNoteLabel(e){
+        const noteLabel = e.currentTarget.value;
+        const widgetData = this._getWidgetData();
+        widgetData.setNoteLabel( noteLabel  );
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     //!override
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const noteName = widgetData.getNoteName();
+        let  sNoteLabel;
+        if( widgetData.getNoteLabel() ){
+            sNoteLabel = widgetData.getNoteLabel();
+        }
+        else{
+            sNoteLabel = "";
+        }
+
         const jsx =   (
             <>
                 <p>{i18n.t("borderRadius")}</p>
@@ -135,6 +150,9 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
                 <p>{i18n.t("Name")}</p>
                 <AutoComplete value={noteName} options={this.state.nameOptions}
                               onChange={(noteName) => this._onChangeNoteName(noteName)} style={{width: "100%"}}/>
+                <p>{i18n.t("Label")}</p>
+                <Input placeholder={i18n.t("Label")} allowClear value={sNoteLabel}
+                       defaultValue={sNoteLabel} onChange={(e) => this._onChangeNoteLabel(e)} />
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={widgetData.getNoteTitleFontSize()}
                              onChange={(n) => this._onChangeNoteTitleFontSize(n)}/>

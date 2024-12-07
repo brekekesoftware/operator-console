@@ -87,7 +87,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.7";
+const VERSION = "2.1.8";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -123,6 +123,7 @@ import WidgetData from "./data/widgetData/WidgetData";
 import {CallHistory2} from "./CallHistory2";
 import PalRestApi from "./PalRestApi";
 import ScreenPaneDatas from "./data/ScreenPaneDatas";
+import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -4561,6 +4562,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         const subDatas = this.getShowAutoDialWidgetSubDatas_ver2();
         const subData = legacyButtonRuntimeSubWidget_autoDialButton.getLegacyButtonSubWidgetData();
         const index = BrekekeOperatorConsole._getIndexFromArray(subDatas, subData);
+        let becomeHide = false;
         if (index === -1) {
             //visible autoDialView_ver2
             const sort = this.getSystemSettingsData().getAutoDialRecentDisplayOrder();
@@ -4571,8 +4573,17 @@ export default class BrekekeOperatorConsole extends React.Component {
             // if( widgets.length === 0 ){
             //   //invisible
             // }
+            if( subDatas.length === 0 ){
+                becomeHide = true;
+            }
         }
-        this.setState({showAutoDialWidgetSubDatas_ver2: subDatas});  //for rerender
+
+        if( becomeHide ){
+            this.abortAutoDialView_ver2();
+        }
+        else {
+            this.setState({showAutoDialWidgetSubDatas_ver2: subDatas});  //for rerender
+        }
     }
 
     addOnBeginSaveEditingScreenFunctionIfNotExists(func) {
@@ -4758,6 +4769,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     abortAutoDialView_ver2 = () => {
+        AutoDialView_ver2.getStaticInstance().clearLatestSearchInfo();
         this.setState({showAutoDialWidgetSubDatas_ver2: []});  //for rerender
     }
 

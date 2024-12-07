@@ -184,6 +184,38 @@ export default class PalCallInfo extends ACallInfo {
     /**
      *  overload method
      */
+    setHolding( b ){
+        if( b ){
+            this._CallInfosAsParent.getPhoneClientAsParent().hold( this,
+                function( res, obj){
+                    //!forBug res includes failed?
+                },
+                function( err ) {
+                    console.error("Failed to hold call. err=", err);
+                    Notification.error({message: i18n.t('failedToHoldCall') + "\r\n" + err, duration: 0});
+                }
+            );
+        }
+        else{
+            this._CallInfosAsParent.getPhoneClientAsParent().unhold( this,
+                function( res, obj){
+                    if( res.startsWith("failed")) {
+                        console.error("Failed to unhold call. res=", res);
+                        Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
+                    }
+                },
+                function( err ) {
+                    console.error("Failed to unhold call. err=", err );
+                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration:0 });
+                }
+            );
+        }
+    }
+
+
+    /**
+     *  overload method
+     */
     toggleHoldWithCheck() {
         if( this.getIsHolding() === true ){
             this._CallInfosAsParent.getPhoneClientAsParent().unhold( this,

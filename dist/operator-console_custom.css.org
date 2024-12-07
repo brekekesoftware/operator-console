@@ -2987,3 +2987,10 @@ a.kbc-button-lg.kbc-lineTable-button-callInfo-success::after {
   -moz-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
   animation: kbc-general-button-danger-flash-keyframes 3s infinite;
 }
+
+.brOC .menuIcon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 15;
+}

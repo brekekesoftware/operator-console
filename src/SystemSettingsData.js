@@ -156,7 +156,7 @@ export default class SystemSettingsData{
         this._Data.ucChatAgentComponentEnabled = false;
         this._Data.extensionScript = "";
         this._Data.phoneTerminal = "phoneTerminal_webphone";
-        this._Data.autoDialRecentDisplayOrder = CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC;
+        this._Data.autoDialRecentDisplayOrder = CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC;
 		this._Data.autoDialPhonebookName = "";
     }
 

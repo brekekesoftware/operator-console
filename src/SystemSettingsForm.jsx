@@ -43,8 +43,8 @@ const SystemSettingsForm = ( props ) => {
             </Form.Item>
             <Form.Item label={i18n.t("RecentDisplayOrder")} name={"autoDialRecentDisplayOrder"}>
                 <Select>
-                    <Select.Option value={CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC}>{i18n.t("CallOrIncomingCountDesc")}</Select.Option>
                     <Select.Option value={CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC}>{i18n.t("StartDatetimeDesc")}</Select.Option>
+                    <Select.Option value={CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC}>{i18n.t("CallOrIncomingCountDesc")}</Select.Option>
                 </Select>
             </Form.Item>
             <Form.Item label={i18n.t("PhonebookName")} name={"autoDialPhonebookName"}>

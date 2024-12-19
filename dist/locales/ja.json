@@ -1,5 +1,9 @@
 {
   "ja": {
+	"Layouts_have_been_deleted" : "レイアウトを削除しました。",
+	"Failed_to_delete_layouts" : "レイアウトの削除に失敗しました。",
+	"CheckAll" : "全てにチェック",
+	"DeleteLayouts" : "レイアウトの削除",
 	"Label" : "ラベル",
   	"Failed_to_parse_call_history" : "通話履歴の解析に失敗しました。",
 	"Transfer_button_settings" : "転送ボタンの設定",

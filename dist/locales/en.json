@@ -1,5 +1,9 @@
 {
   "en": {
+	"Layouts_have_been_deleted" : "Layouts have been deleted.",
+	"Failed_to_delete_layouts" : "Failed to delete layouts.",
+	"CheckAll" : "Check all",
+	"DeleteLayouts" : "Delete layouts",
 	"Label" : "Label",
 	"Failed_to_parse_call_history" : "Failed to parse call history.",
 	"Transfer_button_settings" : "Transfer button settings",

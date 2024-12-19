@@ -13,6 +13,9 @@ import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLay
 import Spin from "antd/lib/spin";
 import ScreenData from "./data/ScreenData";
 import OCUtil from "./OCUtil";
+import DeleteLayoutsModalForDropDownMenu, {
+    refreshNoteNamesForDeleteLayoutsModalForDropDownMenu
+} from "./DeleteLayoutsModalForDropDownMenu";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -26,11 +29,45 @@ export default function DropDownMenu( { operatorConsole } ){
     };
 
     const [ openLayoutModalOpen,  setOpenLayoutModalOpen ] = useState( false );
+    const [ deleteLayoutsModalOpen,  setDeleteLayoutsModalOpen ] = useState( false );
+
     const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
     const [isLoading, setIsLoading ] = useState(false);
     const showOpenLayoutModalFunc = ( ) =>{
         setOpenLayoutModalOpen( true );
         refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalOpen, setIsLoading  );;
+    }
+
+    //let layoutNamesForDeleteLayouts;
+    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+    const [ layoutNamesForDeleteLayouts, setLayoutNamesForDeleteLayouts ] = useState(null);
+    const setNoteNamesFunctionForDeleteLayouts = ( noteNames ) =>{
+        if( !noteNames || Array.isArray(noteNames ) !== true || noteNames.length === 0 ){
+            setLayoutNamesForDeleteLayouts( new Array() );
+        }
+        else {
+            const layoutNamesForDeleteLayouts = new Array();
+            for( let i = 0; i < noteNames.length; i++ ) {
+                const noteName = noteNames[i];
+                if( BrekekeOperatorConsole.isOCNoteName( noteName) ){
+                    const layoutName = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                    layoutNamesForDeleteLayouts.push( layoutName );
+                }
+            }
+            setLayoutNamesForDeleteLayouts( layoutNamesForDeleteLayouts );
+        }
+    };
+
+    const [isLoadingNoteNamesForDeleteLayouts, setIsLoadingNoteNamesFunctionForDeleteLayouts ] = useState(false);
+    //
+    // let isLoadingNoteNamesForDeleteLayouts = false;
+    // const setIsLoadingNoteNamesFunctionForDeleteLayouts = ( b ) =>{
+    //     isLoadingNoteNamesForDeleteLayouts = b;
+    // };
+
+    const showDeleteLayoutsModalFunc = ( ) =>{
+        setDeleteLayoutsModalOpen( true );
+        refreshNoteNamesForDeleteLayoutsModalForDropDownMenu( operatorConsole, setNoteNamesFunctionForDeleteLayouts, setIsLoadingNoteNamesFunctionForDeleteLayouts);;
     }
 
     let items;
@@ -145,9 +182,17 @@ export default function DropDownMenu( { operatorConsole } ){
                         {i18n.t("openLayout")}
                     </a>
                 ),
-            },,
+            },
             {
                 key: '5',
+                label: (
+                    <a onClick={showDeleteLayoutsModalFunc}>
+                        {i18n.t("DeleteLayouts")}
+                    </a>
+                ),
+            },
+            {
+                key: '6',
                 label: (
                     <a onClick={operatorConsole.startSettingsScreen}>
                         {i18n.t("settings_screen")}
@@ -155,7 +200,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '6',
+                key: '7',
                 label: (
                     <a onClick={ () => operatorConsole.openAboutOCModalByState() }>
                         {i18n.t("About_OperatorConsole")}
@@ -232,6 +277,12 @@ export default function DropDownMenu( { operatorConsole } ){
         <>
             <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={operatorConsole.getState().newLayoutModalOpen} />
             <OpenLayoutModalForDropdownMenu noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
+            <DeleteLayoutsModalForDropDownMenu
+                operatorConsole={ operatorConsole } useStateOpen={ deleteLayoutsModalOpen  } useStateSetOpen={ setDeleteLayoutsModalOpen }
+                layoutNamesForDeleteLayouts = { layoutNamesForDeleteLayouts } isLoadingNoteNamesForDeleteLayouts = { isLoadingNoteNamesForDeleteLayouts }
+                setNoteNamesFunctionForDeleteLayouts={setNoteNamesFunctionForDeleteLayouts}
+                setIsLoadingNoteNamesFunctionForDeleteLayouts={setIsLoadingNoteNamesFunctionForDeleteLayouts}
+            />
             <div ref={spinScreen} className="spinScreen">
                 <div>
                     <Spin/>

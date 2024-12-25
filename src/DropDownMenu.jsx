@@ -221,8 +221,8 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <a onClick={showOpenLayoutModalFunc}>
-                                    {i18n.t("openLayout")}
+                                <a style={signOutStyle} onClick={signOutOnClick}>
+                                    {i18n.t("signout")}
                                 </a>
                             )
                         }

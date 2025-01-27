@@ -56,6 +56,10 @@ export default class OCUtil{
         return b;
     }
 
+    static isBoolean( o ){
+        return o === true || o === false;
+    }
+
     static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
         if( oErr ){
             if( consoleErrorMessage ) {
@@ -85,6 +89,40 @@ export default class OCUtil{
                     }
                 }
                 Notification.error({message: notificationErrorMessage + "\r\n" + obj, duration: duration});
+            }
+        }
+
+    }
+
+    static logWarningWithNotification( consoleWarningMessage, notificationWarningMessage = null,  oWarning = null, duration ){
+        if( oWarning ){
+            if( consoleWarningMessage ) {
+                console.warn(consoleWarningMessage, oWarning);
+            }
+            else{
+                console.warn( oWarning );
+            }
+        }
+        else{
+            console.warn( consoleWarningMessage );
+        }
+
+        if( notificationWarningMessage ) {
+            if( !oWarning ){
+                Notification.error({message: notificationWarningMessage, duration: duration});
+            }
+            else {
+                let obj;
+                if (oWarning instanceof Error) { // true
+                    obj = oWarning.toString();
+                } else {
+                    try {
+                        obj = JSON.stringify(oWarning);
+                    } catch (errJsonStringify) {
+                        obj = oWarning;
+                    }
+                }
+                Notification.error({message: notificationWarningMessage + "\r\n" + obj, duration: duration});
             }
         }
 

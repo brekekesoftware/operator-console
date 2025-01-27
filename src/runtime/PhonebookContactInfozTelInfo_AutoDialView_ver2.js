@@ -2,24 +2,40 @@ import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfoz
 
 export default class PhonebookContactInfozTelInfo_AutoDialView_ver2 extends PhonebookContactInfozInfo_AutoDialView_ver2{
     constructor( key, title, value, type ) {
-        super( key,title, value, type  );
-        this._SvgPathD =PhonebookContactInfozTelInfo_AutoDialView_ver2._getSvgPathD( this._Title  );
+        super(key, title, value, type);
+        this._SvgPathD = PhonebookContactInfozTelInfo_AutoDialView_ver2._getSvgPathD(this._Title);
     }
+
+    // constructor( key, title, value, type, copySrc ) {
+    //     if( copySrc ){
+    //         super( key, title, value, type );
+    //         this.copyFrom(copySrc);
+    //     }
+    //     else {
+    //         super(key, title, value, type);
+    //         this._SvgPathD = PhonebookContactInfozTelInfo_AutoDialView_ver2._getSvgPathD(this._Title);
+    //     }
+    // }
 
     //!override
     _setValue( val ){
         if( val === undefined || val === null  || val.length === 0 ) {
-            this._Value = "";
+            super._Value = "";
         }
         else {
             //this._Value = value.trim();
-            this._Value = val.trim();
+            super._Value = val.trim();
         }
     }
 
     getSvgPathD(){
         return this._SvgPathD;
     }
+
+    // copyFrom( phonebookContactInfozTelInfo_AutoDialView_ver2 ) {
+    //     super.copyFrom( phonebookContactInfozTelInfo_AutoDialView_ver2 );
+    //     this._SvgPathD = phonebookContactInfozTelInfo_AutoDialView_ver2._SvgPathD;
+    // }
 
     static _getSvgPathD( title ){
         const titleLower = title.toLowerCase();

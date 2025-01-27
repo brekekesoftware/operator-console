@@ -6,8 +6,11 @@ export default class FileInfosLoader {
 
     load( options ){
         this._fileInfos = null;
-
-        this._filesFileUrl = options["filesFileUrl"]; //require
+        let filesFileUrlOrPath = options["filesFileUrlOrPath"];;
+        if( !filesFileUrlOrPath ) {
+            filesFileUrlOrPath = options["filesFileUrl"]; //!deprecated. Possibility of containing relative paths
+        }
+        this._filesFileUrlOrPath = filesFileUrlOrPath;
         this._loadSuccessFunction = options["loadSuccessFunction"];   //require
         this._loadTimeoutFunction = options["loadTimeoutFunction"]; //require
         this._loadFailFunction = options["loadFailFunction"];   //!require
@@ -17,7 +20,7 @@ export default class FileInfosLoader {
 
         const filesFile = new FilesFile();
         const optionsFilesFile = {
-            url : this._filesFileUrl,
+            urlOrPath : this._filesFileUrlOrPath,//Possibility of containing relative paths
             successFunction: (options) =>{
                 this._onFilesFileLoadSuccess(options);
             },
@@ -62,32 +65,36 @@ export default class FileInfosLoader {
     _onFilesFileLoadSuccess( options ){
         const filesFile = options.caller;
 
-        let fileRootUrl = this._filesFileUrl;
+        let fileRootUrlOrPath = this._filesFileUrlOrPath;
         //!limitation  Supports file path url only.
-        const questionIndex = fileRootUrl.lastIndexOf('?');
+        const questionIndex = fileRootUrlOrPath.lastIndexOf('?');
         if( questionIndex !== -1 ){
-            fileRootUrl = fileRootUrl.substring( 0, questionIndex );
+            fileRootUrlOrPath = fileRootUrlOrPath.substring( 0, questionIndex );
         }
-        const slashIndex = fileRootUrl.lastIndexOf('/');
+        const slashIndex = fileRootUrlOrPath.lastIndexOf('/');
         if( slashIndex !== -1 ){
-            fileRootUrl = fileRootUrl.substring(0,slashIndex);
+            fileRootUrlOrPath = fileRootUrlOrPath.substring(0,slashIndex);
         }
-        let fileUrlPrefix;
-        if( fileRootUrl.length !== 0 ){
-            fileUrlPrefix = fileRootUrl + '/';
+        let fileUrlOrPathPrefix;
+        if( fileRootUrlOrPath.length !== 0 ){
+            fileUrlOrPathPrefix = fileRootUrlOrPath + '/';
         }
         else{
-            fileUrlPrefix = "";
+            fileUrlOrPathPrefix = "";
         }
         const fileNames = filesFile.getFileNames();
         const fileInfos = new Array();
         for( let i = 0; i < fileNames.length; i++ ){
             const fileName = fileNames[i];
-            const fileUrl = fileUrlPrefix + fileName;
-            const fileInfo = {"url": fileUrl, "name": fileName };
+            const fileUrlOrPath = fileUrlOrPathPrefix + fileName;
+            const fileInfo = {
+                "url": fileUrlOrPath, //!deprecated
+                "urlOrPath": fileUrlOrPath,
+                "name": fileName
+            };
             fileInfos.push( fileInfo );
         }
-        this._fileRootUrl = fileRootUrl;
+        this._fileRootUrlOrPath = fileRootUrlOrPath;
         this._fileInfos = fileInfos;
         const optionsSuccess = {caller:this};
         this._loadSuccessFunction( optionsSuccess );
@@ -98,8 +105,17 @@ export default class FileInfosLoader {
         return this._fileInfos;
     }
 
-    getFileRootUrl(){
-        return this._fileRootUrl;
+    getFileInfoByFilename( sFileName){
+        if( !this._fileInfos || Array.isArray( this._fileInfos ) === false ){
+            return null;
+        }
+
+        const foundFileInfo = this._fileInfos.find( (fileInfo) => fileInfo["name"] === sFileName );
+        return foundFileInfo;
     }
+
+    // getFileRootUrlOrPath(){
+    //     return this._fileRootUrlOrPath;
+    // }
 
 }

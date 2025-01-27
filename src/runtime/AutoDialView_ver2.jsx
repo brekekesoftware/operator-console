@@ -17,6 +17,7 @@ import Empty from "antd/lib/empty";
 import PhonebookContactInfozTelsView from "./PhonebookContactInfozTelsView";
 import PhonebookContactInfozInfoView from "./PhonebookContactInfozInfoView";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
+import PhonebookContact_AutoDialView_ver2 from "./PhonebookContact_AutoDialView_ver2";
 let AUTO_DIAL_VIEW_VER2;
 const _GET_CONTACT_LIST_LIMIT = 1000;   //!limit max 1000
 
@@ -31,6 +32,7 @@ export default class AutoDialView_ver2 extends React.Component {
         // oc.getCallHistory2().sortIfNeed();
         AUTO_DIAL_VIEW_VER2 = this;
         this._phonebookContactInfoArray = null;
+        this._autoDialViewzPhonebookContactArray = null;
         this.clearLatestSearchInfo();
         //this._PhonebookScrollableDivElement = null;
         //this._AutoDialViewRef = React.createRef();
@@ -130,6 +132,12 @@ export default class AutoDialView_ver2 extends React.Component {
         }
         else {
             this._phonebookContactInfoArray.length = 0; //clear array
+        }
+        if( this._autoDialViewzPhonebookContactArray == null ){
+            this._autoDialViewzPhonebookContactArray = new Array();
+        }
+        else {
+            this._autoDialViewzPhonebookContactArray.length = 0; //clear array
         }
         this.setState({rerender:true});
         this._appendPhonebookContactsRecursive();
@@ -415,7 +423,8 @@ export default class AutoDialView_ver2 extends React.Component {
         }
 
         const phoneClient = oc.getPhoneClient();
-        let offset = this._phonebookContactInfoArray.length;
+        //let offset = this._phonebookContactInfoArray.length;
+        let offset = this._autoDialViewzPhonebookContactArray.length;
         options["offset"] = offset;
         let contactListCount;
 
@@ -434,22 +443,29 @@ export default class AutoDialView_ver2 extends React.Component {
         if (contactList) {
             for (let i = 0; i < contactList.length; i++) {
                 const contactListItem = contactList[i];
-                const aid = contactListItem["aid"];
-                const getContactOptions = {
-                    methodName : "getContact",
-                    methodParams : JSON.stringify({
-                        aid : aid
-                    })
-                };
-                const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
-                    OCUtil.logErrorWithNotification("Failed to get phonebook contact.", i18n.t('Failed_to_get_phone_book_contact'), rej );
-                    contactListCount = -2;
-                    return contactListCount;
-                });
-                const contactInfo = new PhonebookContactInfo_AutoDialView_ver2(contact);
-                this._phonebookContactInfoArray.push(contactInfo);
-                contactListCount = contactList.length;
+                const contactInfo2 = new PhonebookContact_AutoDialView_ver2(contactListItem);
+                this._autoDialViewzPhonebookContactArray.push(contactInfo2);
             }
+
+            // for (let i = 0; i < contactList.length; i++) {
+            //     const contactListItem = contactList[i];
+            //     const aid = contactListItem["aid"];
+            //     const getContactOptions = {
+            //         methodName : "getContact",
+            //         methodParams : JSON.stringify({
+            //             aid : aid
+            //         })
+            //     };
+            //     const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
+            //         OCUtil.logErrorWithNotification("Failed to get phonebook contact.", i18n.t('Failed_to_get_phone_book_contact'), rej );
+            //         contactListCount = -2;
+            //         return contactListCount;
+            //     });
+            //     const contactInfo = new PhonebookContactInfo_AutoDialView_ver2(contact);
+            //     this._phonebookContactInfoArray.push(contactInfo);
+            //     contactListCount = contactList.length;
+            // }
+            contactListCount = contactList.length;
         }
         else{
             contactListCount = -1;
@@ -457,11 +473,41 @@ export default class AutoDialView_ver2 extends React.Component {
         return contactListCount;
     }
 
-    _callPhonebookCallInfozTel( pbContactInfozTeIInfo){
-        const tel = pbContactInfozTeIInfo.getValue();
+   async  _callOrOpenPhonebookCallInfozTelsView( evMouseClick, autodialviewPhonebookContact ){
+        const getContactOptions = {
+            methodName : "getContact",
+            methodParams : JSON.stringify({
+                aid : autodialviewPhonebookContact.getAid()
+            })
+        };
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.setDialingAndMakeCall( tel );
-        oc.abortAutoDialView_ver2();
+        const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
+            OCUtil.logErrorWithNotification("Failed to get phonebook contact.", i18n.t('Failed_to_get_phone_book_contact'), rej );
+            return;
+        });
+        const contactInfo = new PhonebookContactInfo_AutoDialView_ver2(contact);
+        const telInfoArray = contactInfo.getFreezedPhonebookContactInfozTelInfoArray();
+        if( !telInfoArray || telInfoArray.length === 0 ){
+            this.setLatestContactInfoToAutodialviewPhonebookContact( autodialviewPhonebookContact, contactInfo );
+            Notification.info({  message: i18n.t("The_phone_number_is_not_registered") });
+        }
+        else if( telInfoArray.length === 1 ){
+            this._callPhonebookCallInfozTel( evMouseClick,telInfoArray[0], ()=>{
+                this.setLatestContactInfoToAutodialviewPhonebookContact( autodialviewPhonebookContact, contactInfo );   //for wait button animation
+            });
+        }
+        else{
+            this.setLatestContactInfoToAutodialviewPhonebookContact( autodialviewPhonebookContact, contactInfo );
+            this._openPhonebookCallInfozTelsView( contactInfo );
+        }
+    }
+
+    _callPhonebookCallInfozTel( evMouseClick, pbContactInfozTeIInfo, onDoneFunc ){
+        const tel = pbContactInfozTeIInfo.getValue();
+        AutoDialView_ver2.onClickCallButtonForAutoDialView( evMouseClick, tel, onDoneFunc  );
+        // const oc = BrekekeOperatorConsole.getStaticInstance();
+        // oc.setDialingAndMakeCall( tel );
+        // oc.abortAutoDialView_ver2();
     }
 
     _openPhonebookCallInfozTelsView( pbContactInfo ){
@@ -483,12 +529,114 @@ export default class AutoDialView_ver2 extends React.Component {
         //}
     }
 
+    setLatestContactInfoToAutodialviewPhonebookContact( autodialwiewPhonebookContact, pbContactInfo ){
+        autodialwiewPhonebookContact.setLatestPhonebookContactInfo( pbContactInfo );
+        this.setState({rerender:true});    //for rerender
+    }
+
     _openPhonebookCallInfozInfoView( pbContactInfo ){
         const pbContactInfozInfoView = PhonebookContactInfozInfoView.getStaticPhonebookContactInfozInfoViewInstance();
         const pbContactInfozTelsView = PhonebookContactInfozTelsView.getStaticPhonebookContactInfozTelsViewInstance();
         pbContactInfozTelsView.closePhonebookContactInfozTelsView( () => {
             pbContactInfozInfoView.closePhonebookContactInfozInfoView(  () => pbContactInfozInfoView.openPhonebookContactInfozInfoView(pbContactInfo) );
         });
+    }
+
+    async _openPhonebookCallInfozInfoView2( autodialviewPhonebookContact ){
+        const getContactOptions = {
+            methodName : "getContact",
+            methodParams : JSON.stringify({
+                 aid : autodialviewPhonebookContact.getAid()
+             })
+        };
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+         const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
+            OCUtil.logErrorWithNotification("Failed to get phonebook contact.", i18n.t('Failed_to_get_phone_book_contact'), rej );
+            return;
+         });
+         const contactInfo = new PhonebookContactInfo_AutoDialView_ver2(contact);
+         this.setLatestContactInfoToAutodialviewPhonebookContact( autodialviewPhonebookContact, contactInfo );
+        const pbContactInfozInfoView = PhonebookContactInfozInfoView.getStaticPhonebookContactInfozInfoViewInstance();
+        const pbContactInfozTelsView = PhonebookContactInfozTelsView.getStaticPhonebookContactInfozTelsViewInstance();
+        pbContactInfozTelsView.closePhonebookContactInfozTelsView( () => {
+            pbContactInfozInfoView.closePhonebookContactInfozInfoView(  () => pbContactInfozInfoView.openPhonebookContactInfozInfoView(contactInfo) );
+        });
+    }
+
+    async _deleteContact2(  autodialviewPhonebookContact ){
+        const getContactOptions = {
+            methodName : "getContact",
+            methodParams : JSON.stringify({
+                aid : autodialviewPhonebookContact.getAid()
+            })
+        };
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
+            OCUtil.logErrorWithNotification("Failed to get phonebook contact.", i18n.t('Failed_to_get_phone_book_contact'), rej );
+            return;
+        });
+        const pbContactInfo = new PhonebookContactInfo_AutoDialView_ver2(contact);
+        this.setLatestContactInfoToAutodialviewPhonebookContact( autodialviewPhonebookContact, pbContactInfo );
+        const isShared = pbContactInfo.getIsShared() === true;
+        const isAdmin = oc.getIsAdmin();
+        const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
+        if( isDeletable !== true  ){
+            const aid = pbContactInfo.getAid();
+            console.warn("You do not have permission to delete phone book contact.. aid=" + aid);
+            Notification.warning({
+                message: i18n.t("You_do_not_have_permission_to_delete_phone_book_contact"),
+            });
+            return;
+        }
+
+        const aid = pbContactInfo.getAid();
+
+        const failFunc = ( resOrError ) =>{
+            if( Array.isArray( resOrError ) ) {
+                const aid = resOrError[0];
+                console.error("Failed to delete phone book contact. aid=" + aid);
+                Notification.error({
+                    message: i18n.t("failed_to_save_data_to_pbx"),
+                    duration: 0
+                });
+            }
+            else{
+                OCUtil.logErrorWithNotification("Failed to delete phone book contact.", i18n.t("failed_to_save_data_to_pbx"), resOrError );
+            }
+            this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+        };
+
+        const deleteContactOptions = {
+            methodName : "deleteContact",
+            methodParams : JSON.stringify({
+                aid : aid
+            }),
+            onSuccessFunction : (ret) =>{
+                let bSuccess = false;
+                const arSucceeded = ret["succeeded"];
+                if( Array.isArray( arSucceeded ) ) {
+                    if( arSucceeded.length !== 0 ) {
+                        const iAidRet = arSucceeded[0];
+                        let aidIntegerOrString = aid;
+                        if( Number.isInteger( iAidRet ) && OCUtil.isString(aid)){
+                            aidIntegerOrString = parseInt( aid );
+                        }
+                        bSuccess = aidIntegerOrString  === iAidRet;
+                    }
+                }
+                if( bSuccess === true ){
+                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                    this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+                }
+                else{
+                    //const arFailed = ret["failed"];
+                    failFunc();
+                }
+            },
+            onFailFunction : (resOrError) => failFunc( resOrError )
+        };
+        oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
+
     }
 
     _deleteContact(  pbContactInfo ){
@@ -572,6 +720,46 @@ export default class AutoDialView_ver2 extends React.Component {
     _onChangeOnlySharedContacts( checked, ev ){
         const keywords = this._getPhonebookKeywordsValue();
         this._getContactList( keywords, checked );
+    }
+
+    static onClickCallButtonForAutoDialView( evMouseClick, partyNumber, onDoneFunc ){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const sysData = oc.getSystemSettingsData();
+        const b = sysData.getAutoDialOneTouchCall();
+        if( b === true ) {
+            oc.abortAutoDialView_ver2();
+            //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+
+            const bHasActiaveCall = !!oc.getCurrentCallInfo();
+            //const dialing = oc.getDialing();
+            //if ( dialing && dialing.length !== 0  && bHasActiaveCall) {
+            if (  bHasActiaveCall) {
+                //show transfer method modal.
+                const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
+                runtimeScreenView.setIsShowSelectCallingMethodModal(true, partyNumber );
+            }
+            else {
+                oc.setDialingAndMakeCall2(partyNumber);
+            }
+
+        }
+        else{
+            //flash once call button.
+            evMouseClick.target.classList.add("kbc-button-success-flash-once");
+            setTimeout( ()=>{
+                evMouseClick.target.classList.remove("kbc-button-success-flash-once");
+                //oc.abortAutoDialView_ver2();
+                if( onDoneFunc ){
+                    onDoneFunc();
+                }
+            }, 1000 );             //!depend. css animation time
+            oc.setDialing( partyNumber, false );
+        }
+
+    }
+
+    _onClickStartDatetimeCallHistoryCallButton( e, partyNumber ){
+        AutoDialView_ver2.onClickCallButtonForAutoDialView( e, partyNumber );
     }
 
     render() {
@@ -675,10 +863,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <button
                                                                                         title={i18n.t(`Call`)}
                                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                        onClick={() => {
-                                                                                            oc.abortAutoDialView_ver2();
-                                                                                            //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
-                                                                                            oc.setDialingAndMakeCall2(partyNumber);
+                                                                                        onClick={(e) => {
+                                                                                            AutoDialView_ver2.onClickCallButtonForAutoDialView( e, partyNumber );
                                                                                         }
                                                                                         }>
                                                                                         {<FontAwesomeIcon size="lg"
@@ -740,10 +926,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                         <button
                                                                                             title={i18n.t(`Call`)}
                                                                                             className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                            onClick={() => {
-                                                                                                oc.abortAutoDialView_ver2();
-                                                                                                //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
-                                                                                                oc.setDialingAndMakeCall2(partyNumber);
+                                                                                            onClick={(e) => {
+                                                                                                this._onClickStartDatetimeCallHistoryCallButton( e, partyNumber );
                                                                                             }
                                                                                             }>
                                                                                             {<FontAwesomeIcon size="lg"
@@ -795,10 +979,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <button
                                                                                     title={i18n.t(`Call`)}
                                                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                    onClick={() => {
-                                                                                        //oc.setDialingAndMakeCall2( ext.id, this.props.currentCallIndex, this.props.callIds, this.props.callById );
-                                                                                        oc.setDialingAndMakeCall2(ext.id);
-                                                                                        oc.abortAutoDialView_ver2();
+                                                                                    onClick={(e) => {
+                                                                                        AutoDialView_ver2.onClickCallButtonForAutoDialView( e, ext.id );
                                                                                     }
                                                                                     }>
                                                                                     {<FontAwesomeIcon size="lg"
@@ -870,7 +1052,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <div className="autoDialView_ver2_tableParent"
                                                                      id="phonebookScrollableDiv_brOC_AutoDialView_ver2"
                                                                      onScroll={(e) => this._onScrollPhonebookScrollableDiv(e)}>
-                                                                    {this._phonebookContactInfoArray === null && (
+                                                                    {this._autoDialViewzPhonebookContactArray === null && (
                                                                         <div style={{
                                                                             display: "flex",
                                                                             justifyContent: "center",
@@ -879,7 +1061,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         </div>
                                                                     )
                                                                     }
-                                                                    { this._phonebookContactInfoArray !== null && (
+                                                                    { this._autoDialViewzPhonebookContactArray !== null && (
                                                                         <table className={"defaultContentTable"} style={{border: "0",width:"100%"}}>
                                                                             <thead>
                                                                             <tr>
@@ -890,26 +1072,41 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                            { this._phonebookContactInfoArray.map((pbContactInfo,i) => {
-                                                                                const isShared = pbContactInfo.getIsShared();
+                                                                            { this._autoDialViewzPhonebookContactArray.map((autoDialViewzPhoneBookContact,i) => {
+                                                                                const latestPbContactInfo = autoDialViewzPhoneBookContact.getLatestPhonebookContactInfo();
+                                                                                const wasShared = latestPbContactInfo ? latestPbContactInfo.getIsShared() : false;
                                                                                 const isAdmin = oc.getIsAdmin();
-                                                                                const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
+                                                                                const isDeletable = wasShared === false || ( wasShared === true && isAdmin === true );
+                                                                                const telInfoArray = latestPbContactInfo ? latestPbContactInfo.getFreezedPhonebookContactInfozTelInfoArray() : null;
                                                                                 return (
                                                                                     <tr key={i} style={{height:"42px"}}>
-                                                                                        <td>{pbContactInfo.getDisplayName()}</td>
+                                                                                        <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
                                                                                         <td>
                                                                                             <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                                                                                                { pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray().length === 1 && (
+                                                                                                { !telInfoArray && (
                                                                                                     <button
                                                                                                         title={i18n.t(`Call`)}
                                                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                                        onClick={(e) => this._callPhonebookCallInfozTel( pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray()[0] )}
+                                                                                                        onClick={(e) => this._callOrOpenPhonebookCallInfozTelsView(e, autoDialViewzPhoneBookContact)}
                                                                                                     >
-                                                                                                        <FontAwesomeIcon size="lg" icon="fas fa-phone" />
+                                                                                                        <FontAwesomeIcon
+                                                                                                            size="lg"
+                                                                                                            icon="fas fa-phone"/>
                                                                                                     </button>
                                                                                                 )}
-                                                                                                { pbContactInfo.getFreezedPhonebookContactInfozTelInfoArray().length > 1 && (
-                                                                                                    <a onClick={(e) => this._openPhonebookCallInfozTelsView( pbContactInfo ) }>
+                                                                                                { telInfoArray && telInfoArray.length === 1 && (
+                                                                                                    <button
+                                                                                                        title={i18n.t(`Call`)}
+                                                                                                        className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
+                                                                                                        onClick={(e) => this._callPhonebookCallInfozTel(e, telInfoArray[0])}
+                                                                                                    >
+                                                                                                        <FontAwesomeIcon
+                                                                                                            size="lg"
+                                                                                                            icon="fas fa-phone" />
+                                                                                                    </button>
+                                                                                                )}
+                                                                                                { telInfoArray &&  telInfoArray.length > 1 && (
+                                                                                                    <a onClick={(e) => this._openPhonebookCallInfozTelsView( latestPbContactInfo ) }>
                                                                                                         <FontAwesomeIcon size="lg" icon="fas fa-phone" />
                                                                                                     </a>
                                                                                                 )}
@@ -921,7 +1118,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 alignItems: "center",
                                                                                                 justifyContent: "center"
                                                                                             }}>
-                                                                                                <a onClick={(e) => this._openPhonebookCallInfozInfoView( pbContactInfo )}>
+                                                                                                <a onClick={(e) => this._openPhonebookCallInfozInfoView2( autoDialViewzPhoneBookContact )}>
                                                                                                     {<FontAwesomeIcon
                                                                                                         size="lg"
                                                                                                         icon="fas fa-info-circle"/>}
@@ -935,7 +1132,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                     alignItems: "center",
                                                                                                     justifyContent: "center"
                                                                                                 }}>
-                                                                                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteContact( pbContactInfo ) }
+                                                                                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteContact2( autoDialViewzPhoneBookContact ) }
                                                                                                                 okText={i18n.t("yes")}
                                                                                                                 cancelText={i18n.t("no")}
                                                                                                     >

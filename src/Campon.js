@@ -27,6 +27,7 @@ export default class Campon{
         if( !isBusy ){
             //transfer
             const transferMode = "attended";
+            callInfo.setIsTransferring(true);
             this._OperatorConsoleAsParent.transferCallCore(  transferExtensionId, transferMode , transferTalkerId, transferTenant  ,
                 ( operatorConsoleAsCaller, message) => {
                     if( message.startsWith("fail")){
@@ -76,7 +77,6 @@ export default class Campon{
         }
         const callInfo = waitCamponObject.callInfo;
         delete callInfo["camponDstExtensionId"];
-
         this._OperatorConsoleAsParent.setState({"rerender":true});     //!for rerender
     }
 
@@ -96,7 +96,10 @@ export default class Campon{
         //const waitCamponObject = { transferTenant, transferExtensionId, transferTalkerId, transferMode, timeoutMillis };
          const oc2 = extensionsStatusAsCaller.getOperatorConsoleAsParent();
          const callInfo = oc2.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(waitCamponObject.transferTalkerId);
-
+        const callInfoFrom = waitCamponObject.callInfo;
+         if( callInfoFrom ){
+             callInfoFrom.setIsTransferring(true);
+         }
         //const transferMode = "attended";
         const transferMode = waitCamponObject.isBlindTransfer === true ? "blind" : "attended"; //!testit
         this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, waitCamponObject.transferTalkerId, waitCamponObject.transferTenant,
@@ -108,7 +111,7 @@ export default class Campon{
                     if (!callInfo) {
                         Notification.error({ message:i18n.t("failed_to_transfer_call")});
                     } else {
-                        if( waitCamponObject.isBlindTransfer ){
+                        if (waitCamponObject.isBlindTransfer) {
                             callInfo.hangup();
                         }
                     }
@@ -117,7 +120,6 @@ export default class Campon{
         );
 
         this._removeCampon( waitCamponObject );
-
         callInfo.camponDstExtensionId = null;
         oc2.setState({latestCamponCall:callInfo});    //for redraw
     }
@@ -143,6 +145,9 @@ export default class Campon{
             return false;
         }
 
+        if( callInfo.getIsTransferring() === true ) {   //manual campon
+            callInfo.setIsTransferring(false);
+        }
         this._cancelCampOn( obj );
         return true;
     }

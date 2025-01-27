@@ -57,6 +57,15 @@ export default class PhonebookContactInfozInfo_AutoDialView_ver2{
         this._setValue(value);
     }
 
+    // //!info. virtual(base) method
+    // copyFrom( phonebookContactInfozInfo_AutoDialView_ver2 ){
+    //     this._InfoKeyName = phonebookContactInfozInfo_AutoDialView_ver2._InfoKeyName;
+    //     this._IsTelKey = phonebookContactInfozInfo_AutoDialView_ver2._IsTelKey;
+    //     this._IsCustomKey = phonebookContactInfozInfo_AutoDialView_ver2._IsCustomKey;
+    //     this._Value = phonebookContactInfozInfo_AutoDialView_ver2._Value;
+    //     this._Title = phonebookContactInfozInfo_AutoDialView_ver2._Title;
+    // }
+
     static getTitleByPhonebookItem( item  ){
         let title;
         if( item.caption ){

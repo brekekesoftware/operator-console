@@ -294,10 +294,11 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         });
     }
 
-    _makeCall( tel ){
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.setDialingAndMakeCall( tel );
-        oc.abortAutoDialView_ver2();
+    _makeCall( evMouseClick, tel ){
+        AutoDialView_ver2.onClickCallButtonForAutoDialView( evMouseClick, tel );
+        // const oc = BrekekeOperatorConsole.getStaticInstance();
+        // oc.setDialingAndMakeCall( tel );
+        // oc.abortAutoDialView_ver2();
     }
 
     _save(){
@@ -738,7 +739,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                                     <button
                                                                         title={i18n.t(`Call`)}
                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding"
-                                                                        onClick={(e) => this._makeCall(tel)}
+                                                                        onClick={(e) => this._makeCall(e, tel)}
                                                                     >
                                                                         <FontAwesomeIcon size="lg" icon="fas fa-phone"/>
                                                                     </button>

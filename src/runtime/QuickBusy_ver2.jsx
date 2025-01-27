@@ -20,7 +20,13 @@ export default class QuickBusy_ver2 extends React.Component {
         oc.addOnAppendKeypadValueCallback( this._onAppendKeypadValue.bind(this) );
         oc.addOnbackspaceKeypadValueCallback( this._onBackspaceKeypadValue.bind(this) );
         oc.addOnClearDialingCallbacks( this._onClearDialing.bind(this) );
+        oc.addOnChangeIsDTMFInputCallBack( this._onChangeIsDTMFInput.bind(this));
+        //oc.addOnSetDialingCallback( this._onSetDialingCallback.bind(this));
         //oc.addOnSetCurrentScreenIndexCallback( this._onSetCurrentScreenIndex.bind(this) );
+    }
+
+    _onChangeIsDTMFInput( operatorConsoleAsCaller ){
+        this.setState({candidateCallNos:null});
     }
 
     _onClearDialing( operatorConsoleAsCaller ){
@@ -31,8 +37,19 @@ export default class QuickBusy_ver2 extends React.Component {
         return QUICK_BUSY_CLICK_TO_CALL;
     }
 
+    _onSetDialingCallback( ocAsCaller, dialing ){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        if( oc.getIsDTMFInput() === true ){
+            return;
+        }
+        this._resetCandidateCallNos( dialing  );
+    }
+
     _onAppendKeypadValue( operatorConsoleAsSender, key ){
         const oc = BrekekeOperatorConsole.getStaticInstance();
+        if( oc.getIsDTMFInput() === true ){
+            return;
+        }
         const displayState = oc.getDisplayState();
         if( displayState !== brOcDisplayStates.showScreen_ver2 ) {
             return;

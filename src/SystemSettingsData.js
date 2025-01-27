@@ -35,6 +35,10 @@ export default class SystemSettingsData{
 		return this._Data.autoDialPhonebookName;
 	}
 
+    getAutoDialOneTouchCall() {
+        return this._Data.autoDialOneTouchCall;
+    }
+
 
     /**
      *
@@ -59,13 +63,15 @@ export default class SystemSettingsData{
         //cache ringtone files
         const ringtoneInfos = appData.ringtoneInfos;
         SystemSettingsData.cacheRingtones( ringtoneInfos );
-
+        const ringtoneInfos2 = appData.ringtoneInfos2;
+        SystemSettingsData.cacheRingtones2( ringtoneInfos2 );
         //!modify systemSettingsData
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
         this._Data.shortDials = appData.shortDials;
         this._Data.ringtoneInfos = appData.ringtoneInfos;
+        this._Data.ringtoneInfos2 = appData.ringtoneInfos2;
         this._Data.quickBusyClickToCall = appData.quickBusyClickToCall;
         this._Data.ucUrl = appData.ucUrl;
         this._Data.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled;
@@ -74,6 +80,7 @@ export default class SystemSettingsData{
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
         this._Data.autoDialRecentDisplayOrder = appData.autoDialRecentDisplayOrder;
 		this._Data.autoDialPhonebookName = appData.autoDialPhonebookName;
+        this._Data.autoDialOneTouchCall = appData.autoDialOneTouchCall;
         initSuccessFunction();
     }
 
@@ -127,6 +134,47 @@ export default class SystemSettingsData{
         return successCount;
     }
 
+    static cacheRingtones2( ringtoneInfos2 ){
+        //cache ringtone files
+        if( !ringtoneInfos2 || Array.isArray( ringtoneInfos2 ) !== true ) {
+            return -1;
+        }
+        if( ringtoneInfos2.length === 0 ){
+            return 0;
+        }
+
+        //!tocyuu
+
+        return 0;
+
+        // const rootUrl = Util.getRootUrlString();
+        // const xhr = new XMLHttpRequest();
+        // let successCount = 0;
+        // for( let i = 0; i < ringtoneInfos.length; i++ ){
+        //     const ringtoneInfo = ringtoneInfos[i];
+        //     //const caller = ringtoneInfo.ringtoneCaller;
+        //     const fileOrUrl = ringtoneInfo.ringtoneFilepathOrFileurl;
+        //     let fileUrl = OCUtil.getUrlStringFromPathOrUrl( fileOrUrl, rootUrl );
+        //     try {
+        //         const httpStatus = Util.getHeadResposneCodeByUrl( fileUrl , xhr );
+        //         if( httpStatus !== 200 ){
+        //             console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",httpStatusCode=" + httpStatus  );
+        //             Notification.error( {message: i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",httpStatusCode="  + httpStatus , duration:0 } );
+        //         }
+        //         else {
+        //             new Audio(fileUrl);   //cache audio file
+        //             successCount++;
+        //         }
+        //     }
+        //     catch(err){
+        //         console.error("Failed to load ringtone audio file. fileUrl=" + fileUrl + ",error=" , err );
+        //         Notification.error( { message:i18n.t("FailedToLoadRingtoneAudioFile") + ",fileUrl=" + fileUrl + ",error="  + err , duration:0}  );
+        //         continue;
+        //     }
+        // }
+        // return successCount;
+    }
+
     setSystemSettingsDataData( appData, initSuccessFunction, initFailFunction  ){
         appData = this._formatSystemSettingsAppData(appData);
 
@@ -152,12 +200,14 @@ export default class SystemSettingsData{
        this._Data.quickBusyClickToCall = true;
         this._Data.shortDials = null;
         this._Data.ringtoneInfos = null;
+       this._Data.ringtoneInfos2 = null;
         this._Data.ucUrl = "";
         this._Data.ucChatAgentComponentEnabled = false;
         this._Data.extensionScript = "";
         this._Data.phoneTerminal = "phoneTerminal_webphone";
         this._Data.autoDialRecentDisplayOrder = CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC;
 		this._Data.autoDialPhonebookName = "";
+       this._Data.autoDialOneTouchCall = true;
     }
 
     getShortDials(){
@@ -166,6 +216,10 @@ export default class SystemSettingsData{
 
     getRingtoneInfos(){
         return this._Data.ringtoneInfos;
+    }
+
+    getRingtoneInfos2(){
+        return this._Data.ringtoneInfos2;
     }
 
     getCamponTimeoutMillis(){
@@ -193,13 +247,15 @@ export default class SystemSettingsData{
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
         appData.shortDials = appData.shortDials ? appData.shortDials : null;
         appData.ringtoneInfos = appData.ringtoneInfos ? appData.ringtoneInfos : null;
-        appData.quickBusyClickToCall = appData.quickBusyClickToCall ? appData.quickBusyClickToCall : QuickBusy_ver2.getDefaultQuickBusyClickToCall();
+        appData.ringtoneInfos2 = appData.ringtoneInfos2 ? appData.ringtoneInfos2 : null;
+        appData.quickBusyClickToCall = OCUtil.isBoolean(appData.quickBusyClickToCall ) ? appData.quickBusyClickToCall : QuickBusy_ver2.getDefaultQuickBusyClickToCall();
         appData.ucUrl = appData.ucUrl ? appData.ucUrl : "";
         appData.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled  === true ? true : false;
         appData.extensionScript = appData.extensionScript ? appData.extensionScript : "";
         appData.phoneTerminal = appData.phoneTerminal ? appData.phoneTerminal : "phoneTerminal_webphone";
         appData.autoDialRecentDisplayOrder = CallHistory2.parseAutoDialRecentDisplayOrderForce( appData.autoDialRecentDisplayOrder );
 		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
+        appData.autoDialOneTouchCall = OCUtil.isBoolean( appData.autoDialOneTouchCall )  ? appData.autoDialOneTouchCall : true;
         return appData;
     }
 

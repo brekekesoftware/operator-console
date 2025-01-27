@@ -5,7 +5,10 @@ export default class FilesFile{
     load( options ){
         this._fileNames = null;
 
-        const url = options["url"]; //require
+        let urlOrPath = options["urlOrPath"];
+        if( !urlOrPath ) {
+            urlOrPath = options["url"]; //!deprecated. Possibility of containing relative paths
+        }
 
         const successFunction = options["successFunction"];
         const failFunction = options["failFunction"];
@@ -62,7 +65,7 @@ export default class FilesFile{
                 console.error("Loading the FilesFile timed out. ev=", ev, " options=", options  );
             }
         };
-        xhr.open(method, url, true );
+        xhr.open(method, urlOrPath, true );
         xhr.send(null);
     }
 

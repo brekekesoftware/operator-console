@@ -37,7 +37,7 @@ export default class LegacyExtensionStatusRuntimeWidget extends RuntimeWidget{
                     }></div>
                 </div>
                 <div style={{display:"flex",justifyContent:"center",marginTop: extensionStatusExtensionTextTopMargin + "px"}}>
-                    <span style={{fontSize:extensionStatusExtensionFontSize + "px"}}>{ext?.name || extension || i18n.t("extension_status")}</span>
+                    <span style={{fontSize:extensionStatusExtensionFontSize + "px",textAlign:"center"}}>{ext?.name || extension || i18n.t("extension_status")}</span>
                 </div>
             </div>
         );

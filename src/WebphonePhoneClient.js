@@ -6,6 +6,8 @@ import APhoneClient from "./APhoneClient";
 import OCUtil, {BROC_BROCCALLOBJECT_CALL_STATUSES} from "./OCUtil";
 import WebphoneCallInfos from "./WebphoneCallInfos";
 import {reaction} from "mobx";
+import BrekekeOperatorConsole from "./index";
+import Util from "./Util";
 
 export default class WebphonePhoneClient  extends APhoneClient {
     constructor( options  ) {
@@ -14,6 +16,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
         const options_ = {...options}
         options_["phoneClient"] = this;
+        this._RootURLString = Util.getRootUrlString();
         this._webphoneCallInfos = new WebphoneCallInfos( options_ );
     }
 
@@ -228,7 +231,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 //     this._Campon.onPalNotifyServerstatus( this, e );
                 // }
 
-                let old_onClose = pal.onClose
+                let old_onClose = pal.onClose;
                 pal.onClose = e => {
                     console.log('pal.onClose', e)
                     old_onClose && old_onClose(e) // call old listener
@@ -339,21 +342,58 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._webphoneCallInfos.addCallInfoByWebphoneCallObject(call);
 
 
+        //!old
+        // //set custom incoming sound.
+        // const ringtoneInfos = this._OperatorConsoleAsParent.getSystemSettingsData().getRingtoneInfos();
+        //
+        // const brOCCallObjectStatus = OCUtil.getCallStatusFromWebphoneCallObject( call  );
+        // if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
+        //     let incomingRingtone = "";
+        //     //set custom incoming sound.
+        //     if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
+        //         for (let i = 0; i < ringtoneInfos.length; i++) {
+        //             const ringtoneInfo = ringtoneInfos[i];
+        //             const caller = ringtoneInfo.ringtoneCaller;
+        //             const matches = call.partyNumber.match(caller);
+        //             if (matches) {
+        //                 const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
+        //                 incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
+        //                 break;
+        //             }
+        //
+        //         }
+        //     }
+        //     this._setIncomingRingtone(incomingRingtone);
+        //}
+
         //set custom incoming sound.
-        const ringtoneInfos = this._OperatorConsoleAsParent.getSystemSettingsData().getRingtoneInfos();
+        const ringtoneInfos2 = this._OperatorConsoleAsParent.getSystemSettingsData().getRingtoneInfos2();
 
         const brOCCallObjectStatus = OCUtil.getCallStatusFromWebphoneCallObject( call  );
         if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
             let incomingRingtone = "";
             //set custom incoming sound.
-            if (ringtoneInfos && Array.isArray(ringtoneInfos)) {
-                for (let i = 0; i < ringtoneInfos.length; i++) {
-                    const ringtoneInfo = ringtoneInfos[i];
-                    const caller = ringtoneInfo.ringtoneCaller;
+            if (ringtoneInfos2 && Array.isArray(ringtoneInfos2)) {
+                for (let i = 0; i < ringtoneInfos2.length; i++) {
+                    const ringtoneInfo = ringtoneInfos2[i];
+                    const caller = ringtoneInfo["ringtoneCaller"];
                     const matches = call.partyNumber.match(caller);
                     if (matches) {
-                        const ringtoneFilepathOrFileurl = ringtoneInfo.ringtoneFilepathOrFileurl;
-                        incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
+                        const resType = ringtoneInfo["ringtoneResourceType"];
+
+                        if( resType === "preset"){
+                            const presetFilename = ringtoneInfo["preset"];
+                            const fileInfos = BrekekeOperatorConsole.getStaticInstance().getPresetRingtoneSoundFilesInfos();
+                            const fileInfo = fileInfos.getFileInfoByFilename( presetFilename );
+                            if( fileInfo ) {
+                                const fileUrlOrPath = fileInfo["urlOrPath"];
+                                incomingRingtone = fileUrlOrPath;
+                            }
+                        }
+                        else if( resType === "urlOrRelativePath" ){
+                            const ringtoneFilepathOrFileurl = ringtoneInfo["urlOrRelativePath"];
+                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
+                        }
                         break;
                     }
 
@@ -361,8 +401,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
             }
             this._setIncomingRingtone(incomingRingtone);
         }
-
-
 
     }
 

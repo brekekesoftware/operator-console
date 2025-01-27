@@ -199,6 +199,11 @@ $kbc-btn-size-map: (
   -moz-animation: kbc-button-success-flash-keyframes 3s infinite;
   animation: kbc-button-success-flash-keyframes 3s infinite;
 }
+.kbc-button-success-flash-once {
+  -webkit-animation: kbc-button-success-flash-keyframes .5s 1;
+  -moz-animation: kbc-button-success-flash-keyframes .5s 1;
+  animation: kbc-button-success-flash-keyframes .5s 1;
+}
 
 ////////////////////////////////////////////////////////////////
 // led

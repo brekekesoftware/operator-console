@@ -12,6 +12,18 @@ import {Button, Modal} from "antd";
 
 function LineButton({ label, line, width, height, color,  backgroundColor,  border,  borderRadius, fontSize }) {
     const oc = BrekekeOperatorConsole.getStaticInstance();
+
+    const _onClickLineButton = ( line  ) => {
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        let onSetValidLineFunc;
+        if( oc.getDialing() && oc.getDialing().length !== 0 ){
+            onSetValidLineFunc = () =>{
+                oc.makeCall2();
+            };
+        }
+        oc.handleLine(line, onSetValidLineFunc );
+    }
+
     return (
         <button style={{
             display:"inline-block",
@@ -26,7 +38,7 @@ function LineButton({ label, line, width, height, color,  backgroundColor,  bord
             fontSize:fontSize + "px"
         }} title={i18n.t(`legacy_button_description.LegacyLineButton`)}
                 className={"kbc-button kbc-button-fill-parent"}
-                onClick={() => oc.handleLine(line)}
+                onClick={() => _onClickLineButton(line)}
         >
             {label}
         </button>

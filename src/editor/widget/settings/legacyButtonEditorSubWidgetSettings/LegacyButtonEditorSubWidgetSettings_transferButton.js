@@ -4,7 +4,7 @@ import i18n from "../../../../i18n";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
-import {Divider} from "antd";
+import {Divider, Select} from "antd";
 
 export default class LegacyButtonEditorSubWidgetSettings_transferButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -69,6 +69,11 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
+    _onChangeTransferMode( s ){
+        this._LegacyButtonEditorSubWidgetData.setTransferMode(s);
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    }
+
     //!override
     getRenderJsx() {
         const subtypeName = this._LegacyButtonEditorSubWidgetData.getLegacyButtonWidgetSubTypeName();
@@ -93,6 +98,9 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
 
         const bGetIconDisabled = true;
         const cancelTransferIconSelectJsx = this._getIconSelectJsx( subWidgetData.getCancelTransferIcon(), (icon) => this._onFormCancelTransferIconSelected(icon), bGetIconDisabled  );
+
+        const transferMode = this._LegacyButtonEditorSubWidgetData.getTransferMode() ? this._LegacyButtonEditorSubWidgetData.getTransferMode() : "attendedTransfer";
+
         return  (
             <>
                 <Divider>{i18n.t("Transfer_button_settings")}</Divider>
@@ -107,6 +115,19 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
                 <p>{i18n.t("label")}</p>
                 <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
                        defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
+                <p>{i18n.t("mode")}</p>
+                <Select
+                    // onChange={(value) => {
+                    // }}
+                    style={{width: "100%"}}
+                    //placeholder="Please select a option"
+                    value={transferMode}
+                    defaultValue={transferMode}
+                    onSelect={(e) => this._onChangeTransferMode(e)}
+                >
+                    <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
+                    <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
+                </Select>
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getFontSize()}
                              onChange={(n) => this._onChangeFontSize(n)}/>

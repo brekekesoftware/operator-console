@@ -3,7 +3,7 @@ import {Button, Form, Input, Space} from "antd";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import i18n from "./i18n";
 
-export default class ShortDialSettings extends React.Component {
+export default class RingtoneSettings extends React.Component {
     constructor( props ){
         super(props);
     }

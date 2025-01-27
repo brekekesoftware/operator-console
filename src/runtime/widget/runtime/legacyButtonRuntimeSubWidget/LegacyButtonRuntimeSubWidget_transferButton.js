@@ -10,6 +10,20 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
         super(  legacyButtonRuntimeWidgetAsParent, legacyButtonRuntimeSubWidgetData  );
     }
 
+    _onClickTransferButton(){
+        const subWidgetData = this.getLegacyButtonSubWidgetData();
+        const sTransferMode = subWidgetData.getTransferMode();
+        let transferMode;
+        if( sTransferMode === "blindTransfer" ){
+            transferMode = "blind";
+        }
+        else if( sTransferMode === "attendedTransfer"){
+            transferMode = "attended";
+        }
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.transferDialingCall( null, transferMode );
+    }
+
     //!override
     getRenderJsx() {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
@@ -75,6 +89,9 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
             }
             const transferIconJsx = this._getIconJsx( subWidgetData.getIcon(), transferLabel, subWidgetData.getIconWidth(), subWidgetData.getIconHeight() );
             //const transferIconJsx = this._getIconJsx();
+            const callInfoArray = oc.getPhoneClient().getCallInfos().getCallInfoArray();
+            const bButtonDisabled = !callInfoArray || callInfoArray.length === 0;   //has not current call info.
+
             return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
                                    style={{
                                        fontSize:sButtonFontSize,
@@ -83,7 +100,8 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
                                        color:color,
                                        backgroundColor:backgroundColor
                                    }}
-                                   onClick={ () => oc.transferDialingCall() }
+                                   onClick={ () => this._onClickTransferButton() }
+                                   disabled={bButtonDisabled}
             >{transferIconJsx}</button>
         }
     }

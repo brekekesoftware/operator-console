@@ -41,6 +41,7 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         this._cancelTransferOuterBorderRadius = currentOptions["cancelTransferOuterBorderRadius"];
         this._cancelTransferOuterBorderThickness = currentOptions["cancelTransferOuterBorderThickness"];
         this._cancelTransferLabel = currentOptions["cancelTransferLabel"];
+        this._transferMode  = subDataOptions["transferMode"];
 
 
     }
@@ -186,6 +187,13 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         }
         else{
             delete o["cancelTransferLabel"];
+        }
+
+        if( this._transferMode ){
+            o["transferMode"] = this._transferMode;
+        }
+        else{
+            delete o["transferMode"];
         }
     }
 
@@ -347,6 +355,14 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
 
     getCancelTransferLabel(){
         return this._cancelTransferLabel;
+    }
+
+    getTransferMode(){
+        return this._transferMode;
+    }
+
+    setTransferMode( s ){
+        this._transferMode = s;
     }
 
     //!override

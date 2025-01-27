@@ -76,6 +76,7 @@ export default class LegacyButtonEditorSubWidgetSettings_oneTouchDialButton exte
                     <Select.Option value="blindTransferOrCall">{i18n.t("blindTransferOrCall")}</Select.Option>
                     <Select.Option value="attendedTransferOnly">{i18n.t("attendedTransferOnly")}</Select.Option>
                     <Select.Option value="blindTransferOnly">{i18n.t("blindTransferOnly")}</Select.Option>
+                    <Select.Option value="selectTransferOrCall">{i18n.t("Select_transfer_or_make_a_new_call")}</Select.Option>
                 </Select>
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getFontSize()}

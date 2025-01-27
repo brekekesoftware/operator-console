@@ -39,9 +39,18 @@ export default class LegacyButtonRuntimeSubWidget_makeCallButton extends LegacyB
                            backgroundColor:backgroundColor
                        }}
                        onClick={ () => {
-                           if( oc.getIsDTMFInput() !== true ) {
-                               oc.makeCallWithShortDial( null );
+                           const bHasActiaveCall = !!oc.getCurrentCallInfo();
+                           const dialing = oc.getDialing();
+                           if ( dialing && dialing.length !== 0  && bHasActiaveCall) {
+                                //show transfer method modal.
+                               const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
+                               runtimeScreenView.setIsShowSelectCallingMethodModal(true);
+                           } else {
+                               if (oc.getIsDTMFInput() !== true) {
+                                   oc.makeCallWithShortDial(null);
+                               }
                            }
+
                        }}
         >{iconJsx}</button>
     }

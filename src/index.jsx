@@ -87,11 +87,10 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.11";
+const VERSION = "2.1.12";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
-import QuickBusy from "./QuickBusy";
 import LineTableSettings from "./LineTableSettings"
 import LineTable from "./LineTable"
 import Notification from "antd/lib/notification";
@@ -2791,7 +2790,9 @@ export default class BrekekeOperatorConsole extends React.Component {
 		this._disablePasteToDialingCounter = 0;
         this._isDTMFInput = false;
         this._OnBackspaceKeypadValueCallbacks = [];
+        this._OnChangeIsDTMFInputCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
+        this._OnSetDialingCallbacks = [];
         this._OnClearDialingCallbacks = [];
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
@@ -2824,8 +2825,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         this._LoginPalWrapper = new PalWrapper();
 
-        this._RootURLString = Util.getRootUrlString();
         this._DefaultButtonImageFileInfos = new FileInfosLoader();
+        this._PresetRingtoneSoundFilesInfos = new FileInfosLoader();
         this._OnBeforeUnloadFunc = (event) => { this._onBeforeUnload(event)};
         this._OnUnloadFunc = (event) => { this._onUnload( event )};
         window.addEventListener("unload", this._OnUnloadFunc );
@@ -2852,6 +2853,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     getDefaultButtonImageFileInfos(){
         return this._DefaultButtonImageFileInfos;
+    }
+
+    getPresetRingtoneSoundFilesInfos(){
+        return this._PresetRingtoneSoundFilesInfos;
     }
 
     getPhoneClient(){
@@ -3467,7 +3472,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                     return;
                 }
                 this.makeCall();
-                this._clearDialing();
+                //this._clearDialing();
                 return;
             case 8: //backspace
             {
@@ -3838,6 +3843,14 @@ export default class BrekekeOperatorConsole extends React.Component {
             },
         );
 
+    }
+
+    setCurrentRuntimeScreenView_Ver2( runtimeScreenViewAsChild ){
+        this._currentRuntimeScreenViewAsChild = runtimeScreenViewAsChild;
+    }
+
+    getCurrentRuntimeScreenView_ver2(){
+        return this._currentRuntimeScreenViewAsChild;
     }
 
     render() {
@@ -4396,7 +4409,6 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             {/*</Carousel>*/}
                                         </div>
                                         <DropDownMenu operatorConsole={this}></DropDownMenu>
-                                        {/*<QuickBusy operatorConsoleAsParent={this}/>*/}
                                     </>)
                         )
                         : this.state.displayState === brOcDisplayStates.noScreens ? (
@@ -5407,6 +5419,17 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
+    _onSetDialing(dialing) {
+        for (let i = 0; i < this._OnSetDialingCallbacks.length; i++) {
+            const func = this._OnSetDialingCallbacks[i];
+            func(this, dialing);
+        }
+    }
+
+    addOnSetDialingCallback( func ){
+        this._OnSetDialingCallbacks.push( func );
+    }
+
 
     addOnAppendKeypadValueCallback(func) {
         this._OnAppendKeypadValueCallbacks.push(func);
@@ -5414,6 +5437,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     setDialingAndMakeCall = (sDialing, context) => {
         this.setState({dialing: sDialing}, () => {
+            this._onSetDialing( sDialing );
             if( context ) {
                 context.makeCall();
             }
@@ -5423,12 +5447,51 @@ export default class BrekekeOperatorConsole extends React.Component {
         });
     }
 
-    setDialing = (sDialing) => {
+    setDialing = (sDialing, isDTMFInput ) => {  //!deprecated. Use setDialingToState function.
+        this.setDialingToState( sDialing, isDTMFInput );
+    }
+
+    setDialingToState = (sDialing, isDTMFInput ) => {
+         if( OCUtil.isBoolean( isDTMFInput ) ) {
+        //     this._wasDTMFInput = this._isDTMFInput;
+             this._setIsDTMFInput( isDTMFInput );
+        }
         this.setState({dialing: sDialing});
+        this._onSetDialing(sDialing);
+    }
+
+    _setIsDTMFInput(b){
+        if( b === this._isDTMFInput ){
+            return;
+        }
+        this._isDTMFInput = b;
+
+        //callbacks
+        const callbacks = this._OnChangeIsDTMFInputCallbacks;
+        for (let i = 0; i < callbacks.length; i++) {
+            const func = callbacks[i];
+            func(this);
+        }
+    }
+
+    setDialingAndCall( sDialing, bTransfer = false, transferMode = null ){
+        this.setState( {dialing: sDialing }, () =>{
+            if( bTransfer === true ){
+                this.transferDialingCall( null, transferMode );
+            }
+            else{
+                this.makeCall2();
+            }
+        });
+
     }
 
     setDialingAndMakeCall2 = (sDialing) => {
-        this.setState({dialing: sDialing}, () => this.makeCall2());
+        this.setState({dialing: sDialing}, () =>{
+            this._onSetDialing(sDialing);
+            this.makeCall2();
+        }
+        );
     }
 
     backspaceKeypadValue = () => {
@@ -5440,10 +5503,13 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
         const dialing = this.state.dialing.slice(0, -1);
-        this.setState({dialing: dialing}, () => this._onBackspaceKeypadVakue());
+        this.setState({dialing: dialing}, () => this._onBackspaceKeypadValue());
+        if( dialing.length === 0 ){
+            this._resetCallInput( false, true );
+        }
     }
 
-    _onBackspaceKeypadVakue() {
+    _onBackspaceKeypadValue() {
         const callbacks = this._OnBackspaceKeypadValueCallbacks;
         for (let i = 0; i < callbacks.length; i++) {
             const func = callbacks[i];
@@ -5454,6 +5520,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     addOnbackspaceKeypadValueCallback = (func) => {
         this._OnBackspaceKeypadValueCallbacks.push(func);
+    }
+
+    addOnChangeIsDTMFInputCallBack = (func) => {
+        this._OnChangeIsDTMFInputCallbacks.push(func);
     }
 
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
@@ -5681,20 +5751,22 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
 
-    _resetCallInput(){
+    _resetCallInput( bClearDialing = true, forceReset = false ){
         const callInfos = this._aphone.getCallInfos();
         const currentCallIndex = callInfos.getCurrentCallIndex();
         const bDisconnected =  currentCallIndex < 0;
         if( bDisconnected ){
-            this._clearDialing();
-            this._isDTMFInput = false;
+            if( bClearDialing === true ) {
+                this._clearDialing();
+            }
+            this._setIsDTMFInput( false );
             return;
         }
         const currentCallInfo = callInfos.getCallInfoAt( currentCallIndex );
 
         const callStatus = currentCallInfo.getCallStatus();
         const prevCallStatus = this._prevCurrentCallStatus;
-        if( callStatus === prevCallStatus ){
+        if( forceReset !== true && callStatus === prevCallStatus ){
             return;
         }
 
@@ -5704,13 +5776,17 @@ export default class BrekekeOperatorConsole extends React.Component {
         switch( callStatus ){
             case ACallInfo.CALL_STATUSES.talking:
             case ACallInfo.CALL_STATUSES.calling:
-                this._clearDialing();
-                this._isDTMFInput = true;
+                if( bClearDialing === true ) {
+                    this._clearDialing();
+                }
+                this._setIsDTMFInput( true );
                 break;
             case ACallInfo.CALL_STATUSES.holding:
             case ACallInfo.CALL_STATUSES.incoming:
-                this._clearDialing();
-                this._isDTMFInput = false;
+                if( bClearDialing === true ) {
+                    this._clearDialing();
+                }
+                this._setIsDTMFInput( false );
                 break;
             default:
                 console.error("Could not reset CallInput!");
@@ -5837,6 +5913,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         const currentCallInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         if (currentCallInfo && currentCallInfo.getIsHolding()) {
             currentCallInfo.toggleHoldWithCheck();
+            if( currentCallInfo.getIsTransferring() === true ) {
+                currentCallInfo.setIsTransferring(false);
+            }
         }
     }
 
@@ -5874,10 +5953,12 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    transferDialingCall = async () => {
-        const mode = undefined; //use attended
-        this.transferCall( this.state.dialing, mode ).then( () => {
-            this._clearDialing(); //!todo I want to run it after the transfer is complete.
+    transferDialingCall = async ( dialing, mode ) => {
+        const sDialing = dialing ? dialing : this.state.dialing;
+        this.transferCall( sDialing, mode ).then( () => {
+            if( !dialing ) {
+                this._clearDialing(); //!todo I want to run it after the transfer is complete.
+            }
         } );
     }
 
@@ -6038,23 +6119,26 @@ export default class BrekekeOperatorConsole extends React.Component {
     //     return itm;
     // }
 
-    makeCall2 = async ( ) => {
-        const sDialing = this.state.dialing;
+    makeCall2 = async ( dialing ) => {
+        const sDialing = dialing ? dialing : this.state.dialing;
         if (!sDialing) {
             return false;
         }
         //console.log("makeCall: sDialing=" + sDialing);
         //this._CallHistory.addCallNoAndSave(sDialing);
 
-        const bUsingLine = this.state.usingLine;
+        const sUsingLine = this.state.usingLine;
 
         // const bCall = this._aphone.callByPhoneClient(  sDialing, bUsingLine );
         // if( !bCall ){
         //     return false;
         // }
-        this._aphone.callByPhoneClient(  sDialing, bUsingLine );
+        this._aphone.callByPhoneClient(  sDialing, sUsingLine );
 
-        this._clearDialing();
+        this._resetCallInput( false, true );
+        if( !dialing ) {
+            this._clearDialing();
+        }
         if (this.state.currentScreenQuickCallWidget) {
             this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});
         }
@@ -6074,13 +6158,13 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    makeCall = async ( ) => {
+    makeCall = async ( dialing ) => {
         //const {currentCallIndex, callIds = [], callById = {}} = context;
-        await this.makeCall2();
+        await this.makeCall2( dialing );
 
     }
 
-    handleLine = async (line) => {
+    handleLine = async (line, onSetValidLineFunc ) => {
         const {line_talker = '', room_id = ''} = this.state.linesStatus[line] || {};
         const park = this.state.parksStatus[line];
         if (park) {
@@ -6155,7 +6239,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 Notification.error({message: i18n.t('failed_to_hold_line'),duration:0});
                 throw err;
             });
-            this.setState({usingLine: line});
+            this.setState({usingLine: line}, onSetValidLineFunc );
         }
     }
 
@@ -6475,36 +6559,93 @@ export default class BrekekeOperatorConsole extends React.Component {
 //            this.syncDownScreens();
 //            this._syncDownLayout();
 
+            let loadingButtonFileInfos = true;
+            let loadingPresetRingtoneSoundFileInfos = true;
+
             const filesFileUrl = "components/button/icons/default/filenames.txt";
             const loadDefaultButtonImageFileInfosOptions = {
                 filesFileUrl: filesFileUrl,
                 timeoutMillisecond:60000,
                 loadSuccessFunction : (options) =>{
-                    this._startDownLayoutAndSystemSettingsForLoggedin();
+                    loadingButtonFileInfos = false;
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
                 },
                 loadFailFunction : (options) =>{
+                    loadingButtonFileInfos = false;
                     const xhrFail = options["xhrFail"];
                     //const filesfile = options["filesFile"];
                     const httpStatus = xhrFail.status;
                     if( httpStatus !== 404 ){
                         //defined
                         console.error("Failed to load file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
-                        Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  fileRootUrl, duration:0 });
+                        Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  filesFileUrl, duration:0 });
                     }
-                    this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
                 },
                 loadErrorFunction : ( options ) =>{
+                    loadingButtonFileInfos = false;
                     console.error("An error occurred while loading the file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
-                    Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  fileRootUrl, duration:0 });
-                    this._startDownLayoutAndSystemSettingsForLoggedin();
-                },
+                    Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  filesFileUrl, duration:0 });
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }                },
                 loadTimeoutFunction: (options) =>{
+                    loadingButtonFileInfos = false;
                     console.error("Loading the file list timed out. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
-                    Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  fileRootUrl, duration:0 });
-                    this._startDownLayoutAndSystemSettingsForLoggedin();
+                    Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  filesFileUrl, duration:0 });
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
                 }
             };
+
+            const presetRingtoneSoundFilenamessFileUrl = "sounds/ringtone/filenames.txt";
+            const loadPresetRingtoneSoundFilesInfosOptions = {
+                filesFileUrl: presetRingtoneSoundFilenamessFileUrl,
+                timeoutMillisecond:60000,
+                loadSuccessFunction : (options) =>{
+                    loadingPresetRingtoneSoundFileInfos = false;
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
+                },
+                loadFailFunction : (options) =>{
+                    loadingPresetRingtoneSoundFileInfos = false;
+                    const xhrFail = options["xhrFail"];
+                    //const filesfile = options["filesFile"];
+                    const httpStatus = xhrFail.status;
+                    if( httpStatus !== 404 ){
+                        //defined
+                        console.error("Failed to load file list. requestOptions=" , loadPresetRingtoneSoundFilesInfosOptions, ",responseOptions=", options  );
+                        Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
+                    }
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
+                },
+                loadErrorFunction : ( options ) =>{
+                    loadingPresetRingtoneSoundFileInfos = false;
+                    console.error("An error occurred while loading the file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
+                    Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }                },
+                loadTimeoutFunction: (options) =>{
+                    loadingPresetRingtoneSoundFileInfos = false;
+                    console.error("Loading the file list timed out. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
+                    Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
+                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    }
+                }
+            };
+
             this._DefaultButtonImageFileInfos.load( loadDefaultButtonImageFileInfosOptions  );
+            this._PresetRingtoneSoundFilesInfos.load( loadPresetRingtoneSoundFilesInfosOptions );
         });
 
     }

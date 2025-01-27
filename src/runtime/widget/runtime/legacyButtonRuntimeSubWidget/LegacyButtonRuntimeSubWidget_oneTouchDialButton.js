@@ -49,18 +49,32 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
                            }
                            const oc = BrekekeOperatorConsole.getStaticInstance();
                            const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
-                           if( !!currentCallInfo ) {   //transfer?
-                               const callStatus = currentCallInfo.getCallStatus();
-                               const canTransferByCallStatus = callStatus == ACallInfo.CALL_STATUSES.holding || callStatus === ACallInfo.CALL_STATUSES.talking;
-                               if( canTransferByCallStatus === true ) {
-                                   const canTransferByOnetouchdialMode = onetouchdialMode === "attendedTransferOrCall" || onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "attendedTransferOnly" || onetouchdialMode === "blindTransferOnly";
-                                   if(  canTransferByOnetouchdialMode === true ) {
-                                       //const talkerId = currentCallInfo.getPbxTalkerId();
-                                       //const tenant = operatorConsoleAsParent.getLoggedinTenant();
-                                       const mode = onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "blindTransferOnly" ? "blind" : undefined; //use attended
-                                       oc.transferCall( number, mode, currentCallInfo );
-                                       return;
+                           if( !!currentCallInfo ) {   //transfer or call
+                               if( onetouchdialMode === "selectTransferOrCall"){
+                                   //show transfer method modal.
+                                   const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
+                                   runtimeScreenView.setIsShowSelectCallingMethodModal(true, number);
+                                   return;
+                               }
+                               else {
+                                   const callStatus = currentCallInfo.getCallStatus();
+                                   const canTransferByCallStatus = callStatus == ACallInfo.CALL_STATUSES.holding || callStatus === ACallInfo.CALL_STATUSES.talking;
+                                   if (canTransferByCallStatus === true) {
+                                       const canTransferByOnetouchdialMode = onetouchdialMode === "attendedTransferOrCall" || onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "attendedTransferOnly" || onetouchdialMode === "blindTransferOnly";
+                                       if (canTransferByOnetouchdialMode === true) {
+                                           //const talkerId = currentCallInfo.getPbxTalkerId();
+                                           //const tenant = operatorConsoleAsParent.getLoggedinTenant();
+                                           const mode = onetouchdialMode === "blindTransferOrCall" || onetouchdialMode === "blindTransferOnly" ? "blind" : undefined; //use attended
+                                           oc.transferCall(number, mode, currentCallInfo);
+                                           return;
+                                       }
                                    }
+                               }
+                           }
+                           else{
+                               if( onetouchdialMode === "selectTransferOrCall"){
+                                   oc.setDialingAndMakeCall(number, null);
+                                   return;
                                }
                            }
 

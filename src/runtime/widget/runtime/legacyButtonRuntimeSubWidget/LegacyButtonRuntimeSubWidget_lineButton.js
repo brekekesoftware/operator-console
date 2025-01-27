@@ -11,6 +11,17 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
         super(  legacyButtonRuntimeWidgetAsParent, legacyButtonRuntimeSubWidgetData  );
     }
 
+    _onClickLineButton( line ){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        let onSetValidLineFunc;
+        if( oc.getDialing() && oc.getDialing().length !== 0 ){
+                onSetValidLineFunc = () =>{
+                    oc.makeCall2();
+                };
+        }
+        oc.handleLine(line, onSetValidLineFunc );
+    }
+
     //!override
     getRenderJsx() {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
@@ -75,7 +86,7 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
                            color:color,
                            backgroundColor:backgroundColor
                        }}
-                       onClick={() => oc.handleLine(line)}
+                       onClick={() => this._onClickLineButton(line) }
         >{iconJsx}</button>
     }
 

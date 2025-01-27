@@ -14,6 +14,7 @@ import Notification from "antd/lib/notification";
 import Empty from "antd/lib/empty";
 import Spin from "antd/lib/spin";
 import BrekekeOperatorConsole from "./index";
+import RingtoneAudioPlayers from "./RingtoneAudioPlayers";
 //import ShortDialSettings from "./ShortDialSettings";
 
 export const OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID = 'operatorConsole_systemSettings';
@@ -35,6 +36,7 @@ export default class SystemSettingsView extends React.Component {
 
         };
         this.operatorConsoleAsParent = this.props.operatorConsole;
+        this._RingtoneAudioPlayers = new RingtoneAudioPlayers(this);
         this.setSystemSettingsUseFormBindedFunction = this.setSystemSettingsUseForm.bind(this);
         this.operatorConsoleAsParent.setSystemSettingsView( this );
 
@@ -230,6 +232,7 @@ export default class SystemSettingsView extends React.Component {
 
      _onSetOCNoteSuccessAtSyncUp(){
          Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+         this._RingtoneAudioPlayers.clearRingtoneAudioPlayers();
          this.operatorConsoleAsParent.abortSystemSettings();
      }
 
@@ -310,6 +313,10 @@ export default class SystemSettingsView extends React.Component {
     //     }
     // }
 
+    _abortSystemSettings(){
+        this._RingtoneAudioPlayers.clearRingtoneAudioPlayers();
+        this.operatorConsoleAsParent.abortSystemSettings();
+    }
 
     render(){
         const hasCall = this.operatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
@@ -319,14 +326,14 @@ export default class SystemSettingsView extends React.Component {
                     <div style={{display: 'flex', justifyContent:"flex-end",padding: 4, borderBottom: 'solid 1px #e0e0e0'}}>
                         <div>
                             <Space>
-                                <Popconfirm title={i18n.t("are_you_sure")} onConfirm={this.operatorConsoleAsParent.abortSystemSettings}
+                                <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._abortSystemSettings() }
                                             okText={i18n.t("yes")}
                                             cancelText={i18n.t("no")}
                                 >
                                     <Button type="secondary" disabled={isButtonsEnabled}>{i18n.t("discard")}</Button>
                                 </Popconfirm>
                                 <Space/>
-                                <Button type="success" htmlType="cancel" onClick={this.saveSystemSettings} disabled={isButtonsEnabled}>
+                                <Button type="success" htmlType="cancel" onClick={ () => this.saveSystemSettings() } disabled={isButtonsEnabled}>
                                     {i18n.t("save")}
                                 </Button>
                             </Space>
@@ -339,6 +346,7 @@ export default class SystemSettingsView extends React.Component {
                                 hasCall={hasCall}
                                 setSystemSettingsUseFormBindedFunction={this.setSystemSettingsUseFormBindedFunction}
                                 systemSettingsData={ this.operatorConsoleAsParent.getSystemSettingsData() }
+                                ringtoneAudioPlayers={ this._RingtoneAudioPlayers }
                                 // onChangeUcChatAgentComponentEnabledFunction ={this._onChangeUcChatAgentComponentEnabled}
                                 //setAceEditorFunction={ function( aceEditor ){ this_.setAceEditor( aceEditor ) }}
                             />

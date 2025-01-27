@@ -5,6 +5,7 @@ import i18n from "../i18n";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BrekekeOperatorConsole from "../index";
 import OCUtil from "../OCUtil";
+import AutoDialView_ver2 from "./AutoDialView_ver2";
 
 let _INSTANCE;
 export default class PhonebookContactInfozTelsView extends React.Component {
@@ -34,10 +35,11 @@ export default class PhonebookContactInfozTelsView extends React.Component {
             });
     }
 
-    _makeCall( tel ){
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.setDialingAndMakeCall( tel );
-        oc.abortAutoDialView_ver2();
+    _makeCall( evMouseClick, tel ){
+        AutoDialView_ver2.onClickCallButtonForAutoDialView( evMouseClick, tel );
+        // const oc = BrekekeOperatorConsole.getStaticInstance();
+        // oc.setDialingAndMakeCall( tel );
+        // oc.abortAutoDialView_ver2();
     }
 
     render(){
@@ -102,7 +104,7 @@ export default class PhonebookContactInfozTelsView extends React.Component {
                                                 <button
                                                     title={i18n.t(`Call`)}
                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding"
-                                                    onClick={(e) => this._makeCall(tel) }
+                                                    onClick={(e) => this._makeCall(e,tel) }
                                                 >
                                                     <FontAwesomeIcon size="lg" icon="fas fa-phone"/>
                                                 </button>

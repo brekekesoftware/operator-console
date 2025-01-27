@@ -305,10 +305,16 @@ export default class EditScreenView extends React.Component {
       }
       case _PROPERTIES_MODE.tab:
       {
+        const currentEditingPane = this.state.settingsContainerOrDivider;
+        const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+        const selectedTabData = tabsData.getSelectedTabData();
+        const tabLabel = selectedTabData.getTabLabel();
+
         jsx = (
             <>
               <div>
-                <Input type="text" name="tabLabel" defaultValue={i18n.t("UntitledTab")} />
+                {/*<Input type="text" name="tabLabel" defaultValue={i18n.t("UntitledTab")} />*/}
+                <Input type="text" name="tabLabel" defaultValue={tabLabel} />
                 <Button onClick={ (ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
                 <Button onClick={ (ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
               </div>

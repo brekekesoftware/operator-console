@@ -897,9 +897,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         <th style={{width: 20}}>{i18n.t("Status")}</th>
                                                                         <th></th>
                                                                         <th>{i18n.t("Incoming")}</th>
+                                                                        <th>{i18n.t("Transfer")}</th>
                                                                         <th>{i18n.t("StartedAt")}</th>
-                                                                        { this.state.recentShowDetailChecked && <th>{i18n.t("AnsweredAt")}</th> }
-                                                                        { this.state.recentShowDetailChecked && <th>{i18n.t("EndedAt")}</th> }
+                                                                        {this.state.recentShowDetailChecked &&
+                                                                            <th>{i18n.t("AnsweredAt")}</th>}
+                                                                        {this.state.recentShowDetailChecked &&
+                                                                            <th>{i18n.t("EndedAt")}</th>}
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -912,11 +915,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         const sStartedAt = new Date(callHistory2CallInfo.getAddCallMillisTime()).toLocaleString();
                                                                         const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? new Date(callHistory2CallInfo.getAnsweredAt()).toLocaleString() : "";
                                                                         const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? new Date(callHistory2CallInfo.getEndCallMillisTime()).toLocaleString() : "";
+                                                                        const sIsTransfer = callHistory2CallInfo.getIsTransfer() ? "✓" : "";
                                                                         return (
                                                                             <tr key={i}>
                                                                                 <td style={{width: "1%"}}>{partyNumber}</td>
                                                                                 <td>
-                                                                                    <div className={statusClassName}></div>
+                                                                                    <div
+                                                                                        className={statusClassName}></div>
                                                                                 </td>
                                                                                 <td>
                                                                                     {partyNumber && (<div style={{
@@ -927,7 +932,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                             title={i18n.t(`Call`)}
                                                                                             className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                                             onClick={(e) => {
-                                                                                                this._onClickStartDatetimeCallHistoryCallButton( e, partyNumber );
+                                                                                                this._onClickStartDatetimeCallHistoryCallButton(e, partyNumber);
                                                                                             }
                                                                                             }>
                                                                                             {<FontAwesomeIcon size="lg"
@@ -936,9 +941,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     </div>)}
                                                                                 </td>
                                                                                 <td style={{textAlign: "center"}}>{sIsIncoming}</td>
+                                                                                <td style={{textAlign: "center"}}>{sIsTransfer}</td>
                                                                                 <td>{sStartedAt}</td>
-                                                                                { this.state.recentShowDetailChecked && <td>{sAnsweredAt}</td> }
-                                                                                { this.state.recentShowDetailChecked && <td>{sEndedAt}</td> }
+                                                                                {this.state.recentShowDetailChecked &&
+                                                                                    <td>{sAnsweredAt}</td>}
+                                                                                {this.state.recentShowDetailChecked &&
+                                                                                    <td>{sEndedAt}</td>}
                                                                             </tr>
                                                                         )
                                                                     })}

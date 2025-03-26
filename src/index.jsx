@@ -1,24 +1,18 @@
-import React, {useState} from 'react'
+import React, {lazy, Suspense, useState} from 'react'
 import ReactDOM from 'react-dom/client'
-import Login from './login'
 // import { IconPhone, IconBackspace } from './icons'
 import CallPanel from './callPanel'
 // import UpOutlined from '@ant-design/icons/UpOutlined'
 // import DownOutlined from '@ant-design/icons/DownOutlined'
-import MoreOutlined from '@ant-design/icons/MoreOutlined'
 // import CloseOutlined from '@ant-design/icons/CloseOutlined'
 // import CloseOutlined from '@ant-design/icons/CloseOutlined'
 // import CheckCircleOutlined from '@ant-design/icons/CheckCircleOutlined'
 import clsx from 'clsx'
-import { reaction } from "mobx"
-import {getProperty, setProperty, hasProperty, deleteProperty} from 'dot-prop';
 import Dropdown from 'antd/lib/dropdown';
 import 'antd/lib/dropdown/style';
-import Menu from 'antd/lib/menu';
 import 'antd/lib/menu/style';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style';
-import Carousel from 'antd/lib/carousel';
 import 'antd/lib/carousel/style';
 import { Rnd } from 'react-rnd';
 import Button from 'antd/lib/button';
@@ -81,13 +75,13 @@ import debounce from 'debounce'
 
 import i18n, { DEFAULT_LOCALE, isValidLocale, loadTranslations } from "./i18n";
 
-import SystemSettingsView, {OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID,OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION} from "./SystemSettingsView";
+//import SystemSettingsView, {OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID,OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION} from "./SystemSettingsView";
 const PBX_APP_DATA_NAME = 'operator_console';
 //const PBX_APP_DATA_VERSION = '0.1';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.12";
+const VERSION = "2.1.13";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -98,7 +92,9 @@ import ExtensionsStatus from "./ExtensionsStatus";
 import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
 import NoScreensView from "./NoScreensView";
-import {Select, Modal, Tabs, Divider} from "antd";
+import {Select, Modal, Tabs, Divider, ConfigProvider} from "antd";
+import jaJP from 'antd/locale/ja_JP';
+import enUS from 'antd/locale/en_US';
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";
 import LegacyUccacWidgetSettings from "./LegacyUccacWidgetSettings";
 import CallTableSettings from "./CallTableSettings";
@@ -110,13 +106,17 @@ import BrekekeOperatorConsoleEx from "./BrekekeOperatorConsoleEx";
 //import BusylightStatusChanger from "./BusylightStatusChanger";
 import OCUtil, {BROC_BROCCALLOBJECT_CALL_STATUSES} from "./OCUtil";
 import UccacWidget from "./UccacWidget";
-import Login from "./Login";
-import ACallInfos from "./ACallInfos";
+//import Login from "./Login";
+//import SystemSettingsView from "./SystemSettingsView";
+const SystemSettingsView = lazy( () => import(/* webpackChunkName: "SystemSettingsView" */ "./SystemSettingsView"));
+const Login = lazy( () => import(/* webpackChunkName: "Login" */ "./Login"));
+//import ACallInfos from "./ACallInfos";
 import ACallInfo from "./ACallInfo";
 import FileInfosLoader from "./FileInfosLoader";
-import EditScreenView from "./editor/EditScreenView";
+//import EditScreenView from "./editor/EditScreenView";
+const EditScreenView = lazy( () => import(/* webpackChunkName: "EditScreenView-editor" */ "./editor/EditScreenView"));
 import ScreenData from "./data/ScreenData";
-import ShowScreenView_ver2 from "./runtime/ShowScreenView_ver2";
+const ShowScreenView_ver2 = lazy( () => import(/* webpackChunkName: "ShowScreenView_ver2-runtime" */ "./runtime/ShowScreenView_ver2"));
 import PaneData from "./data/PaneData";
 import WidgetData from "./data/widgetData/WidgetData";
 import {CallHistory2} from "./CallHistory2";
@@ -132,7 +132,7 @@ export const brOcDisplayStates = Object.freeze({
     noScreens:5,
     editingScreen_ver2:6,
     showScreen_ver2:7,
-    waitQuickCallKey_ver2:8
+    //waitQuickCallKey_ver2:8
 });
 
 function LegacyCallPanel({ operatorConsoleAsParent, borderRadius, callpanelBgColor, callpanelFgColor,
@@ -718,7 +718,7 @@ function LegacyBackspaceButton({ operatorConsoleAsParent, subtype, icon, label, 
                     color:color,
                     backgroundColor:backgroundColor
                 }}
-                onClick={context.backspaceKeypadValue}>
+                onClick={context.backspaceKeyValue}>
             {iconJsx}
         </button>
     );
@@ -2789,14 +2789,20 @@ export default class BrekekeOperatorConsole extends React.Component {
 		this._disableKeydownToDialingCounter = 0;
 		this._disablePasteToDialingCounter = 0;
         this._isDTMFInput = false;
-        this._OnBackspaceKeypadValueCallbacks = [];
+        this._OnBackspaceKeyValueCallbacks = [];
         this._OnChangeIsDTMFInputCallbacks = [];
         this._OnAppendKeypadValueCallbacks = [];
+        this._OnAppendKeyValueCallbacks = [];
+        this._OnDeleteKeyValueCallbacks = [];
         this._OnSetDialingCallbacks = [];
         this._OnClearDialingCallbacks = [];
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
-        this.state = window.structuredClone(INIT_STATE);
+        const baseState = window.structuredClone(INIT_STATE);
+        //const language = window.localStorage.getItem('lastLoginLanguage');
+        //baseState.locale = language;
+        //i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
+        this.state = baseState;
         this._PalRestApi = new PalRestApi();
         //this.state.operatorConsole = this;
         this._CallHistory = new CallHistory(this);
@@ -3073,6 +3079,9 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         });
         i18n.defaultLocale = '';
+        //baseState.locale = language;
+        const language = window.localStorage.getItem('lastLoginLanguage');
+        i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
 
         // const lastLoginAccount = localStorage.getItem('lastLoginAccount') || '';
         // try {
@@ -3119,274 +3128,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._disablePasteToDialingCounter--;
     }
 
-    // _onKeydown(e){
-	// 	console.log("onKeydown.e=" , e );
-    //     if( this._disableKeydownToDialingCounter > 0  ){
-    //         return;
-    //     }
-    //
-    //     const isDowned = this.state._downedLayoutAndSystemSettings;
-    //     if( !isDowned ){
-    //         return;
-    //     }
-    //     const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
-    //     const isShowScreenView_ver2 = this.state.displayState === brOcDisplayStates.showScreen_ver2;
-    //     if( !isScreenView && !isShowScreenView_ver2 ){
-    //         return;
-    //     }
-    //
-    //     //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
-    //     const newLayoutModalOpen = this.state.newLayoutModalOpen;
-    //     if( newLayoutModalOpen === true ){
-    //         return;
-    //     }
-    //
-    //     if (
-    //         e.getModifierState("Hyper") ||
-    //         e.getModifierState("Fn") ||
-    //         e.getModifierState("Super") ||
-    //         e.getModifierState("OS") ||
-    //         e.getModifierState("Win") ||  /* hack for IE */
-    //         e.getModifierState("Copilot") /* //!todo //!check //!forbug  work? */
-    //     ) {
-    //         return;
-    //     }
-    //
-    //     if (
-    //         e.getModifierState("Alt") +
-    //         e.getModifierState("Control") +
-    //         e.getModifierState("Meta") >
-    //         1
-    //     ) {
-    //         return;
-    //     }
-    //
-    //     if (
-    //         (e.getModifierState("ScrollLock") ||
-    //             e.getModifierState("Scroll")) /* hack for IE */ &&
-    //         !e.getModifierState("Control") &&
-    //         !e.getModifierState("Alt") &&
-    //         !e.getModifierState("Meta")
-    //     ) {
-    //         switch (e.key) {
-    //             case "ArrowDown":
-    //             case "Down":
-    //                 //e.preventDefault();
-    //                 //break;
-    //                 return;
-    //             case "ArrowLeft":
-    //             case "Left":
-    //                 //e.preventDefault();
-    //                 //break;
-    //                 return;
-    //             case "ArrowRight":
-    //             case "Right":
-    //                 //e.preventDefault();
-    //                 //break;
-    //                 return;
-    //             case "ArrowUp":
-    //             case "Up":
-    //                 //e.preventDefault();
-    //                 //break;
-    //                 return;
-    //             case "Process":
-    //                 //e.preventDefault()();
-    //                 //break;
-    //                 return;
-    //         }
-    //     }
-    //
-    //
-    //     const keyCode = e.keyCode;
-    //     switch( keyCode ) {
-    //         case 13:    //enter key
-    //             if( this._isDTMFInput === true ) {
-    //                 return;
-    //             }
-    //             this.makeCall();
-    //             this._clearDialing();
-    //             return;
-    //         case 8: //backspace
-    //         {
-    //             if( this._isDTMFInput === true ){
-    //                 return;
-    //             }
-    //             let dialing = this.state.dialing;
-    //             if (!dialing || dialing.length === 0) {
-    //                 return;
-    //             }
-    //             dialing = dialing.substring(0, dialing.length - 1);
-    //             this.setDialing(dialing);
-    //             return;
-    //         }
-    //             break;
-    //         case 46:    //delete
-    //         {
-    //             if( this._isDTMFInput === true ){
-    //                 return;
-    //             }
-    //
-    //             let dialing = this.state.dialing;
-    //             if (!dialing || dialing.length === 0) {
-    //                 return;
-    //             }
-    //             dialing = dialing.substring(1, dialing.length);
-    //             this.setDialing(dialing);
-    //             return;
-    //         }
-    //             break;
-    //         case 9: //tab
-    //         //case 32: //space
-    //         case 16: //shift
-    //         case 17: //control
-    //         case 18: //alt
-    //         case 112: //F1
-    //         case 113: //F2
-    //         case 114: //F3
-    //         case 115: //F4
-    //         case 116: //F5
-    //         case 117: //F6
-    //         case 118: //F7
-    //         case 119: //F8
-    //         case 120: //F9
-    //         case 121: //F10
-    //         case 122: //F11
-    //         case 123: //F12
-    //         case 37:    //Left arrow
-    //         case 39:    //Right arrow
-    //         case 38: //Up arrow
-    //         case 40: //Down arrow
-    //         case 93:    //menu
-    //         case 144: //Numlock
-    //         case 33: //pageup
-    //         case 34: //pagedown
-    //         case 38: //end
-    //         case 36: //home
-    //         case 45: //insert
-    //         case 145: //scroll lock
-    //         case 19: //pause
-    //         case 44: //print screen
-    //         //case ***; //copilot //!check //!todo //!check //!forbug
-    //         case 91: //meta
-    //         case 29: //NonConvert
-    //         case 0: //char key ( with F12?) //for Firefox
-    //         case 229: //char key ( with F12?)
-    //             return;
-    //             break;
-    //     }
-    //
-    //     //modify keychar
-    //     let keychar;
-    //     switch(keyCode) {
-    //         case 96:    //Num 0
-    //             keychar = '0';
-    //             break;
-    //         case 97:    //Num 1
-    //             keychar = '1';
-    //             break;
-    //         case 98: //Num 2
-    //             keychar = '2';
-    //             break;
-    //         case 99: //Num 3
-    //             keychar = '3';
-    //             break;
-    //         case 100: //Num 4
-    //             keychar = '4';
-    //             break;
-    //         case 101: //Num 5
-    //             keychar =  '5';
-    //             break;
-    //         case 102: //Num 6
-    //             keychar = '6';
-    //             break;
-    //         case 103: //Num 7
-    //             keychar = '7';
-    //             break;
-    //         case 104: //Num 8
-    //             keychar = '8';
-    //             break;
-    //         case 105: //Num 9
-    //             keychar = '9';
-    //             break;
-    //         case 111: //Num divide
-    //             keychar = '/';
-    //             break;
-    //         case 106: //Num multiply
-    //             keychar = '*';
-    //             break;
-    //         case 109: //Num subtract
-    //             keychar = '-';
-    //             break;
-    //         case 107: //Num add
-    //             keychar = '+'
-    //             break;
-    //         case 110: //Num decimal
-    //             keychar = '.';
-    //             break;
-    //         default:
-    //             keychar  = String.fromCharCode(keyCode);
-    //             break;
-    //     }
-    //     if( !keychar ){
-    //         return;
-    //     }
-    //     const isCaplockOn =  e.getModifierState( "CapsLock" );
-    //     if( isCaplockOn ){
-    //         if( e.shiftKey ){
-    //             keychar = keychar.toLowerCase();
-    //         }
-    //         else {
-    //             keychar = keychar.toUpperCase();
-    //         }
-    //     }
-    //     else{
-    //         if( e.shiftKey ) {
-    //             keychar = keychar.toUpperCase();
-    //         }
-    //         else{
-    //             keychar = keychar.toLowerCase();
-    //         }
-    //     }
-    //
-    //     if( this._isDTMFInput === true ){
-    //         if(  this._isSendDTMFChar( keychar ) !== true ) {
-    //             return;
-    //         }
-    //         let  dialing = this.state.dialing;
-    //         if( !dialing ){
-    //             dialing = keychar;
-    //         }
-    //         else {
-    //             dialing += keychar;
-    //         }
-    //
-    //         if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
-    //             dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
-    //         }
-    //         this.setDialing( dialing );
-    //
-    //         this.sendDTMFIfNeed(keychar);
-    //
-    //     }
-    //     else{
-    //         let  dialing = this.state.dialing;
-    //         if( dialing.length >= BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
-    //             return;
-    //         }
-    //
-    //         if( !dialing ){
-    //             dialing = keychar;
-    //         }
-    //         else {
-    //             dialing += keychar;
-    //         }
-    //         this.setDialing( dialing );
-    //
-    //     }
-    //
-    // }
-
-    _onKeydown(e){
+     _onKeydown(e){
         //console.log("onKeydown.e=" , e );
         if( this._disableKeydownToDialingCounter > 0  ){
             return;
@@ -3471,35 +3213,38 @@ export default class BrekekeOperatorConsole extends React.Component {
                 if( this._isDTMFInput === true ) {
                     return;
                 }
-                this.makeCall();
+
+                const bHasActiaveCall = !!this.getCurrentCallInfo();
+                const dialing = this.getDialing();
+                if ( dialing && dialing.length !== 0  && bHasActiaveCall) {
+                    //show transfer method modal.
+                    const runtimeScreenView = this.getCurrentRuntimeScreenView_ver2();
+                    runtimeScreenView.setIsShowSelectCallingMethodModal(true);
+                } else {
+                    this.makeCallWithShortDial(null);
+                }
+
+                //this.makeCall();
                 //this._clearDialing();
                 return;
             case 8: //backspace
             {
-                if( this._isDTMFInput === true ){
-                    return;
-                }
-                let dialing = this.state.dialing;
-                if (!dialing || dialing.length === 0) {
-                    return;
-                }
-                dialing = dialing.substring(0, dialing.length - 1);
-                this.setDialing(dialing);
+                // if( this._isDTMFInput === true ){
+                //     return;
+                // }
+                // let dialing = this.state.dialing;
+                // if (!dialing || dialing.length === 0) {
+                //     return;
+                // }
+                // dialing = dialing.substring(0, dialing.length - 1);
+                // this.setDialing(dialing);
+                this.backspaceKeyValue();
                 return;
             }
                 break;
             case 46:    //delete
             {
-                if( this._isDTMFInput === true ){
-                    return;
-                }
-
-                let dialing = this.state.dialing;
-                if (!dialing || dialing.length === 0) {
-                    return;
-                }
-                dialing = dialing.substring(1, dialing.length);
-                this.setDialing(dialing);
+                this._deleteKeyValue();
                 return;
             }
                 break;
@@ -3544,46 +3289,31 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
         let sKey = e.key;
-        if( !sKey || sKey.length === 0 ){
-            return;
-        }
+        this._appendKeyValue(sKey);
 
+    }
+
+    _deleteKeyValue(){
         if( this._isDTMFInput === true ){
-            if(  this._isSendDTMFChar( sKey ) !== true ) {
-                return;
-            }
-            let  dialing = this.state.dialing;
-            if( !dialing ){
-                dialing = sKey;
-            }
-            else {
-                dialing += sKey;
-            }
-
-            if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
-                dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
-            }
-            this.setDialing( dialing );
-
-            this.sendDTMFIfNeed(sKey);
-
-        }
-        else{
-            let  dialing = this.state.dialing;
-            if( dialing.length >= BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
-                return;
-            }
-
-            if( !dialing ){
-                dialing = sKey;
-            }
-            else {
-                dialing += sKey;
-            }
-            this.setDialing( dialing );
-
+            return false;
         }
 
+        let dialing = this.state.dialing;
+        if (!dialing || dialing.length === 0) {
+            return false;
+        }
+        dialing = dialing.substring(1, dialing.length);
+        this.setDialing(dialing, null, () =>{
+            for( let i = 0; i < this._OnDeleteKeyValueCallbacks.length; i++){
+                const func = this._OnDeleteKeyValueCallbacks[i];
+                func( this );
+            }
+        });
+        return true;
+    }
+
+    addOnDeleteKeyValueCallback( func ){
+        this._OnDeleteKeyValueCallbacks.push( func );
     }
 
     _onPaste(e) {
@@ -3825,17 +3555,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({showAutoDialWidgets: [], currentScreenQuickCallWidget: null});
     }
 
-    _onEditingTabClick(sKey){
-        const tabIndex = parseInt( sKey );
-        this.setState( {
-                currentScreenTabIndex:tabIndex,
-                isSelectingTabInEditLayout: true,
-                selectingWidgetIndex : -1
-            },
-        );
-
-    }
-
     _onShowScreenTabClick(sKey){
         const tabIndex = parseInt( sKey );
         this.setState( {
@@ -3853,563 +3572,64 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this._currentRuntimeScreenViewAsChild;
     }
 
+    _getAntdConfigProviderLocale(){
+        const cpl = this.state.locale === "ja" ? jaJP : enUS;
+        return cpl;
+    }
+
     render() {
         if (!this.state.i18nReady) {
             return <Empty image={null} description={<Spin/>}/>
         }
 
-        const editingWidgetDatas = this._getSelectingEditingWidgetDatas();
-
-        //const selectingWidget = this.state.editingWidgets[this.state.selectingWidgetIndex];
-        let selectingEditingWidget;
-        if( editingWidgetDatas ) {
-            selectingEditingWidget = editingWidgetDatas[this.state.selectingWidgetIndex];
-        }
-        else{
-            selectingEditingWidget = null;
-        }
-        const SeletingEditingWidgetSettings = WidgetSettingsMap[selectingEditingWidget?.type];
-        let selectingWidgetSettingsKey = 0;
-
-        const handleShowConfirmDeleteWidgetOk = () => {
-            this.setState({showConfirmDeleteWidget: false});
-            this.onWidgetRemoved(this.state.selectingWidgetIndex);
-        };
-        const handleShowConfirmDeleteWidgetCancel = () => {
-            this.setState({showConfirmDeleteWidget: false});
-        };
-
-        const handleShowConfirmDeleteTabOk = () => {
-            this.setState({showConfirmDeleteTab: false});
-            this.removeTabInEditMode(this.state.currentScreenTabIndex);
-        };
-        const handleShowConfirmDeleteTabCancel = () => {
-            this.setState({showConfirmDeleteTab: false});
-        };
-
-        const isEditingScreen = !!this.state.isInitialized && this.state._downedLayoutAndSystemSettings && this.state.displayState === brOcDisplayStates.editingScreen;
-        let editingTabItems;
-        if( isEditingScreen ){
-            //const editingScreen = this.state.screens[ this.state.currentScreenIndex ];
-            const tabDatas = this.state.editingTabDatas;
-            editingTabItems = new Array(  tabDatas.length );
-            for( let i = 0; i < editingTabItems.length; i++ ){
-                //const tabData = tabDatas[i];
-                const editingTabData = this.state.editingTabDatas[i];
-                const editingWidgetDatas = editingTabData.widgetDatas;
-                const editingTabJsx = (
-                    <Rnd
-                        size={{width: this.state.editingScreenWidth, height: this.state.editingScreenHeight}}
-                        style={{
-                            border: 'solid 1px #E0E0E0',
-                            background: this.state.editingScreenBackground,
-                            color: this.state.editingScreenForeground
-                        }}
-                        cancel=".brOCEditingWidget"
-                        onResizeStop={(ev, dir, ref) => {
-                            const style = window.getComputedStyle(ref);
-                            this.setEditingScreenSize(parseInt(style.width), parseInt(style.height))
-                        }}>
-                        <GridLines className="brOCEditingGridLines"
-                                   strokeWidth={2}
-                                   cellWidth={this.state.editingScreenGrid * 10}
-                                   cellWidth2={this.state.editingScreenGrid}
-                                   cellHeight={this.state.editingScreenGrid * 10}
-                                   cellHeight2={this.state.editingScreenGrid}
-                        >
-                            {editingWidgetDatas.map((widget, i) => {
-                                const Widget = WidgetMap[widget.type];
-                                if (!Widget) return null;
-                                return (
-                                    <Rnd
-                                        key={i}
-                                        className={clsx("brOCEditingWidget", this.state.selectingWidgetIndex === i && "brOCSelectingWidget")}
-                                        size={{width: widget.width, height: widget.height}}
-                                        position={{x: widget.x, y: widget.y}}
-                                        bounds="parent"
-                                        dragGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
-                                        resizeGrid={[this.state.editingScreenGrid, this.state.editingScreenGrid]}
-                                        onMouseDown={(e) => {
-                                            this.selectWidget(i);
-                                            e.stopPropagation();
-                                        }}
-                                        onDragStop={(e, data) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                            this.onWidgetMoved(i, data.lastX, data.lastY);
-                                            this.makeWidgetOnTop(i);
-                                        }}
-                                        onResize={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                        }}
-                                        onResizeStart={(e) => {
-                                            e.stopPropagation();
-                                            e.preventDefault();
-                                        }}
-                                        enableResizing={this.state.selectingWidgetIndex === i}
-                                        onResizeStop={(e, dir, ref, delta, pos) => {
-                                            const style = window.getComputedStyle(ref);
-                                            this.onWidgetResized(i, pos.x, pos.y, parseInt(style.width), parseInt(style.height))
-                                        }}
-                                    >
-                                        <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper}  />
-                                    </Rnd>
-                                )
-                            })}
-                        </GridLines>
-                    </Rnd>
-                );
-
-                const editingTabItem = {
-                    key : i.toString(),
-                    label : editingTabData.tabTitle,
-                    children : editingTabJsx
-                };
-                editingTabItems[i] = editingTabItem;
-            }
-        }
-        else{
-            editingTabItems = null;
-        }
-
-        const editingTabData = this._getSelectingEditingTabData();
-        const tabsActiveKey = this.state.currentScreenTabIndex.toString();
         const isEditingScreen_ver2 = this.state.displayState === brOcDisplayStates.editingScreen_ver2;
         if( isEditingScreen_ver2 ){
 
             const srcScreenData_ver2 = this.state.screenData_ver2;
             const dstScreenData_ver2 = srcScreenData_ver2.cloneScreenData();
             this._editingScreenData_ver2 = dstScreenData_ver2;
+
+            const configProviderLocale = this._getAntdConfigProviderLocale();
             return (
-                <EditScreenView
-                    operatorConsoleAsParent={this} screenData={this._editingScreenData_ver2}
-            >
-            </EditScreenView> );
+                    <ConfigProvider locale={ configProviderLocale}>
+                        <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+                            <EditScreenView
+                                operatorConsoleAsParent={this} screenData={this._editingScreenData_ver2}
+                            />
+                        </Suspense>
+                    </ConfigProvider>);
         }
 
 
-
+        const configProviderLocale = this._getAntdConfigProviderLocale();
         return (<>
             {!!this.state.isInitialized ? (
                 <div style={{flexGrow:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                     {this.state._downedLayoutAndSystemSettings ? (
                             this.state.displayState === brOcDisplayStates.editingScreen ? ( //editMode
-                                <div style={{display: 'flex', flexGrow: 1, overflow: 'hidden'}}>
-                                    <div className="brOCWidgetBox" style={{
-                                        width: 240,
-                                        borderRight: 'solid 1px #e0e0e0',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: 12,
-                                        padding: 12,
-                                        paddingTop: 48,
-                                        alignItems: 'center',
-                                        overflowY: 'auto',
-                                        overflowX:'hidden'
-                                    }}>
-                                        {ToolboxWidgets.map((widget, i) => {
-                                            const Preview = WidgetPreviewMap[widget.preview];
-                                            if (Preview) {
-                                                return (<div key={ i } style={{
-                                                    width: widget.previewWidth || widget.width,
-                                                    height: widget.previewHeight || widget.height
-                                                }} draggable onDragStart={ev => this.onDragStart(ev, i)}>
-                                                    <Preview/>
-                                                </div>)
-                                            }
-                                            const Widget = WidgetMap[widget.type];
-                                            if (!Widget) {
-                                                return null;
-                                            }
-                                            return (<div key={i} style={{width: widget.width, height: widget.height}} draggable
-                                                         onDragStart={ev => this.onDragStart(ev, i)}>
-                                                <Widget {...widget} operatorConsoleAsParent={this} uccacWrapper={this._UccacWrapper} />
-                                            </div>)
-                                        })}
-                                    </div>
-                                    <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}} onDragOver={this.onDragOver}
-                                         onDrop={this.onDrop}>
-                                        <div style={{display: 'flex', padding: 4, borderBottom: 'solid 1px #e0e0e0'}}>
-                                            <Space>
-                                                <label>{i18n.t("width")}{": "}
-                                                    <InputNumber value={this.state.editingScreenWidth}
-                                                                 onPressEnter={(e) => this.setEditingScreenSize(parseInt(e.target.value), this.state.editingScreenHeight)}
-                                                                 onStep={(v) => this.setEditingScreenSize(v, this.state.editingScreenHeight)}
-                                                    />
-                                                </label>
-                                                <label>{i18n.t("height")}{": "}
-                                                    <InputNumber value={this.state.editingScreenHeight}
-                                                                 onPressEnter={(e) => this.setEditingScreenSize(this.state.editingScreenWidth, parseInt(e.target.value))}
-                                                                 onStep={(v) => this.setEditingScreenSize(this.state.editingScreenWidth, v)}
-                                                    />
-                                                </label>
-                                                <label>{i18n.t("grid")}{": "}
-                                                    <InputNumber value={this.state.editingScreenGrid}
-                                                                 onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
-                                                                 onStep={(v) => this.setEditingScreenGrid(v)}
-                                                    />
-                                                </label>
-                                                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
-                                                    {i18n.t("foreground")}{": "}
-                                                    <Dropdown overlay={<SketchPicker
-                                                        color={this.state.editingScreenForeground}
-                                                        onChangeComplete={this.setEditingScreenForeground}
-                                                    />}>
-                                                        <div style={{
-                                                            width: 48,
-                                                            height: 30,
-                                                            display: 'inline-block',
-                                                            border: 'solid 1px #e0e0e0',
-                                                            background: this.state.editingScreenForeground
-                                                        }}></div>
-                                                    </Dropdown>
-                                                </label>
-                                                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
-                                                    {i18n.t("background")}{": "}
-                                                    <Dropdown overlay={<SketchPicker
-                                                        color={this.state.editingScreenBackground}
-                                                        onChangeComplete={this.setEditingScreenBackground}
-                                                    />}>
-                                                        <div style={{
-                                                            width: 48,
-                                                            height: 30,
-                                                            display: 'inline-block',
-                                                            border: 'solid 1px #e0e0e0',
-                                                            background: this.state.editingScreenBackground
-                                                        }}></div>
-                                                    </Dropdown>
-                                                </label>
-                                            </Space>
-                                            <div style={{marginLeft: 'auto'}}>
-                                                <Space>
-                                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={this.abortEditingScreen}
-                                                                okText={i18n.t("yes")}
-                                                                cancelText={i18n.t("no")}
-                                                    >
-                                                        <Button type="secondary">{i18n.t("discard")}</Button>
-                                                    </Popconfirm>
-                                                    <Space/>
-                                                    <Button type="success" htmlType="cancel" onClick={this.saveEditingScreen}>
-                                                        {i18n.t("save")}
-                                                    </Button>
-                                                </Space>
-                                            </div>
-                                        </div>
-                                        <div style={{display: 'flex', flexGrow: 1}}>
-                                            <div style={{position: 'relative', flexGrow: 1, overflow: 'hidden', background: '#f5f5f5'}}>
-                                                <Tabs activeKey={tabsActiveKey} items={ editingTabItems} onTabClick={ (key) => this._onEditingTabClick(key)  } />
-                                            </div>
-                                            <div style={{
-                                                width: 262,
-                                                borderLeft: 'solid 1px #e0e0e0',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: 12,
-                                                overflow: 'hidden'
-                                            }}>
-                                                {!!selectingEditingWidget?.type && (
-                                                    <div style={{padding:"12px 12px 0px 12px"}}>{i18n.t(`widget_description.${selectingEditingWidget?.type}`)}</div>
-                                                )}
-                                                <div style={{overflowY: 'auto', flexGrow: 1, height:0, paddingLeft:12, paddingRight:12 }}>   {  /* height:0 is for show scrollbar */ }
-                                                    {!!SeletingEditingWidgetSettings && (
-                                                        <SeletingEditingWidgetSettings
-                                                            key={ selectingWidgetSettingsKey++ }
-                                                            widgetIndex={this.state.selectingWidgetIndex}
-                                                            widget={{...selectingEditingWidget}}
-                                                            onChange={this.updateSelectingWidgetSettings}
-                                                            getNoteNames={this.getNoteNames}
-                                                            operatorConsoleAsParent={this}
-                                                        />
-                                                    )}
-                                                    {this.state.isSelectingTabInEditLayout === true && (
-                                                        <Form id="tabFormInEditMode" layout="vertical" initialValues={{tabTitle:editingTabData.tabTitle}} >
-                                                            <Form.Item label={i18n.t("tabTitle")} name="tabTitle">
-                                                                <Input maxLength={30}  />
-                                                            </Form.Item>
-                                                        </Form>
-                                                    )}
-                                                </div>
-                                                {this.state.selectingWidgetIndex !== -1 && (<div style={{padding:"0px 12px 12px 12px"}}>
-                                                    <Button type="secondary"
-                                                            onClick={() => this.duplicateWidget(this.state.selectingWidgetIndex)}>
-                                                        {i18n.t("duplicate")}
-                                                    </Button>
-                                                    <Popconfirm title={i18n.t("are_you_sure")}
-                                                                onConfirm={() => this.onWidgetRemoved(this.state.selectingWidgetIndex)}
-                                                                okText={i18n.t("yes")}
-                                                                cancelText={i18n.t("no")}
-                                                    >
-                                                        <Button type="danger">{i18n.t("remove")}</Button>
-                                                    </Popconfirm>
-                                                    <Modal title={i18n.t("ConfirmDeleteWidgetTitle")} open={this.state.showConfirmDeleteWidget} onOk={handleShowConfirmDeleteWidgetOk} onCancel={handleShowConfirmDeleteWidgetCancel}>
-                                                        <p>{i18n.t("ConfirmDeleteWidgetText")}</p>
-                                                    </Modal>
-                                                </div>)}
-                                                {this.state.isSelectingTabInEditLayout === true && (
-                                                    <div style={{padding:"0px 12px 12px 12px"}}>
-                                                        <Button type="secondary"
-                                                                onClick={() => this.changeTabTitleInEditMode()}>
-                                                            {i18n.t("changeTitle")}
-                                                        </Button>
-                                                        <Button type="secondary"
-                                                                onClick={() => this.addTabInEditMode()}>
-                                                            {i18n.t("add@AddTabButton")}
-                                                        </Button>
-                                                        <Button type="secondary"
-                                                                onClick={() => this.duplicateTabInEditMode()}>
-                                                            {i18n.t("duplicate")}
-                                                        </Button>                                                        <Popconfirm title={i18n.t("are_you_sure")}
-                                                                    onConfirm={() => this.removeTabInEditMode(this.state.currentScreenTabIndex)}
-                                                                    okText={i18n.t("yes")}
-                                                                    cancelText={i18n.t("no")}
-                                                        >
-                                                            <Button type="danger">{i18n.t("remove")}</Button>
-                                                        </Popconfirm>
-                                                        <Modal title={i18n.t("ConfirmDeleteTabTitle")} open={this.state.showConfirmDeleteTab} onOk={handleShowConfirmDeleteTabOk} onCancel={handleShowConfirmDeleteTabCancel}>
-                                                            <p>{i18n.t("ConfirmDeleteTabText")}</p>
-                                                        </Modal>
-                                                </div>)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <></> /* for ver1 */
                             // ) : this.state.displayState === brOcDisplayStates.editingScreen_ver2 ? (
                             //     <EditScreen_ver2
                             //         operatorConsoleAsParent={this}
                             //     />
-                            ) : this.state.displayState === brOcDisplayStates.waitQuickCallKey ? (<>
-                                    <div style={{
-                                        flexGrow: 1,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        overflow: 'hidden',
-                                        background: this.state.screens[this.state.currentScreenIndex].background,
-                                        color: this.state.screens[ this.state.currentScreenIndex].foreground
-                                    }}>
-                                        {/*<Carousel dotPosition="top" lazyLoad swipeToSlide draggable*/}
-                                        {/*          beforeChange={this.onBeforeCurrentScreenIndexChange}*/}
-                                        {/*          afterChange={this.setCurrentScreenIndex} initialSlide={this.state.currentScreenIndex}>*/}
-                                        {this.state.screens.map((screen, screenIndex) => {
-                                            const tabItems = new Array(screen.tabDatas.length);
-                                            for (let i = 0; i < tabItems.length; i++) {
-                                                const tabData = screen.tabDatas[i];
-                                                const tabTitle = tabData.tabTitle;
-                                                let tabJsx;
-                                                if (!tabData.widgetDatas || tabData.widgetDatas.length === 0) {
-                                                    tabJsx = <Empty image={null} description={i18n.t("no_widgets")}/>;
-                                                } else {
-                                                    tabJsx = tabData.widgetDatas.map((widgetData, i) => {
-                                                        const Widget = WidgetMap[widgetData.type];
-                                                        if (!Widget) return null;
-                                                        return (<div key={i} style={{
-                                                            position: 'absolute',
-                                                            left: widgetData.x,
-                                                            top: widgetData.y,
-                                                            width: widgetData.width,
-                                                            height: widgetData.height
-                                                        }} onMouseMove={(e) => e.stopPropagation()}>
-                                                            <Widget
-                                                                {...widgetData}
-                                                                operatorConsoleAsParent={this}
-                                                                uccacWrapper={this._UccacWrapper}
-                                                                context={{
-                                                                    loginUser: this.state.loginUser,
-                                                                    currentCallIndex: this._getCurrentCallIndex(),
-                                                                    //callIds: this._callIds,
-                                                                    //callById: this.callById,
-                                                                    dialing: this.state.dialing,
-                                                                    extensions: this.state.extensions,
-                                                                    extensionsStatus: this.state.extensionsStatus,
-                                                                    linesStatus: this.state.linesStatus,
-                                                                    parksStatus: this.state.parksStatus,
-                                                                    myParksStatus: this.state.myParksStatus,
-                                                                    usingLine: this.state.usingLine,
-                                                                    autoRejectIncoming: this.state.autoRejectIncoming,
-                                                                    monitoringExtension: this.state.monitoringExtension,
-                                                                    switchCallUp: this.switchCallUp,
-                                                                    switchCallDown: this.switchCallDown,
-                                                                    switchCallIndex: this.switchCallIndex,
-                                                                    monitorDialingExtension: this.monitorDialingExtension,
-                                                                    joinConversation: this.joinConversation,
-                                                                    appendKeypadValue: this.appendKeypadValue,
-                                                                    setDialingAndMakeCall: this.setDialingAndMakeCall,
-                                                                    backspaceKeypadValue: this.backspaceKeypadValue,
-                                                                    toggleCallRecording: this.toggleCallRecording,
-                                                                    toggleCallMuted: this.toggleCallMuted,
-                                                                    toggleAutoRejectIncoming: this.toggleAutoRejectIncoming,
-                                                                    resumeCall: this.resumeCall,
-                                                                    holdCall: this.holdCall,
-                                                                    hangUpCall: this.hangUpCall,
-                                                                    answerCall: this.answerCall,
-                                                                    sendDTMFIfNeed: this.sendDTMFIfNeed,
-                                                                    makeCall: this.makeCall,
-                                                                    transferCall: this.transferCall,
-                                                                    handleLine: this.handleLine,
-                                                                    handlePark: this.handlePark,
-                                                                    getNote: this.getNote,
-                                                                    setNote: this.setNote,
-                                                                    toggleQuickCallScreen: this.toggleQuickCallScreen,
-                                                                    onClickAutoDial: this.onClickAutoDial,
-                                                                    currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
-                                                                    widget: widgetData,
-                                                                    showAutoDialWidgets: this.state.showAutoDialWidgets,
-                                                                    operatorConsole: this
-                                                                }}
-                                                            />
-                                                        </div>);
-                                                    });
-                                                }
-                                                const key = i.toString();
-                                                const tabItem = {
-                                                    key:key,
-                                                    label: tabTitle,
-                                                    children: tabJsx
-                                                };
-                                                tabItems[i] = tabItem;
-                                            }
-
-                                            return <div key={screenIndex}>
-                                                <div style={{
-                                                    position: 'relative',
-                                                    width: screen.width,
-                                                    height: screen.height,
-                                                    margin: '0 auto',
-                                                    marginTop: 48,
-                                                }}>
-                                                    <Tabs activeKey={ tabsActiveKey  } items={tabItems} onTabClick={ (key) => this._onShowScreenTabClick(key)  } />
-                                                </div>
-                                            </div>
-                                        })}
-                                        {/*</Carousel>*/}
-                                    </div>
-                                    <DropDownMenu operatorConsole={this}></DropDownMenu>
-                                </>)
+                            ) : this.state.displayState === brOcDisplayStates.waitQuickCallKey ? (
+                                <></>   /* for ver1 */
+                                )
                                 : this.state.displayState === brOcDisplayStates.systemSettingsView ? (
-                                        <SystemSettingsView operatorConsole={this}/>
+                                    <ConfigProvider locale={ configProviderLocale}>
+                                        <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+                                            <SystemSettingsView operatorConsole={this}/>
+                                        </Suspense>
+                                    </ConfigProvider>
                                     ) : this.state.displayState === brOcDisplayStates.showScreen_ver2 ? (
-                                        <ShowScreenView_ver2 operatorConsoleAsParent={this} />
+                                    <ConfigProvider locale={ configProviderLocale}>
+                                        <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+                                            <ShowScreenView_ver2 operatorConsoleAsParent={this} />
+                                        </Suspense>
+                                    </ConfigProvider>
                                 ) :
-                                    (<>
-                                        {/* defaultView */}
-                                        <div style={{
-                                            flexGrow: 1,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            overflow: 'hidden',
-                                            background: this.state.screens[this.state.currentScreenIndex].background,
-                                            color: this.state.screens[this.state.currentScreenIndex].foreground
-                                        }}>
-                                            {/*<Carousel dotPosition="top" lazyLoad swipeToSlide draggable*/}
-                                            {/*          beforeChange={this.onBeforeCurrentScreenIndexChange}*/}
-                                            {/*          afterChange={this.setCurrentScreenIndex}*/}
-                                            {/*          initialSlide={this.state.currentScreenIndex}>*/}
-                                            {this.state.screens.map((screen, screenIndex) => {
-                                                // if( !screen.tabDatas ){
-                                                //     //set default tabData
-                                                //     screen.tabDatas = new Array(1);
-                                                //     screen.tabDatas[0] = {
-                                                //         tabTitle : "Untitled tab",
-                                                //         widgetDatas : new Array()
-                                                //     }
-                                                // }
-                                                const tabItems = new Array( screen.tabDatas.length );
-                                                for( let i = 0; i < tabItems.length; i++ ){
-                                                    const tabData = screen.tabDatas[i];
-                                                    const tabTitle = tabData.tabTitle;
-                                                    let  tabJsx;
-                                                    if( !tabData.widgetDatas ||  tabData.widgetDatas.length === 0 ) {
-                                                        tabJsx = <Empty image={null} description={i18n.t("no_widgets")}/>;
-                                                    }
-                                                    else{
-                                                        tabJsx = tabData.widgetDatas.map( ( widgetData, i ) =>{
-                                                            const Widget = WidgetMap[ widgetData.type ];
-                                                            if (!Widget) return null;
-                                                            return (<div key={i} style={{
-                                                                position: 'absolute',
-                                                                left: widgetData.x,
-                                                                top: widgetData.y,
-                                                                width: widgetData.width,
-                                                                height: widgetData.height
-                                                            }} onMouseMove={(e) => e.stopPropagation()}>
-                                                                <Widget
-                                                                    {...widgetData}
-                                                                    widgetIndex={i}
-                                                                    operatorConsoleAsParent={this}
-                                                                    uccacWrapper={this._UccacWrapper}
-                                                                    context={{
-                                                                        loginUser: this.state.loginUser,
-                                                                        currentCallIndex: this._getCurrentCallIndex(),
-                                                                        //callIds: this._callIds,
-                                                                        //callById: this.callById,
-                                                                        dialing: this.state.dialing,
-                                                                        extensions: this.state.extensions,
-                                                                        extensionsStatus: this.state.extensionsStatus,
-                                                                        linesStatus: this.state.linesStatus,
-                                                                        parksStatus: this.state.parksStatus,
-                                                                        myParksStatus: this.state.myParksStatus,
-                                                                        usingLine: this.state.usingLine,
-                                                                        autoRejectIncoming: this.state.autoRejectIncoming,
-                                                                        monitoringExtension: this.state.monitoringExtension,
-                                                                        switchCallUp: this.switchCallUp,
-                                                                        switchCallDown: this.switchCallDown,
-                                                                        switchCallIndex: this.switchCallIndex,
-                                                                        monitorDialingExtension: this.monitorDialingExtension,
-                                                                        joinConversation: this.joinConversation,
-                                                                        appendKeypadValue: this.appendKeypadValue,
-                                                                        setDialingAndMakeCall: this.setDialingAndMakeCall,
-                                                                        backspaceKeypadValue: this.backspaceKeypadValue,
-                                                                        toggleCallRecording: this.toggleCallRecording,
-                                                                        toggleCallMuted: this.toggleCallMuted,
-                                                                        toggleAutoRejectIncoming: this.toggleAutoRejectIncoming,
-                                                                        resumeCall: this.resumeCall,
-                                                                        holdCall: this.holdCall,
-                                                                        hangUpCall: this.hangUpCall,
-                                                                        answerCall: this.answerCall,
-                                                                        sendDTMFIfNeed: this.sendDTMFIfNeed,
-                                                                        makeCall: this.makeCall,
-                                                                        transferCall: this.transferCall,
-                                                                        handleLine: this.handleLine,
-                                                                        handlePark: this.handlePark,
-                                                                        getNote: this.getNote,
-                                                                        setNote: this.setNote,
-                                                                        toggleQuickCallScreen: this.toggleQuickCallScreen,
-                                                                        currentScreenQuickCallWidget: this.state.currentScreenQuickCallWidget,
-                                                                        onClickAutoDial: this.onClickAutoDial,
-                                                                        widget: widgetData,
-                                                                        makeCallWithShortDial: this.makeCallWithShortDial,
-                                                                        showAutoDialWidgets: this.state.showAutoDialWidgets,
-                                                                        operatorConsole: this
-                                                                    }}
-                                                                />
-                                                            </div>);
-                                                        });
-                                                    }
-                                                    const tabItem = {
-                                                        key : i.toString(),
-                                                        label : tabTitle,
-                                                        children : tabJsx
-                                                    };
-                                                    tabItems[i] = tabItem;
-                                                }
-
-                                                return <div key={screenIndex}>
-                                                    <div style={{
-                                                        position: 'relative',
-                                                        width: screen.width,
-                                                        height: screen.height,
-                                                        margin: '0 auto',
-                                                        marginTop: 48,
-                                                    }}>
-                                                        <Tabs activeKey={tabsActiveKey} items={tabItems} onTabClick={ (key) => this._onShowScreenTabClick(key)  } />
-                                                    </div>
-                                                </div>
-                                            })}
-                                            {/*</Carousel>*/}
-                                        </div>
-                                        <DropDownMenu operatorConsole={this}></DropDownMenu>
-                                    </>)
+                                    (<></> /* for ver1 */ )
                         )
                         : this.state.displayState === brOcDisplayStates.noScreens ? (
                                 <NoScreensView operatorConsoleAsParent={this} />
@@ -4420,7 +3640,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 </div>
             ) :  (
                 <div className='brOCLoginPage'>
-                    <Login operatorConsoleAsParent={this} initialValues={this._getLastLoginAccount()} />
+                    <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+                        <Login operatorConsoleAsParent={this} initialValues={this._getLastLoginAccount()} />
+                    </Suspense>
                 </div>
             )}
 
@@ -4734,7 +3956,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                     tenant : this.getLoggedinTenant(),
                     name:noteName,
                     description : "",
-                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : noteContent
             }),
             onSuccessFunction : ( res ) =>{
@@ -4861,54 +4083,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         })
     }
 
-    onDragStart = (ev, i) => {
-        //console.log('onDragStart', ev);
-        // ev.preventDefault();
-        ev.dataTransfer.clearData();
-        ev.dataTransfer.setData('index', i + "");
-        const itemRect = ev.target.getBoundingClientRect();
-        ev.dataTransfer.setData('offset_x', ev.clientX - itemRect.left);
-        ev.dataTransfer.setData('offset_y', ev.clientY - itemRect.top);
-    }
-    onDragOver = (ev) => {
-        ev.preventDefault();
-    }
-    onDrop = (ev) => {
-        //console.log('onDrop', ev);
-        ev.preventDefault();
-        ev.stopPropagation();
-
-        const screenRect = ev.target.getBoundingClientRect();
-        const offsetX = parseInt(ev.dataTransfer.getData('offset_x'));
-        const offsetY = parseInt(ev.dataTransfer.getData('offset_y'));
-
-        const screen = this.state.screens[this.state.currentScreenIndex];
-        const widget = window.structuredClone(ToolboxWidgets[ev.dataTransfer.getData('index')]);
-        widget.x = ev.clientX - screenRect.left - offsetX;
-        widget.x -= widget.x % screen.grid;
-        widget.y = ev.clientY - screenRect.top - offsetY;
-        widget.y -= widget.y % screen.grid;
-
-        const editingTabDatas = this.state.editingTabDatas;
-        const editingTabData =  editingTabDatas[ this.state.currentScreenTabIndex ];
-        const editingWidgetDatas = editingTabData.widgetDatas;
-        const newEditingWidgetDatas =  [...editingWidgetDatas, widget]
-
-        editingTabData.widgetDatas = newEditingWidgetDatas;
-        editingTabDatas[ this.state.currentScreenTabIndex ] = editingTabData;   //!optimize no need.
-
-        this.setState({
-            editingTabDatas : editingTabDatas
-        });
-        //this.selectWidget(this.state.editingWidgets.length);
-
-        // const selectingTabData = this._getSelectingEditingTabData();
-        // const newEditingWidgets = [ ...selectingTabData.widgetDatas, widget ];
-        // selectingTabData.widgetDatas = newEditingWidgets;
-        // this.setState({ editingTabDatas : this.state.editingTabDatas });
 
 
-    }
 
     _getSelectingEditingTabData(){
         const tabData = this.state.editingTabDatas[ this.state.currentScreenTabIndex ];
@@ -4961,61 +4137,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         editingTabData.widgetDatas = editingWidgets;
         this.setState( {editingTabDatas : this.state.editingTabDatas});
         //this.setState({editingWidgets});
-    }
-    onWidgetRemoved = (i) => {
-        // const widget = this.state.editingWidgets[i];
-        // const tWidget = widget.subtype;
-        // if( tWidget === "LegacyAutoDialButton" ){
-        //     const iW = BrekekeOperatorConsole._getIndexFromArray( this.state.showAutoDialWidgets, widget );
-        //     this.state.showAutoDialWidgets.splice( 1, iW );
-        //     this.setState( { showAutoDialWidgets:this.state.showAutoDialWidgets});
-        // }
-
-
-        //const editingWidgets = [...this.state.editingWidgets];
-
-        const editingTabDatas = this.state.editingTabDatas;
-        const editingTabData = editingTabDatas[ this.state.currentScreenTabIndex ];
-        const editingWidgetDatas = editingTabData.widgetDatas;
-
-        //const removingWidget = editingWidgets[ i ];
-        // const func = removingWidget.OnRemovingWidget;
-        // if( func ){
-        //   func(this,i);
-        // }
-        editingWidgetDatas.splice(i, 1);
-        this.setState({
-            editingTabDatas : editingTabDatas
-        });
-        this.selectWidget(this.state.selectingWidgetIndex === i ? -1 : this.state.selectingWidgetIndex);
-    }
-
-    removeTabInEditMode( tabIndex ){
-        const screen = this.state.screens[ this.state.currentScreenIndex ];
-        if ( this.state.editingTabDatas.length == 1) {
-            Notification.warning({message: i18n.t("YouCanNotDeleteLastTab")});
-            return;
-        }
-
-        const editingTabDatas = this.state.editingTabDatas;
-        editingTabDatas.splice( tabIndex , 1 );
-
-        let newSelectingTabIndex;
-        if( tabIndex == editingTabDatas.length ){
-            newSelectingTabIndex = tabIndex - 1;
-        }
-        else{
-            newSelectingTabIndex = tabIndex;
-        }
-
-
-        this.setState({
-            editingTabDatas :  editingTabDatas,
-            currentScreenTabIndex : newSelectingTabIndex
-        });
-        //this.setState({ editingTabdatas :  this.state.editingTabDatas, currentScreenTabIndex: newSelectingTabIndex });
-
-
     }
 
     getEditingWidget() {
@@ -5275,7 +4396,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         const currentCallIndex = this._getCurrentCallIndex();
 
         this._aphone.getCallInfos().setCurrentCallIndexByOperatorConsole(index);
-        this.setState({refresh:true });
+        this.setState({rerender:true });
         if( index === currentCallIndex ){
             return false;
         }
@@ -5393,6 +4514,60 @@ export default class BrekekeOperatorConsole extends React.Component {
         currentCallInfo.conference();
     }
 
+    _appendKeyValue( sKey ){
+        if( !sKey || sKey.length === 0 ){
+            return false;
+        }
+
+        if( this._isDTMFInput === true ){
+            if(  this._isSendDTMFChar( sKey ) !== true ) {
+                return false;
+            }
+            let  dialing = this.state.dialing;
+            if( !dialing ){
+                dialing = sKey;
+            }
+            else {
+                dialing += sKey;
+            }
+
+            if( dialing.length > BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+                dialing = dialing.substring( dialing.length - BrekekeOperatorConsole.DIALING_MAX_LENGTH, dialing.length );
+            }
+            this.setDialing( dialing, null, () => this._onAppendKeyValue(sKey) );
+            this.sendDTMFIfNeed(sKey);
+
+        }
+        else{
+            let  dialing = this.state.dialing;
+            if( dialing.length >= BrekekeOperatorConsole.DIALING_MAX_LENGTH ){
+                return false;
+            }
+
+            if( !dialing ){
+                dialing = sKey;
+            }
+            else {
+                dialing += sKey;
+            }
+            this.setDialing( dialing, null, () => this._onAppendKeyValue(sKey) );
+
+        }
+
+        return true;
+    }
+
+    _onAppendKeyValue( key ){
+        for( let i = 0; i < this._OnAppendKeyValueCallbacks.length; i++ ){
+            const func = this._OnAppendKeyValueCallbacks[i];
+            func( this, key );
+        }
+    }
+
+    addOnAppendKeyValueCallback( func ){
+        this._OnAppendKeyValueCallbacks.push( func );
+    }
+
     appendKeypadValue = (key) => {
         let dialing = this.state.dialing + key;
         if( this._isDTMFInput === true ){
@@ -5447,16 +4622,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         });
     }
 
-    setDialing = (sDialing, isDTMFInput ) => {  //!deprecated. Use setDialingToState function.
-        this.setDialingToState( sDialing, isDTMFInput );
+    setDialing = (sDialing, isDTMFInput = null, onDoneFunc = null ) => {  //!deprecated. Use setDialingToState function.
+        this.setDialingToState( sDialing, isDTMFInput, onDoneFunc  );
     }
 
-    setDialingToState = (sDialing, isDTMFInput ) => {
+    setDialingToState = (sDialing, isDTMFInput = null, onDoneFunc = null ) => {
          if( OCUtil.isBoolean( isDTMFInput ) ) {
         //     this._wasDTMFInput = this._isDTMFInput;
              this._setIsDTMFInput( isDTMFInput );
         }
-        this.setState({dialing: sDialing});
+        this.setState({dialing: sDialing}, onDoneFunc );
         this._onSetDialing(sDialing);
     }
 
@@ -5494,7 +4669,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         );
     }
 
-    backspaceKeypadValue = () => {
+    backspaceKeyValue = () => {
         if( this._isDTMFInput === true ){
             return;
         }
@@ -5503,14 +4678,14 @@ export default class BrekekeOperatorConsole extends React.Component {
             return;
         }
         const dialing = this.state.dialing.slice(0, -1);
-        this.setState({dialing: dialing}, () => this._onBackspaceKeypadValue());
+        this.setState({dialing: dialing}, () => this._onBackspaceKeyValue());
         if( dialing.length === 0 ){
             this._resetCallInput( false, true );
         }
     }
 
-    _onBackspaceKeypadValue() {
-        const callbacks = this._OnBackspaceKeypadValueCallbacks;
+    _onBackspaceKeyValue() {
+        const callbacks = this._OnBackspaceKeyValueCallbacks;
         for (let i = 0; i < callbacks.length; i++) {
             const func = callbacks[i];
             func(this);
@@ -5518,8 +4693,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
 
-    addOnbackspaceKeypadValueCallback = (func) => {
-        this._OnBackspaceKeypadValueCallbacks.push(func);
+    addOnBackspaceKeyValueCallback = (func) => {
+        this._OnBackspaceKeyValueCallbacks.push(func);
     }
 
     addOnChangeIsDTMFInputCallBack = (func) => {
@@ -5527,7 +4702,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
-        this.setState({refresh:true} );
+        this.setState({rerender:true} );
 
         this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo );
 
@@ -5588,7 +4763,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             this._CallHistory.addCallNoAndSave( callInfo.getPartyNumber() );
         }
 
-        this.setState({refresh:true});
+        this.setState({rerender:true});
 
         this._CallHistory2.onAddCallInfoForCallHistory2( this, callInfo );
 
@@ -5604,7 +4779,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     // onUpdateWebphoneCallObjectPropertyByWebphoneCallInfos( webphoneCallInfosAsCaller, webphoneCallObject, field, val ){
-    //     this.setState({refresh:true});
+    //     this.setState({rerender:true});
     //     const options = {
     //         call : webphoneCallObject,
     //         field: field,
@@ -5795,14 +4970,14 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
         //Not need.
-        //this.setState({refresh:true} );
+        //this.setState({rerender:true} );
     }
 
 
     //!callme
     onUpdateCallInfoByCallInfo = (callInfoAsCaller) => {
         this._resetCallInput();
-        this.setState({refresh:true} );
+        this.setState({rerender:true} );
 
         this._CallHistory2.onUpdateCallInfoForCallHistory2( this, callInfoAsCaller );
 
@@ -5826,7 +5001,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     //!callme
     onHoldByCallInfo( callInfoAsCaller ){
         this._resetCallInput();
-        this.setState({refresh:true} );
+        this.setState({rerender:true} );
 
         const options = {
             callInfo : callInfoAsCaller
@@ -5841,7 +5016,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     //!callme
     onUnholdByCallInfo( callInfoAsCaller ){
         this._resetCallInput();
-        this.setState({refresh:true});
+        this.setState({rerender:true});
 
         const options = {
             callInfo : callInfoAsCaller
@@ -5882,7 +5057,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             } ).catch( (errMsg ) =>{
                 Notification.error({message:errMsg , duration:0 });
             }).finally( () =>{
-                this.setState({refresh:true});
+                this.setState({rerender:true});
             });
         }
     }
@@ -5896,7 +5071,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             } ).catch( (errMsg ) =>{
                 Notification.error({message:errMsg , duration:0 });
             }).finally( () =>{
-                this.setState({refresh:true});
+                this.setState({rerender:true});
             });
         }
     }
@@ -5971,8 +5146,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
         //const tenant = callInfo.pbxTenant;
         const tenant = undefined;   //!testit
-        const talkerId = callInfo.getPbxTalkerId();
-        await this.transferCallCore( dialing, mode, talkerId, tenant,
+        //const talkerId = callInfo.getPbxTalkerId();
+        //await this.transferCallCore( dialing, mode, talkerId, tenant,
+        await this.transferCallCore( dialing, mode, callInfo, tenant,
             function( this_, message ){
                 if( mode === "blind") {
                     if (message && message.toLowerCase().startsWith("fail")) {
@@ -6014,10 +5190,13 @@ export default class BrekekeOperatorConsole extends React.Component {
         return true;
     }
 
-    transferCallCore = async ( dialing, mode, talkerId, tenant, onDoneFunc  ) => {
+    transferCallCore = async ( dialing, mode, callInfo, tenant, onDoneFunc  ) => {
         if ( this._aphone.isPalReady() && dialing ) {
+            const talkerId = callInfo.getPbxTalkerId();
             const promise = this._aphone.transferAsync( tenant, dialing, talkerId, mode );
             await promise.then((message) => {
+                this.setState({rerender:true});  //rerender for Callhistory2
+                this._CallHistory2.onStartTransferForCallHistory2( this, callInfo );
                 //console.log("transferCallCore. result message=" + message );
                 if( onDoneFunc ){
                     onDoneFunc( this, message );
@@ -7029,7 +6208,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     setNoteByLoggedinPal( noteName, content, successFunction, errorFunction  ){
         const tenant = this.state.loginUser.pbxTenant;
         const description = "";
-        const useraccess = BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite
+        const useraccess = BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly
         const options = {
             tenant : tenant,
             name : noteName,
@@ -7280,7 +6459,9 @@ BrekekeOperatorConsole.WAIT_HOLD_TIMELIMIT_MILLIS_AT_ONETOUCHDIAL = 20 * 1000;
 
 export function OperatorConsole( el, props ) {
     const root = ReactDOM.createRoot( el );
-    root.render(<BrekekeOperatorConsole {...props} />);
+    root.render(
+            <BrekekeOperatorConsole {...props} />
+    );
 }
 
 // export function OperatorConsole(el, props) {

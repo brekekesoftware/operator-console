@@ -38,7 +38,7 @@ export default class LegacyButtonRuntimeSubWidget_backspaceButton extends Legacy
                            color:color,
                            backgroundColor:backgroundColor
                        }}
-                       onClick={oc.backspaceKeypadValue}
+                       onClick={oc.backspaceKeyValue}
         >{iconJsx}</button>
     }
 

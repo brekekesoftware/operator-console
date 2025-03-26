@@ -311,9 +311,10 @@ export default class WebphoneCallInfo extends ACallInfo {
                     this._setHolding(false);
                 }
                 break;
-            // case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:
-            //     this.setIsTransferring(false);
-            //     break;
+            case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:
+                //this.setIsTransferring(false);
+                const temp = 0;
+                break;
         }
     }
 }

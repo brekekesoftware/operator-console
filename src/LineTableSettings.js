@@ -25,9 +25,6 @@ export default class LineTableSettings extends React.Component {
         };
         //this._operatorConsoleAsParent.setState( {isSaveEditingScreenButtonDisabled : true } );
         const added = this._operatorConsoleAsParent.addOnBeginSaveEditingScreenFunctionIfNotExists( LineTableSettings._OnBeginSaveEditingScreenFunction );
-        //const thisEditingWidget = this._operatorConsoleAsParent.getEditingWidget();
-        //thisEditingWidget.OnDeselectEditingWidget = this.OnDeselectEditingWidget.bind(this);
-        //thisEditingWidget.OnRemovingWidget = this.OnRemovingWidget.bind(this);
     }
 
     static _copyFromValuesFrom( src, dst ){

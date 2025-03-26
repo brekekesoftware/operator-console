@@ -1,7 +1,7 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Divider, Input} from "antd";
+import {Divider, Input, Select} from "antd";
 import InputNumber from "antd/lib/input-number";
 import Form from "antd/lib/form";
 import {Colorpicker} from "antd-colorpicker";
@@ -263,11 +263,18 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeLinetableTransferMethod( s ){
+        const widgetData = this._getWidgetData();
+        widgetData.setLinetableTransferMethod(s);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     //!override
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const lineDataArray = widgetData.getLineDataArray();
         const lineCount = lineDataArray.length;
+        const linetableTransferMethod = widgetData.getLinetableTransferMethod() ? widgetData.getLinetableTransferMethod() : "selectTransferMethod";
         const jsx =   (
             <>
                 <p>{i18n.t("lineCount")}</p>
@@ -284,6 +291,21 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                                onChange={(e) => this._onChangeLineLabel(e, i)}/>
                     </div>);
                 })}
+                <p>{i18n.t("TransferMethod")}</p>
+                <Select
+                    // onChange={(value) => {
+                    // }}
+                    style={{width: "100%"}}
+                    //placeholder="Please select a option"
+                    value={linetableTransferMethod}
+                    defaultValue={linetableTransferMethod}
+                    onSelect={(e) => this._onChangeLinetableTransferMethod(e)}
+                >
+                    <Select.Option value="selectTransferMethod">{i18n.t("Select_a_transfer_method")}</Select.Option>
+                    <Select.Option value="attendedTransferWithSwitchCall">{i18n.t("Attended_transfer(Switch_a_call)")}</Select.Option>
+                    <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
+                    <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
+                </Select>
                 <p>{i18n.t("bgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getLinetableBgColor()}
                              onChange={(color) => this._onChangeLinetableBgColor(color)}/>

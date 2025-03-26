@@ -1,7 +1,10 @@
 {
   "en": {
+	"Select_a_transfer_method" : "Select a transfer method",
+	"TransferMethod" : "Transfer method",
 	"Attended_transfer" : "Attended transfer",
 	"Blind_transfer" : "Blind transfer",
+	"Attended_transfer(Switch_a_call)" : "Attended transfer(Switch a call)",
 	"Select_transfer_or_make_a_new_call" : "Select transfer or make a new call",
 	"The_phone_number_is_not_registered" : "The phone number is not registered.",
 	"Attended_transfer_a_call_to_a_destination" : "Attended transfer a call to a destination",
@@ -202,6 +205,8 @@
 	"lineLabel" : "Label",
 	"campOn" : "Camp on",
 	"campOnAuto" : "Camp on (Auto)",
+	"Camp on(Attended transfer)" : "Camp on(Attended transfer)",
+	"Camp on(Blind transfer)" : "Camp on(Blind transfer)",
 	"responder" : "Responder",
 	"campOnButtonDescription" : "Make the camp on.",
 	"transfer" : "Transfer",

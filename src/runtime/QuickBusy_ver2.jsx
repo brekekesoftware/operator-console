@@ -18,9 +18,11 @@ export default class QuickBusy_ver2 extends React.Component {
         };
 
         oc.addOnAppendKeypadValueCallback( this._onAppendKeypadValue.bind(this) );
-        oc.addOnbackspaceKeypadValueCallback( this._onBackspaceKeypadValue.bind(this) );
+        oc.addOnBackspaceKeyValueCallback( this._onBackspaceKeyValue.bind(this) );
         oc.addOnClearDialingCallbacks( this._onClearDialing.bind(this) );
         oc.addOnChangeIsDTMFInputCallBack( this._onChangeIsDTMFInput.bind(this));
+        oc.addOnAppendKeyValueCallback( this._onAppendKeyValue.bind(this) );
+        oc.addOnDeleteKeyValueCallback( this._onDeleteKeyValue.bind(this));
         //oc.addOnSetDialingCallback( this._onSetDialingCallback.bind(this));
         //oc.addOnSetCurrentScreenIndexCallback( this._onSetCurrentScreenIndex.bind(this) );
     }
@@ -55,18 +57,24 @@ export default class QuickBusy_ver2 extends React.Component {
             return;
         }
 
-        const ocState = oc.getState();
-        const dialing = ocState.dialing;
+        const dialing = operatorConsoleAsSender.getDialing();
         this._resetCandidateCallNos( dialing );
     }
 
-    _onBackspaceKeypadValue( operatorConsoleAsSender ){
-
-        const ocState = operatorConsoleAsSender.getState();
-        const dialing = ocState.dialing;
+    _onAppendKeyValue( operatorConsoleAsSender, key  ){
+        const dialing = operatorConsoleAsSender.getDialing();
         this._resetCandidateCallNos( dialing );
     }
 
+    _onDeleteKeyValue( operatorConsoleAsSender  ){
+        const dialing = operatorConsoleAsSender.getDialing();
+        this._resetCandidateCallNos( dialing );
+    }
+
+    _onBackspaceKeyValue( operatorConsoleAsSender ){
+        const dialing = operatorConsoleAsSender.getDialing();
+        this._resetCandidateCallNos( dialing );
+    }
 
     static _compare(x, y)
     {

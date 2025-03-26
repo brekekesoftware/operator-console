@@ -89,7 +89,7 @@ export default function NoScreensView( props ){
                                 tenant: operatorConsoleAsParent.getLoggedinTenant(),
                                 name: layoutNoteName,
                                 description: "",
-                                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                                 note: noteContent
                             }),
                             onSuccessFunction : ( res ) =>{
@@ -165,7 +165,7 @@ export default function NoScreensView( props ){
                 tenant: operatorConsoleAsParent.getLoggedinTenant(),
                 name: noteName,
                 description: "",
-                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                 note: noteContent
             }),
             onSuccessFunction : ( res ) =>{

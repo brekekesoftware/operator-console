@@ -16,7 +16,7 @@ export default class LineTableWidgetData extends WidgetData {
             const lineData = new LineTableWidgetLineData( lineDataOptions );
             this._LineDataArray[i] = lineData;
         }
-
+        this._linetableTransferMethod = options["linetableTransferMethod"];
         this._linetableBgColor = options["linetableBgColor"];
         this._linetableOuterBorderThickness = options["linetableOuterBorderThickness"];
         this._linetableOuterBorderColor = options["linetableOuterBorderColor"];
@@ -77,6 +77,13 @@ export default class LineTableWidgetData extends WidgetData {
         }
         else{
             delete o["lineDataArray"];
+        }
+
+        if( this._linetableTransferMethod ){
+            o["linetableTransferMethod"] = this._linetableTransferMethod;
+        }
+        else{
+            delete o["linetableTransferMethod"];
         }
 
         if( this._linetableBgColor ){
@@ -342,6 +349,14 @@ export default class LineTableWidgetData extends WidgetData {
             arr.push( lineData );
         }
         arr.length = newSize;
+    }
+
+    getLinetableTransferMethod(){
+        return this._linetableTransferMethod;
+    }
+
+    setLinetableTransferMethod( s ){
+        this._linetableTransferMethod = s;
     }
 
     getLineButtonFontSize(){

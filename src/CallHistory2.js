@@ -253,6 +253,7 @@ export class CallHistory2 {
                 let endCallMillisTimeColumnIndex = -1;
                 let isIncomingColumnIndex = -1;
                 let answeredAtColumnIndex = -1;
+                let isTransferColumnIndex = -1;
 
                 //read header line
                 const headerColumnNames = headerLine.split("\t");
@@ -277,6 +278,9 @@ export class CallHistory2 {
                             break;
                         case "answeredAt":
                             answeredAtColumnIndex = i;
+                            break;
+                        case "isTransfer":
+                            isTransferColumnIndex = i;
                             break;
                         default:
                             console.warn("Unknown header value('" + headerColumnName + "') was found. Processing of this value will be skipped.");
@@ -315,7 +319,8 @@ export class CallHistory2 {
                         endCallMillisTimeColumnIndex,
                         isIncomingColumnIndex,
                         answeredAtColumnIndex,
-                        line
+                        line,
+                        isTransferColumnIndex
                     };
                     const ch2CallInfo = CallHistory2CallInfo.createTryFromLineForCallHistory2( options );
                     if( ch2CallInfo === null ) {
@@ -468,7 +473,24 @@ export class CallHistory2 {
             }
 
             const partyNumberResult = intlCollator.compare( ch2CallInfoA.getPartyNumber(), ch2CallInfoB.getPartyNumber() ); //ASC order
-            return partyNumberResult;
+            if( partyNumberResult === 0 ){
+                let nCompareResult;
+                const bA = ch2CallInfoA.getIsTransfer();
+                const bB = ch2CallInfoB.getIsTransfer();
+                if( bA === true && bB !== true  ){
+                    nCompareResult = 1;
+                }
+                else if( bA !== true && bB === true  ){
+                    nCompareResult = -1;
+                }
+                else{
+                    nCompareResult = 0;
+                }
+                return nCompareResult;
+            }
+            else {
+                return partyNumberResult;
+            }
         };
         this._CallHistoryCallInfoArray.sort( compareFunc );
     }
@@ -528,19 +550,38 @@ export class CallHistory2 {
     }
 
     onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){
-        const options = {
-            callHistory2AsParent : this,
-            callInfo : callInfo
-        };
-        const callHistory2CallInfo = new CallHistory2CallInfo( options );
-        const callInfoUuid = callInfo.getCallInfoUuid();
-        this._CallHistoryCallInfosObject[ callInfoUuid ] = callHistory2CallInfo
-        // if( Object.keys( this._CallHistoryCallInfosObject ).length > this._saveCount ){
-        //     this._FlushSaveCount();
-        // }
+      this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, false );
+    }
 
-        this._prevSort = null;  //Set dirty
-        this._FlushSave();
+    onStartTransferForCallHistory2( operatorConsoleAsCaller, callInfo ){
+      this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, true );
+    }
+
+    _addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, isTransfer ){
+        let isIncoming;
+        if( isTransfer === true ){
+            isIncoming = false;
+        }
+        else{
+            isIncoming = callInfo.getIsIncoming();
+        }
+
+      const options = {
+        callHistory2AsParent : this,
+        callInfo : callInfo,
+          isTransfer : isTransfer,
+          isIncoming : isIncoming
+      };
+      const callHistory2CallInfo = new CallHistory2CallInfo( options );
+      const callInfoUuid = callInfo.getCallInfoUuid();
+      this._CallHistoryCallInfosObject[ callInfoUuid ] = callHistory2CallInfo;
+      // if( Object.keys( this._CallHistoryCallInfosObject ).length > this._saveCount ){
+      //     this._FlushSaveCount();
+      // }
+
+      this._prevSort = null;  //Set dirty
+      this._FlushSave();
+
     }
 
 

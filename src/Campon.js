@@ -26,9 +26,10 @@ export default class Campon{
         const isBusy = OCUtil.isExtensionBusy( transferExtensionId,  extensionsStatus  );
         if( !isBusy ){
             //transfer
-            const transferMode = "attended";
+            //const transferMode = "attended";
+            const transferMode = isBlindTransfer ? "blind" :  "attended";
             callInfo.setIsTransferring(true);
-            this._OperatorConsoleAsParent.transferCallCore(  transferExtensionId, transferMode , transferTalkerId, transferTenant  ,
+            this._OperatorConsoleAsParent.transferCallCore(  transferExtensionId, transferMode , callInfo, transferTenant  ,
                 ( operatorConsoleAsCaller, message) => {
                     if( message.startsWith("fail")){
                         Notification.error({ message:i18n.t("failed_to_transfer_call")});
@@ -37,7 +38,8 @@ export default class Campon{
                         const callInfo = operatorConsoleAsCaller.getPhoneClient().getCallInfos() .getCallInfoWhereTalkerIdEqual(transferTalkerId);
                         if (!callInfo) {
                             Notification.error({ message:i18n.t("failed_to_transfer_call")});
-                        } else {
+                        }
+                        else if( transferMode === "blind"){
                             callInfo.hangup();
                         }
                     }
@@ -80,6 +82,51 @@ export default class Campon{
         this._OperatorConsoleAsParent.setState({"rerender":true});     //!for rerender
     }
 
+    // onDeleteExtensionStatusFromExtensionsStatus( extensionsStatusAsCaller, extensionId, talkerId ){
+    //     //disconnected.
+    //     //execute transfer.
+    //     //
+    //     const objs = this._WaitCamponObjects[ extensionId ];
+    //     if( !objs  ){
+    //         //No need to transfer
+    //         return;
+    //     }
+    //     const waitCamponObject = objs[ 0 ]; //execute old
+    //     const timeoutId = waitCamponObject.setTimeoutTimeoutId;
+    //     clearTimeout( timeoutId );
+    //
+    //     //const waitCamponObject = { transferTenant, transferExtensionId, transferTalkerId, transferMode, timeoutMillis };
+    //     const oc2 = extensionsStatusAsCaller.getOperatorConsoleAsParent();
+    //     const callInfo = oc2.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(waitCamponObject.transferTalkerId);
+    //     const callInfoFrom = waitCamponObject.callInfo;
+    //     if( callInfoFrom ){
+    //         callInfoFrom.setIsTransferring(true);
+    //     }
+    //     //const transferMode = "attended";
+    //     const transferMode = waitCamponObject.isBlindTransfer === true ? "blind" : "attended"; //!testit
+    //     //this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, waitCamponObject.transferTalkerId, waitCamponObject.transferTenant,
+    //     this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, callInfo, waitCamponObject.transferTenant,
+    //         ( operatorConsoleAsCaller, message) => {
+    //             if( message.startsWith("fail")){
+    //                 Notification.error({ message:i18n.t("failed_to_transfer_call")});
+    //             }
+    //             else {
+    //                 if (!callInfo) {
+    //                     Notification.error({ message:i18n.t("failed_to_transfer_call")});
+    //                 } else {
+    //                     if (waitCamponObject.isBlindTransfer) {
+    //                         callInfo.hangup();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     );
+    //
+    //     this._removeCampon( waitCamponObject );
+    //     callInfo.camponDstExtensionId = null;
+    //     oc2.setState({latestCamponCall:callInfo});    //for redraw
+    // }
+
     onDeleteExtensionStatusFromExtensionsStatus( extensionsStatusAsCaller, extensionId, talkerId ){
         //disconnected.
         //execute transfer.
@@ -95,24 +142,26 @@ export default class Campon{
 
         //const waitCamponObject = { transferTenant, transferExtensionId, transferTalkerId, transferMode, timeoutMillis };
          const oc2 = extensionsStatusAsCaller.getOperatorConsoleAsParent();
-         const callInfo = oc2.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(waitCamponObject.transferTalkerId);
+         //const callInfo = oc2.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(waitCamponObject.transferTalkerId);
         const callInfoFrom = waitCamponObject.callInfo;
-         if( callInfoFrom ){
-             callInfoFrom.setIsTransferring(true);
-         }
+         // if( callInfoFrom ){
+         //     callInfoFrom.setIsTransferring(true);
+         // }
         //const transferMode = "attended";
         const transferMode = waitCamponObject.isBlindTransfer === true ? "blind" : "attended"; //!testit
-        this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, waitCamponObject.transferTalkerId, waitCamponObject.transferTenant,
+        callInfoFrom.setIsTransferring(true);
+        //this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, waitCamponObject.transferTalkerId, waitCamponObject.transferTenant,
+        this._OperatorConsoleAsParent.transferCallCore( waitCamponObject.transferExtensionId, transferMode, callInfoFrom, waitCamponObject.transferTenant,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     Notification.error({ message:i18n.t("failed_to_transfer_call")});
                 }
                 else {
-                    if (!callInfo) {
+                    if (!callInfoFrom) {
                         Notification.error({ message:i18n.t("failed_to_transfer_call")});
                     } else {
                         if (waitCamponObject.isBlindTransfer) {
-                            callInfo.hangup();
+                            callInfoFrom.hangup();
                         }
                     }
                 }
@@ -120,8 +169,8 @@ export default class Campon{
         );
 
         this._removeCampon( waitCamponObject );
-        callInfo.camponDstExtensionId = null;
-        oc2.setState({latestCamponCall:callInfo});    //for redraw
+        callInfoFrom.camponDstExtensionId = null;
+        oc2.setState({latestCamponCall:callInfoFrom});    //for redraw
     }
 
     _cancelCampOn( waitCamponObject  ){

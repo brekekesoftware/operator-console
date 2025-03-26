@@ -10,7 +10,7 @@ import OCUtil from "../../../OCUtil";
 import Dropdown from "antd/lib/dropdown";
 import {Button, Modal} from "antd";
 
-function LineButton({ label, line, width, height, color,  backgroundColor,  border,  borderRadius, fontSize }) {
+function LineButton({ label, line, width, height, color,  backgroundColor,  border,  borderRadius, fontSize, linetableTransferMethod }) {
     const oc = BrekekeOperatorConsole.getStaticInstance();
 
     const _onClickLineButton = ( line  ) => {
@@ -112,7 +112,8 @@ function TransferButton({ callInfo, title,
                             transferButtonOuterBorderColor,
                             transferButtonOuterBorderRadius,
                             transferButtonOuterBorderThickness,
-                            transferButtonFontSize
+                            transferButtonFontSize,
+                            linetableTransferMethod
                         }) {
     const [open, setOpen] = useState(false);
 
@@ -128,7 +129,21 @@ function TransferButton({ callInfo, title,
             showModalForBusy( {camponExtension,callInfo, title});
         }
         else{
-            showModal( {camponExtension,callInfo, title});
+            if( linetableTransferMethod === "attendedTransferWithSwitchCall"  ) {
+                _handleStartTransferNow("attended", true, callInfo, camponExtension );
+            }
+            else if( linetableTransferMethod === "blindTransferWithSwitchCall"  ){
+                _handleStartTransferNow("blind", true, callInfo, camponExtension );
+            }
+            else if( linetableTransferMethod === "attendedTransfer"  ){
+                _handleStartTransferNow("attended", false, callInfo, camponExtension );
+            }
+            else if( linetableTransferMethod === "blindTransfer"  ){
+                _handleStartTransferNow("blind", false, callInfo, camponExtension );
+            }
+            else{
+                showModal( {camponExtension,callInfo, title});
+            }
         }
     };
 
@@ -173,10 +188,11 @@ function TransferButton({ callInfo, title,
     const handleBlindTransferNow = () =>{
         const transferMode =  "attended";
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
         callInfo.setIsTransferring(true);
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     callInfo.setIsTransferring(false);
@@ -195,6 +211,46 @@ function TransferButton({ callInfo, title,
         setModalOpen(null); //close modal
     };
 
+    const handleAttendedTransferNowWithSwitchCall = () =>{
+        const transferMode =  "attended";
+        const bSwitchCall = true;
+        _handleStartTransferNow( transferMode, bSwitchCall );
+    };
+
+    const _handleStartTransferNow = ( transferMode, bSwitchCall, callInfoFrom, transferExtension ) =>{
+        if( bSwitchCall ) {
+            const callId = callInfoFrom.getCallId();
+            const callInfos = oc.getPhoneClient().getCallInfos();
+            const callIndex = callInfos.getCallIndexByCallId(callId);
+            const currentCallIndex = callInfos.getCurrentCallIndex();
+            if( callIndex !== currentCallIndex ) {
+                oc.switchCallIndexWithoutHold(callIndex);
+            }
+        }
+
+        //const transferMode =  undefined;    //attended
+        const tenant = undefined;
+        callInfo.setIsTransferring(true);
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  transferExtension.id, transferMode , callInfo, tenant ,
+            //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
+            ( operatorConsoleAsCaller, message) => {
+                if( message.startsWith("fail")){
+                    callInfo.setIsTransferring(false);
+                    Notification.error({message: i18n.t("failed_to_transfer_call")});
+                }
+                else {
+                    const callInfo = operatorConsoleAsCaller.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(pbxTalkerId);
+                    if (!callInfo) {
+                        Notification.error({message: i18n.t("failed_to_transfer_call")});
+                    } else if( transferMode === "blind"){
+                        callInfo.hangup();
+                    }
+                }
+            }
+        );
+    };
+
     const handleActiveAndStartBlindTransferNow = () =>{
         const callId = modalOpen.callInfo.getCallId();
         const callIndex = oc.getPhoneClient().getCallInfos().getCallIndexByCallId( callId );
@@ -202,10 +258,11 @@ function TransferButton({ callInfo, title,
 
         const transferMode =  undefined;    //attended
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
         callInfo.setIsTransferring(true);
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     callInfo.setIsTransferring(false);
@@ -241,7 +298,12 @@ function TransferButton({ callInfo, title,
         setModalForBusyOpen(null);
     };
 
-    const handleCamponAuto = () =>{
+    const handleCamponBlind = () =>{
+        const isBlindTransfer = true;
+        _handleCampon( isBlindTransfer );
+    }
+
+    const _handleCampon = ( isBlindTransfer ) =>{
         setModalForBusyOpen(null);  //close modal
 
         const callInfo = modalForBusyOpen.callInfo;
@@ -250,7 +312,6 @@ function TransferButton({ callInfo, title,
 
         const settingData = oc.getSystemSettingsData();
         const timeoutMillis = settingData.getCamponTimeoutMillis();
-        const isBlindTransfer = true;
         const transferExtensionId = camponExtension.id;
         callInfo.camponDstExtensionId = transferExtensionId;
         oc.setState({latestCamponCall:callInfo});    //for redraw
@@ -258,22 +319,36 @@ function TransferButton({ callInfo, title,
         const bCampOn = campon.tryStartCamponOrTransfer( callInfo,  isBlindTransfer, timeoutMillis, title );
     }
 
-    const handleCamponManual = () => {
-        setModalForBusyOpen(null);  //close modal
-
-        const callInfo = modalForBusyOpen.callInfo;
-        const camponExtension = modalForBusyOpen.camponExtension;
-        const campon = oc.getCampon();
-
-        const settingData = oc.getSystemSettingsData();
-        const timeoutMillis = settingData.getCamponTimeoutMillis();
+    const handleCamponAttended= () =>{
         const isBlindTransfer = false;
-        const transferExtensionId = camponExtension.id;
-        callInfo.camponDstExtensionId = transferExtensionId;
-        oc.setState({latestCamponCall:callInfo});    //for redraw
+        _handleCampon( isBlindTransfer );
+    }
 
-        const title = modalForBusyOpen.title;
-        const bCampOn = campon.tryStartCamponOrTransfer( callInfo, isBlindTransfer, timeoutMillis, title  );
+    const _handleshowSelectTransferMethodModalOk = () => {
+        setModalOpen(null); //close modal
+
+        const eAttendedTransferCallWithSwitchCall = document.getElementById("attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC");
+        const bAttendedTransferWithSwitchCall =  eAttendedTransferCallWithSwitchCall.checked;
+        if( bAttendedTransferWithSwitchCall ){
+            _handleStartTransferNow("attended", true, modalOpen.callInfo, modalOpen.camponExtension  );
+            return;
+        }
+
+        const eAttendedTransferCall = document.getElementById("attendedTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC");
+        const bAttendedTransfer =  eAttendedTransferCall.checked;
+        if( bAttendedTransfer ){
+            _handleStartTransferNow("attended", false, modalOpen.callInfo, modalOpen.camponExtension  );
+            return;
+        }
+
+        const eBlindTransferCall = document.getElementById("blindTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC");
+        const bBlindTransfer =  eBlindTransferCall.checked;
+        if( bBlindTransfer ){
+            _handleStartTransferNow("blind", false, modalOpen.callInfo, modalOpen.camponExtension  );
+            return;
+        }
+
+
     }
 
     const transferButtonColor = Util.isAntdRgbaProperty( transferButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( transferButtonFgColor ) : "";
@@ -304,41 +379,69 @@ function TransferButton({ callInfo, title,
                 </button>
             </Dropdown>
             <Modal
-                key="modal"
-                open={modalOpen != null }
-                title={i18n.t("transfer")}
-                onOk={handleBlindTransferNow}
+                key={"modal"}
+                open={modalOpen != null}
+                title={i18n.t("Select_a_transfer_method")}
+                onOk={_handleshowSelectTransferMethodModalOk}
                 onCancel={handleModalCancel}
-                width={700}
-                footer={[
-                    <div key="0" style={{whiteSpace:"nowrap"}}>
-                        <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>
-                            {i18n.t("blindTransfer")}
-                        </Button>
-                        <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow} className="brOCMarginLeftButtonToButton">
-                            {i18n.t("activateAndStartBlindTransfer")}
-                        </Button>
-                        <Button key="back" onClick={handleModalCancel} className="brOCMarginLeftButtonToButton">
-                            {i18n.t("cancel")}
-                        </Button>
-                    </div>
-                ]}
             >
-                {i18n.t("confirmTransferNow")}
+                {/*//!warn //!forBug These ID are not unique.*/}
+                <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          id="attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          value="attendedTransferCallWithSwitchCall"
+                          checked={true}/><label
+                    htmlFor="attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC">{i18n.t("Attended_transfer(Switch_a_call)")}</label>
+                </p>
+                <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          id="attendedTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          value="attendedTransferCallWithSwitchCall"
+                /><label
+                    htmlFor="attendedTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC">{i18n.t("Attended_transfer")}</label>
+                </p>
+                <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          id="blindTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
+                          value="blindTransferCall"
+                /><label
+                    htmlFor="blindTransferCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC">{i18n.t("Blind_transfer")}</label>
+                </p>
             </Modal>
+            {/*<Modal*/}
+            {/*    key="modal"*/}
+            {/*    open={modalOpen != null }*/}
+            {/*    title={i18n.t("transfer")}*/}
+            {/*    onOk={handleBlindTransferNow}*/}
+            {/*    onCancel={handleModalCancel}*/}
+            {/*    width={700}*/}
+            {/*    footer={[*/}
+            {/*        <div key="0" style={{whiteSpace:"nowrap"}}>*/}
+            {/*            <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>*/}
+            {/*                {i18n.t("blindTransfer")}*/}
+            {/*            </Button>*/}
+            {/*            <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow} className="brOCMarginLeftButtonToButton">*/}
+            {/*                {i18n.t("activateAndStartBlindTransfer")}*/}
+            {/*            </Button>*/}
+            {/*            <Button key="back" onClick={handleModalCancel} className="brOCMarginLeftButtonToButton">*/}
+            {/*                {i18n.t("cancel")}*/}
+            {/*            </Button>*/}
+            {/*        </div>*/}
+            {/*    ]}*/}
+            {/*>*/}
+            {/*    {i18n.t("confirmTransferNow")}*/}
+            {/*</Modal>*/}
             <Modal
                 key="modalForBusy"
                 open={modalForBusyOpen != null  }
                 title={i18n.t("transfer")}
-                onOk={handleCamponAuto}
+                width={700}
+                onOk={handleCamponBlind}
                 onCancel={handleModalForBusyCancel}
                 footer={[
                     <div key="1" style={{whiteSpace:"nowrap"}}>
-                        <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponAuto}>
-                            {i18n.t("campOnAuto")}
+                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponAttended} className="brOCMarginLeftButtonToButton">
+                            {i18n.t("Camp on(Attended transfer)")}
                         </Button>
-                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual} className="brOCMarginLeftButtonToButton">
-                            {i18n.t("campOn")}
+                        <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponBlind} className="brOCMarginLeftButtonToButton">
+                            {i18n.t("Camp on(Blind transfer)")}
                         </Button>
                         <Button key="backForBusy" onClick={handleModalForBusyCancel} className="brOCMarginLeftButtonToButton">
                             {i18n.t("cancel")}
@@ -377,7 +480,8 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                             bodyFontSize,
                             lineButtonFontSize,
                             transferButtonFontSize,
-                            transferCancelButtonFontSize
+                            transferCancelButtonFontSize,
+                            linetableTransferMethod
                            }){
     const lightClassname =   _getLightClassname( lineInfo.line );
     const title = lineInfo.lineLabel ? lineInfo.lineLabel : lineInfo.line;
@@ -413,6 +517,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                 border={ lineButtonBorder }
                 borderRadius={ lineButtonBorderRadius }
                 fontSize={ lineButtonFontSize }
+                linetableTransferMethod={linetableTransferMethod}
             ></LineButton>
         </td>
         {/*<td style={{width:100,height:70}}>*/}
@@ -439,6 +544,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                                     transferButtonOuterBorderRadius ={transferButtonOuterBorderRadius}
                                     transferButtonOuterBorderThickness = {transferButtonOuterBorderThickness}
                                     transferButtonFontSize = {transferButtonFontSize}
+                                    linetableTransferMethod = { linetableTransferMethod }
                     ></TransferButton> : "" }
         </td>
         <td style={{
@@ -607,6 +713,7 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
                         lineButtonFontSize={lineButtonFontSize}
                         transferButtonFontSize={transferButtonFontSize}
                         transferCancelButtonFontSize={transferCancelButtonFontSize}
+                        linetableTransferMethod={widgetData.getLinetableTransferMethod()}
                     />
                 ))}
                 </tbody>

@@ -262,7 +262,7 @@ export default class SystemSettingsView extends React.Component {
                     tenant : this.operatorConsoleAsParent.getLoggedinTenant(),
                     name:noteName,
                     description : "",
-                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : noteContent
             }),
             onSuccessFunction : ( res )=>{

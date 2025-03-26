@@ -83,6 +83,7 @@ export default class Login extends React.Component {
                         const isAdmin = res[0].toLowerCase() === "true";
                         const language = res[1];
                         this_.setState({isSigningin: false});
+                        window.localStorage.setItem('lastLoginLanguage', language);
                         this_._OperatorConsoleAsParent.onLoggedinByLogin(
                             pal, palWrapper.getPbxHost(), palWrapper.getPbxPort(), tenant, user, loginParams.password, isAdmin, language
                         );

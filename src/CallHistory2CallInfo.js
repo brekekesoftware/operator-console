@@ -7,19 +7,20 @@ export  default class CallHistory2CallInfo {
         const aCallInfo = options["callInfo"];
         if( aCallInfo ) {
             this._CallInfoUuid = aCallInfo.getCallInfoUuid();
-            this._IsIncoming = aCallInfo.getIsIncoming();
             this._AddCallMillisTime = Date.now();
             this._PartyNumber = aCallInfo.getPartyNumber();
+            //this._IsIncoming = aCallInfo.getIsIncoming();
+            //this._IsTransfer = aCallInfo.getIsTransferring();
         }
         else {  //create from log line
             this._CallInfoUuid = options["uuid"];
             this._PartyNumber = options["partyNumber"];
             this._AddCallMillisTime = options["addCallMillisTime"];
-            this._IsIncoming = options["isIncoming"];
-
             this._answeredAt = options["answeredAt"];
             this._endCallMillisTime =  options["endCallMillisTime"];
         }
+        this._IsIncoming = options["isIncoming"];
+        this._IsTransfer = options["isTransfer"];
     }
 
     getPartyNumber(){
@@ -54,14 +55,20 @@ export  default class CallHistory2CallInfo {
         return this._endCallMillisTime;
     }
 
+    getIsTransfer(){
+        return this._IsTransfer;
+    }
+
     static getTsvHeaderString() {
         const s =
-            CallHistory2CallInfo.toTsvValue("uuid") + "\t" +
-            CallHistory2CallInfo.toTsvValue("partyNumber") + "\t" +
-            CallHistory2CallInfo.toTsvValue("addCallMillisTime") + "\t" +
-            CallHistory2CallInfo.toTsvValue("endCallMillisTime") + "\t" +
-            CallHistory2CallInfo.toTsvValue("isIncoming") + "\t" +
-            CallHistory2CallInfo.toTsvValue("answeredAt");
+            CallHistory2CallInfo._toTsvValue("uuid") + "\t" +
+            CallHistory2CallInfo._toTsvValue("partyNumber") + "\t" +
+            CallHistory2CallInfo._toTsvValue("addCallMillisTime") + "\t" +
+            CallHistory2CallInfo._toTsvValue("endCallMillisTime") + "\t" +
+            CallHistory2CallInfo._toTsvValue("isIncoming") + "\t" +
+            CallHistory2CallInfo._toTsvValue("answeredAt") + "\t" +
+            CallHistory2CallInfo._toTsvValue("isTransfer")
+        ;
         return s;
     }
 
@@ -70,16 +77,18 @@ export  default class CallHistory2CallInfo {
      */
     getTsvValuesString() {
         const s =
-            CallHistory2CallInfo.toTsvValue( this._CallInfoUuid ) + "\t" +
-            CallHistory2CallInfo.toTsvValue(this._PartyNumber ) + "\t" +
-            CallHistory2CallInfo.toTsvValue(this._AddCallMillisTime) + "\t" +
-            CallHistory2CallInfo.toTsvValue(this._endCallMillisTime) + "\t" +
-            CallHistory2CallInfo.toTsvValue(this._IsIncoming) + "\t" +
-            CallHistory2CallInfo.toTsvValue(this._answeredAt);
+            CallHistory2CallInfo._toTsvValue( this._CallInfoUuid ) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._PartyNumber ) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._AddCallMillisTime) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._endCallMillisTime) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._IsIncoming) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._answeredAt) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._IsTransfer === true )
+        ;
         return s;
     }
 
-    static toTsvValue( o ) {
+    static _toTsvValue( o ) {
         if( o === undefined || o === null ){
             return "";
         }
@@ -106,14 +115,15 @@ export  default class CallHistory2CallInfo {
     }
 
     static createTryFromLineForCallHistory2( options ) {
-        let callHistory2AsParent = options["callHistory2AsParent"];
-        let uuidColumnIndex = options["uuidColumnIndex"];
-        let partyNumberColumnIndex = options["partyNumberColumnIndex"];
-        let addCallMillisTimeColumnIndex = options["addCallMillisTimeColumnIndex"];
-        let endCallMillisTimeColumnIndex = options["endCallMillisTimeColumnIndex"];
-        let isIncomingColumnIndex = options["isIncomingColumnIndex"];
-        let answeredAtColumnIndex = options["answeredAtColumnIndex"];
+        const callHistory2AsParent = options["callHistory2AsParent"];
+        const uuidColumnIndex = options["uuidColumnIndex"];
+        const partyNumberColumnIndex = options["partyNumberColumnIndex"];
+        const addCallMillisTimeColumnIndex = options["addCallMillisTimeColumnIndex"];
+        const endCallMillisTimeColumnIndex = options["endCallMillisTimeColumnIndex"];
+        const isIncomingColumnIndex = options["isIncomingColumnIndex"];
+        const answeredAtColumnIndex = options["answeredAtColumnIndex"];
         let line = options["line"];
+        const isTransferColumnIndex = options["isTransferColumnIndex"];
 
         const lineLength = line.length;
         if( lineLength === 0 ){
@@ -204,6 +214,20 @@ export  default class CallHistory2CallInfo {
             }
         }
 
+        let isTransferColumnValue = null;
+        if(  Number.isInteger( isTransferColumnIndex ) !== true || isTransferColumnIndex < 0 ) {
+        }
+        else {
+            let sIsTransferColumnValue = CallHistory2CallInfo.fromTsvValue( valueColumns[ isTransferColumnIndex ] );
+            const lower = sIsTransferColumnValue.toLowerCase();
+            if( lower === "true" || lower === "1" ) {
+                isTransferColumnValue = true;
+            }
+            else if( lower === "false" || lower === "0") {
+                isTransferColumnValue = false;
+            }
+        }
+
         const constructorOptions = {
             callHistory2AsParent,
             "uuid" : uuidValue,
@@ -211,7 +235,8 @@ export  default class CallHistory2CallInfo {
             "addCallMillisTime" : addCallMillisTimeValue,
             "endCallMillisTime" : endCallMillisTimeValue,
             "isIncoming" : isIncomingColumnValue,
-            "answeredAt" : answeredAtColumnValue
+            "answeredAt" : answeredAtColumnValue,
+            "isTransfer" : isTransferColumnValue,
         }
 
         const callHistory2CallInfo = new CallHistory2CallInfo( constructorOptions );

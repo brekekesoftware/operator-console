@@ -18,7 +18,7 @@ export default class QuickBusy extends React.Component {
         };
 
         this._operatorConsoleAsParent.addOnAppendKeypadValueCallback( this._onAppendKeypadValue.bind(this) );
-        this._operatorConsoleAsParent.addOnbackspaceKeypadValueCallback( this._onBackspaceKeypadValue.bind(this) );
+        this._operatorConsoleAsParent.addOnBackspaceKeyValueCallback( this._onBackspaceKeyValue.bind(this) );
         this._operatorConsoleAsParent.addOnClearDialingCallbacks( this._onClearDialing.bind(this) );
         //this._operatorConsoleAsParent.addOnSetCurrentScreenIndexCallback( this._onSetCurrentScreenIndex.bind(this) );
     }
@@ -42,7 +42,7 @@ export default class QuickBusy extends React.Component {
         this._resetCandidateCallNos( dialing );
     }
 
-    _onBackspaceKeypadValue( operatorConsoleAsSender ){
+    _onBackspaceKeyValue( operatorConsoleAsSender ){
 
         const ocState = operatorConsoleAsSender.getState();
         const dialing = ocState.dialing;

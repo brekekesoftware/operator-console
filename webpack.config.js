@@ -118,6 +118,7 @@ const modules = (env, argv) => ({
     "operator-console": path.resolve(__dirname, "src", "index.jsx"),
   },
   output: {
+    chunkFilename:'[name].js',
     path: path.resolve(__dirname, "dist"),
     filename: '[name].js',
     library: ['Brekeke'],
@@ -155,6 +156,7 @@ const modules = (env, argv) => ({
     maxAssetSize: 102400000
   },
   optimization: {
+    chunkIds: 'named',
     // this causes "Minified React error"
     // minimize: argv.mode === 'production',
     minimize: false,

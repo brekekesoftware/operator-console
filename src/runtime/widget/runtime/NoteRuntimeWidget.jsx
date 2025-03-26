@@ -106,7 +106,7 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
                     tenant : oc.getLoggedinTenant(),
                     name:noteName,
                     description : "",
-                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : this.state.content
                 }),
                 onSuccessFunction : ( res ) =>{

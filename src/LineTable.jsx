@@ -236,9 +236,10 @@ function TransferButton({ context, lineInfo, callInfo, title,
     const handleBlindTransferNow = () =>{
         const transferMode =  "attended";
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     Notification.error({message: i18n.t("failed_to_transfer_call")});
@@ -263,9 +264,10 @@ function TransferButton({ context, lineInfo, callInfo, title,
 
         const transferMode =  undefined;    //attended
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = callInfo.getPbxTalkerId();
         const tenant = undefined;
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     Notification.error({message: i18n.t("failed_to_transfer_call")});

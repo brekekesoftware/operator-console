@@ -1,7 +1,10 @@
 {
   "ja": {
+	"Select_a_transfer_method" : "転送方法を選択",
+	"TransferMethod" : "転送方法",
 	"Attended_transfer" : "アテンド転送",
 	"Blind_transfer" : "ブラインド転送",
+	"Attended_transfer(Switch_a_call)" : "アテンド転送(通話を切り替える)",
 	"Select_transfer_or_make_a_new_call" : "転送もしくは新規発信を選択",
 	"The_phone_number_is_not_registered" : "電話番号が登録されていません。",
 	"Attended_transfer_a_call_to_a_destination" : "宛先にアテンド転送する",
@@ -202,6 +205,9 @@
 	"lineLabel" : "ラベル",
 	"campOn" : "キャンプオン",
 	"campOnAuto" : "キャンプオン(自動)",
+	"Camp on(Attended transfer)" : "キャンプオン(アテンド転送)",
+	"Camp on(Blind transfer)" : "キャンプオン(ブラインド転送)",
+	"campBlind" : "キャンプオン(自動)",
 	"responder" : "対応者",
 	"campOnButtonDescription" : "キャンプオンを行います。",
 	"transfer" : "転送",

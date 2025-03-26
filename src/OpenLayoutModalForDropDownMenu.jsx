@@ -127,42 +127,49 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
     const getNoteNamesOptions ={
         methodName : "getNoteNames",
         methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
-        onSuccessFunction : ( noteNames ) => {
+        onSuccessFunction : ( allNoteNames ) => {
+            if (!allNoteNames || allNoteNames.length == 0) {
+                setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));
+                return;
+            }
+
+            const noteNames = allNoteNames.filter( function(value){ return value.startsWith( BrekekeOperatorConsole.LAYOUT_NOTE_NAME_PREFIX )} );
             if (!noteNames || noteNames.length == 0) {
                 setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));
-            } else {
-                let jsxContents = [];
-                const lastLayoutShortname = operatorConsole.getLastLayoutShortname();
-                let currentLayoutBolded = false;
-                for (let i = 0; i < noteNames.length; i++) {
-                    const noteName = noteNames[i];
-                    const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
-                    if( noteShortname.length === 0 ){   //Skip. Because can not select.
-                        continue;
-                    }
-                    let isFontBold = false;
-                    if( currentLayoutBolded === false ){
-                        isFontBold = noteShortname === lastLayoutShortname;
-                        if( isFontBold === true ){
-                            currentLayoutBolded = true;
-                        }
-                    }
-
-                    let sNoteShortname;
-                    if( isFontBold === true ){
-                        sNoteShortname = <div key={i}><a style={{fontWeight:"bold"}} className="test"
-                                                         onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
-                        </div>;
-                    }
-                    else {
-                        sNoteShortname = <div key={i}><a className="test"
-                                                         onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
-                        </div>;
-                    }
-                    jsxContents.push( sNoteShortname );
-                }
-                setNoteNamesContentFunc(jsxContents);
+                return;
             }
+
+            let jsxContents = [];
+            const lastLayoutShortname = operatorConsole.getLastLayoutShortname();
+            let currentLayoutBolded = false;
+            for (let i = 0; i < noteNames.length; i++) {
+                const noteName = noteNames[i];
+                const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                if( noteShortname.length === 0 ){   //Skip. Because can not select.
+                    continue;
+                }
+                let isFontBold = false;
+                if( currentLayoutBolded === false ){
+                    isFontBold = noteShortname === lastLayoutShortname;
+                    if( isFontBold === true ){
+                        currentLayoutBolded = true;
+                    }
+                }
+
+                let sNoteShortname;
+                if( isFontBold === true ){
+                    sNoteShortname = <div key={i}><a style={{fontWeight:"bold"}} className="test"
+                                                     onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
+                    </div>;
+                }
+                else {
+                    sNoteShortname = <div key={i}><a className="test"
+                                                     onClick={() => selectOCNoteByShortname(operatorConsole, noteShortname)}>{noteShortname}</a><br/>
+                    </div>;
+                }
+                jsxContents.push( sNoteShortname );
+            }
+            setNoteNamesContentFunc(jsxContents);
         },
         onFailFunction : ( errOrResponse ) =>{
             OCUtil.logErrorWithNotification( "Failed to get note names.",i18n.t("Failed_to_get_note_names"), errOrResponse );

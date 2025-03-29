@@ -417,7 +417,7 @@
     "legacy_button_description": {
       "LegacyDummyButton": "A dummy button that has no function.",
       "LegacyCallTalkingButton": "It lights red when the user is in a talking call (not holding/ringing)",
-      "LegacyNoAnswerButton": "To automatically reject incoming calls. It lights red when enabled",
+      "LegacyNoAnswerButton": "To automatically reject incoming calls. It lights red when enabled (This function is under construction)",
       "LegacyCallbackButton": "It blinks red if a callback is available. It lights red when the callback is active (This function is under construction)",
       "LegacyTransferButton": "Transfer or cancel transfer active call to the number you are dialing",
       "LegacyToggleRecordingButton": "To start/stop call recording. It lights red if started",

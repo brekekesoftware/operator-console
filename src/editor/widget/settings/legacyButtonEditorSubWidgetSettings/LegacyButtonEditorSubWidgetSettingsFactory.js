@@ -12,7 +12,7 @@ import LegacyButtonEditorSubWidgetSettings_prevCallButton from "./LegacyButtonEd
 import LegacyButtonEditorSubWidgetSettings_monitorDialingExtensionButton
     from "./LegacyButtonEditorSubWidgetSettings_monitorDialingExtensionButton";
 import LegacyButtonEditorSubWidgetSettings_stationLineDesignationButton
-    from "./LegacyButtonEditorSubWidgetSettings_stationLineDsignationButton";
+    from "./LegacyButtonEditorSubWidgetSettings_stationLineDesignationButton";
 import LegacyButtonEditorSubWidgetSettings_parkCallButton from "./LegacyButtonEditorSubWidgetSettings_parkCallButton";
 import LegacyButtonEditorSubWidgetSettings_seriesSetButton from "./LegacyButtonEditorSubWidgetSettings_seriesSetButton";
 import LegacyButtonEditorSubWidgetSettings_monitoringCallButton

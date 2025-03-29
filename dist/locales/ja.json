@@ -416,7 +416,7 @@
     "legacy_button_description": {
       "LegacyDummyButton": "機能のないダミーボタンです。",
       "LegacyCallTalkingButton": "ユーザーが通話中(保留/呼び出し中ではない)の場合に、赤く点灯します。",
-      "LegacyNoAnswerButton": "着信を自動的に拒否します。 有効にすると赤色に点灯します。",
+      "LegacyNoAnswerButton": "着信を自動的に拒否します。 有効にすると赤色に点灯します(この機能は開発中です)。",
       "LegacyCallbackButton": "コールバックが利用可能なときは赤く点滅し、コールバックがアクティブなときには赤く点灯します(この機能は開発中です)。",
       "LegacyTransferButton": "アクティブな通話をダイヤルしている番号に、転送をするか転送をキャンセルします。",
       "LegacyToggleRecordingButton": "通話録音を開始/停止します。 起動すると赤く点灯します。",

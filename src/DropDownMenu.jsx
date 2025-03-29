@@ -119,14 +119,14 @@ export default function DropDownMenu( { operatorConsole } ){
                     </a>
                 ),
             },
-            {
-                key: '2',
-                label: (
-                    <a onClick={operatorConsole.startShowScreen_ver2}>
-                        {i18n.t("show_screen")}
-                    </a>
-                ),
-            },
+            // {
+            //     key: '2',
+            //     label: (
+            //         <a onClick={operatorConsole.startShowScreen_ver2}>
+            //             {i18n.t("show_screen")}
+            //         </a>
+            //     ),
+            // },
             // {
             //     key: '3',
             //     label: (
@@ -168,7 +168,7 @@ export default function DropDownMenu( { operatorConsole } ){
             //     ),
             // },
             {
-                key: '3',
+                key: '2',
                 label: (
                     <a onClick={showNewLayoutModalFunc}>
                         {i18n.t("newLayout")}
@@ -176,7 +176,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '4',
+                key: '3',
                 label: (
                     <a onClick={showOpenLayoutModalFunc}>
                         {i18n.t("openLayout")}
@@ -184,7 +184,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '5',
+                key: '4',
                 label: (
                     <a onClick={showDeleteLayoutsModalFunc}>
                         {i18n.t("DeleteLayouts")}
@@ -192,7 +192,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '6',
+                key: '5',
                 label: (
                     <a onClick={operatorConsole.startSettingsScreen}>
                         {i18n.t("settings_screen")}
@@ -200,7 +200,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 ),
             },
             {
-                key: '7',
+                key: '6',
                 label: (
                     <a onClick={ () => operatorConsole.openAboutOCModalByState() }>
                         {i18n.t("About_OperatorConsole")}
@@ -249,16 +249,16 @@ export default function DropDownMenu( { operatorConsole } ){
                     </a>
                 ),
             },
+            // {
+            //     key: '2',
+            //     label: (
+            //         <a onClick={operatorConsole.startSettingsScreen}>
+            //             {i18n.t("settings_screen")}
+            //         </a>
+            //     ),
+            // },
             {
                 key: '2',
-                label: (
-                    <a onClick={operatorConsole.startSettingsScreen}>
-                        {i18n.t("settings_screen")}
-                    </a>
-                ),
-            },
-            {
-                key: '3',
                 label: (
                     <a onClick={() => operatorConsole.openAboutOCModalByState()}>
                         {i18n.t("About_OperatorConsole")}

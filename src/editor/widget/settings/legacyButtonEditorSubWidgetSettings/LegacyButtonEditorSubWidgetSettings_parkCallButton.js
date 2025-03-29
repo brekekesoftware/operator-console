@@ -59,7 +59,7 @@ export default class LegacyButtonEditorSubWidgetSettings_parkCallButton extends 
                 <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
                        defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
                 <p>{i18n.t("number")}</p>
-                <Input allowClear defaultValue={sNumber}
+                <Input allowClear value={sNumber} defaultValue={sNumber}
                        onChange={(e) => this._onChangeNumber(e)}/>
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getFontSize()}

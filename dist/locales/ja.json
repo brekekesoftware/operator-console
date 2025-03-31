@@ -1,5 +1,6 @@
 {
   "ja": {
+	"User" : "ユーザー",
 	"Select_a_transfer_method" : "転送方法を選択",
 	"TransferMethod" : "転送方法",
 	"Attended_transfer" : "アテンド転送",
@@ -92,7 +93,7 @@
 	"ExtensionNumber" : "内線番号",
 	"Phonebook" : "電話帳",
 	"Area" : "領域",
-	"Are_you_sure_you_want_to_delete_the_tab" : "タブを削除してもよろしいですか?",
+	"Are_you_sure_you_want_to_remove_the_tab" : "タブを削除してもよろしいですか?",
 	"Add_tab" : "タブの追加",
 	"Rename_tab" : "タブの名称を変更",
 	"Remove_tab" : "タブの削除",

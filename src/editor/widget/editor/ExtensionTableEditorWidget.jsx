@@ -68,7 +68,7 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
                         textTransform:"uppercase",
                         //height:EXTENSION_TABLE_TH_HEIGHT,
                         borderRadius:outerBorderRadius +  "px 0 0 0",
-                    }}>{i18n.t("id")}</th>
+                    }}>{i18n.t("ExtensionNumber")}</th>
                     <th style={{
                         fontSize : headerFontSize + "px",
                         textTransform:"uppercase",

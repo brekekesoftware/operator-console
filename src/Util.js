@@ -5,7 +5,6 @@ export default class Util{
         return b;
     }
 
-
     static isNumeric(value) {
         return /^-?\d+(\.\d+)?$/.test(value);   //0.5
     }

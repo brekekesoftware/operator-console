@@ -816,7 +816,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                 <li className="tab tab-A is-active"
                                                     onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e)}>{i18n.t("Recent")}</li>
                                                 <li className="tab tab-B"
-                                                    onClick={this.tabSwitch}>{i18n.t("ExtensionNumber")}</li>
+                                                    onClick={this.tabSwitch}>{i18n.t("User")}</li>
                                                 <li className="tab tab-C"
                                                     onClick={ (e) => {
                                                         this.tabSwitch(e);
@@ -961,7 +961,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                         <table className={"defaultContentTable"} style={{border: "0"}}>
                                                             <thead>
                                                             <tr className="defaultItemPaddingForTr">
-                                                                <th>{i18n.t("ID")}</th>
+                                                                <th>{i18n.t("ExtensionNumber")}</th>
                                                                 <th>{i18n.t("Name")}</th>
                                                                 <th>{i18n.t("Status")}</th>
                                                                 <th></th>

@@ -60,6 +60,10 @@ export default class OCUtil{
         return o === true || o === false;
     }
 
+    static isNumber(value) {
+        return typeof value === 'number' && isFinite(value);
+    }
+
     static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
         if( oErr ){
             if( consoleErrorMessage ) {

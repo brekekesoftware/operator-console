@@ -1,6 +1,6 @@
 {
   "name": "brekeke-operator-console",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",

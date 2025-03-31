@@ -1,4 +1,5 @@
 import React from "react";
+import OCUtil from "../../../OCUtil";
 
 //!abstract class
 export default class EditorWidgetTemplate {
@@ -31,11 +32,26 @@ export default class EditorWidgetTemplate {
         const width = this.getWidth();
         const height = this.getHeight();
         const renderMainJsx = this.getRenderMainJsx();
+        let sWidth;
+        if( OCUtil.isNumber( width ) ){
+            sWidth = width + "px";
+        }
+        else{
+            sWidth = width;
+        }
+        let sHeight;
+        if( OCUtil.isNumber( height ) ){
+            sHeight = height + "px";
+        }
+        else{
+            sHeight = height;
+        }
+
         return <div
             key={jsxKey}
             className="grabbable"
             data-br-widget-type-id={this._WidgetTypeId }
-            style={{width: width + "px",height:height + "px",marginBottom:"4px"}}
+            style={{width:sWidth,height:sHeight,margin:"0 4px 4px 4px"}}
             draggable={true}
             onDragStart={(ev) => editScreenViewAsCaller.onDragEditorWidgetTemplateStart(ev) }>
             {renderMainJsx}

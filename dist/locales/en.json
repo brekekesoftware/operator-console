@@ -1,5 +1,6 @@
 {
   "en": {
+	"User" : "User",
 	"Select_a_transfer_method" : "Select a transfer method",
 	"TransferMethod" : "Transfer method",
 	"Attended_transfer" : "Attended transfer",

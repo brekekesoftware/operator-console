@@ -35,6 +35,26 @@ body{
   --defaultCellHoverBackgroundColor : #F5F5F5;
   --defaultLinkHoverColor : #4BC5DE;
   --defaultDisabledTextColor : #D8D8D8;
+  --defaultSectionVerticalSpace: 6px;
+  --defaultButtonVerticalSpace: 4px;
+  --defaultButtonHorizontalSpace: 4px;
+  --defaultElementVerticalSpace: 4px;
+}
+
+.brOC .defaultElementMarginTop{
+	margin-top:var(--defaultElementVerticalSpace);
+}
+
+.brOC .defaultButtonMarginLeft{
+	margin-left:var(--defaultButtonHorizontalSpace);
+}
+
+.brOC .defaultButtonMarginTop{
+	margin-top:var(--defaultButtonVerticalSpace);
+}
+
+.brOC .defaultSectionMarginTop{
+	margin-top:var(--defaultSectionVerticalSpace);
 }
 
 //.brOC .defaultHoverForIcon:hover {
@@ -43,6 +63,14 @@ body{
 //  /* text-decoration-color:#4BC5DE; */
 //  cursor:pointer;
 //}
+
+.brOC .editorRightFrameRoot{
+	padding:4px;
+}
+
+.brOC :where(.css-dev-only-do-not-override-1htoz2s).ant-btn {
+	border:1px solid #AAAAAA;
+}
 
 .brOC .defaultDisabledTextColor{
   color : var(--defaultDisabledTextColor);

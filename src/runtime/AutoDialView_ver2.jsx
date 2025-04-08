@@ -1073,6 +1073,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         <table className={"defaultContentTable"} style={{border: "0",width:"100%"}}>
                                                                             <thead>
                                                                             <tr>
+                                                                                <th>{i18n.t("PhonebookName")}</th>
                                                                                 <th>{i18n.t("DisplayName")}</th>
                                                                                 <th style={{textAlign: "center"}}>{i18n.t("Call")}</th>
                                                                                 <th style={{textAlign: "center"}}>{i18n.t("Info")}</th>
@@ -1087,11 +1088,17 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 const isDeletable = wasShared === false || ( wasShared === true && isAdmin === true );
                                                                                 const telInfoArray = latestPbContactInfo ? latestPbContactInfo.getFreezedPhonebookContactInfozTelInfoArray() : null;
                                                                                 return (
-                                                                                    <tr key={i} style={{height:"42px"}}>
+                                                                                    <tr key={i}
+                                                                                        style={{height: "42px"}}>
+                                                                                        <td>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
                                                                                         <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
                                                                                         <td>
-                                                                                            <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                                                                                                { !telInfoArray && (
+                                                                                            <div style={{
+                                                                                                display: "flex",
+                                                                                                alignItems: "center",
+                                                                                                justifyContent: "center"
+                                                                                            }}>
+                                                                                                {!telInfoArray && (
                                                                                                     <button
                                                                                                         title={i18n.t(`Call`)}
                                                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
@@ -1102,7 +1109,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                             icon="fas fa-phone"/>
                                                                                                     </button>
                                                                                                 )}
-                                                                                                { telInfoArray && telInfoArray.length === 1 && (
+                                                                                                {telInfoArray && telInfoArray.length === 1 && (
                                                                                                     <button
                                                                                                         title={i18n.t(`Call`)}
                                                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
@@ -1110,12 +1117,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                     >
                                                                                                         <FontAwesomeIcon
                                                                                                             size="lg"
-                                                                                                            icon="fas fa-phone" />
+                                                                                                            icon="fas fa-phone"/>
                                                                                                     </button>
                                                                                                 )}
-                                                                                                { telInfoArray &&  telInfoArray.length > 1 && (
-                                                                                                    <a onClick={(e) => this._openPhonebookCallInfozTelsView( latestPbContactInfo ) }>
-                                                                                                        <FontAwesomeIcon size="lg" icon="fas fa-phone" />
+                                                                                                {telInfoArray && telInfoArray.length > 1 && (
+                                                                                                    <a onClick={(e) => this._openPhonebookCallInfozTelsView(latestPbContactInfo)}>
+                                                                                                        <FontAwesomeIcon
+                                                                                                            size="lg"
+                                                                                                            icon="fas fa-phone"/>
                                                                                                     </a>
                                                                                                 )}
                                                                                             </div>
@@ -1126,7 +1135,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 alignItems: "center",
                                                                                                 justifyContent: "center"
                                                                                             }}>
-                                                                                                <a onClick={(e) => this._openPhonebookCallInfozInfoView2( autoDialViewzPhoneBookContact )}>
+                                                                                                <a onClick={(e) => this._openPhonebookCallInfozInfoView2(autoDialViewzPhoneBookContact)}>
                                                                                                     {<FontAwesomeIcon
                                                                                                         size="lg"
                                                                                                         icon="fas fa-info-circle"/>}
@@ -1134,20 +1143,23 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                             </div>
                                                                                         </td>
                                                                                         <td>
-                                                                                            { isDeletable && (
+                                                                                            {isDeletable && (
                                                                                                 <div style={{
                                                                                                     display: "flex",
                                                                                                     alignItems: "center",
                                                                                                     justifyContent: "center"
                                                                                                 }}>
-                                                                                                    <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteContact2( autoDialViewzPhoneBookContact ) }
-                                                                                                                okText={i18n.t("yes")}
-                                                                                                                cancelText={i18n.t("no")}
+                                                                                                    <Popconfirm
+                                                                                                        title={i18n.t("are_you_sure")}
+                                                                                                        onConfirm={() => this._deleteContact2(autoDialViewzPhoneBookContact)}
+                                                                                                        okText={i18n.t("yes")}
+                                                                                                        cancelText={i18n.t("no")}
                                                                                                     >
                                                                                                         <a>
-                                                                                                            {<FontAwesomeIcon
-                                                                                                                size="lg"
-                                                                                                                icon="fa fa-trash"/>}
+                                                                                                            {
+                                                                                                                <FontAwesomeIcon
+                                                                                                                    size="lg"
+                                                                                                                    icon="fa fa-trash"/>}
                                                                                                         </a>
                                                                                                     </Popconfirm>
                                                                                                 </div>

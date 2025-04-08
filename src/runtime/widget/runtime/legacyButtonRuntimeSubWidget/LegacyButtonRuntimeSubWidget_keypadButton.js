@@ -10,25 +10,6 @@ export default class LegacyButtonRuntimeSubWidget_keypadButton extends LegacyBut
         super(  legacyButtonRuntimeWidgetAsParent, legacyButtonRuntimeSubWidgetData  );
     }
 
-    _getQuickCallDialingBySymbol( symbol, quickCallWidgetSubData ){
-        if( !quickCallWidgetSubData ){
-            return null;
-        }
-        if( symbol === '0' ) return quickCallWidgetSubData.getKeypadZero();
-        if( symbol === '1' ) return quickCallWidgetSubData.getKeypadOne();
-        if( symbol === '2' ) return quickCallWidgetSubData.getKeypadTwo();
-        if( symbol === '3' ) return quickCallWidgetSubData.getKeypadThree();
-        if( symbol === '4' ) return quickCallWidgetSubData.getKeypadFour();
-        if( symbol === '5' ) return quickCallWidgetSubData.getKeypadFive();
-        if( symbol === '6' ) return quickCallWidgetSubData.getKeypadSix();
-        if( symbol === '7' ) return quickCallWidgetSubData.getKeypadSeven();
-        if( symbol === '8' ) return quickCallWidgetSubData.getKeypadEight();
-        if( symbol === '9' ) return quickCallWidgetSubData.getKeypadNine();
-        if( symbol === '*' ) return quickCallWidgetSubData.getKeypadAsterisk();
-        if( symbol === '#' ) return quickCallWidgetSubData.getKeypadSharp();
-        return null;
-    }
-
     //!override
     getRenderJsx() {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
@@ -60,7 +41,7 @@ export default class LegacyButtonRuntimeSubWidget_keypadButton extends LegacyBut
                        }}
                        onClick={
                            () => {
-                               let sDialing = this._getQuickCallDialingBySymbol( symbol, oc.getCurrentScreenQuickCallWidgetSubDataFromState() );
+                               let sDialing = BrekekeOperatorConsole.getQuickCallDialingBySymbol( symbol, oc.getCurrentScreenQuickCallWidgetSubDataFromState() );
                                if( sDialing ) {
                                    oc.setDialingAndMakeCall( sDialing );
                                }

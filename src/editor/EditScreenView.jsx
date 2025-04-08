@@ -256,7 +256,7 @@ export default class EditScreenView extends React.Component {
         const currentEditingPane = this.state.settingsContainerOrDivider;
         const enableTabs = currentEditingPane.getEditorPanezEnableTabs();
         jsx = (
-            <>
+            <div className="editorRightFrameRoot">
               <div>
                 <div>
                   {i18n.t("Tabs")}:
@@ -271,7 +271,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div>
+                <div className="defaultSectionMarginTop">
                   {i18n.t("Area")}:
                 </div>
                 <div>
@@ -280,26 +280,28 @@ export default class EditScreenView extends React.Component {
                   }}>{i18n.t("splitVertically")}
                   </Button>
                 </div>
-                <div>
+                <div className="defaultButtonMarginTop">
                   <Button style={{width:"100%"}} onClick={() => {
                     this._splitHorizontally();
                   }}>{i18n.t("splitHorizontally")}
                   </Button>
                 </div>
               </div>
-            </>
+            </div>
         );
         break;
       }
       case _PROPERTIES_MODE.divider:
       {
         jsx = (
-            <Popconfirm title={i18n.t("confirmRemoveSplitter")} onConfirm={() => this._removeSplitter()}
-                        okText={i18n.t("yes")}
-                        cancelText={i18n.t("no")}
-            >
-              <Button>{i18n.t("removeSplitter")}</Button>
-            </Popconfirm>
+            <div className="editorRightFrameRoot">
+              <Popconfirm title={i18n.t("confirmRemoveSplitter")} onConfirm={() => this._removeSplitter()}
+                          okText={i18n.t("yes")}
+                          cancelText={i18n.t("no")}
+              >
+                <Button>{i18n.t("removeSplitter")}</Button>
+              </Popconfirm>
+            </div>
         );
         break;
       }
@@ -311,14 +313,14 @@ export default class EditScreenView extends React.Component {
         const tabLabel = selectedTabData.getTabLabel();
 
         jsx = (
-            <>
+            <div className="editorRightFrameRoot">
               <div>
                 {/*<Input type="text" name="tabLabel" defaultValue={i18n.t("UntitledTab")} />*/}
                 <Input type="text" name="tabLabel" defaultValue={tabLabel} />
-                <Button onClick={ (ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
-                <Button onClick={ (ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
+                <Button className="defaultElementMarginTop" onClick={ (ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
+                <Button className="defaultButtonMarginLeft" onClick={ (ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
               </div>
-              <div>
+              <div className="defaultButtonMarginTop">
                 <Popconfirm title={i18n.t("Are_you_sure_you_want_to_remove_the_tab")} onConfirm={() => this._onClickRemoveTab()}
                             okText={i18n.t("yes")}
                             cancelText={i18n.t("no")}
@@ -327,18 +329,29 @@ export default class EditScreenView extends React.Component {
                 </Popconfirm>
 
               </div>
-            </>
+            </div>
         );
         break;
       }
       case _PROPERTIES_MODE.widget: {
         const widgetData = this.state.selectingEditorWidgetData;
+        // const mainJsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx( this, widgetData );
+        //
+        // jsx = (
+        //     <div className="editorRightFrameRoot">
+        //       {mainJsx}
+        //     </div>
+        // );
         jsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx( this, widgetData );
         break;
       }
       default:
       {
-        jsx = i18n.t("Click_on_any_area_or_splitter_or_widget_or_tab_on_the_left");
+        jsx = (
+        <div className="editorRightFrameRoot">
+          {i18n.t("Click_on_any_area_or_splitter_or_widget_or_tab_on_the_left")}
+        </div>
+        );
         break;
       }
     }

@@ -3,7 +3,7 @@ import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfoz
 
 export default class PhonebookContactInfozInfoFactory_AutoDialView_ver2{
 
-    static createPhonebookContactInfozInfoTry( key, title = null, value, type = null  ){
+    static createPhonebookContactInfozInfoTry( key, title = null, value, type = null, phonebookItem = null  ){
         //const key = pbItem.key;
         if( !key || key.length === 0 ) {
             return null;
@@ -12,10 +12,10 @@ export default class PhonebookContactInfozInfoFactory_AutoDialView_ver2{
 
         let info;
         if ( isTelKey ) {
-            info = new PhonebookContactInfozTelInfo_AutoDialView_ver2( key, title, value, isTelKey );
+            info = new PhonebookContactInfozTelInfo_AutoDialView_ver2( key, title, value, isTelKey, phonebookItem );
         }
         else{
-            info = new PhonebookContactInfozInfo_AutoDialView_ver2( key,title, value, isTelKey );
+            info = new PhonebookContactInfozInfo_AutoDialView_ver2( key,title, value, isTelKey, phonebookItem );
         }
         return info;
     }

@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.15";
+const VERSION = "2.1.16";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -979,25 +979,25 @@ function LegacyDummyButton({ operatorConsoleAsParent, subtype, icon, label, butt
         >{iconJsx}</button>
     );
 }
-function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
-    const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
-    const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
-    const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
-        "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
-    const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
-    const iconJsx = getIconJsx( icon, label );
-    return (
-        //<button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
-        <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", context.widget && context.currentScreenQuickCallWidget === context.widget && 'kbc-button-danger')}
-                style={{
-                    border:border,
-                    borderRadius:borderRadius,
-                    color:color,
-                    backgroundColor:backgroundColor
-                }}
-                onClick={ () => context?.toggleQuickCallScreen( context.widget )  }>{iconJsx}</button>
-    );
-}
+// function LegacyQuickCallButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
+//     const color = Util.isAntdRgbaProperty( buttonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( buttonFgColor ) : "";
+//     const backgroundColor = Util.isAntdRgbaProperty( buttonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( buttonBgColor ) : "";
+//     const border = Util.isNumeric( buttonOuterBorderThickness ) && Util.isAntdRgbaProperty( buttonOuterBorderColor) ?
+//         "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
+//     const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
+//     const iconJsx = getIconJsx( icon, label );
+//     return (
+//         //<button title={i18n.t(`legacy_button_description.${subtype}`)}  className="kbc-button kbc-button-fill-parent"
+//         <button title={i18n.t(`legacy_button_description.${subtype}`)}  className={clsx("kbc-button kbc-button-fill-parent", context.widget && context.currentScreenQuickCallWidget === context.widget && 'kbc-button-danger')}
+//                 style={{
+//                     border:border,
+//                     borderRadius:borderRadius,
+//                     color:color,
+//                     backgroundColor:backgroundColor
+//                 }}
+//                 onClick={ () => context?.toggleQuickCallScreen( context.widget )  }>{iconJsx}</button>
+//     );
+// }
 
 function LegacyAutoDialButton({ operatorConsoleAsParent, subtype, icon, label, buttonFgColor, buttonBgColor, buttonOuterBorderColor, buttonOuterBorderRadius, buttonOuterBorderThickness, context = {} }) {
     const isRedColor = context.showAutoDialWidgets && BrekekeOperatorConsole._getIndexFromArray( context.showAutoDialWidgets, context.widget ) !== -1;
@@ -1743,7 +1743,7 @@ const LegacyButtonMap = {
     [LegacyUnholdCallButton.name]: LegacyUnholdCallButton,
     [LegacyHoldCallButton.name]: LegacyHoldCallButton,
     [LegacyPickUpCallButton.name]: LegacyPickUpCallButton,
-    [LegacyQuickCallButton.name]: LegacyQuickCallButton,
+    //[LegacyQuickCallButton.name]: LegacyQuickCallButton,
     [LegacyAutoDialButton.name]: LegacyAutoDialButton,
     [LegacyOneTouchDialButton.name]: LegacyOneTouchDialButton
 };
@@ -3128,6 +3128,24 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._disablePasteToDialingCounter--;
     }
 
+    static getQuickCallDialingBySymbol( symbol, quickCallWidgetSubData ){
+        if( !quickCallWidgetSubData ){
+            return null;
+        }
+        if( symbol === '0' ) return quickCallWidgetSubData.getKeypadZero();
+        if( symbol === '1' ) return quickCallWidgetSubData.getKeypadOne();
+        if( symbol === '2' ) return quickCallWidgetSubData.getKeypadTwo();
+        if( symbol === '3' ) return quickCallWidgetSubData.getKeypadThree();
+        if( symbol === '4' ) return quickCallWidgetSubData.getKeypadFour();
+        if( symbol === '5' ) return quickCallWidgetSubData.getKeypadFive();
+        if( symbol === '6' ) return quickCallWidgetSubData.getKeypadSix();
+        if( symbol === '7' ) return quickCallWidgetSubData.getKeypadSeven();
+        if( symbol === '8' ) return quickCallWidgetSubData.getKeypadEight();
+        if( symbol === '9' ) return quickCallWidgetSubData.getKeypadNine();
+        if( symbol === '*' ) return quickCallWidgetSubData.getKeypadAsterisk();
+        if( symbol === '#' ) return quickCallWidgetSubData.getKeypadSharp();
+        return null;
+    }
      _onKeydown(e){
         //console.log("onKeydown.e=" , e );
         if( this._disableKeydownToDialingCounter > 0  ){
@@ -3206,6 +3224,72 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
             }
         }
+
+        //Currently QuickCall
+         const qcSubData = this.getCurrentScreenQuickCallWidgetSubDataFromState();
+         if( qcSubData ){
+             const keyCode = e.keyCode;
+             let symbol;
+             switch( keyCode ){
+                 case 96:    //num 0
+                 case 48:   //0
+                     symbol = '0';
+                     break;
+                 case 97: //num 1
+                 case 49: //1
+                     symbol = '1';
+                     break;
+                 case 98: //num 2
+                 case 50: //2
+                     symbol = '2';
+                     break;
+                 case 99: //num 3
+                 case 51: //3
+                     symbol = '3';
+                     break;
+                 case 100: //num 4
+                 case 52://4
+                     symbol = '4';
+                     break;
+                 case 101: //num 5
+                 case 53: //5
+                     symbol = '5';
+                     break;
+                 case 102: //num 6
+                 case 54: //6
+                     symbol = '6';
+                     break;
+                 case 103: //num 7
+                 case 55: //7
+                     symbol = '7';
+                     break;
+                 case 104:  //num 8
+                 case 56: //8
+                     symbol = '8';
+                     break;
+                 case 105:  //num 9
+                 case 57: //9
+                     symbol = '9';
+                     break;
+                 case 106:  //num *
+                 case 186: //*
+                     symbol = '*';
+                     break;
+                 case 51: //#
+                     symbol = '#';
+                     break;
+                 default:
+                     symbol = null;
+                     break;
+             }
+             if( symbol ) {
+                 const sDialing = BrekekeOperatorConsole.getQuickCallDialingBySymbol( symbol, qcSubData );
+                 if( sDialing ) {
+                     this.setDialingAndMakeCall(sDialing);
+                     return;
+                 }
+             }
+         }
 
         const keyCode = e.keyCode;
         switch( keyCode ) {
@@ -3735,15 +3819,15 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.showAutoDialWidgetSubDatas_ver2;
     }
 
-    toggleQuickCallScreen = (quickCallButtonWidget) => {
-        //console.log("quickCallButtonWidget=" + quickCallButtonWidget);
-
-        if (this.state.currentScreenQuickCallWidget === quickCallButtonWidget) {
-            this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});   //toggle off
-        } else {
-            this.setDisplayState(brOcDisplayStates.waitQuickCallKey, {currentScreenQuickCallWidget: quickCallButtonWidget});
-        }
-    }
+    // toggleQuickCallScreen = (quickCallButtonWidget) => {
+    //     //console.log("quickCallButtonWidget=" + quickCallButtonWidget);
+    //
+    //     if (this.state.currentScreenQuickCallWidget === quickCallButtonWidget) {
+    //         this.setDisplayState(brOcDisplayStates.showScreen, {currentScreenQuickCallWidget: null});   //toggle off
+    //     } else {
+    //         this.setDisplayState(brOcDisplayStates.waitQuickCallKey, {currentScreenQuickCallWidget: quickCallButtonWidget});
+    //     }
+    // }
 
     toggleQuickCallButton_ver2 = (quickCallButtonWidgetSubData) => {
         //console.log("quickCallButtonWidgetSubData=" + quickCallButtonWidgetSubData);

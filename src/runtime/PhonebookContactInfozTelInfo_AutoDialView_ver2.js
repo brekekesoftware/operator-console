@@ -1,8 +1,8 @@
 import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfozInfo_AutoDialView_ver2";
 
 export default class PhonebookContactInfozTelInfo_AutoDialView_ver2 extends PhonebookContactInfozInfo_AutoDialView_ver2{
-    constructor( key, title, value, type ) {
-        super(key, title, value, type);
+    constructor( key, title, value, type, phonebookItem = null ) {
+        super(key, title, value, type, phonebookItem );
         this._SvgPathD = PhonebookContactInfozTelInfo_AutoDialView_ver2._getSvgPathD(this._Title);
     }
 

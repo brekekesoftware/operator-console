@@ -49,7 +49,7 @@ export default class PhonebookContactInfo_AutoDialView_ver2{
                     type = null;
                 }
 
-                const pbContactInfozInfo = PhonebookContactInfozInfoFactory_AutoDialView_ver2.createPhonebookContactInfozInfoTry(key, title, value, type );
+                const pbContactInfozInfo = PhonebookContactInfozInfoFactory_AutoDialView_ver2.createPhonebookContactInfozInfoTry(key, title, value, type, phonebookItem );
                 if (!pbContactInfozInfo) {
                     continue;
                 }

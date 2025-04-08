@@ -1,6 +1,9 @@
+
+const HIDDEN_CUSTOM_KEYS = ["$lang"];   //!modify //!sync //If it is defined in the PBX/SIPServer, define it here too.
+
 export default class PhonebookContactInfozInfo_AutoDialView_ver2{
-    //!private
-    constructor( key, title, value, type ) {
+    constructor( key, title, value, type, phonebookItem = null ) {
+        this._PhonebookItem = phonebookItem;
         this._InfoKeyName = key;
         //Set name
         this._IsTelKey = type === "phone";
@@ -66,6 +69,11 @@ export default class PhonebookContactInfozInfo_AutoDialView_ver2{
     //     this._Title = phonebookContactInfozInfo_AutoDialView_ver2._Title;
     // }
 
+    //return phonebookItem or null
+    getPhonebookItem(){
+        return this._PhonebookItem;
+    }
+
     static getTitleByPhonebookItem( item  ){
         let title;
         if( item.caption ){
@@ -102,7 +110,8 @@ export default class PhonebookContactInfozInfo_AutoDialView_ver2{
     }
 
     static isHiddenCustomKey( key ){
-        const b =  key.startsWith("$");
+        //const b =  key.startsWith("$");
+        const b =  HIDDEN_CUSTOM_KEYS.includes( key );
         return b;
     }
 

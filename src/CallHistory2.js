@@ -57,6 +57,7 @@ export class CallHistory2 {
         this._CallHistoryCallInfosObject = new Object();
         this._CallHistoryCallInfoArray = new Array();   //sortable array
         this._prevSort = null;  //Set dirty
+        this._isSavable = false;
 
         this._FlushSave = debounce(
             () => {
@@ -78,6 +79,10 @@ export class CallHistory2 {
         //     },
         //     5000
         // );
+    }
+
+    setIsSavableTrue(){
+        this._isSavable = true;
     }
 
     //!warn Do not change the contents of the array.
@@ -104,6 +109,10 @@ export class CallHistory2 {
     }
 
     _save( onSuccessFunction, onFailFunction ) {
+        if( this._isSavable !== true ){
+            console.log("CallHistory2:Does not save call histories. (Because this._isSavable is not true.)");
+            return false;
+        }
 
         //set save count
         this._syncSaveCount();
@@ -132,6 +141,7 @@ export class CallHistory2 {
         }
         const oc = BrekekeOperatorConsole.getStaticInstance();
         oc.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
+        return true;
     }
 
     _syncSaveCount( ){
@@ -425,7 +435,7 @@ export class CallHistory2 {
                 }
             }
 
-             const partyNumberResult = intlCollator.compare( ch2CallInfoA.getPartyNumber(), ch2CallInfoB.getPartyNumber() );    //ASC order
+            const partyNumberResult = intlCollator.compare( ch2CallInfoA.getPartyNumber(), ch2CallInfoB.getPartyNumber() );    //ASC order
             return partyNumberResult;
         };
 
@@ -534,6 +544,7 @@ export class CallHistory2 {
                 }
             );
         }
+        this._isSavable = false;
     }
 
     onUnloadForCallHistory2( operatorConsoleAsCaller, event ){
@@ -547,14 +558,15 @@ export class CallHistory2 {
                 }
             );
         }
+        this._isSavable = false;
     }
 
     onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){
-      this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, false );
+        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, false );
     }
 
     onStartTransferForCallHistory2( operatorConsoleAsCaller, callInfo ){
-      this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, true );
+        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, true );
     }
 
     _addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, isTransfer ){
@@ -566,21 +578,21 @@ export class CallHistory2 {
             isIncoming = callInfo.getIsIncoming();
         }
 
-      const options = {
-        callHistory2AsParent : this,
-        callInfo : callInfo,
-          isTransfer : isTransfer,
-          isIncoming : isIncoming
-      };
-      const callHistory2CallInfo = new CallHistory2CallInfo( options );
-      const callInfoUuid = callInfo.getCallInfoUuid();
-      this._CallHistoryCallInfosObject[ callInfoUuid ] = callHistory2CallInfo;
-      // if( Object.keys( this._CallHistoryCallInfosObject ).length > this._saveCount ){
-      //     this._FlushSaveCount();
-      // }
+        const options = {
+            callHistory2AsParent : this,
+            callInfo : callInfo,
+            isTransfer : isTransfer,
+            isIncoming : isIncoming
+        };
+        const callHistory2CallInfo = new CallHistory2CallInfo( options );
+        const callInfoUuid = callInfo.getCallInfoUuid();
+        this._CallHistoryCallInfosObject[ callInfoUuid ] = callHistory2CallInfo;
+        // if( Object.keys( this._CallHistoryCallInfosObject ).length > this._saveCount ){
+        //     this._FlushSaveCount();
+        // }
 
-      this._prevSort = null;  //Set dirty
-      this._FlushSave();
+        this._prevSort = null;  //Set dirty
+        this._FlushSave();
 
     }
 

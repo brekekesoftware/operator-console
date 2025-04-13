@@ -6,6 +6,7 @@ import { CSS } from '@dnd-kit/utilities';
 import GridLines from "react-gridlines";
 import EditorWidgetFactory from "./widget/editor/EditorWidgetFactory";
 import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
+import EditScreenView from "./EditScreenView";
 
 const DraggableTabNode = ({ className, ...props }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -104,7 +105,11 @@ export default function EditorTabFunctionComponent(props){
                 onDragEnter={ (ev)=> _onDragEnter(ev)}
                 onDragOver={(ev) =>{ _onDragOver(ev)}}
                 onDrop={ (ev) => _onDrop(ev, editorPaneAsParent, tabData, tabId ) }
-
+                onMouseDown = {
+                    (ev) =>{
+                        editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+                    }
+                }
                 //style={{width:"300px",height:"300px",position:"relative"}}
                 //height={"1000px"}
                 //style={{width:"auto"}}
@@ -193,12 +198,12 @@ export default function EditorTabFunctionComponent(props){
         <Tabs
             style={css}
             data-br-container-id={paneId}
-            onMouseDown={ (ev) => {
-                    ev.stopPropagation();
-                    //ev.preventDefault();
-                    editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
-                }
-            }
+            // onMouseDown={ (ev) => {
+            //         ev.stopPropagation();
+            //         //ev.preventDefault();
+            //         editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+            //     }
+            // }
             className={className}
             //tabBarStyle={{overflow:"auto"}}
             activeKey={activeKey}

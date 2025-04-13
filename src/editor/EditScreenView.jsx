@@ -106,6 +106,14 @@ export default class EditScreenView extends React.Component {
     this.setState({settingsContainerOrDivider: editorPane, propertiesMode : _PROPERTIES_MODE.pane } );
   }
 
+  getCurrentPropertiesModeFromState(){
+    return this.state.propertiesMode;
+  }
+
+  static getEditScreenViewzPropertiesModes(){
+    return _PROPERTIES_MODE;
+  }
+
 
   onClickByEditorDivider(ev){
     const eEditorDividerDiv = ev.target;

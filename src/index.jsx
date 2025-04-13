@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.16";
+const VERSION = "2.1.17";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -5222,30 +5222,56 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     transferCall = async ( dialing, mode, callInfo ) => {
-        if( !callInfo ){
+        if( !dialing ){
+            return false;
+        }
+
+        if (!callInfo) {
             callInfo = this._aphone.getCallInfos().getCurrentCallInfo();
         }
         if (!callInfo) {
             return false;
         }
+
+        const callStatus = callInfo.getCallStatus();
+        if( callStatus !== ACallInfo.CALL_STATUSES.talking && callStatus !== ACallInfo.CALL_STATUSES.holding ){
+            Notification.warning({message:i18n.t("Cannot_transfer_a_call_that_is_not_talking_or_not_on_holding")});
+            return false;
+        }
+
+        let didSetHolding;
+        //Set a call on hold before transferring.
+        if ( callStatus === ACallInfo.CALL_STATUSES.talking  && callInfo.getIsHolding() !== true) {
+            callInfo.setHolding(true);
+            didSetHolding = true;
+        } else {
+            didSetHolding = false;
+        }
+
         //const tenant = callInfo.pbxTenant;
         const tenant = undefined;   //!testit
         //const talkerId = callInfo.getPbxTalkerId();
         //await this.transferCallCore( dialing, mode, talkerId, tenant,
-        await this.transferCallCore( dialing, mode, callInfo, tenant,
-            function( this_, message ){
-                if( mode === "blind") {
-                    if (message && message.toLowerCase().startsWith("fail")) {
-                        //!fail
+        try{
+            await this.transferCallCore(dialing, mode, callInfo, tenant,
+                function (this_, message) {
+                    if (mode === "blind") {
+                        if (message && message.toLowerCase().startsWith("fail")) {
+                            //!fail
+                        } else {
+                            callInfo.hangup();
+                        }
                     } else {
-                        callInfo.hangup();
+                        callInfo.setIsTransferring(true);
                     }
                 }
-                else{
-                    callInfo.setIsTransferring(true);
-                }
+            );
+        }
+        catch(err){
+            if( didSetHolding === true ){
+                callInfo.setHolding(false);
             }
-        );
+        };
 
         return true;
     }
@@ -5914,9 +5940,10 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _startDownLayoutAndSystemSettingsForLoggedin(){
+        const this_ = this;
         this._downLayoutAndSystemSettingsForLoggedin(
             function(){
-
+                this_._CallHistory2.setIsSavableTrue();
             },
             function(){
 

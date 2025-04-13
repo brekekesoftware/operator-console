@@ -36,8 +36,12 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     conference(){
        const promise =  this._conferenceTransferring();
+       const this_ = this;
        promise.then( function(res){ //res is true.
            //console.log("Succeeded  to conference call. res=", res );
+           if( res === true || res === "true") {    //success
+               this_.setIsTransferring(false);
+           }
        }, function(res){
            console.error("Failed to conference call. res=", res );
            Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration:0 });

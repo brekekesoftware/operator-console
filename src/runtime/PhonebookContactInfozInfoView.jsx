@@ -359,13 +359,23 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         //Collect custom items
         for( let i = 0; i < this._PbContactInfozCustomItemArray.length; i++ ){
             const customItem = this._PbContactInfozCustomItemArray[i];
-            customItem.setName( customItem.getName() ); //Remove first $ char(for Builtin)
+
+            const bHidden = PhonebookContactInfozInfo_AutoDialView_ver2.isHiddenCustomKey( customItem.getName() );
+            if( bHidden !== true ) {
+                customItem.setName(customItem.getName()); //Remove first $ char(for Builtin)
+            }
             const customItemName = customItem.getName();
 
             if( customItemName.length === 0 ){
                 continue;
             }
-            const pbItem = this._getPhonebookItemByCaption( customItemName );
+            let pbItem;
+            if( bHidden !== true ) {
+                this._getPhonebookItemByCaption(customItemName);
+            }
+            else{
+                pbItem = null;
+            }
             //const bIsBuiltin = !!pbItem;
             let name;
             if( pbItem ){

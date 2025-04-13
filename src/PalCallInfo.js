@@ -406,11 +406,15 @@ export default class PalCallInfo extends ACallInfo {
      */
     conference(){
         const phoneClient = this._CallInfosAsParent.getPhoneClientAsParent();
+        const this_ = this;
         phoneClient.conference( this,
             function( res, obj){
                 if( res && res.startsWith("failed")){
                     console.error("Failed to conference call. res=", res );
                     Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration:0 });
+                }
+                else{
+                    this_.setIsTransferring(false);
                 }
             },
             function( err ) {

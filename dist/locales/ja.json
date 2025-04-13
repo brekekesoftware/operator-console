@@ -1,5 +1,7 @@
 {
   "ja": {
+	"Cannot_transfer_a_call_that_is_not_talking_or_not_on_holding" : "通話中もしくは保留中でない通話の転送を行うことはできません。",
+	"Deleted" : "削除済み",
 	"User" : "ユーザー",
 	"Select_a_transfer_method" : "転送方法を選択",
 	"TransferMethod" : "転送方法",

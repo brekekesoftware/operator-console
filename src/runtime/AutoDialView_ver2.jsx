@@ -116,8 +116,17 @@ export default class AutoDialView_ver2 extends React.Component {
     //
     // }
 
-    _resetPhonebookContactInfoArrayAsync( pbKeywords, pbShared, pbName ){
+    async _resetPhonebookContactInfoArrayAsync( pbKeywords, pbShared, pbName ){
+        const getPhonebooksOptions ={
+            methodName : "getPhonebooks",
+            // methodParams : JSON.stringify({
+            // }),
+        }
         const oc = BrekekeOperatorConsole.getStaticInstance();
+        this._latestPhonebookArray = await oc.getPalRestApi().callPalRestApiMethodAsync( getPhonebooksOptions ).catch( (resOrError) =>{
+            OCUtil.logErrorWithNotification("Failed to get phone books.", i18n.t("Failed_to_get_phone_books"), resOrError );
+            return;
+        });
         const systemSettingsData = oc.getSystemSettingsData();
         if( !pbName ) {
             pbName = systemSettingsData.getAutoDialPhonebookName();
@@ -819,12 +828,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     onClick={this.tabSwitch}>{i18n.t("User")}</li>
                                                 <li className="tab tab-C"
                                                     onClick={ (e) => {
-                                                        this.tabSwitch(e);
-                                                        //if( this._phonebookContactInfoArray === null ){
+                                                            this.tabSwitch(e);
+                                                            //if( this._phonebookContactInfoArray === null ){
                                                             if( this.reshowContactList() === false ) {
                                                                 this._resetPhonebookContactInfoArrayAsync();
                                                             }
-                                                        //}
+                                                            //}
                                                     }}>{i18n.t("Phonebook")}</li>
                                             </ul>
 
@@ -1074,6 +1083,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <thead>
                                                                             <tr>
                                                                                 <th>{i18n.t("PhonebookName")}</th>
+                                                                                <th>{i18n.t("Shared")}</th>
                                                                                 <th>{i18n.t("DisplayName")}</th>
                                                                                 <th style={{textAlign: "center"}}>{i18n.t("Call")}</th>
                                                                                 <th style={{textAlign: "center"}}>{i18n.t("Info")}</th>
@@ -1087,10 +1097,27 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 const isAdmin = oc.getIsAdmin();
                                                                                 const isDeletable = wasShared === false || ( wasShared === true && isAdmin === true );
                                                                                 const telInfoArray = latestPbContactInfo ? latestPbContactInfo.getFreezedPhonebookContactInfozTelInfoArray() : null;
+                                                                                const phonebookData = this._latestPhonebookArray.find( ( phonebookData ) => {
+                                                                                    const phonebookName = phonebookData.phonebook;
+                                                                                    const b =  phonebookName === autoDialViewzPhoneBookContact.getPhonebookName();
+                                                                                    return b;
+                                                                                });
+                                                                                let sShared;
+                                                                                if( !phonebookData ){
+                                                                                    sShared = "(" + i18n.t("Deleted") + ")";
+                                                                                }
+                                                                                else if( phonebookData.shared == "true" || phonebookData.shared === true  ){
+                                                                                    sShared = "✓";
+                                                                                }
+                                                                                else{
+                                                                                    sShared = "";
+                                                                                }
+
                                                                                 return (
                                                                                     <tr key={i}
                                                                                         style={{height: "42px"}}>
                                                                                         <td>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
+                                                                                        <td style={{textAlign:"center"}}>{sShared}</td>
                                                                                         <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
                                                                                         <td>
                                                                                             <div style={{

@@ -174,6 +174,11 @@ export default class PalRestApi{
         this._palRestApiBaseUrlPrefix = null;
     }
 
+    isDeinited(){
+        const b = this._palRestApiToken === null && this._palRestApiBaseUrlPrefix === null; //!depend deinitPalRestApi()
+        return b;
+    }
+
     callPalRestApiMethod( options ){
         const methodName = options.methodName;
         let methodParams = options.methodParams;

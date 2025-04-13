@@ -57,7 +57,6 @@ export class CallHistory2 {
         this._CallHistoryCallInfosObject = new Object();
         this._CallHistoryCallInfoArray = new Array();   //sortable array
         this._prevSort = null;  //Set dirty
-        this._isSavable = false;
 
         this._FlushSave = debounce(
             () => {
@@ -81,9 +80,11 @@ export class CallHistory2 {
         // );
     }
 
-    setIsSavableTrue(){
-        this._isSavable = true;
-    }
+    // onDeinitPalRestApiByOperatorConsole( operatorConsoleAsCaller ){
+    // }
+
+    // onInitPalRestApiSuccessByLogin( operatorConsoleAsCaller ){
+    // }
 
     //!warn Do not change the contents of the array.
     getCallHistory2CallInfoArray() {
@@ -109,11 +110,6 @@ export class CallHistory2 {
     }
 
     _save( onSuccessFunction, onFailFunction ) {
-        if( this._isSavable !== true ){
-            console.log("CallHistory2:Does not save call histories. (Because this._isSavable is not true.)");
-            return false;
-        }
-
         //set save count
         this._syncSaveCount();
 
@@ -139,8 +135,7 @@ export class CallHistory2 {
             onSuccessFunction: onSuccessFunction,
             onFailFunction: onFailFunction
         }
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        oc.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
+        this._OperatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
         return true;
     }
 
@@ -199,7 +194,7 @@ export class CallHistory2 {
         return s;
     }
 
-    loadCallHistory2( onSuccessFunction, onFailFunction ){
+    loadCallHistory2( palRestApi, onSuccessFunction, onFailFunction ){
 
         const getAppDataOptions = {
             methodName : "getAppData",
@@ -533,6 +528,7 @@ export class CallHistory2 {
     }
 
     onBeginLogoutForCallHistory2( operatorConsoleAsCaller ){
+        this._FlushSave.clear();
         if( this._isLoadedEvenOnce === true ) {
             this._isLoadedEvenOnce = false;
             this._save(
@@ -544,10 +540,10 @@ export class CallHistory2 {
                 }
             );
         }
-        this._isSavable = false;
     }
 
     onUnloadForCallHistory2( operatorConsoleAsCaller, event ){
+        this._FlushSave.clear();
         if( this._isLoadedEvenOnce === true ) {
             this._save(
                 () => {
@@ -558,7 +554,6 @@ export class CallHistory2 {
                 }
             );
         }
-        this._isSavable = false;
     }
 
     onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){

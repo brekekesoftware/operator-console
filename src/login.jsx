@@ -138,6 +138,7 @@ export default class Login extends React.Component {
                     pbxDirectoryName : params.pbxDirectoryName
                 };
                 palWrapper.initPalWrapper( initPalWrapperOptions );
+                //this_._OperatorConsoleAsParent.onInitPalRestApiSuccessByLogin(this_);
             }
             const onInitPalRestApiFailFunction = ( err ) =>{
                 this.setState({isSigningin:false});

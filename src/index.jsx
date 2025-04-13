@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.17";
+const VERSION = "2.1.18";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -5943,7 +5943,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         const this_ = this;
         this._downLayoutAndSystemSettingsForLoggedin(
             function(){
-                this_._CallHistory2.setIsSavableTrue();
             },
             function(){
 
@@ -6052,6 +6051,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._UccacWrapper.deinitUccacWrapper();
         this._deinitPalWrapper();
         this._PalRestApi.deinitPalRestApi();
+        //this._CallHistory2.onDeinitPalRestApiByOperatorConsole(this);
 
         this.setState({
             ...window.structuredClone(INIT_STATE),
@@ -6059,6 +6059,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             locale: this.state.locale
         });
     }
+
+    // onInitPalRestApiSuccessByLogin( loginAsCaller ){
+    //     this._CallHistory2.onInitPalRestApiSuccessByOperatorConsole(this);
+    // }
 
     // _setDefaultTabDatasToStateScreens(){
     //     const screens = this.state.screens;
@@ -6442,6 +6446,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
             //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
             this._CallHistory2. loadCallHistory2(
+                this._PalRestApi,
                 () =>{
                     this._toSetNoteSuccess(setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
                 },

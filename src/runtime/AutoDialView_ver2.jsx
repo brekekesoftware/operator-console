@@ -33,6 +33,7 @@ export default class AutoDialView_ver2 extends React.Component {
         AUTO_DIAL_VIEW_VER2 = this;
         this._phonebookContactInfoArray = null;
         this._autoDialViewzPhonebookContactArray = null;
+        //this._autoDialViewRightStyle = "0";
         this.clearLatestSearchInfo();
         //this._PhonebookScrollableDivElement = null;
         //this._AutoDialViewRef = React.createRef();
@@ -307,6 +308,7 @@ export default class AutoDialView_ver2 extends React.Component {
         const arrayTabs = Array.prototype.slice.call(tabs);
         const index = arrayTabs.indexOf(tgt);
         document.getElementsByClassName('panel')[index].classList.add('is-show');
+        //this._resetAutoDialViewRightStyleToElementForBug();
 
         // //!bad To set the table on the right side( browser's bug ? )
         // const eTable =  document.body.querySelector('[data-br-name="brOC_AutoDialView_ver2_rootTable"]');
@@ -720,10 +722,49 @@ export default class AutoDialView_ver2 extends React.Component {
         });
     }
 
+    // _toggleAutoDialViewRightStyleForBug(){  //!forBug
+    //     //const eAutoDialView = document.getElementsByClassName("autoDialView")[0];
+    //     if( this._autoDialViewRightStyle === "0" ){
+    //         this._autoDialViewRightStyle = "100px";
+    //     }
+    //     else {
+    //         this._autoDialViewRightStyle = "0";
+    //     }
+    //     //eAutoDialView.style.right = this._autoDialViewPrevRight;
+    // }
+    //
+    // _resetAutoDialViewRightStyleToElementForBug(){  //!forBug
+    //     this._toggleAutoDialViewRightStyleForBug();
+    //     const eAutoDialView = document.getElementsByClassName("autoDialView")[0];
+    //     setTimeout( ()=> {
+    //         eAutoDialView.style.right = this._autoDialViewRightStyle;
+    //     },5000);
+    // }
+
     _onRecentShowDetailChange(e){
         const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
         const checked = eRecentShowDetail.checked;
-        this.setState({recentShowDetailChecked:checked});
+        //this._toggleAutoDialViewRightStyleForBug();
+        this.setState({recentShowDetailChecked:checked}, ()=>{
+            // //!forBug
+            // setTimeout(
+            //     () => this.setState({recentShowDetailChecked:!checked}, ()=>{
+            //         setTimeout( ()=> this.setState( {recentShowDetailChecked:checked} ),1);
+            //     })
+            //     ,1
+            // );
+            setTimeout(
+                () => this.setState({recentShowDetailChecked:!checked}, ()=>{
+                    this.setState( {recentShowDetailChecked:checked} );
+                })
+                ,1
+            );
+
+
+            // this.setState({recentShowDetailChecked:!checked}, ()=>{
+            //     this.setState({ recentShowDetailChecked:checked });
+            // });
+        });
     }
 
     _onChangeOnlySharedContacts( checked, ev ){
@@ -785,9 +826,10 @@ export default class AutoDialView_ver2 extends React.Component {
         // const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
         // const bRecentShowDetail = eRecentShowDetail.checked;
         return (<>
-            <PhonebookContactInfozInfoView />
-            <PhonebookContactInfozTelsView />
+            <PhonebookContactInfozInfoView/>
+            <PhonebookContactInfozTelsView/>
             {/*<div ref={this._AutoDialViewRef} className="brOCReset autoDialView">*/}
+            {/*<div className="brOCReset autoDialView" style={{right:this._autoDialViewRightStyle}}>*/}
             <div className="brOCReset autoDialView">
                 {/*<table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} data-br-name="brOC_AutoDialView_ver2_rootTable">*/}
                 <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>
@@ -807,7 +849,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                         </Popconfirm>
                                     </td>
                                     <td style={{textAlign: "right", verticalAlign: "top"}}>
-                                        <FontAwesomeIcon icon="far fa-window-close" onClick={this._onClickClose.bind(this)} className="closeFontAwesomeIcon" />
+                                        <FontAwesomeIcon icon="far fa-window-close"
+                                                         onClick={this._onClickClose.bind(this)}
+                                                         className="closeFontAwesomeIcon"/>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -825,15 +869,15 @@ export default class AutoDialView_ver2 extends React.Component {
                                                 <li className="tab tab-A is-active"
                                                     onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e)}>{i18n.t("Recent")}</li>
                                                 <li className="tab tab-B"
-                                                    onClick={this.tabSwitch}>{i18n.t("User")}</li>
+                                                    onClick={(e) => this.tabSwitch(e)}>{i18n.t("User")}</li>
                                                 <li className="tab tab-C"
-                                                    onClick={ (e) => {
-                                                            this.tabSwitch(e);
-                                                            //if( this._phonebookContactInfoArray === null ){
-                                                            if( this.reshowContactList() === false ) {
-                                                                this._resetPhonebookContactInfoArrayAsync();
-                                                            }
-                                                            //}
+                                                    onClick={(e) => {
+                                                        this.tabSwitch(e);
+                                                        //if( this._phonebookContactInfoArray === null ){
+                                                        if (this.reshowContactList() === false) {
+                                                            this._resetPhonebookContactInfoArrayAsync();
+                                                        }
+                                                        //}
                                                     }}>{i18n.t("Phonebook")}</li>
                                             </ul>
 
@@ -873,7 +917,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                         title={i18n.t(`Call`)}
                                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                                         onClick={(e) => {
-                                                                                            AutoDialView_ver2.onClickCallButtonForAutoDialView( e, partyNumber );
+                                                                                            AutoDialView_ver2.onClickCallButtonForAutoDialView(e, partyNumber);
                                                                                         }
                                                                                         }>
                                                                                         {<FontAwesomeIcon size="lg"
@@ -893,9 +937,16 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     )}
                                                     {recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC && (
                                                         <>
-                                                            <div style={{display:"flex",alignItems:"center",margin:"4px"}}>
-                                                                <Checkbox id="recentShowDetail_brOC_AutoDialView_ver2"  checked={this.state.recentShowDetailChecked} onChange={ (e) => this._onRecentShowDetailChange(e) } />
-                                                                <label style={{marginLeft:"2px"}} htmlFor="recentShowDetail_brOC_AutoDialView_ver2">{i18n.t("Show_detail")}</label>
+                                                            <div style={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                margin: "4px"
+                                                            }}>
+                                                                <Checkbox id="recentShowDetail_brOC_AutoDialView_ver2"
+                                                                          checked={this.state.recentShowDetailChecked}
+                                                                          onChange={(e) => this._onRecentShowDetailChange(e)}/>
+                                                                <label style={{marginLeft: "2px"}}
+                                                                       htmlFor="recentShowDetail_brOC_AutoDialView_ver2">{i18n.t("Show_detail")}</label>
                                                             </div>
                                                             <div className={"autoDialView_ver2_tableParent"}>
                                                                 <table style={{border: "0"}}
@@ -997,7 +1048,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     title={i18n.t(`Call`)}
                                                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                                     onClick={(e) => {
-                                                                                        AutoDialView_ver2.onClickCallButtonForAutoDialView( e, ext.id );
+                                                                                        AutoDialView_ver2.onClickCallButtonForAutoDialView(e, ext.id);
                                                                                     }
                                                                                     }>
                                                                                     {<FontAwesomeIcon size="lg"
@@ -1057,15 +1108,15 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <Switch
                                                                     id="brOC_autoDialView_ver2_phonebook_onlySharedContacts"
                                                                     // defaultChecked={false}   //!bug? Sometimes it stops working.
-                                                                    onChange={ ( checked, ev ) => this._onChangeOnlySharedContacts( checked, ev )  }
+                                                                    onChange={(checked, ev) => this._onChangeOnlySharedContacts(checked, ev)}
                                                                 />
                                                             </td>
-                                                            <td style={{width:"99%"}}></td>
+                                                            <td style={{width: "99%"}}></td>
                                                         </tr>
                                                         <tr className="defaultItemPaddingForTr">
                                                             <td colSpan="3"
                                                                 className="paddingTopZeroImportant_AutoDialView_ver2"
-                                                                style={{padding: "0",width:"100%"}}>
+                                                                style={{padding: "0", width: "100%"}}>
                                                                 <div className="autoDialView_ver2_tableParent"
                                                                      id="phonebookScrollableDiv_brOC_AutoDialView_ver2"
                                                                      onScroll={(e) => this._onScrollPhonebookScrollableDiv(e)}>
@@ -1073,13 +1124,15 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         <div style={{
                                                                             display: "flex",
                                                                             justifyContent: "center",
-                                                                            alignItems:"center",height:"inherit"}}>
+                                                                            alignItems: "center", height: "inherit"
+                                                                        }}>
                                                                             <Spin/>
                                                                         </div>
                                                                     )
                                                                     }
-                                                                    { this._autoDialViewzPhonebookContactArray !== null && (
-                                                                        <table className={"defaultContentTable"} style={{border: "0",width:"100%"}}>
+                                                                    {this._autoDialViewzPhonebookContactArray !== null && (
+                                                                        <table className={"defaultContentTable"}
+                                                                               style={{border: "0", width: "100%"}}>
                                                                             <thead>
                                                                             <tr>
                                                                                 <th>{i18n.t("PhonebookName")}</th>
@@ -1091,25 +1144,23 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
-                                                                            { this._autoDialViewzPhonebookContactArray.map((autoDialViewzPhoneBookContact,i) => {
+                                                                            {this._autoDialViewzPhonebookContactArray.map((autoDialViewzPhoneBookContact, i) => {
                                                                                 const latestPbContactInfo = autoDialViewzPhoneBookContact.getLatestPhonebookContactInfo();
                                                                                 const wasShared = latestPbContactInfo ? latestPbContactInfo.getIsShared() : false;
                                                                                 const isAdmin = oc.getIsAdmin();
-                                                                                const isDeletable = wasShared === false || ( wasShared === true && isAdmin === true );
+                                                                                const isDeletable = wasShared === false || (wasShared === true && isAdmin === true);
                                                                                 const telInfoArray = latestPbContactInfo ? latestPbContactInfo.getFreezedPhonebookContactInfozTelInfoArray() : null;
-                                                                                const phonebookData = this._latestPhonebookArray.find( ( phonebookData ) => {
+                                                                                const phonebookData = this._latestPhonebookArray.find((phonebookData) => {
                                                                                     const phonebookName = phonebookData.phonebook;
-                                                                                    const b =  phonebookName === autoDialViewzPhoneBookContact.getPhonebookName();
+                                                                                    const b = phonebookName === autoDialViewzPhoneBookContact.getPhonebookName();
                                                                                     return b;
                                                                                 });
                                                                                 let sShared;
-                                                                                if( !phonebookData ){
+                                                                                if (!phonebookData) {
                                                                                     sShared = "(" + i18n.t("Deleted") + ")";
-                                                                                }
-                                                                                else if( phonebookData.shared == "true" || phonebookData.shared === true  ){
+                                                                                } else if (phonebookData.shared == "true" || phonebookData.shared === true) {
                                                                                     sShared = "✓";
-                                                                                }
-                                                                                else{
+                                                                                } else {
                                                                                     sShared = "";
                                                                                 }
 
@@ -1117,7 +1168,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <tr key={i}
                                                                                         style={{height: "42px"}}>
                                                                                         <td>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
-                                                                                        <td style={{textAlign:"center"}}>{sShared}</td>
+                                                                                        <td style={{textAlign: "center"}}>{sShared}</td>
                                                                                         <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
                                                                                         <td>
                                                                                             <div style={{
@@ -1203,7 +1254,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                             </td>
                                                         </tr>
                                                         <tr className="addContact_AutoDialView_ver2">
-                                                            <td colSpan="3" className="addContact_AutoDialView_ver2" style={{paddingRight:"4px",paddingTop:"4px"}}>
+                                                            <td colSpan="3" className="addContact_AutoDialView_ver2"
+                                                                style={{paddingRight: "4px", paddingTop: "4px"}}>
                                                                 <div style={{
                                                                     display: "flex",
                                                                     alignItems: "center",

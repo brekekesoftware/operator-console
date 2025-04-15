@@ -292,15 +292,25 @@ export default class AutoDialView_ver2 extends React.Component {
     }
 
     _tabSwitchAndSortIfNeedCallHistory2(e){
-        this.tabSwitch(e);
+        const eTarget2 = document.getElementById("tabB_AutoDialView_ver2_brOC");
+        this.tabSwitch(e, eTarget2 );
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const sort = oc.getSystemSettingsData().getAutoDialRecentDisplayOrder();
         oc.getCallHistory2().sortIfNeed( sort );
     }
 
-    tabSwitch(e){
+    tabSwitch(e, eTarget2 = null ){
+        this._tabSwitchMain( e.target );
+        if( eTarget2 ) {    //!forBug
+            setTimeout(() => {
+                this._tabSwitchMain(eTarget2);
+                setTimeout(() => this._tabSwitchMain(e.target), 5);
+            }, 1);
+        }
+    }
+
+    _tabSwitchMain(tgt){
         document.getElementsByClassName('is-active')[0].classList.remove('is-active');
-        const tgt = e.target;
         tgt.classList.add('is-active');
 
         document.getElementsByClassName('is-show')[0].classList.remove('is-show');
@@ -866,13 +876,18 @@ export default class AutoDialView_ver2 extends React.Component {
                                     <td>
                                         <div className="tab-panel">
                                             <ul className="tab-group">
-                                                <li className="tab tab-A is-active"
+                                                <li className="tab tab-A is-active" id="tabA_AutoDialView_ver2_brOC"
                                                     onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e)}>{i18n.t("Recent")}</li>
                                                 <li className="tab tab-B"
-                                                    onClick={(e) => this.tabSwitch(e)}>{i18n.t("User")}</li>
-                                                <li className="tab tab-C"
                                                     onClick={(e) => {
-                                                        this.tabSwitch(e);
+                                                        const eTarget2 = document.getElementById("tabB_AutoDialView_ver2_brOC");
+                                                        this.tabSwitch(e, eTarget2 );
+                                                    }}>{i18n.t("User")}</li>
+                                                <li className="tab tab-C" id="tabB_AutoDialView_ver2_brOC"
+                                                    onClick={(e) => {
+                                                        // const eTarget2 = document.getElementById("tabA_AutoDialView_ver2_brOC");
+                                                        // this.tabSwitch(e, eTarget2 );
+                                                        this.tabSwitch( e, null );
                                                         //if( this._phonebookContactInfoArray === null ){
                                                         if (this.reshowContactList() === false) {
                                                             this._resetPhonebookContactInfoArrayAsync();

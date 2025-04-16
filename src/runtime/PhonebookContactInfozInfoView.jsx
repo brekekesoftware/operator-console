@@ -546,6 +546,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                 }
                 if( bSuccess === true ){
                     Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                    AutoDialView_ver2.getStaticInstance().reshowContactList();  //Refresh Contact list
                     this.closePhonebookContactInfozInfoView();
                 }
                 else{
@@ -553,7 +554,10 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                     failFunc();
                 }
             },
-            onFailFunction : (resOrError) => failFunc( resOrError )
+            onFailFunction : (resOrError) => {
+                AutoDialView_ver2.getStaticInstance().reshowContactList();  //Refresh Contact list
+                failFunc( resOrError );
+            }
         };
         oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
     }

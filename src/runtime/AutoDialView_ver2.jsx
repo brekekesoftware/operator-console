@@ -291,20 +291,24 @@ export default class AutoDialView_ver2 extends React.Component {
 
     }
 
-    _tabSwitchAndSortIfNeedCallHistory2(e){
+    _tabSwitchAndSortIfNeedCallHistory2(eTarget1){
         const eTarget2 = document.getElementById("tabB_AutoDialView_ver2_brOC");
-        this.tabSwitch(e, eTarget2 );
+        this.tabSwitch(eTarget1, eTarget2 );
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const sort = oc.getSystemSettingsData().getAutoDialRecentDisplayOrder();
         oc.getCallHistory2().sortIfNeed( sort );
     }
 
-    tabSwitch(e, eTarget2 = null ){
-        this._tabSwitchMain( e.target );
+    tabSwitch(eTarget1, eTarget2 = null ){
+        this._tabSwitchMain( eTarget1 );
         if( eTarget2 ) {    //!forBug
             setTimeout(() => {
                 this._tabSwitchMain(eTarget2);
-                setTimeout(() => this._tabSwitchMain(e.target), 5);
+                setTimeout(() => {
+                        this._tabSwitchMain(eTarget1);
+                        //setTimeout( () => this._tabSwitchMain(eTarget1), 5 );
+                    }
+                    , 5);
             }, 1);
         }
     }
@@ -660,69 +664,69 @@ export default class AutoDialView_ver2 extends React.Component {
 
     }
 
-    _deleteContact(  pbContactInfo ){
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        const isShared = pbContactInfo.getIsShared() === true;
-        const isAdmin = oc.getIsAdmin();
-        const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
-        if( isDeletable !== true  ){
-            console.warn("You do not have permission to delete phone book contact.. aid=" + aid);
-            Notification.warning({
-                message: i18n.t("You_do_not_have_permission_to_delete_phone_book_contact"),
-            });
-            return;
-        }
-
-
-        const aid = pbContactInfo.getAid();
-
-        const failFunc = ( resOrError ) =>{
-            if( Array.isArray( resOrError ) ) {
-                const aid = resOrError[0];
-                console.error("Failed to delete phone book contact. aid=" + aid);
-                Notification.error({
-                    message: i18n.t("failed_to_save_data_to_pbx"),
-                    duration: 0
-                });
-            }
-            else{
-                OCUtil.logErrorWithNotification("Failed to delete phone book contact.", i18n.t("failed_to_save_data_to_pbx"), resOrError );
-            }
-            this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
-        };
-
-        const deleteContactOptions = {
-            methodName : "deleteContact",
-            methodParams : JSON.stringify({
-                aid : aid
-            }),
-            onSuccessFunction : (ret) =>{
-                let bSuccess = false;
-                const arSucceeded = ret["succeeded"];
-                if( Array.isArray( arSucceeded ) ) {
-                    if( arSucceeded.length !== 0 ) {
-                        const iAidRet = arSucceeded[0];
-                        let aidIntegerOrString = aid;
-                        if( Number.isInteger( iAidRet ) && OCUtil.isString(aid)){
-                            aidIntegerOrString = parseInt( aid );
-                        }
-                        bSuccess = aidIntegerOrString  === iAidRet;
-                    }
-                }
-                if( bSuccess === true ){
-                    Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                    this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
-                }
-                else{
-                    //const arFailed = ret["failed"];
-                    failFunc();
-                }
-            },
-            onFailFunction : (resOrError) => failFunc( resOrError )
-        };
-        oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
-
-    }
+    // _deleteContact(  pbContactInfo ){
+    //     const oc = BrekekeOperatorConsole.getStaticInstance();
+    //     const isShared = pbContactInfo.getIsShared() === true;
+    //     const isAdmin = oc.getIsAdmin();
+    //     const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
+    //     if( isDeletable !== true  ){
+    //         console.warn("You do not have permission to delete phone book contact.. aid=" + aid);
+    //         Notification.warning({
+    //             message: i18n.t("You_do_not_have_permission_to_delete_phone_book_contact"),
+    //         });
+    //         return;
+    //     }
+    //
+    //
+    //     const aid = pbContactInfo.getAid();
+    //
+    //     const failFunc = ( resOrError ) =>{
+    //         if( Array.isArray( resOrError ) ) {
+    //             const aid = resOrError[0];
+    //             console.error("Failed to delete phone book contact. aid=" + aid);
+    //             Notification.error({
+    //                 message: i18n.t("failed_to_save_data_to_pbx"),
+    //                 duration: 0
+    //             });
+    //         }
+    //         else{
+    //             OCUtil.logErrorWithNotification("Failed to delete phone book contact.", i18n.t("failed_to_save_data_to_pbx"), resOrError );
+    //         }
+    //         this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+    //     };
+    //
+    //     const deleteContactOptions = {
+    //         methodName : "deleteContact",
+    //         methodParams : JSON.stringify({
+    //             aid : aid
+    //         }),
+    //         onSuccessFunction : (ret) =>{
+    //             let bSuccess = false;
+    //             const arSucceeded = ret["succeeded"];
+    //             if( Array.isArray( arSucceeded ) ) {
+    //                 if( arSucceeded.length !== 0 ) {
+    //                     const iAidRet = arSucceeded[0];
+    //                     let aidIntegerOrString = aid;
+    //                     if( Number.isInteger( iAidRet ) && OCUtil.isString(aid)){
+    //                         aidIntegerOrString = parseInt( aid );
+    //                     }
+    //                     bSuccess = aidIntegerOrString  === iAidRet;
+    //                 }
+    //             }
+    //             if( bSuccess === true ){
+    //                 Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+    //                 this._resetPhonebookContactInfoArrayAsync( this._latestSearchPhonebookKeywords, this._latestSearchPhonebookShared, this._latestSearchPhonebookName );
+    //             }
+    //             else{
+    //                 //const arFailed = ret["failed"];
+    //                 failFunc();
+    //             }
+    //         },
+    //         onFailFunction : (resOrError) => failFunc( resOrError )
+    //     };
+    //     oc.getPalRestApi().callPalRestApiMethod( deleteContactOptions );
+    //
+    // }
 
     _openAddContactView(){
         const pbContactInfozInfoView = PhonebookContactInfozInfoView.getStaticPhonebookContactInfozInfoViewInstance();
@@ -763,12 +767,14 @@ export default class AutoDialView_ver2 extends React.Component {
             //     })
             //     ,1
             // );
-            setTimeout(
-                () => this.setState({recentShowDetailChecked:!checked}, ()=>{
-                    this.setState( {recentShowDetailChecked:checked} );
-                })
-                ,1
-            );
+            //!forBug
+                this.setState({recentShowDetailChecked:!checked}, ()=>{
+                    this.setState( {recentShowDetailChecked:checked}, ()=>{
+                        this.setState( { recentShowDetailChecked: !checked}, ()=>{
+                            setTimeout( () => this.setState( { recentShowDetailChecked: checked }), 5 );
+                        } );
+                    } );
+                });
 
 
             // this.setState({recentShowDetailChecked:!checked}, ()=>{
@@ -877,17 +883,17 @@ export default class AutoDialView_ver2 extends React.Component {
                                         <div className="tab-panel">
                                             <ul className="tab-group">
                                                 <li className="tab tab-A is-active" id="tabA_AutoDialView_ver2_brOC"
-                                                    onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e)}>{i18n.t("Recent")}</li>
+                                                    onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e.target)}>{i18n.t("Recent")}</li>
                                                 <li className="tab tab-B"
                                                     onClick={(e) => {
                                                         const eTarget2 = document.getElementById("tabB_AutoDialView_ver2_brOC");
-                                                        this.tabSwitch(e, eTarget2 );
+                                                        this.tabSwitch(e.target, eTarget2 );
                                                     }}>{i18n.t("User")}</li>
                                                 <li className="tab tab-C" id="tabB_AutoDialView_ver2_brOC"
                                                     onClick={(e) => {
                                                         // const eTarget2 = document.getElementById("tabA_AutoDialView_ver2_brOC");
                                                         // this.tabSwitch(e, eTarget2 );
-                                                        this.tabSwitch( e, null );
+                                                        this.tabSwitch( e.target, null );
                                                         //if( this._phonebookContactInfoArray === null ){
                                                         if (this.reshowContactList() === false) {
                                                             this._resetPhonebookContactInfoArrayAsync();

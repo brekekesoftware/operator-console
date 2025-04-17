@@ -97,7 +97,7 @@
 .brOC div.autoDialView_ver2_tableParent {
     max-height:400px;
     overflow-y:auto;
-    overflow-x: hidden;;
+    overflow-x: hidden;
     scrollbar-width: thin;
 }
 

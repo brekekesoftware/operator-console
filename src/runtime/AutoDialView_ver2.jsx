@@ -18,9 +18,10 @@ import PhonebookContactInfozTelsView from "./PhonebookContactInfozTelsView";
 import PhonebookContactInfozInfoView from "./PhonebookContactInfozInfoView";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
 import PhonebookContact_AutoDialView_ver2 from "./PhonebookContact_AutoDialView_ver2";
+import Select from "antd/lib/select";
 let AUTO_DIAL_VIEW_VER2;
 const _GET_CONTACT_LIST_LIMIT = 1000;   //!limit max 1000
-
+const _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE = "extensionNumber";
 export default class AutoDialView_ver2 extends React.Component {
 
     constructor( props ){
@@ -33,6 +34,8 @@ export default class AutoDialView_ver2 extends React.Component {
         AUTO_DIAL_VIEW_VER2 = this;
         this._phonebookContactInfoArray = null;
         this._autoDialViewzPhonebookContactArray = null;
+        this._filteredExtensionArray = null;
+        this._currentExtensionFilterColumnName = _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE;
         //this._autoDialViewRightStyle = "0";
         this.clearLatestSearchInfo();
         //this._PhonebookScrollableDivElement = null;
@@ -346,6 +349,76 @@ export default class AutoDialView_ver2 extends React.Component {
         this._getContactList( keywords, bOnlySharedContacts );
     }
 
+    _getExtensionFilterWordValue(){
+        const eInput = document.getElementById("brOC_autoDialView_ver2_extension_filterWord");
+        const v = eInput.value;
+        return v;
+    }
+
+    _getExtensionFilterColumnName(){
+        //Not supported in AntDesign Select.
+        //const e = document.getElementById("brOC_autoDialView_ver2_extension_filterColumnName");
+        //const v = e.value;
+
+        const v = this._currentExtensionFilterColumnName;
+        return v;
+    }
+
+    _onClickGetExtensionList(){
+        const filterWord = this._getExtensionFilterWordValue();
+        const filterColumnName = this._getExtensionFilterColumnName();
+        this._filteredExtensionArray = this._getFilteredExtensionArray( filterWord, filterColumnName );
+        this.setState({rerender:true});
+    }
+
+    _getFilteredExtensionArray( filterWord, filterColumnName ){
+        // let filterWordTrimmed;
+        // if( filterWord ) {
+        //      filterWord = filterWord.trim();
+        // }
+        // else{
+        //     filterWordTrimmed = "";
+        // }
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        let exts = oc.state.extensions;
+        if( !exts ){
+            exts = new Array();
+        }
+
+        let filterdExts;
+        if( !filterWord || filterWord.length === 0 || !filterColumnName || filterColumnName.length === 0 ){
+            filterdExts = new Array( exts.length );
+            for( let i = 0; i < exts.length; i++ ) {
+                filterdExts[i] = exts[i];
+            }
+        }
+        else{
+            filterdExts = new Array();
+            if( filterColumnName === "extensionNumber"){
+                for (let i = 0; i < exts.length; i++) {
+                    const ext = exts[i];
+                    const extensionNumber = ext.id;
+                    const bInclude = extensionNumber.includes( filterWord );
+                    if( bInclude === true ){
+                        filterdExts.push( ext );
+                    }
+                }
+            }
+            else if( filterColumnName === "name") {
+                for (let i = 0; i < exts.length; i++) {
+                    const ext = exts[i];
+                    const name = ext.name;
+                    const bInclude = name.includes( filterWord );
+                    if( bInclude === true ){
+                        filterdExts.push( ext );
+                    }
+                }
+            }
+        }
+
+        return filterdExts;
+    }
+
     _getContactList( keywords, bOnlySharedContacts ){
         this._resetPhonebookContactInfoArrayAsync( keywords, bOnlySharedContacts );
     }
@@ -386,6 +459,19 @@ export default class AutoDialView_ver2 extends React.Component {
         oc.subtractDisableKeydownToDialingCounter();
         oc.subtractDisablePasteToDialingCounter();
     }
+
+    _onExtensionsKeywordsFocus(e){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.addDisableKeydownToDialingCounter();
+        oc.addDisablePasteToDialingCounter();
+    }
+
+    _onExtensionsKeywordsBlur(e){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
+    }
+
 
     _onScrollPhonebookScrollableDiv(e){
 
@@ -768,13 +854,19 @@ export default class AutoDialView_ver2 extends React.Component {
             //     ,1
             // );
             //!forBug
-                this.setState({recentShowDetailChecked:!checked}, ()=>{
-                    this.setState( {recentShowDetailChecked:checked}, ()=>{
-                        this.setState( { recentShowDetailChecked: !checked}, ()=>{
-                            setTimeout( () => this.setState( { recentShowDetailChecked: checked }), 5 );
-                        } );
-                    } );
+            setTimeout( () =>
+            {
+                this.setState({recentShowDetailChecked: !checked}, () => {
+                    setTimeout( () => this.setState({recentShowDetailChecked: checked}
+                        // ,() => {
+                        //     this.setState({recentShowDetailChecked: !checked}, () => {
+                        //         setTimeout(() => this.setState({recentShowDetailChecked: checked}), 5);
+                        //     });
+                        // }
+                    )
+                    ,5);
                 });
+            },5);
 
 
             // this.setState({recentShowDetailChecked:!checked}, ()=>{
@@ -886,8 +978,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e.target)}>{i18n.t("Recent")}</li>
                                                 <li className="tab tab-B"
                                                     onClick={(e) => {
-                                                        const eTarget2 = document.getElementById("tabB_AutoDialView_ver2_brOC");
+                                                        const eTarget2 = document.getElementById("tabA_AutoDialView_ver2_brOC");
                                                         this.tabSwitch(e.target, eTarget2 );
+                                                        if( this._filteredExtensionArray === null ) {   //First time
+                                                            setTimeout( () => {
+                                                                    this._filteredExtensionArray = this._getFilteredExtensionArray();
+                                                                    this.setState({rerender: true});
+                                                                },5);
+                                                        }
                                                     }}>{i18n.t("User")}</li>
                                                 <li className="tab tab-C" id="tabB_AutoDialView_ver2_brOC"
                                                     onClick={(e) => {
@@ -1038,54 +1136,121 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     )}
                                                 </div>
                                                 <div className="panel tab-B">
-                                                    <div className="autoDialView_ver2_tableParent">
-                                                        <table className={"defaultContentTable"} style={{border: "0"}}>
-                                                            <thead>
-                                                            <tr className="defaultItemPaddingForTr">
-                                                                <th>{i18n.t("ExtensionNumber")}</th>
-                                                                <th>{i18n.t("Name")}</th>
-                                                                <th>{i18n.t("Status")}</th>
-                                                                <th></th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {oc.state.extensions.map((ext, i) => {
-                                                                const extensionsStatus = oc.state.extensionsStatus;
-                                                                const statusClassName = OCUtil.getExtensionStatusClassName(ext.id, extensionsStatus);
-
-                                                                return (
-                                                                    <tr key={i}>
-                                                                        <td style={{width: 100}}>{ext.id}</td>
-                                                                        <td style={{width: 100}}>{ext.name}</td>
-                                                                        <td style={{width: 20}}>
-                                                                            <div className={statusClassName}></div>
-                                                                        </td>
-                                                                        <td style={{width: 50}}>
-                                                                            <div style={{
-                                                                                display: "flex",
-                                                                                justifyContent: "center"
-                                                                            }}>
-                                                                                <button
-                                                                                    title={i18n.t(`Call`)}
-                                                                                    className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                    onClick={(e) => {
-                                                                                        AutoDialView_ver2.onClickCallButtonForAutoDialView(e, ext.id);
-                                                                                    }
-                                                                                    }>
-                                                                                    {<FontAwesomeIcon size="lg"
-                                                                                                      icon="fas fa-phone"/>}
-                                                                                </button>
-                                                                            </div>
-                                                                        </td>
+                                                    <table className="defaultContentTable" style={{border: "0"}}><tbody>
+                                                    <tr className="defaultItemPaddingForTr">
+                                                        <td>
+                                                            <Input
+                                                                id="brOC_autoDialView_ver2_extension_filterWord"
+                                                                maxLength={1000}
+                                                                placeholder={i18n.t('Filter')} allowClear
+                                                                defaultValue={''}
+                                                                onFocus={(e) => this._onExtensionsKeywordsFocus(e)}
+                                                                onBlur={(e) => this._onExtensionsKeywordsBlur(e)}
+                                                                style={{width: "300px", size: "middle"}}/>
+                                                        </td>
+                                                        <td style={{paddingLeft: "0px"}}>
+                                                            <Select
+                                                                id="brOC_autoDialView_ver2_extension_filterColumnName"
+                                                                style={{width:"120px"}}
+                                                                defaultValue={ _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE } size="large" onChange={ (val) =>{
+                                                                    this._currentExtensionFilterColumnName = val;
+                                                                }}>
+                                                                <Select.Option
+                                                                    value={ _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE }>{i18n.t("ExtensionNumber")}</Select.Option>
+                                                                <Select.Option
+                                                                    value="name">{i18n.t("Name")}</Select.Option>
+                                                            </Select>
+                                                        </td>
+                                                        <td style={{paddingLeft: "4px"}}>
+                                                            <button
+                                                                title={i18n.t(`Search`)}
+                                                                className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
+                                                                onClick={(e) => this._onClickGetExtensionList()}
+                                                                size={"middle"}
+                                                            >
+                                                                <svg height="24" viewBox="0 0 24 24" width="24">
+                                                                    <path
+                                                                        d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
+                                                                        fill="black">
+                                                                    </path>
+                                                                </svg>
+                                                            </button>
+                                                            {/*<svg height="24" viewBox="0 0 24 24" width="24"*/}
+                                                            {/*     onClick={(e) => this._onClickGetContactList()}>*/}
+                                                            {/*    <path*/}
+                                                            {/*        d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"*/}
+                                                            {/*        fill="black">*/}
+                                                            {/*    </path>*/}
+                                                            {/*</svg>*/}
+                                                        </td>
+                                                        <td style={{width: "99%"}}></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colSpan="4" style={{padding:"0"}}>
+                                                            <div className="autoDialView_ver2_tableParent">
+                                                                <table className={"defaultContentTable"}
+                                                                       style={{border: "0", width:"100%"}}>
+                                                                    <thead>
+                                                                    <tr className="defaultItemPaddingForTr">
+                                                                        <th>{i18n.t("ExtensionNumber")}</th>
+                                                                        <th>{i18n.t("Name")}</th>
+                                                                        <th style={{width:"1%"}}>{i18n.t("Status")}</th>
+                                                                        <th style={{width:"1%"}}></th>
                                                                     </tr>
-                                                                )
-                                                            })}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    { this._filteredExtensionArray === null && (
+                                                                        <div style={{
+                                                                            display: "flex",
+                                                                            justifyContent: "center",
+                                                                            alignItems: "center", height: "inherit"
+                                                                        }}>
+                                                                            <Spin/>
+                                                                        </div>
+                                                                    )}
+                                                                    { this._filteredExtensionArray !== null && this._filteredExtensionArray.map((ext, i) => {
+                                                                        const extensionsStatus = oc.state.extensionsStatus;
+                                                                        const statusClassName = OCUtil.getExtensionStatusClassName(ext.id, extensionsStatus);
+
+                                                                        return (
+                                                                            <tr key={i}>
+                                                                            <td>{ext.id}</td>
+                                                                                <td>{ext.name}</td>
+                                                                                <td style={{width: "1%"}}>
+                                                                                    <div
+                                                                                        className={statusClassName}></div>
+                                                                                </td>
+                                                                                <td style={{width:"1%"}}>
+                                                                                    <div style={{
+                                                                                        display: "flex",
+                                                                                        justifyContent: "center"
+                                                                                    }}>
+                                                                                        <button
+                                                                                            title={i18n.t(`Call`)}
+                                                                                            className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
+                                                                                                onClick={(e) => {
+                                                                                                    AutoDialView_ver2.onClickCallButtonForAutoDialView(e, ext.id);
+                                                                                                }
+                                                                                                }>
+                                                                                                {<FontAwesomeIcon
+                                                                                                    size="lg"
+                                                                                                    icon="fas fa-phone"/>}
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            )
+                                                                        })}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    </table>
                                                 </div>
                                                 <div className="panel tab-C">
-                                                    <table className={"defaultContentTable"} style={{border: "0"}}>
+                                                    <table className="defaultContentTable" style={{border: "0"}}>
                                                         <tbody>
                                                         <tr className="defaultItemPaddingForTr">
                                                             <td>

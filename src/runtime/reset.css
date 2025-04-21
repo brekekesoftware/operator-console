@@ -112,7 +112,6 @@ button{
     white-space: nowrap;
     padding:0;
     width:initial;
-    text-align:initial;
     border:0;
 }
 
@@ -122,6 +121,7 @@ button{
 
 .brOC .brOCReset td {
     color:#584937;
+    text-align:initial;
 }
 
 

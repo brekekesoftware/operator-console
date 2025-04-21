@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.22";
+const VERSION = "2.1.23";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -4076,7 +4076,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         //         useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadWrite,
         //         note : content
         //     };
-        this.getPalRestApi().callPalRestApiMethod( setNoteOptions );
+        this._PalRestApi.callPalRestApiMethod( setNoteOptions );
 
 
         //this.operatorConsoleAsParent.abortSystemSettings();
@@ -4788,7 +4788,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
         this.setState({rerender:true} );
 
-        this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo );
+        this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
 
         const options = {
             callInfo : callInfo
@@ -4849,7 +4849,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         this.setState({rerender:true});
 
-        this._CallHistory2.onAddCallInfoForCallHistory2( this, callInfo );
+        this._CallHistory2.onAddCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
 
 
         const options = {
@@ -5063,7 +5063,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._resetCallInput();
         this.setState({rerender:true} );
 
-        this._CallHistory2.onUpdateCallInfoForCallHistory2( this, callInfoAsCaller );
+        this._CallHistory2.onUpdateCallInfoForCallHistory2( this, callInfoAsCaller, this._PalRestApi );
 
         const options = {
             callInfo:callInfoAsCaller
@@ -5306,7 +5306,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             const promise = this._aphone.transferAsync( tenant, dialing, talkerId, mode );
             await promise.then((message) => {
                 this.setState({rerender:true});  //rerender for Callhistory2
-                this._CallHistory2.onStartTransferForCallHistory2( this, callInfo );
+                this._CallHistory2.onStartTransferForCallHistory2( this, callInfo, this._PalRestApi );
                 //console.log("transferCallCore. result message=" + message );
                 if( onDoneFunc ){
                     onDoneFunc( this, message );
@@ -5593,7 +5593,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     _onUnload(event){
         //console.log("OperatorConsole:onUnload. this.aphone=" + this._aphone );
-        this._CallHistory2.onUnloadForCallHistory2( this, event );
+        const pForUnload = this._PalRestApi.clonePalRestApi();
+        this._CallHistory2.onBeginUnloadForCallHistory2( this, event, pForUnload );
         this._deinitAphoneClient();
         this._deinitPalWrapper();
     }
@@ -6035,7 +6036,8 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     logout = () => {
-        this._CallHistory2.onBeginLogoutForCallHistory2(this);
+        const pForLogout = this._PalRestApi.clonePalRestApi();
+        this._CallHistory2.onBeginLogoutForCallHistory2(this, pForLogout );
         this._Campon.onBeginLogout(this);
         window.removeEventListener("beforeunload", this._OnBeforeUnloadFunc  );
         if( this._OnUnloadFunc ) {
@@ -6124,7 +6126,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
 
         }
-        this.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
+        this._PalRestApi.callPalRestApiMethod( setAppDataOptions );
 
     }
 

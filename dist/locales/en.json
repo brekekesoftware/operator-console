@@ -1,5 +1,8 @@
 {
   "en": {
+	"Year" : "Year",
+	"Month" : "Month",
+	"Day" : "Day",
 	"Filter" : "Filter",
 	"Cannot_transfer_a_call_that_is_not_talking_or_not_on_holding" : "Cannot transfer a call that is not talking or not on holding.",
 	"Deleted" : "Deleted",

@@ -4,7 +4,8 @@ import {defaultTransition} from "@dnd-kit/sortable/dist/hooks/defaults";
 import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
 import OCUtil from "./OCUtil";
 import i18n from "./i18n";
-import BrekekeOperatorConsole from "./index";    //!bad Cross References
+import BrekekeOperatorConsole from "./index";
+import PalRestApi from "./PalRestApi";    //!bad Cross References
 
 const CALLHISTORY2_CALL_HISTORIES_DATA_ID = "OperatorConsole-CallHistory2-callHistories-test2";
 const CALLHISTORY2_RECENT_DISPLAY_ORDERS = Object.freeze( {
@@ -52,21 +53,22 @@ class CallHistory2FoTInfo{  //FoT is FREQUENCY_OF_TRANSMISSION
 }
 
 export class CallHistory2 {
-    constructor(operatorConsoleAsParent) {
+    constructor(operatorConsoleAsParent ) {
         this._OperatorConsoleAsParent = operatorConsoleAsParent;
         this._CallHistoryCallInfosObject = new Object();
         this._CallHistoryCallInfoArray = new Array();   //sortable array
         this._prevSort = null;  //Set dirty
 
         this._FlushSave = debounce(
-            () => {
+            ( palRestApi ) => {
                 this._save(
                     () =>{
 
                     },
                     ( errorOrResponse ) =>{
                         OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse );
-                    }
+                    },
+                    palRestApi
                 );
             },
             5000
@@ -97,7 +99,7 @@ export class CallHistory2 {
         return CALLHISTORY2_RECENT_DISPLAY_ORDERS;
     }
 
-    clearCallHistory2( onSuccessFunction, onFailFunction ){
+    clearCallHistory2( onSuccessFunction, onFailFunction, palRestApi ){
         this._prevSort = null;  //Set dirty
 
         //clear object
@@ -106,10 +108,10 @@ export class CallHistory2 {
             delete this._CallHistoryCallInfosObject[prop];
         }
 
-        this._save( onSuccessFunction, onFailFunction );
+        this._save( onSuccessFunction, onFailFunction,palRestApi );
     }
 
-    _save( onSuccessFunction, onFailFunction ) {
+    _save( onSuccessFunction, onFailFunction, palRestApi ) {
         //set save count
         this._syncSaveCount();
 
@@ -135,7 +137,7 @@ export class CallHistory2 {
             onSuccessFunction: onSuccessFunction,
             onFailFunction: onFailFunction
         }
-        this._OperatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( setAppDataOptions );
+        palRestApi.callPalRestApiMethod( setAppDataOptions );
         return true;
     }
 
@@ -356,7 +358,7 @@ export class CallHistory2 {
                 }
             }
         }
-        this._OperatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getAppDataOptions );
+        palRestApi.callPalRestApiMethod( getAppDataOptions );
 
     }
 
@@ -500,16 +502,16 @@ export class CallHistory2 {
         this._CallHistoryCallInfoArray.sort( compareFunc );
     }
 
-    onUpdateCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){
+    onUpdateCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
         const callInfoUuid = callInfo.getCallInfoUuid();
         const callHistory2CallInfo =  this._CallHistoryCallInfosObject[ callInfoUuid ];
         callHistory2CallInfo.onUpdateCallInfoForCallHistory2CallInfo( this, callInfo );
 //        this._prevSort = null;    //Set dirty
-        this._FlushSave();
+        this._FlushSave( palRestApi );
     }
 
     //call end
-    onRemoveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){
+    onRemoveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
         const callInfoUuid = callInfo.getCallInfoUuid();
 
         const callHistory2CallInfo = this._CallHistoryCallInfosObject[ callInfoUuid ];
@@ -524,10 +526,10 @@ export class CallHistory2 {
         //this._CallHistoryCallInfoArray.splice( arrayIndex, 1 );
 
         this._prevSort = null;  //Set dirty
-        this._FlushSave();
+        this._FlushSave( palRestApi );
     }
 
-    onBeginLogoutForCallHistory2( operatorConsoleAsCaller ){
+    onBeginLogoutForCallHistory2( operatorConsoleAsCaller, palRestApiForLogout ){
         this._FlushSave.clear();
         if( this._isLoadedEvenOnce === true ) {
             this._isLoadedEvenOnce = false;
@@ -537,34 +539,44 @@ export class CallHistory2 {
                 },
                 (errorOrResponse) => {
                     OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse);
-                }
+                },
+                palRestApiForLogout
             );
         }
     }
 
-    onUnloadForCallHistory2( operatorConsoleAsCaller, event ){
+    onBeginUnloadForCallHistory2( operatorConsoleAsCaller, event, palRestApiForUnload ){
         this._FlushSave.clear();
         if( this._isLoadedEvenOnce === true ) {
-            this._save(
-                () => {
+            if( !palRestApiForUnload ){
+                console.log("Call history will not be saved because PalRestAPI is null.");
+            }
+            else if( palRestApiForUnload.isPalRestApiInitialized() !== true ){
+                console.log("Call history will not be saved because PalRestAPI is not initialized.");
+            }
+            else {
+                this._save( //!NotTested    //!forBug
+                    () => {
 
-                },
-                (errorOrResponse) => {
-                    OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse);
-                }
-            );
+                    },
+                    (errorOrResponse) => {
+                        OCUtil.logErrorWithNotification("Failed to save call histories.", i18n.t("Failed_to_save_call_histories"), errorOrResponse);
+                    },
+                    palRestApiForUnload
+                );
+            }
         }
     }
 
-    onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo ){
-        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, false );
+    onAddCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
+        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, false, palRestApi );
     }
 
-    onStartTransferForCallHistory2( operatorConsoleAsCaller, callInfo ){
-        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, true );
+    onStartTransferForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
+        this._addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, true, palRestApi );
     }
 
-    _addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, isTransfer ){
+    _addReserveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, isTransfer, palRestApi ){
         let isIncoming;
         if( isTransfer === true ){
             isIncoming = false;
@@ -587,7 +599,7 @@ export class CallHistory2 {
         // }
 
         this._prevSort = null;  //Set dirty
-        this._FlushSave();
+        this._FlushSave( palRestApi );
 
     }
 

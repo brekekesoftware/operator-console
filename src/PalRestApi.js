@@ -9,6 +9,15 @@ export default class PalRestApi{
     constructor() {
     }
 
+    clonePalRestApi(){
+        const p = new PalRestApi();
+        //!modify //!sync(require)
+        p._palRestApiToken = this._palRestApiBaseUrlPrefix;
+        p._palRestApiBaseUrlPrefix = this._palRestApiBaseUrlPrefix;
+        p._initPalRestApiFetchOptions = this._initPalRestApiFetchOptions;
+        return p;
+    }
+
     initPalRestApi( options ){
         this._palRestApiToken = null;
         const hostname = options.hostname;
@@ -174,9 +183,9 @@ export default class PalRestApi{
         this._palRestApiBaseUrlPrefix = null;
     }
 
-    isDeinited(){
-        const b = this._palRestApiToken === null && this._palRestApiBaseUrlPrefix === null; //!depend deinitPalRestApi()
-        return b;
+    isPalRestApiInitialized(){
+        const bNotInitialized = !this._palRestApiToken || this._palRestApiToken === null || !this._palRestApiBaseUrlPrefix || this._palRestApiBaseUrlPrefix === null; //!depend deinitPalRestApi()
+        return !bNotInitialized;
     }
 
     callPalRestApiMethod( options ){

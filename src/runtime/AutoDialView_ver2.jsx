@@ -1723,6 +1723,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     size: "middle"
                                                                                 }}
                                                                                 defaultValue={this._callInfosToYear }
+                                                                                onChange={ (val) => this._callInfosToYear = val }
                                                                             />
                                                                                 {i18n.t("Year")}
                                                                                 <Select
@@ -2448,6 +2449,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     size: "middle"
                                                                                 }}
                                                                                 defaultValue={this._callInfosToYear }
+                                                                                onChange={ (val) => this._callInfosToYear = val }
                                                                             />
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toHour"

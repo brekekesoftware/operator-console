@@ -1168,9 +1168,10 @@ export default class AutoDialView_ver2 extends React.Component {
         //Date to end.
 
         const dateFrom = new Date( iFromYear, iFromMonth - 1, iFromDay, iFromHour, iFromMinute );
+        const bChangeFrom = this._setBeforeMaxDateToDayDate( dateFrom, iFromMonth );
 
         const dateTo = new Date( iToYear, iToMonth -1, iToDay, iToHour, iToMinute, 59, MAX_DATE_MILLISECONDS );
-        const bChange = this._setBeforeMaxDateToDayDate( dateTo, iToMonth );
+        const bChangeTo = this._setBeforeMaxDateToDayDate( dateTo, iToMonth );
 
         const callInfoArrayDateFiltered = new Array();
         if( dateFrom > dateTo ){
@@ -1205,9 +1206,9 @@ export default class AutoDialView_ver2 extends React.Component {
                     date.setFullYear( dateBefore.getFullYear());
                     date.setMonth( dateBefore.getMonth());
                     date.setDate( dateBefore.getDate());
-                    date.setHour( 23 );
-                    date.setMinute( 59 );
-                    date.setSecond( 59 );
+                    date.setHours( 23 );
+                    date.setMinutes( 59 );
+                    date.setSeconds( 59 );
                     date.setMilliseconds( MAX_DATE_MILLISECONDS  );
                     break;
                 }

@@ -109,8 +109,8 @@ export default class RuntimeScreenView_ver2 extends React.Component{
     const rootPaneData = screenData_ver2.getScreenPaneDatas().getOrAddRootPaneData();
     const isVisibleAutoDialView_Ver2 =  this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2 && this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2.length !== 0;
     return (
-        <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
-          <div style={{display: "flex", alignItems: "center",height:"47ox",color:screenData_ver2.getScreenForegroundColor(),backgroundColor:screenData_ver2.getScreenBackgroundColor()}}>
+        <div style={{height: "100%"}}>
+          <div style={{color:screenData_ver2.getScreenForegroundColor(),backgroundColor:screenData_ver2.getScreenBackgroundColor()}}>
             <div>
               <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
             </div>

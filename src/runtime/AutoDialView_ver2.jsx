@@ -308,16 +308,16 @@ export default class AutoDialView_ver2 extends React.Component {
 
     tabSwitch(eTarget1, eTarget2 = null ){
         this._tabSwitchMain( eTarget1 );
-        if( eTarget2 ) {    //!forBug
-            setTimeout(() => {
-                this._tabSwitchMain(eTarget2);
-                setTimeout(() => {
-                        this._tabSwitchMain(eTarget1);
-                        //setTimeout( () => this._tabSwitchMain(eTarget1), 5 );
-                    }
-                    , 5);
-            }, 1);
-        }
+        // if( eTarget2 ) {    //!forBug
+        //     setTimeout(() => {
+        //         this._tabSwitchMain(eTarget2);
+        //         setTimeout(() => {
+        //                 this._tabSwitchMain(eTarget1);
+        //                 //setTimeout( () => this._tabSwitchMain(eTarget1), 5 );
+        //             }
+        //             , 5);
+        //     }, 5);
+        // }
     }
 
     _tabSwitchMain(tgt){
@@ -880,20 +880,20 @@ export default class AutoDialView_ver2 extends React.Component {
             //     })
             //     ,1
             // );
-            //!forBug
-            setTimeout( () =>
-            {
-                this.setState({recentShowDetailChecked: !checked}, () => {
-                    setTimeout( () => this.setState({recentShowDetailChecked: checked}
-                        // ,() => {
-                        //     this.setState({recentShowDetailChecked: !checked}, () => {
-                        //         setTimeout(() => this.setState({recentShowDetailChecked: checked}), 5);
-                        //     });
-                        // }
-                    )
-                    ,5);
-                });
-            },5);
+            // //!forBug
+            // setTimeout( () =>
+            // {
+            //     this.setState({recentShowDetailChecked: !checked}, () => {
+            //         setTimeout( () => this.setState({recentShowDetailChecked: checked}
+            //             // ,() => {
+            //             //     this.setState({recentShowDetailChecked: !checked}, () => {
+            //             //         setTimeout(() => this.setState({recentShowDetailChecked: checked}), 5);
+            //             //     });
+            //             // }
+            //         )
+            //         ,5);
+            //     });
+            // },5);
 
 
             // this.setState({recentShowDetailChecked:!checked}, ()=>{
@@ -1251,7 +1251,7 @@ export default class AutoDialView_ver2 extends React.Component {
     _onClickForGetDatetimeDescCallInfoArrayForDisplay(){
         this._callInfoArrayForDisplay = null;   //Display spin
         setTimeout( () =>{  //async
-            this._getDatetimeDescCallInfoArrayForDisplay();
+            this._callInfoArrayForDisplay = this._getDatetimeDescCallInfoArrayForDisplay();
             this.setState({rerender:true});
         }, 1);
     }
@@ -1287,11 +1287,11 @@ export default class AutoDialView_ver2 extends React.Component {
             {/*<div className="brOCReset autoDialView" style={{right:this._autoDialViewRightStyle}}>*/}
             <div className="brOCReset autoDialView">
                 {/*<table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} data-br-name="brOC_AutoDialView_ver2_rootTable">*/}
-                <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>
+                <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} style={{marginLeft:"auto"}}>
                     <tbody>
                     <tr>
                         <td>
-                            <table className="defaultTranparentTable defaultSpaceBottom" style={{width: "100%"}}>
+                            <table className="defaultTranparentTable defaultSpaceBottom">
                                 <tbody>
                                 <tr>
                                     <td style={{width: "99%"}}>
@@ -1409,327 +1409,330 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 {language === "ja" && (
                                                                     <>
                                                                         <td>
-                                                                            <div style={{display:"flex",alignItems:"center"}}>
-                                                                            <Input
-                                                                                id="brOC_autoDialView_ver2_callInfos_fromYear"
-                                                                                maxLength={4}
-                                                                                // placeholder={i18n.t('Year')}
-                                                                                allowClear
-                                                                                defaultValue={this._callInfosFromYear}
-                                                                                onFocus={(e) => this._onCallInfosFromYearFocus(e)}
-                                                                                onBlur={(e) => this._onCallInfosFromYearBlur(e)}
-                                                                                style={{
-                                                                                    width: "100px",
-                                                                                    size: "middle"
-                                                                                }}
-                                                                                onChange={ (val) => this._callInfosFromYear = val }
-                                                                            />
-                                                                            {i18n.t("Year")}
-                                                                            <Select
-                                                                                id="brOC_autoDialView_ver2_callInfos_fromMonth"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromMonth = val }
-                                                                                defaultValue={this._callInfosFromMonth}
-                                                                            >
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                            </Select>
-                                                                            {i18n.t("Month")}
-                                                                            <Select
-                                                                                id="brOC_autoDialView_ver2_callInfos_fromDay"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromDay = val }
-                                                                                defaultValue={this._callInfosFromDay}
-                                                                            >
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={13}>13</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={14}>14</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={16}>16</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={17}>17</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={18}>18</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={19}>19</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={20}>20</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={21}>21</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={22}>22</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={23}>23</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={24}>24</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={25}>25</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={26}>26</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={27}>27</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={28}>28</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={29}>29</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={30}>30</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={31}>31</Select.Option>
-                                                                            </Select>
-                                                                            {i18n.t("Day")}
-                                                                            <Select
-                                                                                id="brOC_autoDialView_ver2_callInfos_fromHour"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromHour = val }
-                                                                                defaultValue={this._callInfosFromHour}
-                                                                            >
-                                                                                <Select.Option
-                                                                                    value={0}>0</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={13}>13</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={14}>14</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={16}>16</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={17}>17</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={18}>18</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={19}>19</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={20}>20</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={21}>21</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={22}>22</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={23}>23</Select.Option>
-                                                                            </Select>
-                                                                            :
-                                                                            <Select
-                                                                                id="brOC_autoDialView_ver2_callInfos_fromMinute"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromMinute = val }
-                                                                                defaultValue={this._callInfosFromMinute}
-                                                                            >
-                                                                                <Select.Option
-                                                                                    value={0}>0</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={13}>13</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={14}>14</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={16}>16</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={17}>17</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={18}>18</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={19}>19</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={20}>20</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={21}>21</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={22}>22</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={23}>23</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={24}>24</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={25}>25</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={26}>26</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={27}>27</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={28}>28</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={29}>29</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={30}>30</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={31}>31</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={32}>32</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={33}>33</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={34}>34</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={35}>35</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={36}>36</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={37}>37</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={38}>38</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={39}>39</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={40}>40</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={41}>41</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={42}>42</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={43}>43</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={44}>44</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={45}>45</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={46}>46</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={47}>47</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={48}>48</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={49}>49</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={50}>50</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={51}>51</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={52}>52</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={53}>53</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={54}>54</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={55}>55</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={56}>56</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={57}>57</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={58}>58</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={59}>59</Select.Option>
-                                                                            </Select>
-                                                                            ~
-                                                                            <Input
-                                                                                id="brOC_autoDialView_ver2_callInfos_toYear"
-                                                                                maxLength={4}
-                                                                                //placeholder={i18n.t('Year')}
-                                                                                allowClear
-                                                                                onFocus={(e) => this._onCallInfosToYearFocus(e)}
-                                                                                onBlur={(e) => this._onCallInfosToYearBlur(e)}
-                                                                                style={{
-                                                                                    width: "100px",
-                                                                                    size: "middle"
-                                                                                }}
-                                                                                defaultValue={this._callInfosToYear }
-                                                                                onChange={ (val) => this._callInfosToYear = val }
-                                                                            />
-                                                                                {i18n.t("Year")}
+                                                                            <div style={{
+                                                                                display: "flex",
+                                                                                alignItems: "center"
+                                                                            }}>
+                                                                                <Input
+                                                                                    id="brOC_autoDialView_ver2_callInfos_fromYear"
+                                                                                    maxLength={4}
+                                                                                    // placeholder={i18n.t('Year')}
+                                                                                    allowClear
+                                                                                    defaultValue={this._callInfosFromYear}
+                                                                                    onFocus={(e) => this._onCallInfosFromYearFocus(e)}
+                                                                                    onBlur={(e) => this._onCallInfosFromYearBlur(e)}
+                                                                                    style={{
+                                                                                        width: "100px",
+                                                                                        size: "middle"
+                                                                                    }}
+                                                                                    onChange={(val) => this._callInfosFromYear = val}
+                                                                                />
+                                                                                <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Year")}</span>
+                                                                                <Select
+                                                                                    id="brOC_autoDialView_ver2_callInfos_fromMonth"
+                                                                                    style={{width: "60px"}} size="large"
+                                                                                    onChange={(val) => this._callInfosFromMonth = val}
+                                                                                    defaultValue={this._callInfosFromMonth}
+                                                                                >
+                                                                                    <Select.Option
+                                                                                        value={1}>1</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={2}>2</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={3}>3</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={4}>4</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={5}>5</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={6}>6</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={7}>7</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={8}>8</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={9}>9</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={10}>10</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={11}>11</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={12}>12</Select.Option>
+                                                                                </Select>
+                                                                                <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Month")}</span>
+                                                                                <Select
+                                                                                    id="brOC_autoDialView_ver2_callInfos_fromDay"
+                                                                                    style={{width: "60px"}} size="large"
+                                                                                    onChange={(val) => this._callInfosFromDay = val}
+                                                                                    defaultValue={this._callInfosFromDay}
+                                                                                >
+                                                                                    <Select.Option
+                                                                                        value={1}>1</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={2}>2</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={3}>3</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={4}>4</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={5}>5</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={6}>6</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={7}>7</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={8}>8</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={9}>9</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={10}>10</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={11}>11</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={12}>12</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={13}>13</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={14}>14</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={15}>15</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={16}>16</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={17}>17</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={18}>18</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={19}>19</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={20}>20</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={21}>21</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={22}>22</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={23}>23</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={24}>24</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={25}>25</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={26}>26</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={27}>27</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={28}>28</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={29}>29</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={30}>30</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={31}>31</Select.Option>
+                                                                                </Select>
+                                                                                <div style={{margin:"0 6px 0 4px"}}>{i18n.t("Day")}</div>
+                                                                                <Select
+                                                                                    id="brOC_autoDialView_ver2_callInfos_fromHour"
+                                                                                    style={{width: "60px"}} size="large"
+                                                                                    onChange={(val) => this._callInfosFromHour = val}
+                                                                                    defaultValue={this._callInfosFromHour}
+                                                                                >
+                                                                                    <Select.Option
+                                                                                        value={0}>0</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={1}>1</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={2}>2</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={3}>3</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={4}>4</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={5}>5</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={6}>6</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={7}>7</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={8}>8</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={9}>9</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={10}>10</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={11}>11</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={12}>12</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={13}>13</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={14}>14</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={15}>15</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={16}>16</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={17}>17</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={18}>18</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={19}>19</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={20}>20</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={21}>21</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={22}>22</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={23}>23</Select.Option>
+                                                                                </Select>
+                                                                                <span style={{margin:"0 4px 0 4px"}}>:</span>
+                                                                                <Select
+                                                                                    id="brOC_autoDialView_ver2_callInfos_fromMinute"
+                                                                                    style={{width: "60px"}} size="large"
+                                                                                    onChange={(val) => this._callInfosFromMinute = val}
+                                                                                    defaultValue={this._callInfosFromMinute}
+                                                                                >
+                                                                                    <Select.Option
+                                                                                        value={0}>0</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={1}>1</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={2}>2</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={3}>3</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={4}>4</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={5}>5</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={6}>6</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={7}>7</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={8}>8</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={9}>9</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={10}>10</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={11}>11</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={12}>12</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={13}>13</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={14}>14</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={15}>15</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={16}>16</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={17}>17</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={18}>18</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={19}>19</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={20}>20</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={21}>21</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={22}>22</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={23}>23</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={24}>24</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={25}>25</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={26}>26</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={27}>27</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={28}>28</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={29}>29</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={30}>30</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={31}>31</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={32}>32</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={33}>33</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={34}>34</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={35}>35</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={36}>36</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={37}>37</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={38}>38</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={39}>39</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={40}>40</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={41}>41</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={42}>42</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={43}>43</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={44}>44</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={45}>45</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={46}>46</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={47}>47</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={48}>48</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={49}>49</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={50}>50</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={51}>51</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={52}>52</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={53}>53</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={54}>54</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={55}>55</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={56}>56</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={57}>57</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={58}>58</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={59}>59</Select.Option>
+                                                                                </Select>
+                                                                                <span style={{margin:"0 4px 0 4px"}}>~</span>
+                                                                                <Input
+                                                                                    id="brOC_autoDialView_ver2_callInfos_toYear"
+                                                                                    maxLength={4}
+                                                                                    //placeholder={i18n.t('Year')}
+                                                                                    allowClear
+                                                                                    onFocus={(e) => this._onCallInfosToYearFocus(e)}
+                                                                                    onBlur={(e) => this._onCallInfosToYearBlur(e)}
+                                                                                    style={{
+                                                                                        width: "100px",
+                                                                                        size: "middle"
+                                                                                    }}
+                                                                                    defaultValue={this._callInfosToYear}
+                                                                                    onChange={(val) => this._callInfosToYear = val}
+                                                                                />
+                                                                                <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Year")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toMonth"
                                                                                     style={{width: "60px"}} size="large"
-                                                                                    onChange={ (val) => this._callInfosToMonth = val }
+                                                                                    onChange={(val) => this._callInfosToMonth = val}
                                                                                     defaultValue={this._callInfosToMonth}
                                                                                 >
                                                                                     <Select.Option
@@ -1757,11 +1760,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <Select.Option
                                                                                         value={12}>12</Select.Option>
                                                                                 </Select>
-                                                                                {i18n.t("Month")}
+                                                                                <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Month")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toDay"
                                                                                     style={{width: "60px"}} size="large"
-                                                                                    onChange={ (val) => this._callInfosToDay = val }
+                                                                                    onChange={(val) => this._callInfosToDay = val}
                                                                                     defaultValue={this._callInfosToDay}
                                                                                 >
                                                                                     <Select.Option
@@ -1827,11 +1830,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <Select.Option
                                                                                         value={31}>31</Select.Option>
                                                                                 </Select>
-                                                                                {i18n.t("Day")}
+                                                                                <div style={{margin: "0px 6px 0 4px"}}>{i18n.t("Day")}</div>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toHour"
                                                                                     style={{width: "60px"}} size="large"
-                                                                                    onChange={ (val) => this._callInfosToHour = val }
+                                                                                    onChange={(val) => this._callInfosToHour = val}
                                                                                     defaultValue={this._callInfosToHour}
                                                                                 >
                                                                                     <Select.Option
@@ -1883,11 +1886,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <Select.Option
                                                                                         value={23}>23</Select.Option>
                                                                                 </Select>
-                                                                                :
+                                                                                <span style={{margin:"0 4px 0 4px"}}>:</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toMinute"
                                                                                     style={{width: "60px"}} size="large"
-                                                                                    onChange={ (val) => this._callInfosToMinute = val }
+                                                                                    onChange={(val) => this._callInfosToMinute = val}
                                                                                     defaultValue={this._callInfosToMinute}
                                                                                 >
                                                                                     <Select.Option
@@ -2036,11 +2039,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 {language !== "ja" && (
                                                                     <>
                                                                     <td>
-                                                                        <div style={{display:"flex",alignItems:"center"}}>
+                                                                        <div style={{
+                                                                            display: "flex",
+                                                                            alignItems: "center"
+                                                                        }}>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromMonth"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromMonth = val }
+                                                                                onChange={(val) => this._callInfosFromMonth = val}
                                                                                 defaultValue={this._callInfosFromMonth}
                                                                             >
                                                                                 <Select.Option
@@ -2068,11 +2074,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={12}>12</Select.Option>
                                                                             </Select>
-                                                                            /
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromDay"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromDay = val }
+                                                                                onChange={(val) => this._callInfosFromDay = val}
                                                                                 defaultValue={this._callInfosFromDay}
                                                                             >
                                                                                 <Select.Option
@@ -2138,6 +2145,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={31}>31</Select.Option>
                                                                             </Select>
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Input
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromYear"
                                                                                 maxLength={4}
@@ -2150,12 +2159,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     width: "100px",
                                                                                     size: "middle"
                                                                                 }}
-                                                                                onChange={ (val) => this._callInfosFromYear = val }
+                                                                                onChange={(val) => this._callInfosFromYear = val}
                                                                             />
+                                                                            <span style={{marginLeft: "6px"}}></span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromHour"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromHour = val }
+                                                                                onChange={(val) => this._callInfosFromHour = val}
                                                                                 defaultValue={this._callInfosFromHour}
                                                                             >
                                                                                 <Select.Option
@@ -2207,11 +2217,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={23}>23</Select.Option>
                                                                             </Select>
-                                                                            :
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>:</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromMinute"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosFromMinute = val }
+                                                                                onChange={(val) => this._callInfosFromMinute = val}
                                                                                 defaultValue={this._callInfosFromMinute}
                                                                             >
                                                                                 <Select.Option
@@ -2335,11 +2346,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={59}>59</Select.Option>
                                                                             </Select>
-                                                                            ~
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>~</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toMonth"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosToMonth = val }
+                                                                                onChange={(val) => this._callInfosToMonth = val}
                                                                                 defaultValue={this._callInfosToMonth}
                                                                             >
                                                                                 <Select.Option
@@ -2367,11 +2379,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={12}>12</Select.Option>
                                                                             </Select>
-                                                                            /
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toDay"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosToDay = val }
+                                                                                onChange={(val) => this._callInfosToDay = val}
                                                                                 defaultValue={this._callInfosToDay}
                                                                             >
                                                                                 <Select.Option
@@ -2437,6 +2450,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={31}>31</Select.Option>
                                                                             </Select>
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Input
                                                                                 id="brOC_autoDialView_ver2_callInfos_toYear"
                                                                                 maxLength={4}
@@ -2448,13 +2463,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     width: "100px",
                                                                                     size: "middle"
                                                                                 }}
-                                                                                defaultValue={this._callInfosToYear }
-                                                                                onChange={ (val) => this._callInfosToYear = val }
+                                                                                defaultValue={this._callInfosToYear}
+                                                                                onChange={(val) => this._callInfosToYear = val}
                                                                             />
+                                                                            <span style={{marginLeft: "6px"}}></span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toHour"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosToHour = val }
+                                                                                onChange={(val) => this._callInfosToHour = val}
                                                                                 defaultValue={this._callInfosToHour}
                                                                             >
                                                                                 <Select.Option
@@ -2506,11 +2522,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <Select.Option
                                                                                     value={23}>23</Select.Option>
                                                                             </Select>
-                                                                            :
+                                                                            <span
+                                                                                style={{margin: "0 4px 0 4px"}}>:</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toMinute"
                                                                                 style={{width: "60px"}} size="large"
-                                                                                onChange={ (val) => this._callInfosToMinute = val }
+                                                                                onChange={(val) => this._callInfosToMinute = val}
                                                                                 defaultValue={this._callInfosToMinute}
                                                                             >
                                                                                 <Select.Option
@@ -2636,7 +2653,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             </Select>
                                                                         </div>
                                                                     </td>
-                                                                    <td>
+                                                                        <td>
                                                                         <button
                                                                             title={i18n.t(`Search`)}
                                                                             className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"

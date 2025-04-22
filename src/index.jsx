@@ -3688,7 +3688,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         const configProviderLocale = this._getAntdConfigProviderLocale();
         return (<>
             {!!this.state.isInitialized ? (
-                <div style={{flexGrow:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+                <div style={{height:"100%"}}>
                     <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                     {this.state._downedLayoutAndSystemSettings ? (
                             this.state.displayState === brOcDisplayStates.editingScreen ? ( //editMode
@@ -3702,13 +3702,13 @@ export default class BrekekeOperatorConsole extends React.Component {
                                 )
                                 : this.state.displayState === brOcDisplayStates.systemSettingsView ? (
                                     <ConfigProvider locale={ configProviderLocale}>
-                                        <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
-                                            <SystemSettingsView operatorConsole={this}/>
+                                        <Suspense fallback={<Empty image={null} description={<div style={{height: "100%"}}><Spin/></div>}/>}>
+                                        <SystemSettingsView operatorConsole={this}/>
                                         </Suspense>
                                     </ConfigProvider>
                                     ) : this.state.displayState === brOcDisplayStates.showScreen_ver2 ? (
                                     <ConfigProvider locale={ configProviderLocale}>
-                                        <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+                                        <Suspense fallback={<Empty image={null} description={<div style={{height:"100%"}}><Spin/></div>}/>}>
                                             <ShowScreenView_ver2 operatorConsoleAsParent={this} />
                                         </Suspense>
                                     </ConfigProvider>

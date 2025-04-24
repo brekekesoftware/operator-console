@@ -1,5 +1,7 @@
 {
   "en": {
+	"RevertToInitial" : "Revert to initial",
+	"Tooltip" : "Tooltip",
 	"Year" : "Year",
 	"Month" : "Month",
 	"Day" : "Day",

@@ -13,7 +13,7 @@ export default class LegacyButtonRuntimeSubWidget_toggleRecordingButton extends 
 
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -31,14 +31,13 @@ export default class LegacyButtonRuntimeSubWidget_toggleRecordingButton extends 
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
         const isDanger = currentCallInfo?.getIsRecording();
         if( isDanger ){
             color = null;
             backgroundColor = null;
         }
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-toggleRecording-button-danger')}
+        return <button title={tooltipOfButtonWidget}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-toggleRecording-button-danger')}
            style={{
                fontSize:sButtonFontSize,
                border:border,

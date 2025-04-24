@@ -22,7 +22,7 @@ export default class LegacyButtonRuntimeSubWidget  {
     }
 
     //!abstract
-    getRenderJsx(){
+    getRenderJsx(tooltipOfButtonWidget){
         throw new Error("Not implemented.");
     }
 

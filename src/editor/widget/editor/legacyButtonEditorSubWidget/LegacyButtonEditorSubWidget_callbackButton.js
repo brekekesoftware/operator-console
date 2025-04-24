@@ -10,7 +10,7 @@ export default class LegacyButtonEditorSubWidget_callbackButton extends LegacyBu
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -26,8 +26,7 @@ export default class LegacyButtonEditorSubWidget_callbackButton extends LegacyBu
             "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent" disabled={true} //!todo implement
+        return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent" disabled={true} //!todo implement
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

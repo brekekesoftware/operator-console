@@ -12,7 +12,7 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
 
@@ -33,7 +33,6 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
                 "solid " + unholdButtonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( unholdButtonOuterBorderColor )  : "";
             const unholdBorderRadius = Util.isNumber( unholdButtonOuterBorderRadius ) ? unholdButtonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
             let unholdLabel;
             if( subWidgetData.getUnholdLabel() ){
                 unholdLabel = subWidgetData.getUnholdLabel();
@@ -42,7 +41,7 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
                 unholdLabel = i18n.t("Unhold");
             }
             const unholdIconJsx = this._getIconJsx( subWidgetData.getUnholdIcon(), unholdLabel, subWidgetData.getUnholdIconWidth(), subWidgetData.getUnholdIconHeight() );
-            return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash-slow kbc-toggleHoldCall-button-danger-flash"
+            return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash-slow kbc-toggleHoldCall-button-danger-flash"
                            style={{
                                fontSize:sUnholdButtonFontSize,
                                border:unholdBorder,
@@ -78,7 +77,6 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
                 "solid " + holdButtonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( holdButtonOuterBorderColor )  : "";
             const holdBorderRadius = Util.isNumber( holdButtonOuterBorderRadius ) ? holdButtonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
             let holdLabel;
             if( subWidgetData.getHoldLabel() ){
                 holdLabel = subWidgetData.getHoldLabel();
@@ -87,7 +85,7 @@ export default class LegacyButtonRuntimeSubWidget_toggleHoldCallButton extends L
                 holdLabel = i18n.t("Hold");
             }
             const holdIconJsx = this._getIconJsx( subWidgetData.getHoldIcon(), holdLabel, subWidgetData.getHoldIconWidth(), subWidgetData.getHoldIconHeight() );
-            return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+            return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                            style={{
                                fontSize:sHoldButtonFontSize,
                                border:holdBorder,

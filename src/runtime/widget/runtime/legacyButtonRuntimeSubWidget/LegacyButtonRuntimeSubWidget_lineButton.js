@@ -23,7 +23,7 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -75,9 +75,8 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
         //     backgroundColor = null;
         // }
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}
+        return <button title={tooltipOfButtonWidget}
                        className={clsx("kbc-button kbc-button-fill-parent", light)}
                        style={{
                            fontSize:sButtonFontSize,

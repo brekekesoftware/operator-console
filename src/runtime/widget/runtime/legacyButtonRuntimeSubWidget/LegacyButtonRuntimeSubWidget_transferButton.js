@@ -25,7 +25,7 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const oc = BrekekeOperatorConsole.getStaticInstance();
@@ -45,7 +45,6 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
                 "solid " + cancelTransferButtonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( cancelTransferButtonOuterBorderColor )  : "";
             const cancelTransferBorderRadius = Util.isNumber( cancelTransferButtonOuterBorderRadius ) ? cancelTransferButtonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
             let cancelTransferLabel;
             if( subWidgetData.getLabel() ){
                 cancelTransferLabel = subWidgetData.getCancelTransferLabel();
@@ -54,7 +53,7 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
                 cancelTransferLabel = i18n.t("Cancel_transfer");
             }
             const cancelTransferIconJsx = this._getIconJsx( subWidgetData.getCancelTransferIcon(), cancelTransferLabel, subWidgetData.getCancelTransferIconWidth(), subWidgetData.getCancelTransferIconHeight() );
-            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash kbc-transfer-button-danger-flash"
+            return         <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash kbc-transfer-button-danger-flash"
                                    style={{
                                        fontSize:sCancelTransferButtonFontSize,
                                        border:cancelTransferBorder,
@@ -79,7 +78,6 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
                 "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
             const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
             let transferLabel;
             if( subWidgetData.getLabel() ){
                 transferLabel = subWidgetData.getLabel();
@@ -92,7 +90,7 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
             const callInfoArray = oc.getPhoneClient().getCallInfos().getCallInfoArray();
             const bButtonDisabled = !callInfoArray || callInfoArray.length === 0;   //has not current call info.
 
-            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+            return         <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                                    style={{
                                        fontSize:sButtonFontSize,
                                        border:border,

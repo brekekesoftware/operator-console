@@ -11,7 +11,7 @@ export default class LegacyButtonRuntimeSubWidget_unholdCallButton extends Legac
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -30,9 +30,8 @@ export default class LegacyButtonRuntimeSubWidget_unholdCallButton extends Legac
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+        return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

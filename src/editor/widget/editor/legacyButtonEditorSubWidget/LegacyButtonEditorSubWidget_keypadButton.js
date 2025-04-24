@@ -10,7 +10,7 @@ export default class LegacyButtonEditorSubWidget_keypadButton extends LegacyButt
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -26,10 +26,9 @@ export default class LegacyButtonEditorSubWidget_keypadButton extends LegacyButt
             "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const symbol = this._LegacyButtonEditorSubWidgetData.getSymbol();
         const iconJsx = this._getIconJsx(null,symbol);
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+        return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

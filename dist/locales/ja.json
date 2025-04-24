@@ -1,5 +1,7 @@
 {
   "ja": {
+	"RevertToInitial" : "初期に戻す",
+	"Tooltip" : "ツールチップ",
 	"Year" : "年",
 	"Month" : "月",
 	"Day" : "日",

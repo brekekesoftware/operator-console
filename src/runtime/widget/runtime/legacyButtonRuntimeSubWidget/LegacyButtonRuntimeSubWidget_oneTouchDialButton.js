@@ -13,7 +13,7 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -32,9 +32,8 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
         const oneTouchDialData = this._LegacyButtonRuntimeSubWidgetData;
         const number = oneTouchDialData.getNumber();
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+        return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

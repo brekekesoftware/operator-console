@@ -12,7 +12,7 @@ export default class LegacyButtonRuntimeSubWidget_autoDialButton extends LegacyB
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -38,9 +38,8 @@ export default class LegacyButtonRuntimeSubWidget_autoDialButton extends LegacyB
             backgroundColor = null;
         }
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger kbc-autoDial-button-danger')}
+        return <button title={tooltipOfButtonWidget}  className={clsx("kbc-button kbc-button-fill-parent", isRedColor && 'kbc-button-danger kbc-autoDial-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

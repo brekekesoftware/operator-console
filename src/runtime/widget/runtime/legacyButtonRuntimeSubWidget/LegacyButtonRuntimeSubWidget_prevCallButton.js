@@ -12,7 +12,7 @@ export default class LegacyButtonRuntimeSubWidget_prevCallButton extends LegacyB
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -33,7 +33,6 @@ export default class LegacyButtonRuntimeSubWidget_prevCallButton extends LegacyB
         const currentCallIndex = callInfos.getCurrentCallIndex();
         const callInfoCount = callInfos.getCallInfoCount();
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
         let onClick;
         if( currentCallIndex === - 1 ){
@@ -47,7 +46,7 @@ export default class LegacyButtonRuntimeSubWidget_prevCallButton extends LegacyB
         else{
             onClick = (ev) => oc.switchCallUp();
         }
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash kbc-prevCall-button-danger-flash")}
+        return <button title={tooltipOfButtonWidget}  className={clsx("kbc-button kbc-button-fill-parent", currentCallIndex > 0 && "kbc-button-danger-flash kbc-prevCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

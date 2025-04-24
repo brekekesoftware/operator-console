@@ -12,7 +12,7 @@ export default class LegacyButtonRuntimeSubWidget_quickCallButton extends Legacy
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -29,7 +29,6 @@ export default class LegacyButtonRuntimeSubWidget_quickCallButton extends Legacy
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
         const currentQuickCallSubData =  oc.getCurrentScreenQuickCallWidgetSubDataFromState();
         const isDanger = currentQuickCallSubData && currentQuickCallSubData.getLegacyButtonWidgetDataAsParent().getWidgetUuid() === this._LegacyButtonRuntimeSubWidgetData.getLegacyButtonWidgetDataAsParent().getWidgetUuid()
@@ -37,7 +36,7 @@ export default class LegacyButtonRuntimeSubWidget_quickCallButton extends Legacy
             color = null;
             backgroundColor = null;
         }
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-quickCall-button-danger')}
+        return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-quickCall-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

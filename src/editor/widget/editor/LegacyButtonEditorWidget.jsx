@@ -1,5 +1,7 @@
 import EditorWidget from "./EditorWidget";
 import LegacyButtonEditorSubWidgetFactory from "./legacyButtonEditorSubWidget/LegacyButtonEditorSubWidgetFactory";
+import BrekekeOperatorConsole from "../../../index";
+import i18n from "../../../i18n";
 
 export default class LegacyButtonEditorWidget extends EditorWidget{
 
@@ -12,7 +14,13 @@ export default class LegacyButtonEditorWidget extends EditorWidget{
         const widgetData = this.getWidgetData();
         const legacyButtonWidgetSubData = widgetData.getSubData();
         const subWidget = LegacyButtonEditorSubWidgetFactory.getStaticLegacyButtonEditorSubWidgetFactoryInstance().newLegacyButtonEditorSubWidget( this, legacyButtonWidgetSubData );
-        const jsx = subWidget.getRenderJsx();
+		const language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
+		let tooltipOfButtonWidget = widgetData.getTooltipOfButtonWidget( language );
+        if( tooltipOfButtonWidget === undefined || tooltipOfButtonWidget === null ){
+            const subtypeName = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeName();
+            tooltipOfButtonWidget = i18n.t(`legacy_button_description.${subtypeName}`);
+        }
+        const jsx = subWidget.getRenderJsx(tooltipOfButtonWidget);
         return jsx;
     }
 

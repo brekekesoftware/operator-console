@@ -10,7 +10,7 @@ export default class LegacyButtonEditorSubWidget_alarmButton extends LegacyButto
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = subWidgetData.getLegacyButtonWidgetDataAsParent();
 
@@ -27,9 +27,8 @@ export default class LegacyButtonEditorSubWidget_alarmButton extends LegacyButto
             "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent" disabled={true}
+        return <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent" disabled={true}
                        style={{
                            fontSize : sButtonFontSize,
                            border:border,

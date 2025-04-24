@@ -5,6 +5,9 @@ import LegacyButtonWidgetSubData from "./legacyButtonWidgetSubData/LegacyButtonW
 export default class LegacyButtonWidgetData extends WidgetData{
     constructor( options ) {
         super( options );
+        this._tooltipOfButtonWidget_ja = options["tooltipOfButtonWidget_ja"];
+        this._tooltipOfButtonWidget_en = options["tooltipOfButtonWidget_en"];
+
         let legacyButtonWidgetSubDataOptions = options["legacyButtonWidgetSubDataOptions"];
         // if( !legacyButtonWidgetSubDataOptions && options["oWidgetData"] ){
         //     legacyButtonWidgetSubDataOptions = options["oWidgetData"]["legacyButtonWidgetSubDataOptions"];
@@ -37,6 +40,20 @@ export default class LegacyButtonWidgetData extends WidgetData{
 
     //!override
     setWidgetDataToObjectMain( o ){
+        if( this._tooltipOfButtonWidget_en == undefined || this._tooltipOfButtonWidget_en === null  ){
+            delete o["tooltipOfButtonWidget_en"];
+        }
+        else{
+            o["tooltipOfButtonWidget_en"] = this._tooltipOfButtonWidget_en;
+        }
+
+        if( this._tooltipOfButtonWidget_ja == undefined || this._tooltipOfButtonWidget_ja === null  ){
+            delete o["tooltipOfButtonWidget_ja"];
+        }
+        else{
+            o["tooltipOfButtonWidget_ja"] = this._tooltipOfButtonWidget_ja;
+        }
+
         const oSubData = new Object();
         this._subData.setWidgetSubDataToObject( oSubData );
         o["legacyButtonWidgetSubDataOptions"] = oSubData;
@@ -66,4 +83,45 @@ export default class LegacyButtonWidgetData extends WidgetData{
         const subData = this.setSubDataBySubtypeId(subtypeId);
         subData.importLegacyButtonWidgetSubDataFromWidget_ver0_1( widget_ver0_1 );
     }
+
+    setTooltipOfButtonWidget_en( tooltipOfButtonWidget_en ){
+        this._tooltipOfButtonWidget_en = tooltipOfButtonWidget_en;
+    }
+
+    getTooltipOfButtonWidget_en(){
+        return this._tooltipOfButtonWidget_en;
+    }
+
+    setTooltipOfButtonWidget_ja( tooltipOfButtonWidget_ja ){
+        this._tooltipOfButtonWidget_ja = tooltipOfButtonWidget_ja;
+    }
+
+    getTooltipOfButtonWidget_ja(){
+        return this._tooltipOfButtonWidget_ja;
+    }
+	
+	getTooltipOfButtonWidget( language ){
+		//!depend language //!modify language //!sync language
+		let tooltipOfButtonWidget;
+		if( language === "ja" ){
+			tooltipOfButtonWidget = this._tooltipOfButtonWidget_ja;
+		}
+		else{
+			tooltipOfButtonWidget = this._tooltipOfButtonWidget_en;
+		}
+		
+        return tooltipOfButtonWidget;
+    }
+	
+	setTooltipOfButtonWidget( s, language ){
+       //!depend language //!modify language //!sync language
+		if( language === "ja" ){
+			this._tooltipOfButtonWidget_ja = s;
+		}
+		else{
+			this._tooltipOfButtonWidget_en = s;
+		}
+	}
+
+
 }

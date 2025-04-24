@@ -25,7 +25,7 @@ export default class LegacyButtonEditorSubWidget_callTalkingButton extends Legac
     // }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -42,7 +42,6 @@ export default class LegacyButtonEditorSubWidget_callTalkingButton extends Legac
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
         const currentCallInfo = BrekekeOperatorConsole.getStaticInstance().getPhoneClient().getCallInfos().getCurrentCallInfo();
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
 
         const isDanger = currentCallInfo?.getIsAnswered() && !currentCallInfo?.getIsHolding();
         if( isDanger ){
@@ -50,7 +49,7 @@ export default class LegacyButtonEditorSubWidget_callTalkingButton extends Legac
             backgroundColor = null;
         }
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className=
+        return <button title={tooltipOfButtonWidget}  className=
             {
                 clsx(
                     "kbc-button kbc-button-fill-parent",

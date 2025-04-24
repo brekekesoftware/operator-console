@@ -12,7 +12,7 @@ export default class LegacyButtonRuntimeSubWidget_monitoringCallButton extends L
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -29,7 +29,6 @@ export default class LegacyButtonRuntimeSubWidget_monitoringCallButton extends L
         const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
 
         const isDanger =  !!oc.getMonitoringExtension();
@@ -38,7 +37,7 @@ export default class LegacyButtonRuntimeSubWidget_monitoringCallButton extends L
             backgroundColor = null;
         }
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-monitoringCall-button-danger')} //!todo implement
+        return <button title={tooltipOfButtonWidget}  className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-monitoringCall-button-danger')} //!todo implement
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

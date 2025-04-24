@@ -13,7 +13,7 @@ export default class LegacyButtonEditorSubWidget_pickUpCallButton extends Legacy
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -31,12 +31,11 @@ export default class LegacyButtonEditorSubWidget_pickUpCallButton extends Legacy
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const iconJsx = this._getIconJsx();
 
         const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
 
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
+        return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

@@ -11,7 +11,7 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const oc = BrekekeOperatorConsole.getStaticInstance();
@@ -31,7 +31,6 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
                 "solid " + cancelTransferButtonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( cancelTransferButtonOuterBorderColor )  : "";
             const cancelTransferBorderRadius = Util.isNumber( cancelTransferButtonOuterBorderRadius ) ? cancelTransferButtonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
 //            const transferIconJsx = this._getIconJsx();
             let cancelTransferLabel;
             if( subWidgetData.getLabel() ){
@@ -41,7 +40,7 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
                 cancelTransferLabel = i18n.t("Cancel_transfer");
             }
             const cancelTransferIconJsx = this._getIconJsx( subWidgetData.getCancelTransferIcon(), cancelTransferLabel, subWidgetData.getCancelTransferIconWidth(), subWidgetData.getCancelTransferIconHeight() );
-            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash kbc-transfer-button-danger-flash"
+            return         <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent kbc-button-danger-flash kbc-transfer-button-danger-flash"
                                    style={{
                                        fontSize:sCancelTransferButtonFontSize,
                                        border:cancelTransferBorder,
@@ -66,7 +65,6 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
                 "solid " + buttonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( buttonOuterBorderColor )  : "";
             const borderRadius = Util.isNumber( buttonOuterBorderRadius ) ? buttonOuterBorderRadius + "px" : "";
 
-            const subtypeName = this._getLegacyButtonWidgetSubTypeName();
 //            const transferIconJsx = this._getIconJsx();
             let transferLabel;
             if( subWidgetData.getLabel() ){
@@ -76,7 +74,7 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
                 transferLabel = i18n.t("Transfer");
             }
             const transferIconJsx = this._getIconJsx( subWidgetData.getIcon(), transferLabel, subWidgetData.getIconWidth(), subWidgetData.getIconHeight() );
-            return         <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className="kbc-button kbc-button-fill-parent"
+            return         <button title={tooltipOfButtonWidget} className="kbc-button kbc-button-fill-parent"
                                    style={{
                                        fontSize:sButtonFontSize,
                                        border:border,

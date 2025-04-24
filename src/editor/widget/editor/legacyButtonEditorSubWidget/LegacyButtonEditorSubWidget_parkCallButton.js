@@ -12,7 +12,7 @@ export default class LegacyButtonEditorSubWidget_parkCallButton extends LegacyBu
     }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -33,10 +33,9 @@ export default class LegacyButtonEditorSubWidget_parkCallButton extends LegacyBu
         const parksStatus = oc.getParksStatus();
         const number = this._LegacyButtonEditorSubWidgetData.getNumber();
 
-        const subtypeName = this._getLegacyButtonWidgetSubTypeName();
         const light = myParksStatus[number] ? 'kbc-button-success-flash-slow kbc-parkCall-button-success-flash-slow' : parksStatus[number] ? 'kbc-button-danger-flash-slow kbc-parkCall-button-danger-flash-slow' : '';
         const iconJsx = this._getIconJsx();
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", light)}
+        return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", light)}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

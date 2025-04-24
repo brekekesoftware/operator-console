@@ -1,3 +1,5 @@
+/* old */
+/*
 .brOC .autoDialView {
     position:absolute;
     top: var(--headerHeight);
@@ -11,20 +13,47 @@
 	max-width:100vw;
 	max-height:calc(100vh - 50px);
 }
+*/
+
+.brOC .autoDialViewWrapper{
+	position:absolute;
+	width:100%;
+}
+
+.brOC .autoDialView {
+    position:relative;
+    top:0;
+    border-radius: var(--defaultBorderRadius);
+    background-color:initial;
+    z-index: 111;
+	scrollbar-width:thin;
+	overflow:auto;
+	max-width:100vw;
+	max-height:calc(100vh - 50px);
+    animation-duration: 1s;
+    animation-name: AutoDialViewSlideIn_position;
+}
 
 .brOC .autoDialView > table {
     background-color: var(--defaultOutsideBgColor);
     animation-duration: 0.5s;
-    animation-name: AutoDialViewTableSlideIn;
+    animation-name: AutoDialViewTableSlideIn_color;
 }
 
-@keyframes AutoDialViewTableSlideIn {
+@keyframes AutoDialViewSlideIn_position {
     0% {
         margin-left:100%;
-        opacity: 0;
     }
     100% {
         margin-left:0%;
+    }
+}
+
+@keyframes AutoDialViewTableSlideIn_color {
+    0% {
+        opacity: 0;
+    }
+    100% {
         opacity: 1;
     }
 }

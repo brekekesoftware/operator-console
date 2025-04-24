@@ -22,6 +22,55 @@ export default class OCUtil{
     //     return -1;
     // }
 
+    static isValidDateObject(d){
+        let b;
+        if (Object.prototype.toString.call(d) === "[object Date]") {
+            if(isNaN(d)) {
+                b = false;
+            } else {
+                b = true;
+            }
+        } else {
+            b = false;
+        }
+        return b;
+    }
+
+    static getMaxDayDate( year, month ) {
+        month--;
+        const iWishDateMonth = month;
+        const d = new Date(year, iWishDateMonth );
+        if( OCUtil.isValidDateObject(d) !== true ){
+            return null;
+        }
+
+        //!optimize loop
+        let day = 32;
+        do {
+            day--;
+            d.setDate(day);
+        }
+        while( d.getMonth() !== iWishDateMonth  );
+        return d;
+    }
+
+    static isSameDateYMD( d1, d2 ){
+        if( d1 === d2 ){
+            return true;
+        }
+
+        // if( !d1 ){
+        //     return false;
+        // }
+        // if( !d2 ){
+        //     return false;
+        // }
+
+        const b = d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+        return b;
+    }
+
+
     static removeChar( s , c ){
         let bContinue = true;
         let sRemoved = s;

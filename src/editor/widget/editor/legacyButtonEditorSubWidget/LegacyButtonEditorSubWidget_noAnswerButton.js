@@ -25,7 +25,7 @@ export default class LegacyButtonEditorSubWidget_noAnswerButton extends LegacyBu
     // }
 
     //!override
-    getRenderJsx() {
+    getRenderJsx(tooltipOfButtonWidget) {
         const subWidgetData = this.getLegacyButtonSubWidgetData();
         //const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
         const sButtonFontSize = subWidgetData.getFontSize() ? subWidgetData.getFontSize() + "px" : "1rem";    //!default
@@ -49,7 +49,7 @@ export default class LegacyButtonEditorSubWidget_noAnswerButton extends LegacyBu
             color = null;
             backgroundColor = null;
         }
-        return <button title={i18n.t(`legacy_button_description.${subtypeName}`)} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-noAnswer-button-danger')}
+        return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", isDanger && 'kbc-button-danger kbc-noAnswer-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

@@ -4,6 +4,7 @@ import LegacyButtonRuntimeSubWidget from "./LegacyButtonRuntimeSubWidget";
 import BrekekeOperatorConsole from "../../../../index";
 import clsx from "clsx";
 import Util from "../../../../Util";
+import LegacyButtonWidgetSubData from "../../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
 
 export default class LegacyButtonRuntimeSubWidget_autoDialButton extends LegacyButtonRuntimeSubWidget  {
 
@@ -30,7 +31,9 @@ export default class LegacyButtonRuntimeSubWidget_autoDialButton extends LegacyB
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const subWidgetDatas = oc.getShowAutoDialWidgetSubDatas_ver2();
-        const isRedColor =  subWidgetDatas && BrekekeOperatorConsole._getIndexFromArray( subWidgetDatas, subWidgetData ) !== -1;
+        //const isRedColor =  subWidgetDatas && BrekekeOperatorConsole._getIndexFromArray( subWidgetDatas, subWidgetData ) !== -1;  //!Did not work.
+        const isRedColor =  subWidgetDatas && LegacyButtonWidgetSubData.findWidgetUuidIndexFromLegacyButtonWidgetSubData( subWidgetDatas, subWidgetData ) !== -1;
+
 
         if( isRedColor ){
             //use default

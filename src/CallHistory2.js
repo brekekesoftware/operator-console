@@ -57,6 +57,7 @@ export class CallHistory2 {
         this._OperatorConsoleAsParent = operatorConsoleAsParent;
         this._CallHistoryCallInfosObject = new Object();
         this._CallHistoryCallInfoArray = new Array();   //sortable array
+        this._latestCallHistoryCallInfoArrayRefreshDate = null;   //new Date();
         this._prevSort = null;  //Set dirty
 
         this._FlushSave = debounce(
@@ -87,6 +88,17 @@ export class CallHistory2 {
 
     // onInitPalRestApiSuccessByLogin( operatorConsoleAsCaller ){
     // }
+	
+	getLatestCallHistoryCallInfoArrayRefreshMilliTime(){
+		let milliTime;
+		if( !this._latestCallHistoryCallInfoArrayRefreshDate ){
+			milliTime = 0;
+		}
+		else{
+			milliTime = this._latestCallHistoryCallInfoArrayRefreshDate.getTime();
+		}
+		return milliTime;
+	}
 
     //!warn Do not change the contents of the array.
     getCallHistory2CallInfoArray() {
@@ -151,7 +163,7 @@ export class CallHistory2 {
         const n = settings.getAutoDialMaxSaveCount();
 
         if( Object.keys( this._CallHistoryCallInfosObject ).length <= n ){
-            this._saveCount = n;
+            //this._saveCount = n;
             return false;
         }
 
@@ -173,7 +185,7 @@ export class CallHistory2 {
         if(  prevSortOrder !== CALLHISTORY2_RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC ){
             this._prevSort = null;  //Set dirty
         }
-        this._saveCount = n;
+        //this._saveCount = n;
         return true;
     }
 
@@ -197,7 +209,6 @@ export class CallHistory2 {
     }
 
     loadCallHistory2( palRestApi, onSuccessFunction, onFailFunction ){
-
         const getAppDataOptions = {
             methodName : "getAppData",
             methodParams : JSON.stringify({
@@ -206,6 +217,7 @@ export class CallHistory2 {
             onSuccessFunction : ( sJsonData ) => {
                 if( !sJsonData || sJsonData.length === 0 ){
                     this._isLoadedEvenOnce = true;
+                    this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                     console.log("The CallHistory2Data(Json response) is empty.");
                     if( onSuccessFunction ){
                         onSuccessFunction();
@@ -225,6 +237,7 @@ export class CallHistory2 {
                 if( !sLines ){
                     this._isLoadedEvenOnce = true;
                     //console.log("The CallHIstory2Data  is empty(Line property's value is null) so it will not be read.")
+                    this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                     if( onSuccessFunction ){
                         onSuccessFunction();
                     }
@@ -234,6 +247,7 @@ export class CallHistory2 {
                 const lines = sLines.split("\n");
                 if( lines.length === 0 ){
                     this._isLoadedEvenOnce = true;
+					this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                     //console.log("The CallHIstory2Data  is empty so it will not be read.")
                     if( onSuccessFunction ){
                         onSuccessFunction();
@@ -244,6 +258,7 @@ export class CallHistory2 {
                 const headerLineLength = headerLine.length;
                 if( headerLineLength === 0 ){
                     this._isLoadedEvenOnce = true;
+					this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                     console.warn("The CallHistory2Data's header is not defined so it will not be read.")
                     if( onSuccessFunction ){
                         onSuccessFunction();
@@ -298,6 +313,7 @@ export class CallHistory2 {
                 if( uuidColumnIndex === -1 ){
                     this._isLoadedEvenOnce = true;
                     console.warn("Call history will not load because the 'uuid' column does not exist.");
+					this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                     if( onSuccessFunction ){
                         onSuccessFunction();
                     }
@@ -347,6 +363,7 @@ export class CallHistory2 {
                 }
                 this._syncSaveCount();
                 this._isLoadedEvenOnce = true;
+				this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
                 if( onSuccessFunction ){
                     onSuccessFunction();
                 }
@@ -433,6 +450,7 @@ export class CallHistory2 {
             }
 
             const partyNumberResult = intlCollator.compare( ch2CallInfoA.getPartyNumber(), ch2CallInfoB.getPartyNumber() );    //ASC order
+            this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
             return partyNumberResult;
         };
 
@@ -446,7 +464,8 @@ export class CallHistory2 {
             const ch2CallInfo = ch2FoTInfo.getCallHistory2CallInfo();
             this._CallHistoryCallInfoArray[i] = ch2CallInfo;
         }
-
+		
+		this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
     }
 
     onSavingSystemSettingsForCallHistory2( operatorConsoleAsCaller ){
@@ -500,6 +519,7 @@ export class CallHistory2 {
             }
         };
         this._CallHistoryCallInfoArray.sort( compareFunc );
+        this._latestCallHistoryCallInfoArrayRefreshDate = new Date();
     }
 
     onUpdateCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){

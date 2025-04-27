@@ -19,6 +19,8 @@ import PhonebookContactInfozInfoView from "./PhonebookContactInfozInfoView";
 import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoDialView_ver2";
 import PhonebookContact_AutoDialView_ver2 from "./PhonebookContact_AutoDialView_ver2";
 import Select from "antd/lib/select";
+import LegacyButtonRuntimeSubWidget_autoDialButton
+    from "./widget/runtime/legacyButtonRuntimeSubWidget/LegacyButtonRuntimeSubWidget_autoDialButton";
 let AUTO_DIAL_VIEW_VER2;
 const _GET_CONTACT_LIST_LIMIT = 1000;   //!limit max 1000
 const _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE = "extensionNumber";
@@ -1015,7 +1017,39 @@ export default class AutoDialView_ver2 extends React.Component {
         return iDay;
     }
 
-    _getDatetimeDescCallInfoArrayForDisplay(){
+    _getDatetimeDescCallInfoArrayForDisplay( iFromYear = null, iFromMonth = null, iFromDay = null, iFromHour = null, iFromMinute = null, iToYear = null, iToMonth = null, iToDay = null, iToHour = null, iToMinute = null ){
+		if( iFromYear === undefined || iFromYear === null ){
+			iFromYear = this._latestCallHistoryFromYearInt;
+		}
+		if( iFromMonth === undefined || iFromMonth === null ){
+			iFromMonth = this._latestCallHistoryFromMonthInt;
+		}
+		if( iFromDay === undefined || iFromDay === null ){
+			iFromDay = this._latestCallHistoryFromDayInt;
+		}	
+		if( iFromHour === undefined || iFromHour === null ){
+			iFromHour = this._latestCallHistoryFromHourInt;
+		}
+		if( iFromMinute === undefined || iFromMinute === null ){
+			iFromMinute = this._latestCallHistoryFromMinuteInt;
+		}
+
+		if( iToYear === undefined || iToYear === null ){
+			iToYear = this._latestCallHistoryToYearInt;
+		}
+		if( iToMonth === undefined || iToMonth === null ){
+			iToMonth = this._latestCallHistoryToMonthInt;
+		}
+		if( iToDay === undefined || iToDay === null ){
+			iToDay = this._latestCallHistoryToDayInt;
+		}	
+		if( iToHour === undefined || iToHour === null ){
+			iToHour = this._latestCallHistoryToHourInt;
+		}
+		if( iToMinute === undefined || iToMinute === null ){
+			iToMinute = this._latestCallHistoryToMinuteInt;
+		}
+		
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const callHistory2 = oc.getCallHistory2();
         const callInfoArray = callHistory2.getCallHistory2CallInfoArray();
@@ -1023,6 +1057,130 @@ export default class AutoDialView_ver2 extends React.Component {
         const systemSettingsData = oc.getSystemSettingsData();
         callHistory2.sortIfNeed( CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC  );
 
+
+        const dateFrom = new Date( iFromYear, iFromMonth - 1, iFromDay, iFromHour, iFromMinute );
+        const bChangeFrom = this._setBeforeMaxDateToDayDate( dateFrom, iFromMonth );
+
+        const dateTo = new Date( iToYear, iToMonth -1, iToDay, iToHour, iToMinute, 0, 0 );
+        const bChangeTo = this._setBeforeMaxDateToDayDate( dateTo, iToMonth );
+
+        const callInfoArrayDateFiltered = new Array();
+        if( dateFrom > dateTo ){
+            //console.log();
+        }
+        else if( callInfoArray ){
+            for (let i = 0; i < callInfoArray.length; i++) {
+                const callInfo = callInfoArray[i];
+                const dStartedAt = new Date(callInfo.getAddCallMillisTime())  //!overhead //!cost
+                if( (dStartedAt >= dateFrom &&  dStartedAt < dateTo)  ){
+                    callInfoArrayDateFiltered.push( callInfo);
+                }
+            }
+        }
+
+        const recentDisplayCount = systemSettingsData.getAutoDialMaxDisplayCount();
+        const callInfoArrayForDisplay = callInfoArrayDateFiltered.slice(0, recentDisplayCount);
+        return callInfoArrayForDisplay;
+    }
+
+    _setBeforeMaxDateToDayDate( date, iWishMonth ){
+        const iDateWishMonth = iWishMonth - 1;
+        const iMonth = date.getMonth();
+        if( iMonth === iDateWishMonth ){
+            return false;
+        }
+        else{
+            const dateBefore = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            for( let day = 1;; day++ ) {
+                dateBefore.setDate(date.getDate() - day);
+                if (dateBefore.getMonth() == iDateWishMonth) {
+                    date.setFullYear( dateBefore.getFullYear());
+                    date.setMonth( dateBefore.getMonth());
+                    date.setDate( dateBefore.getDate());
+                    date.setHours( 23 );
+                    date.setMinutes( 59 );
+                    date.setSeconds( 59 );
+                    date.setMilliseconds( MAX_DATE_MILLISECONDS  );
+                    break;
+                }
+            }
+            return true;
+        }
+    }
+
+    _resetFromDateToDate(){
+
+        // this._callInfosFromYear = "0000";
+        // this._callInfosFromMonth = "1";
+        // this._callInfosFromDay = "1";
+        // this._callInfosFromHour = "0";
+        // this._callInfosFromMinute = "0";
+        //
+        // this._callInfosToYear = "9999";
+        // this._callInfosToMonth = "12";
+        // this._callInfosToDay = "31";
+        // this._callInfosToHour = "23";
+        // this._callInfosToMinute = "59";
+
+        const dateFrom = new Date();
+        const iFromFullYear = dateFrom.getFullYear();
+        const sFromFullYear = iFromFullYear.toString();
+        const iFromMonth = dateFrom.getMonth() + 1;
+        const sMonth = iFromMonth.toString();
+        const iFromDay = dateFrom.getDate();
+        const sFromDay = iFromDay.toString();
+
+        this._callInfosFromYear = sFromFullYear;
+        this._callInfosFromMonth = sMonth;
+        this._callInfosFromDay = sFromDay;
+        const iFromHour = 0;
+        this._callInfosFromHour = iFromHour.toString().padStart(2,'0');
+        const iFromMinute = 0;
+        this._callInfosFromMinute = iFromMinute.toString().padStart(2,'0');
+
+        const dateFromMax = OCUtil.getMaxDayDate( iFromFullYear, iFromMonth + 1 );
+        this._callInfosMaxFromDate = new Date( dateFromMax.getTime());
+
+        const dateTo = new Date( dateFrom.getFullYear(), dateFrom.getMonth(), dateFrom.getDate() + 1 );
+        const iToFullYear = dateTo.getFullYear();
+        this._callInfosToYear = iToFullYear.toString();
+        const iToMonth = dateTo.getMonth() + 1;
+        this._callInfosToMonth = iToMonth.toString();
+        const iToDay = dateTo.getDate();
+        this._callInfosToDay = iToDay.toString();
+        const iToHour = 0;
+        this._callInfosToHour = iToHour.toString().padStart(2,'0');
+        const iToMinute = 0;
+        this._callInfosToMinute = iToMinute.toString().padStart(2,'0');
+
+        const dateToMax = OCUtil.getMaxDayDate( iToFullYear, iToMonth );
+        this._callInfosMaxToDate = new Date( dateToMax.getTime());
+
+        this._latestCallHistoryFromYearInt = iFromFullYear;
+        this._latestCallHistoryFromMonthInt = iFromMonth;
+        this._latestCallHistoryFromDayInt = iFromDay;
+        this._latestCallHistoryFromHourInt = iFromHour;
+        this._latestCallHistoryFromMinuteInt = iFromMinute;
+
+        this._latestCallHistoryToYearInt = iToFullYear;
+        this._latestCallHistoryToMonthInt = iToMonth;
+        this._latestCallHistoryToDayInt = iToDay;
+        this._latestCallHistoryToHourInt = iToHour;
+        this._latestCallHistoryToMinuteInt = iToMinute;
+    }
+
+    onShowAutoDialView_ver2ByOperatorConsole( operatorConsoleAsCaller ){
+        const bFirstShowTime = !this._callInfoArrayForDisplay;
+        if( !bFirstShowTime ){
+            return;
+        }
+
+        this._resetFromDateToDate();
+			
+        this.setState({rerender:true});
+    }
+
+    _onClickForGetDatetimeDescCallInfoArrayForDisplay(){
         //Date from begin.
         //
         //const eFromYear = document.getElementById("brOC_autoDialView_ver2_callInfos_fromYear");
@@ -1123,7 +1281,7 @@ export default class AutoDialView_ver2 extends React.Component {
         // const eToMinute = document.getElementById("brOC_autoDialView_ver2_callInfos_toMinute");
         // const sToMinute = eToMinute.value;
         const sToMinute = this._callInfosToMinute;
-        let iToMinute = 59;
+        let iToMinute = 0;
         try{
             iToMinute = parseInt( sToMinute );
         }
@@ -1131,7 +1289,7 @@ export default class AutoDialView_ver2 extends React.Component {
             //console.log("AutoDialView toMinute: Failed to parseInt. toMinute(String)=" + sToMinute );
         }
         if( isNaN( iToMinute ) ){
-            iToMinute = 59;
+            iToMinute = 0;
         }
         else if( iToMinute < 0 ){
             iToMinute = 0;
@@ -1142,99 +1300,21 @@ export default class AutoDialView_ver2 extends React.Component {
         //
         //Date to end.
 
-        const dateFrom = new Date( iFromYear, iFromMonth - 1, iFromDay, iFromHour, iFromMinute );
-        const bChangeFrom = this._setBeforeMaxDateToDayDate( dateFrom, iFromMonth );
+        this._latestCallHistoryFromYearInt = iFromYear;
+        this._latestCallHistoryFromMonthInt = iFromMonth;
+        this._latestCallHistoryFromDayInt = iFromDay;
+        this._latestCallHistoryFromHourInt = iFromHour;
+        this._latestCallHistoryFromMinuteInt = iFromMinute;
 
-        const dateTo = new Date( iToYear, iToMonth -1, iToDay, iToHour, iToMinute, 59, MAX_DATE_MILLISECONDS );
-        const bChangeTo = this._setBeforeMaxDateToDayDate( dateTo, iToMonth );
+        this._latestCallHistoryToYearInt = iToYear;
+        this._latestCallHistoryToMonthInt = iToMonth;
+        this._latestCallHistoryToDayInt = iToDay;
+        this._latestCallHistoryToHourInt = iToHour;
+        this._latestCallHistoryToMinuteInt = iToMinute;
 
-        const callInfoArrayDateFiltered = new Array();
-        if( dateFrom > dateTo ){
-            //console.log();
-        }
-        else if( callInfoArray ){
-            for (let i = 0; i < callInfoArray.length; i++) {
-                const callInfo = callInfoArray[i];
-                const dStartedAt = new Date(callInfo.getAddCallMillisTime())  //!overhead //!cost
-                if( (dStartedAt < dateFrom ||  dStartedAt > dateTo) === false ){
-                    callInfoArrayDateFiltered.push( callInfo);
-                }
-            }
-        }
-
-        const recentDisplayCount = systemSettingsData.getAutoDialMaxDisplayCount();
-        const callInfoArrayForDisplay = callInfoArrayDateFiltered.slice(0, recentDisplayCount);
-        return callInfoArrayForDisplay;
-    }
-
-    _setBeforeMaxDateToDayDate( date, iWishMonth ){
-        const iDateWishMonth = iWishMonth - 1;
-        const iMonth = date.getMonth();
-        if( iMonth === iDateWishMonth ){
-            return false;
-        }
-        else{
-            const dateBefore = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-            for( let day = 1;; day++ ) {
-                dateBefore.setDate(date.getDate() - day);
-                if (dateBefore.getMonth() == iDateWishMonth) {
-                    date.setFullYear( dateBefore.getFullYear());
-                    date.setMonth( dateBefore.getMonth());
-                    date.setDate( dateBefore.getDate());
-                    date.setHours( 23 );
-                    date.setMinutes( 59 );
-                    date.setSeconds( 59 );
-                    date.setMilliseconds( MAX_DATE_MILLISECONDS  );
-                    break;
-                }
-            }
-            return true;
-        }
-    }
-
-    componentDidMount(){
-        // this._callInfosFromYear = "0000";
-        // this._callInfosFromMonth = "1";
-        // this._callInfosFromDay = "1";
-        // this._callInfosFromHour = "0";
-        // this._callInfosFromMinute = "0";
-        //
-        // this._callInfosToYear = "9999";
-        // this._callInfosToMonth = "12";
-        // this._callInfosToDay = "31";
-        // this._callInfosToHour = "23";
-        // this._callInfosToMinute = "59";
-
-        const dateNow = new Date();
-        const iFullYear = dateNow.getFullYear();
-        const sFullYear = iFullYear;
-        const iMonth = dateNow.getMonth() + 1;
-        const sMonth = iMonth.toString();
-        const sDay = dateNow.getDate().toString();
-
-        this._callInfosFromYear = sFullYear;
-        this._callInfosFromMonth = sMonth;
-        this._callInfosFromDay = sDay;
-        this._callInfosFromHour = "0";
-        this._callInfosFromMinute = "0";
-
-        this._callInfosToYear = sFullYear;
-        this._callInfosToMonth = sMonth;
-        this._callInfosToDay = sDay;
-        this._callInfosToHour = "23";
-        this._callInfosToMinute = "59";
-
-        const dateMax = OCUtil.getMaxDayDate( iFullYear, iMonth );
-        this._callInfosMaxFromDate = new Date( dateMax.getTime());
-        this._callInfosMaxToDate = new Date( dateMax.getTime());
-    }
-
-    _onClickForGetDatetimeDescCallInfoArrayForDisplay(){
-        this._callInfoArrayForDisplay = null;   //Display spin
-        setTimeout( () =>{  //async
-            this._callInfoArrayForDisplay = this._getDatetimeDescCallInfoArrayForDisplay();
-            this.setState({rerender:true});
-        }, 1);
+        //this._callInfoArrayForDisplay = null;   //Display spin
+        this._latestCallHistory2CallInfoArrayRefreshMilliTime = -1;
+        this.setState({rerender:true});
     }
 
     _onChangeToYear( sYear ){
@@ -1346,12 +1426,12 @@ export default class AutoDialView_ver2 extends React.Component {
     }
 
     render() {
-        if (!this.props.isVisible) {
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        if (!this.props.isVisible ) {
             return (null);
         }
 
-
-        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const dateFormatString = oc.getDateFormatStringInstance();
         const language = oc.getLoggedinLanguage();
         const callHistory2 = oc.getCallHistory2();
         const systemSettingsData = oc.getSystemSettingsData();
@@ -1360,27 +1440,41 @@ export default class AutoDialView_ver2 extends React.Component {
         const recentDisplayCount = systemSettingsData.getAutoDialMaxDisplayCount();
 
         //!bad Not a render logic
-        if( !this._callInfoArrayForDisplay && recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC ){
-            setTimeout( () =>{
-                this._callInfoArrayForDisplay = this._getDatetimeDescCallInfoArrayForDisplay();
+        let fromDaySelectOptionsJsx;
+        let toDaySelectOptionsJsx;
+        if( recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC ) {
+            const latestCallHistory2RefreshTime = callHistory2.getLatestCallHistoryCallInfoArrayRefreshMilliTime();
+            if( this._latestCallHistory2CallInfoArrayRefreshMilliTime === undefined ){  //!forBug For abort infinite constructor&render loop   //!bad
+                this._resetFromDateToDate();
+                this._latestCallHistory2CallInfoArrayRefreshMilliTime = -1;
                 this.setState({rerender:true});
-            },1);
+            }
+            else if( latestCallHistory2RefreshTime !== this._latestCallHistory2CallInfoArrayRefreshMilliTime ){
+                this._latestCallHistory2CallInfoArrayRefreshMilliTime = latestCallHistory2RefreshTime;
+                setTimeout(() => {
+                    this._callInfoArrayForDisplay = this._getDatetimeDescCallInfoArrayForDisplay();
+                    this.setState({rerender: true});
+                }, 1);
+            }
+            // const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
+            // const bRecentShowDetail = eRecentShowDetail.checked;
+
+            fromDaySelectOptionsJsx = new Array();
+            const iMaxFromDay = this._callInfosMaxFromDate.getDate();
+            for( let i = 1; i <= iMaxFromDay; i++ ){
+                fromDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
+            }
+
+            toDaySelectOptionsJsx = new Array();
+            const iMaxToDay = this._callInfosMaxToDate.getDate();
+            for( let i = 1; i <= iMaxToDay; i++ ){
+                toDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
+            }
         }
 
-        // const eRecentShowDetail = document.getElementById("recentShowDetail_brOC_AutoDialView_ver2");
-        // const bRecentShowDetail = eRecentShowDetail.checked;
 
-        const fromDaySelectOptionsJsx = new Array();
-        const iMaxFromDay = this._callInfosMaxFromDate.getDate();
-        for( let i = 1; i <= iMaxFromDay; i++ ){
-            fromDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
-        }
 
-        const toDaySelectOptionsJsx = new Array();
-        const iMaxToDay = this._callInfosMaxToDate.getDate();
-        for( let i = 1; i <= iMaxToDay; i++ ){
-            toDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
-        }
+
 
         return (<>
             <PhonebookContactInfozInfoView/>
@@ -1390,7 +1484,7 @@ export default class AutoDialView_ver2 extends React.Component {
             <div className="autoDialViewWrapper">
             <div className="brOCReset autoDialView">
                 {/*<table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} data-br-name="brOC_AutoDialView_ver2_rootTable">*/}
-                <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} style={{marginLeft:"auto"}}>
+                <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"} >
                     <tbody>
                     <tr>
                         <td>
@@ -1454,13 +1548,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                 <div className="panel tab-A is-show">
                                                     {recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.CALL_OR_INCOMING_COUNT_DESC && (
                                                         <div className={"autoDialView_ver2_RecentRoot"}>
-                                                            <table style={{border: "0"}}
+                                                            <table style={{border: "0",width:"100%"}}
                                                                    className={"defaultContentTable"}>
                                                                 <thead>
                                                                 <tr className="defaultItemPaddingForTr">
-                                                                    <th style={{width: "1%"}}>{i18n.t("CallNo")}</th>
-                                                                    <th style={{width: 20}}>{i18n.t("Status")}</th>
-                                                                    <th></th>
+                                                                    <th>{i18n.t("CallNo")}</th>
+                                                                    <th style={{width: 10}}>{i18n.t("Status")}</th>
+                                                                    <th style={{width:10}}></th>
                                                                     <th>{i18n.t("LatestStartedAt")}</th>
                                                                 </tr>
                                                                 </thead>
@@ -1470,14 +1564,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     const isExtension = OCUtil.indexOfArrayFromExtensions(oc.state.extensions, partyNumber) !== -1;
                                                                     const extensionsStatus = oc.state.extensionsStatus;
                                                                     const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(partyNumber, extensionsStatus) : "";
-                                                                    const sAddDateTime = new Date(callHistory2CallInfo.getAddCallMillisTime()).toLocaleString();
+                                                                    const sAddDateTime = dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAddCallMillisTime() ) );
                                                                     return (
                                                                         <tr key={i}>
-                                                                            <td style={{width: "1%"}}>{partyNumber}</td>
-                                                                            <td>
+                                                                            <td>{partyNumber}</td>
+                                                                            <td style={{textAlign: "center",width:10}}>
                                                                                 <div className={statusClassName}></div>
                                                                             </td>
-                                                                            <td>
+                                                                            <td style={{width:10}}>
                                                                                 {partyNumber && (<div style={{
                                                                                     display: "flex",
                                                                                     justifyContent: "center"
@@ -1494,7 +1588,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     </button>
                                                                                 </div>)}
                                                                             </td>
-                                                                            <td>
+                                                                            <td style={{textAlign: "center"}}>
                                                                                 {sAddDateTime}
                                                                             </td>
                                                                         </tr>
@@ -1505,7 +1599,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                         </div>
                                                     )}
                                                     {recentDisplayOrder === CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC && (
-                                                        <table style={{border: "0"}}
+                                                        <table style={{border: "0",width:"100%"}}
                                                                className={"defaultContentTable"}>
                                                             <tbody>
                                                             <tr>
@@ -1582,25 +1676,25 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     defaultValue={this._callInfosFromHour}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>0</Select.Option>
+                                                                                        value={0}>00</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={1}>1</Select.Option>
+                                                                                        value={1}>01</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>2</Select.Option>
+                                                                                        value={2}>02</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>3</Select.Option>
+                                                                                        value={3}>03</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>4</Select.Option>
+                                                                                        value={4}>04</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>5</Select.Option>
+                                                                                        value={5}>05</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>6</Select.Option>
+                                                                                        value={6}>06</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>7</Select.Option>
+                                                                                        value={7}>07</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>8</Select.Option>
+                                                                                        value={8}>08</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>9</Select.Option>
+                                                                                        value={9}>09</Select.Option>
                                                                                     <Select.Option
                                                                                         value={10}>10</Select.Option>
                                                                                     <Select.Option
@@ -1638,7 +1732,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     defaultValue={this._callInfosFromMinute}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>0</Select.Option>
+                                                                                        value={0}>00</Select.Option>
                                                                                     <Select.Option
                                                                                         value={15}>15</Select.Option>
                                                                                     <Select.Option
@@ -1713,25 +1807,25 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     defaultValue={this._callInfosToHour}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>0</Select.Option>
+                                                                                        value={0}>00</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={1}>1</Select.Option>
+                                                                                        value={1}>01</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>2</Select.Option>
+                                                                                        value={2}>02</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>3</Select.Option>
+                                                                                        value={3}>03</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>4</Select.Option>
+                                                                                        value={4}>04</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>5</Select.Option>
+                                                                                        value={5}>05</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>6</Select.Option>
+                                                                                        value={6}>06</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>7</Select.Option>
+                                                                                        value={7}>07</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>8</Select.Option>
+                                                                                        value={8}>08</Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>9</Select.Option>
+                                                                                        value={9}>09</Select.Option>
                                                                                     <Select.Option
                                                                                         value={10}>10</Select.Option>
                                                                                     <Select.Option
@@ -1769,7 +1863,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     defaultValue={this._callInfosToMinute}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>0</Select.Option>
+                                                                                        value={0}>00</Select.Option>
                                                                                     <Select.Option
                                                                                         value={15}>15</Select.Option>
                                                                                     <Select.Option
@@ -1874,25 +1968,25 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 defaultValue={this._callInfosFromHour}
                                                                             >
                                                                                 <Select.Option
-                                                                                    value={0}>0</Select.Option>
+                                                                                    value={0}>00</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={1}>1</Select.Option>
+                                                                                    value={1}>01</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={2}>2</Select.Option>
+                                                                                    value={2}>02</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={3}>3</Select.Option>
+                                                                                    value={3}>03</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={4}>4</Select.Option>
+                                                                                    value={4}>04</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={5}>5</Select.Option>
+                                                                                    value={5}>05</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={6}>6</Select.Option>
+                                                                                    value={6}>06</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={7}>7</Select.Option>
+                                                                                    value={7}>07</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={8}>8</Select.Option>
+                                                                                    value={8}>08</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={9}>9</Select.Option>
+                                                                                    value={9}>09</Select.Option>
                                                                                 <Select.Option
                                                                                     value={10}>10</Select.Option>
                                                                                 <Select.Option
@@ -1931,7 +2025,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 defaultValue={this._callInfosFromMinute}
                                                                             >
                                                                                 <Select.Option
-                                                                                    value={0}>0</Select.Option>
+                                                                                    value={0}>00</Select.Option>
                                                                                 <Select.Option
                                                                                     value={15}>15</Select.Option>
                                                                                 <Select.Option
@@ -2009,25 +2103,25 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 defaultValue={this._callInfosToHour}
                                                                             >
                                                                                 <Select.Option
-                                                                                    value={0}>0</Select.Option>
+                                                                                    value={0}>00</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={1}>1</Select.Option>
+                                                                                    value={1}>01</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={2}>2</Select.Option>
+                                                                                    value={2}>02</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={3}>3</Select.Option>
+                                                                                    value={3}>03</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={4}>4</Select.Option>
+                                                                                    value={4}>04</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={5}>5</Select.Option>
+                                                                                    value={5}>05</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={6}>6</Select.Option>
+                                                                                    value={6}>06</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={7}>7</Select.Option>
+                                                                                    value={7}>07</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={8}>8</Select.Option>
+                                                                                    value={8}>08</Select.Option>
                                                                                 <Select.Option
-                                                                                    value={9}>9</Select.Option>
+                                                                                    value={9}>09</Select.Option>
                                                                                 <Select.Option
                                                                                     value={10}>10</Select.Option>
                                                                                 <Select.Option
@@ -2066,7 +2160,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 defaultValue={this._callInfosToMinute}
                                                                             >
                                                                                 <Select.Option
-                                                                                    value={0}>0</Select.Option>
+                                                                                    value={0}>00</Select.Option>
                                                                                 <Select.Option
                                                                                     value={15}>15</Select.Option>
                                                                                 <Select.Option
@@ -2111,13 +2205,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                htmlFor="recentShowDetail_brOC_AutoDialView_ver2">{i18n.t("Show_detail")}</label>
                                                                     </div>
                                                                     <div className={"autoDialView_ver2_tableParent"}>
-                                                                        <table style={{border: "0"}}
+                                                                        <table style={{border: "0",width:"100%"}}
                                                                                className={"defaultContentTable"}>
                                                                             <thead>
                                                                             <tr className="defaultItemPaddingForTr">
-                                                                                <th style={{width: "1%"}}>{i18n.t("Tel")}</th>
-                                                                                <th style={{width: 20}}>{i18n.t("Status")}</th>
-                                                                                <th></th>
+                                                                                <th>{i18n.t("Tel")}</th>
+                                                                                <th style={{width:10}}>{i18n.t("Status")}</th>
+                                                                                <th style={{width:10}}></th>
                                                                                 <th>{i18n.t("Incoming")}</th>
                                                                                 <th>{i18n.t("Transfer")}</th>
                                                                                 <th>{i18n.t("StartedAt")}</th>
@@ -2144,18 +2238,18 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 const extensionsStatus = oc.state.extensionsStatus;
                                                                                 const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(partyNumber, extensionsStatus) : "";
                                                                                 const sIsIncoming = callHistory2CallInfo.getIsIncoming() ? "✓" : "";
-                                                                                const sStartedAt = new Date(callHistory2CallInfo.getAddCallMillisTime()).toLocaleString();  //!overhead //!cost
-                                                                                const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? new Date(callHistory2CallInfo.getAnsweredAt()).toLocaleString() : "";
-                                                                                const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? new Date(callHistory2CallInfo.getEndCallMillisTime()).toLocaleString() : "";
+                                                                                const sStartedAt = dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAddCallMillisTime()) );
+                                                                                const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAnsweredAt())) : "";
+                                                                                const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getEndCallMillisTime())) : "";
                                                                                 const sIsTransfer = callHistory2CallInfo.getIsTransfer() ? "✓" : "";
                                                                                 return (
                                                                                     <tr key={i}>
-                                                                                        <td style={{width: "1%"}}>{partyNumber}</td>
-                                                                                        <td>
+                                                                                        <td style={{width: 10}}>{partyNumber}</td>
+                                                                                        <td style={{textAlign:"center",width:10}}>
                                                                                             <div
                                                                                                 className={statusClassName}></div>
                                                                                         </td>
-                                                                                        <td>
+                                                                                        <td style={{width:10}}>
                                                                                             {partyNumber && (
                                                                                                 <div style={{
                                                                                                     display: "flex",
@@ -2195,7 +2289,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     )}
                                                 </div>
                                                 <div className="panel tab-B">
-                                                <table className="defaultContentTable" style={{border: "0"}}><tbody>
+                                                <table className="defaultContentTable" style={{border: "0",width:"100%"}}><tbody>
                                                     <tr className="defaultItemPaddingForTr">
                                                         <td>
                                                             <Input
@@ -2253,8 +2347,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     <tr className="defaultItemPaddingForTr">
                                                                         <th>{i18n.t("ExtensionNumber")}</th>
                                                                         <th>{i18n.t("Name")}</th>
-                                                                        <th style={{width:"1%"}}>{i18n.t("Status")}</th>
-                                                                        <th style={{width:"1%"}}></th>
+                                                                        <th style={{width:10}}>{i18n.t("Status")}</th>
+                                                                        <th style={{width:10}}></th>
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -2275,11 +2369,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <tr key={i}>
                                                                             <td>{ext.id}</td>
                                                                                 <td>{ext.name}</td>
-                                                                                <td style={{width: "1%"}}>
+                                                                                <td style={{width: 10,textAlign:"center"}}>
                                                                                     <div
                                                                                         className={statusClassName}></div>
                                                                                 </td>
-                                                                                <td style={{width:"1%"}}>
+                                                                                <td style={{width:10,textAlign:"center"}}>
                                                                                     <div style={{
                                                                                         display: "flex",
                                                                                         justifyContent: "center"
@@ -2309,7 +2403,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     </table>
                                                 </div>
                                                 <div className="panel tab-C">
-                                                    <table className="defaultContentTable" style={{border: "0"}}>
+                                                    <table className="defaultContentTable" style={{border: "0",width:"100%"}}>
                                                         <tbody>
                                                         <tr className="defaultItemPaddingForTr">
                                                             <td>
@@ -2383,9 +2477,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <th>{i18n.t("PhonebookName")}</th>
                                                                                 <th>{i18n.t("Shared")}</th>
                                                                                 <th>{i18n.t("DisplayName")}</th>
-                                                                                <th style={{textAlign: "center"}}>{i18n.t("Call")}</th>
-                                                                                <th style={{textAlign: "center"}}>{i18n.t("Info")}</th>
-                                                                                <th style={{textAlign: "center"}}>{i18n.t("Delete")}</th>
+                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Call")}</th>
+                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Info")}</th>
+                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Delete")}</th>
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -2415,7 +2509,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                         <td>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
                                                                                         <td style={{textAlign: "center"}}>{sShared}</td>
                                                                                         <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
-                                                                                        <td>
+                                                                                        <td style={{width:10}}>
                                                                                             <div style={{
                                                                                                 display: "flex",
                                                                                                 alignItems: "center",
@@ -2452,7 +2546,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 )}
                                                                                             </div>
                                                                                         </td>
-                                                                                        <td>
+                                                                                        <td style={{width:10}}>
                                                                                             <div style={{
                                                                                                 display: "flex",
                                                                                                 alignItems: "center",
@@ -2465,7 +2559,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 </a>
                                                                                             </div>
                                                                                         </td>
-                                                                                        <td>
+                                                                                        <td style={{width:10}}>
                                                                                             {isDeletable && (
                                                                                                 <div style={{
                                                                                                     display: "flex",

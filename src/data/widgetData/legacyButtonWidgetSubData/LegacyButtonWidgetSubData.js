@@ -143,5 +143,19 @@ export default class LegacyButtonWidgetSubData{
     importLegacyButtonWidgetSubDataFromWidget_ver0_1(widget_ver0_1) {
         throw new Error("Not implemented.");
     }
+    
+    static findWidgetUuidIndexFromLegacyButtonWidgetSubData( subWidgetDatas, subWidgetData ){
+        const widgetData = subWidgetData.getLegacyButtonWidgetDataAsParent();
+        const widgetUuid = widgetData.getWidgetUuid();
+        for( let i = 0; i < subWidgetDatas.length; i++ ){   //!optimize
+            const currentSubWidgetData = subWidgetDatas[i];
+            const currentWidgetData = currentSubWidgetData.getLegacyButtonWidgetDataAsParent();
+            const currentWidgetUuid = currentWidgetData.getWidgetUuid();
+            if( widgetUuid === currentWidgetUuid  ){
+                return i;
+            }
+        }
+        return -1;
+    }
 
 }

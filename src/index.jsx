@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.25";
+const VERSION = "2.1.26";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -123,6 +123,7 @@ import {CallHistory2} from "./CallHistory2";
 import PalRestApi from "./PalRestApi";
 import ScreenPaneDatas from "./data/ScreenPaneDatas";
 import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
+import DateFormatStringFactory from "./util/DateFormatStringFactory";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -2783,6 +2784,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     constructor(props) {
         super(props);
         BREKEKE_OPERATOR_CONSOLE = this;
+        this._dateFormatString = null;
         this._DefaultPbxDirectoryName = "pbx";
         //this.callById = {};
         //this._callIds = new Array();
@@ -3082,7 +3084,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         //baseState.locale = language;
         const language = window.localStorage.getItem('lastLoginLanguage');
         i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
-
+        this._dateFormatString = null;DateFormatStringFactory.newDateFormatStringInstance(language);
         // const lastLoginAccount = localStorage.getItem('lastLoginAccount') || '';
         // try {
         //   this.setState({lastLoginAccount: JSON.parse(lastLoginAccount)})
@@ -3637,7 +3639,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
 
     onClickDropDownMenu(e) {
-        this.setState({showAutoDialWidgets: [], currentScreenQuickCallWidget: null});
+        this.setState({showAutoDialWidgets: [], currentScreenQuickCallWidget: null });
     }
 
     _onShowScreenTabClick(sKey){
@@ -3886,6 +3888,8 @@ export default class BrekekeOperatorConsole extends React.Component {
             //visible autoDialView_ver2
             const sort = this.getSystemSettingsData().getAutoDialRecentDisplayOrder();
             this._CallHistory2.sortIfNeed(sort);
+            const autoDialView_ver2 = AutoDialView_ver2.getStaticInstance();
+            autoDialView_ver2.onShowAutoDialView_ver2ByOperatorConsole(this);
             subDatas.push(subData);
         } else {
             subDatas.splice(index, 1);
@@ -5828,10 +5832,15 @@ export default class BrekekeOperatorConsole extends React.Component {
         this.setState({ linesStatus, usingLine });
     }
 
+    getDateFormatStringInstance(){
+        return this._dateFormatString;
+    }
+
     onLoggedinByLogin(  loggedinPal, pbxHost, pbxPort, tenant, user, password, isAdmin, language  ){
         window.addEventListener("beforeunload",  this._OnBeforeUnloadFunc );
         this._loggedinPal = loggedinPal;
         i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
+        this._dateFormatString = DateFormatStringFactory.newDateFormatStringInstance( language );
         const this_ = this;
         const loginUser = {
             pbxHost : pbxHost,

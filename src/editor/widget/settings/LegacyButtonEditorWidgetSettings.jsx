@@ -9,6 +9,8 @@ import Input from "antd/lib/input";
 import LegacyButtonWidgetSubData_unholdCallButton
     from "../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData_unholdCallButton";
 import BrekekeOperatorConsole from "../../../index";
+import TextArea from "antd/es/input/TextArea";
+import Popconfirm from "antd/lib/popconfirm";
 
 export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettings {
     constructor( props ) {
@@ -99,14 +101,18 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
                     })}
                 </Select>
                 <p>{i18n.t("Tooltip")}</p>
-                <Input placeholder={i18n.t("Tooltip")} allowClear value={sTooltipOfButtonWidget}
-                       defaultValue={sTooltipOfButtonWidget}
-                       maxLength={1000}
-                       onChange={(e) => this._onChangeTooltipOfButtonWidget(e.target.value)}/>
-				<br />
-                <Button className="defaultButtonMarginTop" onClick={() => {
-                    this._setTooltipOfButtonWidgetToInitial();
-                }}>{i18n.t("RevertToInitial")}</Button>
+                <TextArea maxLength={1000} style={{minHeight:68}}
+                          placeholder={i18n.t("Tooltip")} value={sTooltipOfButtonWidget}
+                          defaultValue={sTooltipOfButtonWidget}
+                          rows={3}
+                          maxLength={1000}
+                          onChange={(e) => this._onChangeTooltipOfButtonWidget(e.target.value)}/>
+                <Popconfirm key="submitConfirm" title={i18n.t("are_you_sure")} onConfirm={()=> this._setTooltipOfButtonWidgetToInitial()}
+                            okText={i18n.t("yes")}
+                            cancelText={i18n.t("no")}
+                >
+                    <Button className="defaultButtonMarginTop">{i18n.t("RevertToInitial")}</Button>
+                </Popconfirm>
                 <p style={{
                     marginTop: 12,
                     marginBottom: 0

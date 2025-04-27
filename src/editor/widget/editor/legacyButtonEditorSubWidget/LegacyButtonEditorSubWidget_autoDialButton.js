@@ -4,25 +4,12 @@ import i18n from "../../../../i18n";
 import BrekekeOperatorConsole from "../../../../index";
 import clsx from "clsx";
 import Util from "../../../../Util";
+import LegacyButtonWidgetSubData from "../../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
 
 export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyButtonEditorSubWidget  {
 
     constructor( legacyButtonEditorWidgetAsParent, legacyButtonEditorSubWidgetData  ) {
         super(  legacyButtonEditorWidgetAsParent, legacyButtonEditorSubWidgetData  );
-    }
-
-    _findWidgetUuidIndex( subWidgetDatas, subWidgetData ){
-        const widgetData = subWidgetData.getLegacyButtonWidgetDataAsParent();
-        const widgetUuid = widgetData.getWidgetUuid();
-        for( let i = 0; i < subWidgetDatas.length; i++ ){   //!optimize
-            const currentSubWidgetData = subWidgetDatas[i];
-            const currentWidgetData = currentSubWidgetData.getLegacyButtonWidgetDataAsParent();
-            const currentWidgetUuid = currentWidgetData.getWidgetUuid();
-            if( widgetUuid === currentWidgetUuid  ){
-                return i;
-            }
-        }
-        return -1;
     }
 
     //!override
@@ -45,7 +32,7 @@ export default class LegacyButtonEditorSubWidget_autoDialButton extends LegacyBu
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const subWidgetDatas = oc.getShowAutoDialWidgetSubDatas_ver2();
-        const isRedColor =  subWidgetDatas && this._findWidgetUuidIndex( subWidgetDatas, subWidgetData ) !== -1;
+        const isRedColor =  subWidgetDatas && LegacyButtonWidgetSubData.findWidgetUuidIndexFromLegacyButtonWidgetSubData( subWidgetDatas, subWidgetData ) !== -1;
 
         if( isRedColor ){
             //use default

@@ -8,6 +8,7 @@
     z-index: 113;
 	max-width:100vw;
 	max-height:calc(100vh - 60px);
+	overflow:auto;
 }
 
 .brOC .phonebookContactInfozTelsView > table {

@@ -1,5 +1,7 @@
+###### [バージョン 2.1.28]
+
 ###### [バージョン 2.1.27]
-1. Brekeke Operator Consoleについて(英語:Abouut Brekeke Operator Console)のモーダルウィンドウを表示しているときに、<br />
+1. Brekeke Operator Consoleについて(英語:About Brekeke Operator Console)のモーダルウィンドウを表示しているときに、<br />
 Brekeke Operator Consoleのメインビューへのキー入力を受け付けないようにしました。
 
 1. ボタンウィジェットのアイコンの選択を、モーダルウィンドウの一覧表示から行えるようにしました。

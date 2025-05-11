@@ -87,14 +87,18 @@ export default class LegacyButtonRuntimeSubWidget  {
                 iconWidth = nIconWidth;
             }
             else{
-                iconWidth = subWidgetData.getIconWidth();
+                if( subWidgetData.getIconWidth ) {
+                    iconWidth = subWidgetData.getIconWidth();
+                }
             }
             let iconHeight;
             if( nIconHeight ){
                 iconHeight = nIconHeight;
             }
             else {
-                iconHeight = subWidgetData.getIconHeight();
+                if( subWidgetData.getIconHeight ) {
+                    iconHeight = subWidgetData.getIconHeight();
+                }
             }
 
             const oStyle = {};

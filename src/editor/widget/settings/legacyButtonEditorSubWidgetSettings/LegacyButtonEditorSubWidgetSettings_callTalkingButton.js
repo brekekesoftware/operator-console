@@ -30,7 +30,9 @@ export default class LegacyButtonEditorSubWidgetSettings_callTalkingButton exten
             sLabel = "";
         }
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

@@ -11,15 +11,19 @@
   color: #304701;
   background-color: #A8C64E;
   box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px;
+  overflow:hidden;
 
   .brOCCallPanelRow {
     display: flex;
-    min-height: 3rem;
+    min-height: 10px;
+  }
+
+  .brOCCallPanelMainForRows{
+	margin-left:4px;
   }
 
   .brOCCallPanelDialing {
-    font-size: 1.2rem;
-    line-height: 1.2rem;
+    font-size: 16px;
     font-variant-numeric: tabular-nums;
     white-space: pre-wrap;
     word-break: break-all;
@@ -33,32 +37,40 @@
     flex-shrink: 0;
   }
   .brOCCallPanelMain {
+	align-items:center;
     flex-grow: 1;
-    margin-left: 0.25rem;
+    margin-left: 4px;
   }
-
+  
   .brOCCallPanelPartyName {
-    font-size: 1.2rem;
-    height: 1.2rem;
-    line-height: 1.2rem;
+    font-size: 17px;
+	height:17px;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .brOCCallPanelMissedCall {
+    font-size: 17px;
+    height: 17px;
     font-variant-numeric: tabular-nums;
   }
   .brOCCallPanelPartyNumber {
-    font-size: 1.2rem;
-    height: 1.2rem;
-    line-height: 1.2rem;
+    font-size: 17px;
+    height: 17px;
     font-variant-numeric: tabular-nums;
   }
   .brOCCallPanelPartyNumber_small {
-    font-size: 0.9rem;
-    height: 0.9rem;
-    line-height: 0.9rem;
+    font-size: 14px;
+    height: 14px;
     font-variant-numeric: tabular-nums;
   }
   .brOCCallPanelDuration {
-    font-size: 1.2rem;
-    height: 1.2rem;
-    line-height: 1.2rem;
+    font-size: 16px;
+    height: 16px;
     font-variant-numeric: tabular-nums;
   }
 }
+.missedCallRow-callPanel-brekeke_operatorConsole{
+    display: flex;
+    min-height: 16px;
+}
+

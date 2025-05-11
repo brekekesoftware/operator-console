@@ -2,11 +2,13 @@ import ACallInfo from "./ACallInfo";
 import PalCallInfos from "./PalCallInfos";
 import Notification from "antd/lib/notification";
 import i18n from "./i18n";
+import BrekekeOperatorConsole from "./index";
 
 export default class PalCallInfo extends ACallInfo {
 
     constructor( palCallInfosAsParent, callId, palNotifyStatusEventParam ) {
         super( palCallInfosAsParent );
+        this._isVideoEnable = false;
         this._PalCallInfosAsParent = palCallInfosAsParent;
         this._OnHoldFunctions = new Array();    //!const
         const e = palNotifyStatusEventParam;
@@ -51,6 +53,10 @@ export default class PalCallInfo extends ACallInfo {
         this._partyName = partyName;
         this._partyNumber = partyNumber;
 
+    }
+
+    isVideoEnable() {
+        return this._isVideoEnable;
     }
 
     /**
@@ -172,7 +178,7 @@ export default class PalCallInfo extends ACallInfo {
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
         phoneClient.hangup( this,
             function( res, obj){
-
+                this._isHangupSelf = true;
             },
             function( err ) {
                 console.error("Failed to hangup call. err=", err );
@@ -301,12 +307,14 @@ export default class PalCallInfo extends ACallInfo {
      *  overload method
      */
     answerCall() {
+        const this_ = this;
         this._CallInfosAsParent.getPhoneClientAsParent().answerCall( this,
             function( res, obj){
                 if( res && res.startsWith("failed")){
                     console.error("Failed to answer call. res=", res );
                     Notification.error({message: i18n.t('failedToAnswerCall') + "\r\n" + res, duration:0 });
                 }
+                BrekekeOperatorConsole.getStaticInstance().onAnsweredCallByPalCallInfo(this_);
             },
             function( err ) {
                 console.error("Failed to answer call. err=", err );

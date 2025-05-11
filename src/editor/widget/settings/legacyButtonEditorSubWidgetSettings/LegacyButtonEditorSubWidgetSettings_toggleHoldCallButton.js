@@ -6,6 +6,7 @@ import Input from "antd/lib/input";
 import {Divider} from "antd";
 import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
+import EditScreenView from "../../../EditScreenView";
 
 export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -13,8 +14,22 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onFormHoldIconSelected( icon ){
+    // _onFormHoldIconSelected( icon ){
+    //     this._LegacyButtonEditorSubWidgetData.setHoldIcon( icon );
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    // }
+
+    _onHoldIconSelected( selectIconModalAsCaller, icon ){
         this._LegacyButtonEditorSubWidgetData.setHoldIcon( icon );
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    }
+
+    _onHoldIconSelectCanceled( selectIconModalAsCaller ){
+    }
+
+    _onClickRemoveHoldIcon(ev){
+        const subWidgetData = this._LegacyButtonEditorSubWidgetData;
+        subWidgetData.setHoldIcon(null);
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -64,8 +79,22 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
-    _onFormUnholdIconSelected( icon ){
+    // _onFormUnholdIconSelected( icon ){
+    //     this._LegacyButtonEditorSubWidgetData.setUnholdIcon( icon );
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    // }
+
+    _onUnholdIconSelected( selectIconModalAsCaller, icon ){
         this._LegacyButtonEditorSubWidgetData.setUnholdIcon( icon );
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    }
+
+    _onUnholdIconSelectCanceled( selectIconModalAsCaller ){
+    }
+
+    _onClickRemoveUnholdIcon(ev){
+        const subWidgetData = this._LegacyButtonEditorSubWidgetData;
+        subWidgetData.setUnholdIcon(null);
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -134,8 +163,20 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         }
 
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
-        const holdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getHoldIcon(), this._onFormHoldIconSelected );
-        const unholdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getUnholdIcon(), this._onFormUnholdIconSelected );
+        //const holdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getHoldIcon(), this._onFormHoldIconSelected );
+        const holdIconSelectJsx = this._getSelectIconModalJsx(
+			subWidgetData.getHoldIcon(),
+			( selectIconModalAsCaller, icon ) => this._onHoldIconSelected( selectIconModalAsCaller, icon ),
+			(selectIconModalAsCaller) => this._onHoldIconSelectCanceled(selectIconModalAsCaller),
+			(ev) => this._onClickRemoveHoldIcon(ev)
+		);
+        //const unholdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getUnholdIcon(), this._onFormUnholdIconSelected );
+        const unholdIconSelectJsx = this._getSelectIconModalJsx(
+			subWidgetData.getUnholdIcon(),
+			( selectIconModalAsCaller, icon ) => this._onUnholdIconSelected( selectIconModalAsCaller, icon ),
+			(selectIconModalAsCaller) => this._onUnholdIconSelectCanceled(selectIconModalAsCaller),
+			(ev) => this._onClickRemoveUnholdIcon(ev)
+		);
         return  (
             <>
                 <Divider>{i18n.t("Hold_button_settings")}</Divider>

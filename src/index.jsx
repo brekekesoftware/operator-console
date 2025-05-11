@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.26";
+const VERSION = "2.1.27";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -124,6 +124,7 @@ import PalRestApi from "./PalRestApi";
 import ScreenPaneDatas from "./data/ScreenPaneDatas";
 import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
 import DateFormatStringFactory from "./util/DateFormatStringFactory";
+import LegacyButtonWidgetSubData from "./data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -2776,7 +2777,8 @@ const INIT_STATE = {
     currentScreenTabIndex : 0,
     isSelectingTabInEditLayout : false,
     editingTabDatas : new Array(),
-    isAboutOCModalOpen : false
+    isAboutOCModalOpen : false,
+    hasMissedCall : false
 };
 
 
@@ -2801,6 +2803,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
         const baseState = window.structuredClone(INIT_STATE);
+        this._MissedCallInfoCandidates = new Array();
+
         //const language = window.localStorage.getItem('lastLoginLanguage');
         //baseState.locale = language;
         //i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
@@ -2850,11 +2854,32 @@ export default class BrekekeOperatorConsole extends React.Component {
         return b;
     }
 
+    onAnsweredCallByWebphoneCallInfo( webphoneCallInfoAsCaller ){
+        this._onAnsweredCallByCallInfo( webphoneCallInfoAsCaller );
+    }
+
+    onAnsweredCallByPalCallInfo( palCallInfoAsCaller ){
+        this._onAnsweredCallByCallInfo( palCallInfoAsCaller );
+    }
+	
+	_onAnsweredCallByCallInfo( callInfo ){
+		const index = this._MissedCallInfoCandidates.indexOf( callInfo );
+		if( index !== -1 ){
+			this._MissedCallInfoCandidates.splice(index,1);
+			//this.setState({rerender:true});
+		}
+	}
+
+
     openAboutOCModalByState(){
+        this.addDisableKeydownToDialingCounter();
+        this.addDisablePasteToDialingCounter();
         this.setState({isAboutOCModalOpen:true});
     }
 
     closeAboutOCModalByState(){
+        this.subtractDisableKeydownToDialingCounter();
+        this.subtractDisablePasteToDialingCounter();
         this.setState({isAboutOCModalOpen:false});
     }
 
@@ -3544,6 +3569,15 @@ export default class BrekekeOperatorConsole extends React.Component {
         return tenant;
     }
 
+    getHasMissedCallFromState(){
+        const b = this.state.hasMissedCall;
+        return b;
+    }
+
+    setHasMissedCallToFalseToState(){
+        this.setState({hasMissedCall:false});
+    }
+
     getLoggedinUsername(){
         if( !this.state.loginUser ){
             return null;
@@ -3882,7 +3916,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         //console.log("onClick LegacyButtonRuntimeSubWidget_autoDialButton=" + legacyButtonRuntimeSubWidget_autoDialButton);
         const subDatas = this.getShowAutoDialWidgetSubDatas_ver2();
         const subData = legacyButtonRuntimeSubWidget_autoDialButton.getLegacyButtonSubWidgetData();
-        const index = BrekekeOperatorConsole._getIndexFromArray(subDatas, subData);
+        const index = LegacyButtonWidgetSubData.findWidgetUuidIndexFromLegacyButtonWidgetSubData( subDatas, subData );
+        //const index = BrekekeOperatorConsole._getIndexFromArray(subDatas, subData);   //Dose not work
         let becomeHide = false;
         if (index === -1) {
             //visible autoDialView_ver2
@@ -4790,8 +4825,32 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnChangeIsDTMFInputCallbacks.push(func);
     }
 
+    //On end(disconnect) call
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
-        this.setState({rerender:true} );
+
+        const bIsIncoming = callInfo.getIsIncoming();
+        const bAnswered = callInfo.getIsAnswered();
+        const bMissedCall = bIsIncoming === true && bAnswered !== true && callInfo.getIsHangupSelf() !== true;
+        let hasMissedCall = false;
+        if( bMissedCall ){
+            hasMissedCall = true;
+        }
+		else{
+            const index = this._MissedCallInfoCandidates.indexOf( callInfo );
+            this._MissedCallInfoCandidates.splice( index, 1 );
+
+            for( let i = 0; i < this._MissedCallInfoCandidates.length; i++ ){
+                const missedCallInfo = this._MissedCallInfoCandidates[i];
+                if( missedCallInfo.getIsDisconnected() ){
+                    const bMissedCall = missedCallInfo.getIsAnswered() !== true && missedCallInfo.getIsIncoming() === true && missedCallInfo.getIsHangupSelf() !== true;
+                    if( bMissedCall ){
+                        hasMissedCall = true;
+                        break;
+                    }
+                }
+            }
+		}
+        this.setState({hasMissedCall:hasMissedCall}); //With rerender
 
         this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
 
@@ -4852,6 +4911,9 @@ export default class BrekekeOperatorConsole extends React.Component {
             this._CallHistory.addCallNoAndSave( callInfo.getPartyNumber() );
         }
 
+        if( callInfo.getIsIncoming() === true ) {
+            this._MissedCallInfoCandidates.push(callInfo);
+        }
         this.setState({rerender:true});
 
         this._CallHistory2.onAddCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
@@ -5428,7 +5490,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         //     return false;
         // }
         this._aphone.callByPhoneClient(  sDialing, sUsingLine );
-
+        this.setHasMissedCallToFalseToState();
         this._resetCallInput( false, true );
         if( !dialing ) {
             this._clearDialing();
@@ -5945,6 +6007,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             };
 
             this._DefaultButtonImageFileInfos.load( loadDefaultButtonImageFileInfosOptions  );
+            //SelectIconModal.getSelectIconModalInstance().onLoadDefaultButtonImageFileInfosByOperatorConsole(this);
             this._PresetRingtoneSoundFilesInfos.load( loadPresetRingtoneSoundFilesInfosOptions );
         });
 

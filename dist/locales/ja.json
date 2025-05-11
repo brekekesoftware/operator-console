@@ -1,5 +1,11 @@
 {
   "ja": {
+ 	"There_is_a_missed_call" : "不在着信あり",
+	"RemoveIcon" : "除去",
+	"SelectAnIcon" : "アイコンを選択",
+	"Video_button" : "ビデオ ボタン",
+	"Start_video" : "ビデオを開始",
+	"Stop_video" : "ビデオを終了",
 	"RevertToInitial" : "初期に戻す",
 	"Tooltip" : "ツールチップ",
 	"Year" : "年",

@@ -18,6 +18,7 @@ import EditorWidgetSettingsFactory from "./widget/settings/EditorWidgetSettingsF
 import InputNumber from "antd/lib/input-number";
 import Dropdown from "antd/lib/dropdown";
 import {SketchPicker} from "react-color";
+import SelectIconModal from "./SelectIconModal";
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
   disable : false,
@@ -31,10 +32,11 @@ const _PROPERTIES_MODE = Object.freeze({
   tab : 2,
   widget:3
 });
-
+let _EDIT_SCREEN_VIEW_INSTANCE = null;
 export default class EditScreenView extends React.Component {
   constructor( props ) {
     super( props );
+    _EDIT_SCREEN_VIEW_INSTANCE = this;
     this._OperatorConsoleAsParent = props["operatorConsoleAsParent"];
     this.state = {
       settingsContainerOrDivider:null,
@@ -46,6 +48,10 @@ export default class EditScreenView extends React.Component {
     this._RootPaneData = rootPaneData;
     //const rootPaneData = this._OperatorConsoleAsParent.getOperatorConsoleData().getScreenData().addPaneData();
     //this._RootPaneData = rootPaneData;
+  }
+
+  static getEditScreenViewInstance(){
+    return _EDIT_SCREEN_VIEW_INSTANCE;
   }
 
   getOperatorConsoleAsParent(){
@@ -369,6 +375,8 @@ export default class EditScreenView extends React.Component {
   render() {
     const settingsAreaJsx = this._getSettingsAreaJsx();
     return (
+        <>
+        <SelectIconModal editScreenViewAsParent={this} />
         <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
           <div style={{display: "flex", alignItems: "center",height:"47ox"}}>
             <div style={{width:"240px"}}>
@@ -450,6 +458,7 @@ export default class EditScreenView extends React.Component {
             </div>
           </div>
         </div>
+        </>
     )
   }
 

@@ -29,7 +29,9 @@ export default class LegacyButtonEditorSubWidgetSettings_startButton extends Leg
             sLabel = "";
         }
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

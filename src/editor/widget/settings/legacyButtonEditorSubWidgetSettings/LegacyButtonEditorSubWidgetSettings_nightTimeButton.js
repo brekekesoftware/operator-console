@@ -29,7 +29,9 @@ export default class LegacyButtonEditorSubWidgetSettings_nightTimeButton extends
             sLabel = "";
         }
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

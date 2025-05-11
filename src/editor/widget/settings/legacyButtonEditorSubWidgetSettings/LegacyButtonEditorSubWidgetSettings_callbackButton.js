@@ -28,7 +28,9 @@ export default class LegacyButtonEditorSubWidgetSettings_callbackButton extends 
             sLabel = "";
         }
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

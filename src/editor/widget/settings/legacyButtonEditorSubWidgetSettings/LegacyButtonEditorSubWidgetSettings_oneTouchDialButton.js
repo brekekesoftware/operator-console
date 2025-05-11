@@ -43,7 +43,9 @@ export default class LegacyButtonEditorSubWidgetSettings_oneTouchDialButton exte
         const sNumber = this._LegacyButtonEditorSubWidgetData.getNumber() ? this._LegacyButtonEditorSubWidgetData.getNumber() : "";
         const onetouchdialMode = this._LegacyButtonEditorSubWidgetData.getOnetouchdialMode() ? this._LegacyButtonEditorSubWidgetData.getOnetouchdialMode() : "callOnly";
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

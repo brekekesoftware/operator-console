@@ -1,11 +1,15 @@
 import React from 'react';
-import {Select} from "antd";
+import {Button, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BrekekeOperatorConsole from "../../../../index";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {far} from "@fortawesome/free-regular-svg-icons";
 import {fab} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import EditScreenView from "../../../EditScreenView";
+import SelectIconModal from "../../../SelectIconModal";
+import i18n from "../../../../i18n";
+import "./LegacyButtonEditorSubWidgetSettings.css";
 
 //!abstract
 export default class LegacyButtonEditorSubWidgetSettings{
@@ -19,6 +23,85 @@ export default class LegacyButtonEditorSubWidgetSettings{
         throw new Error("Not implemented.");
     }
 
+    _onOkSelectIconModal(selectIconModalAsCaller, selectedIconValue){
+        if( selectedIconValue ) {
+            const subWidgetData = this._LegacyButtonEditorSubWidgetData;
+            subWidgetData.setIcon(selectedIconValue);
+            const esv = EditScreenView.getEditScreenViewInstance();
+            esv.setState({rerender: true});
+        }
+    }
+
+    _onCancelSelectIconModal(selectIconModalAsCaller){
+
+    }
+
+    _onClickSelectIconModalButton( ev, iconValue, okFunction = null, cancelFunction = null ){
+
+        let okFunc = okFunction;
+        if( !okFunc ){
+            okFunc = (selectIconModalAsCaller, selectedIconValue) => this._onOkSelectIconModal( selectIconModalAsCaller,selectedIconValue );
+        }
+
+        let cancelFunc = cancelFunction;
+        if( !cancelFunc ){
+            cancelFunc = (selectIconModalAsCaller) => this._onCancelSelectIconModal(selectIconModalAsCaller);
+        }
+
+        const selectIconModal = SelectIconModal.getSelectIconModalInstance();
+        const args = {
+            selectedIconValue:iconValue,
+            onOkFunction: (selectIconModalAsCaller, selectedIconValue) => okFunc(selectIconModalAsCaller, selectedIconValue),
+            onCancelFunction: (selectIconModalAsCaller) => cancelFunc(selectIconModalAsCaller)
+        };
+        selectIconModal.setSelectIconModalVisibleToState(args);
+    }
+
+    _onClickRemoveIcon(ev){
+        const subWidgetData = this._LegacyButtonEditorSubWidgetData;
+        subWidgetData.setIcon(null);
+        const esv = EditScreenView.getEditScreenViewInstance();
+        esv.setState({rerender:true});
+    }
+
+    _getSelectIconModalJsx( sIcon = null, okFunction = null, cancelFunction = null, onClickRemoveIconButtonFunction = null  ){
+        const subWidgetData = this._LegacyButtonEditorSubWidgetData;
+        if( !sIcon && subWidgetData.getIcon ) {
+            sIcon = subWidgetData.getIcon();
+        }
+        let iconJsx;
+        if( sIcon ){
+            if( sIcon.startsWith("PATH:") ){
+                const src = sIcon.substring(5,sIcon.length);
+                iconJsx = <img src={src} alt={sIcon} title={sIcon} className="imageIconImage_LegacyButtonEditorSubWidgetSettings" />;
+            }
+            else{
+                iconJsx = <FontAwesomeIcon icon={sIcon} className="FontAwesomeIconImage_LegacyButtonEditorSubWidgetSettings" />
+            }
+        }
+        else{
+            iconJsx = (null);
+        }
+
+        let  onClickRemoveIconButtonFunction_ = onClickRemoveIconButtonFunction;
+        if( !onClickRemoveIconButtonFunction_ ){
+            onClickRemoveIconButtonFunction_ = (ev) => this._onClickRemoveIcon(ev);
+        }
+
+        return (
+            <>
+                <div>
+                    {iconJsx}
+                </div>
+                <div className="brOCMarginTopButtonToElement_short">
+                    <Button onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
+                    <Button className="brOCMarginLeftButtonToButton" onClick={(ev) => onClickRemoveIconButtonFunction_(ev) } disabled={!sIcon}>{ i18n.t("RemoveIcon")}</Button>
+                </div>
+            </>
+        );
+    }
+
+    //Don't use it anymore
   _getIconSelectJsx( strIcon, evOnFormIconSelected, bGetIconDisabled ){
 
     //const operatorConsoleAsParent = this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().getOperatorConsoleAsParent();

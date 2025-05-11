@@ -112,7 +112,9 @@ export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends
         const  sKeypadAsterisk = this._LegacyButtonEditorSubWidgetData.getKeypadAsterisk() ? this._LegacyButtonEditorSubWidgetData.getKeypadAsterisk() : "";
         const  sKeypadSharp = this._LegacyButtonEditorSubWidgetData.getKeypadSharp() ? this._LegacyButtonEditorSubWidgetData.getKeypadSharp() : "";
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
                 <>

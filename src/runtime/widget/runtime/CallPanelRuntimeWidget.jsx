@@ -3,6 +3,7 @@ import RuntimeWidget from "./RuntimeWidget";
 import {IconKeyboard, IconPhoneIncoming, IconPhoneOutgoing} from "../../../icons";
 import BrekekeOperatorConsole from "../../../index";
 import Util from "../../../Util";
+import i18n from "../../../i18n";
 
 function formatSecondsToHHMMSS (seconds) {
     const secondsNum = Math.floor( seconds );
@@ -80,6 +81,7 @@ export default class CallPanelRuntimeWidget extends RuntimeWidget{
 
         const partyName = currentCallInfo?.getPartyName();
         const hasPartyName = partyName && partyName.length !== 0;
+        const bHasMissedCall = oc.getHasMissedCallFromState();
         return (
             <div className="brOCCallPanel" style={{
                 borderRadius: callpanelBorderRadius,
@@ -87,13 +89,22 @@ export default class CallPanelRuntimeWidget extends RuntimeWidget{
                 boxShadow: sBoxShadow,
                 color: callpanelFgColor
             }}>
+                {bHasMissedCall && (<div className={"missedCallRow-callPanel-brekeke_operatorConsole"}>
+                    <div className="brOCCallPanelLeft">
+                        {IconPhoneIncoming}
+                    </div>
+                    <div className="brOCCallPanelMain">
+                        <div className="brOCCallPanelMissedCall">{i18n.t("There_is_a_missed_call")}</div>
+                    </div>
+                </div>)}
                 <div className="brOCCallPanelRow">
                     <div className="brOCCallPanelLeft">
                         {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
                     </div>
-                    <div className="brOCCallPanelMain">
-                        { hasPartyName && <div className="brOCCallPanelPartyName">{partyName}</div> }
-                        <div className={ hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber" }>{currentCallInfo?.getPartyNumber()}</div>
+                    <div className="brOCCallPanelMainForRows">
+                        {hasPartyName && <div className="brOCCallPanelPartyName">{partyName}</div>}
+                        <div
+                            className={hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber"}>{currentCallInfo?.getPartyNumber()}</div>
                         <div className="brOCCallPanelDuration">{this.state.duration}</div>
                     </div>
                 </div>

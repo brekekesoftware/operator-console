@@ -2,6 +2,7 @@ import ACallInfo from "./ACallInfo";
 import Notification from "antd/lib/notification";
 import i18n from "./i18n";
 import PalCallInfos from "./PalCallInfos";
+import BrekekeOperatorConsole from "./index";
 
 export default class WebphoneCallInfo extends ACallInfo {
 
@@ -27,8 +28,29 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
         this._setHolding = callObject.setHolding;
+        this._CallObject = callObject;
+        this._isVideoEnable = true;
+    }
 
+    isVideoEnable() {
+        return this._isVideoEnable;
+    }
 
+    isVideoActive(){
+        const b = this._isVideoActive;
+        return b;
+    }
+
+    startVideo(){
+        const callObject = this._CallObject;
+        callObject.videoStreamActive = true;
+        this._isVideoActive = true;
+    }
+
+    stopVideo(){
+        const callObject = this._CallObject;
+        callObject.videoStreamActive = false;
+        this._isVideoActive = false;
     }
 
     /**
@@ -193,6 +215,7 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     hangup(){
         this._hangup();
+        this._isHangupSelf = true;
         //const cl = this._WebphoneCallInfosAsParent.getWebphonePhoneClientAsParent();
         //cl.hangup( this );
     }
@@ -202,6 +225,7 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     answerCall() {
         this._answer();
+        BrekekeOperatorConsole.getStaticInstance().onAnsweredCallByWebphoneCallInfo(this);
     }
 
     /**

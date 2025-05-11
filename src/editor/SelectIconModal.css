@@ -1,0 +1,80 @@
+div.SelectIconModal-brekeke_operatorConsole{
+}
+
+div.SelectIconModal-brekeke_operatorConsole div.ant-modal-content{
+	height:100%;
+}
+
+div.SelectIconModal-brekeke_operatorConsole div.ant-modal-body{
+	height:calc(100% - 64px);
+}
+
+
+
+div.selectIconModal_container-brekeke_operatorConsole_editor_SelectIconModal {
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    width: 100%;
+    height: calc(100% - 32px);
+    overflow: auto;
+}
+
+div.selectIconModal_fontAwesomeIcon-brekeke_operatorConsole_editor_SelectIconModal,
+div.selectIconModal_fileIcon-brekeke_operatorConsole_editor_SelectIconModal
+{
+	width: 64px;
+	height:min-content;
+    margin: 1px;
+    cursor:pointer;
+}
+
+div.selectIconModal_fontAwesomeIcon-brekeke_operatorConsole_editor_SelectIconModal:hover,
+div.selectIconModal_fileIcon-brekeke_operatorConsole_editor_SelectIconModal:hover
+{
+    background-color: #DDDDDD;
+}
+
+p.selectIconModal_fontAwesomeIconName-brekeke_operatorConsole_editor_SelectIconModal,
+p.selectIconModal_fileIconName-brekeke_operatorConsole_editor_SelectIconModal{
+    word-break:break-all;
+    margin:0;
+}
+
+img.selectIconModal_fileIconImage-brekeke_operatorConsole_editor_SelectIconModal
+{
+	width:64px;
+	height:64px;
+    vertical-align:middle;
+}
+
+.selectIconModal_fontAwesomeIconImage-brekeke_operatorConsole_editor_SelectIconModal{
+	width:64px !important;
+	height:64px;
+}
+
+.SelectIconModal_modal-brekeke_operatorConsole_editor_SelectIconModal{
+	width:80%;
+	height:80%;
+}
+
+div.selectIconModal_fileIcon_selected-brekeke_operatorConsole_editor_SelectIconModal,
+div.selectIconModal_fontAwesomeIcon_selected-brekeke_operatorConsole_editor_SelectIconModal {
+    border:2px solid #FF0000;
+    box-sizing: content-box;
+	border-radius:4px;
+	background-color:#FFDDDD;
+}
+
+div.SelectIconModal_modal-brekeke_operatorConsole_editor_SelectIconModal > div{
+	height:100%;
+}
+
+.SelectIconModal_filterTextInput-brekeke_operatorConsole_editor_SelectIconModal{
+	width:90%
+}
+
+div.SelectIconModal_modal-brekeke_operatorConsole_editor_SelectIconModal{
+	top:20px;
+	height:calc(100vh - 20px);
+}	

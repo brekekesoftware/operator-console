@@ -4,6 +4,8 @@ import LegacyButtonRuntimeSubWidgetFactory from "./legacyButtonRuntimeSubWidget/
 import i18n from "../../../i18n";
 import BrekekeOperatorConsole from "../../../index";
 import Util from "../../../Util";
+import Popconfirm from "antd/lib/popconfirm";
+import ACallInfo from "../../../ACallInfo";
 const CELL_MARGIN = 4;
 export default class CallTableRuntimeWidget extends RuntimeWidget{
 
@@ -25,7 +27,7 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         // const callTableTbodyRowHeight = 44;
         const callTableTheadRowHeight = callTableThFontSize + CELL_MARGIN;
         const callTableTbodyRowHeight = callTableTdFontSize + CELL_MARGIN;
-        
+
         let idKey = 0;
 
         const CallTableColumns = [  //!overhead
@@ -45,6 +47,14 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         //const activeButtonCellWidth = 50;
         const activeButtonCellHeight = activeButtonHeight + CELL_MARGIN;;
         const activeButtonFontSize = widgetData.getCalltableActiveButtonFontSize() ? widgetData.getCalltableActiveButtonFontSize() :  9;
+
+        //!temp
+        const videoButtonWidth = 42;   //!default
+        const videoButtonHeight = 42;   //!default
+        //const videoButtonCellWidth = videoButtonWidth + CELL_MARGIN;
+        //const videoButtonCellWidth = 50;
+        const videoButtonCellHeight = activeButtonHeight + CELL_MARGIN;
+        const videoButtonFontSize = 9;
 
         const outerBorderRadius = ( widgetData.getCalltableOuterBorderRadius() || widgetData.getCalltableOuterBorderRadius() === 0 ) ? widgetData.getCalltableOuterBorderRadius() : 0; //!default
         const outerBorderThickness = ( widgetData.getCalltableOuterBorderThickness() || widgetData.getCalltableOuterBorderThickness() === 0 ) ? widgetData.getCalltableOuterBorderThickness() : 0; //!default
@@ -69,55 +79,70 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                 }}>
                     <thead>
                     <tr style={{
-                        color:headerFgColor,
-                        borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
-                        display:"table-row",
-                        tableLayout:"unset",
-                        height:callTableTheadRowHeight
+                        color: headerFgColor,
+                        borderBottom: headerRowUnderlineThickness + "px solid " + headerRowUnderlineColor,
+                        display: "table-row",
+                        tableLayout: "unset",
+                        height: callTableTheadRowHeight
                     }}>
-                        {CallTableColumns.map((item, i ) => {
+                        {CallTableColumns.map((item, i) => {
                             const key = item.key;
                             const title = item.title;
 
                             let borderRadiusTH;
                             const isFirstTH = i === 0;
-                            if( isFirstTH === true ){
-                                borderRadiusTH =  outerBorderRadius +  "px 0 0 0";
-                            }
-                            else{
-                                borderRadiusTH =  "";   //"0"
+                            if (isFirstTH === true) {
+                                borderRadiusTH = outerBorderRadius + "px 0 0 0";
+                            } else {
+                                borderRadiusTH = "";   //"0"
                             }
 
                             return <th key={key}
                                        style={{
-                                           paddingTop:0,
-                                           paddingBottom:0,
-                                           borderRadius:borderRadiusTH,
-                                           fontSize:callTableThFontSize
-                                       }}>{title}</th>;})
+                                           paddingTop: 0,
+                                           paddingBottom: 0,
+                                           borderRadius: borderRadiusTH,
+                                           fontSize: callTableThFontSize
+                                       }}>{title}</th>;
+                        })
                         }
                         <th style={{
                             // width:activeButtonCellWidth,
-                            height:activeButtonCellHeight,
-                            paddingTop:0,
-                            paddingBottom:0,
-                            borderRadius:"0 " + outerBorderRadius + "px 0 0",
-                            fontSize:callTableThFontSize
+                            height: activeButtonCellHeight,
+                            paddingTop: 0,
+                            paddingBottom: 0,
+                            borderRadius: "0 " + outerBorderRadius + "px 0 0",
+                            fontSize: callTableThFontSize
                         }}>{i18n.t("activeButton")}</th>
+                        {/*<th style={{*/}
+                        {/*    // width:activeButtonCellWidth,*/}
+                        {/*    height: videoButtonCellHeight,*/}
+                        {/*    paddingTop: 0,*/}
+                        {/*    paddingBottom: 0,*/}
+                        {/*    borderRadius: "0 " + outerBorderRadius + "px 0 0",*/}
+                        {/*    fontSize: callTableThFontSize*/}
+                        {/*}}>{i18n.t("Video_button")}</th>*/}
                     </tr>
                     </thead>
                     <tbody style={{
-                        color:bodyFgColor,
-                        display:"table-row-group"
+                        color: bodyFgColor,
+                        display: "table-row-group"
                     }}>
                     {callInfoArray.map((callInfo, i) => {
+                        const isCurrentCallIndex = i === currentCallIndex;
+
                         let tdActive;
-                        if( i === currentCallIndex ){
+                        if (isCurrentCallIndex) {
                             tdActive = "\u00A0";
                         }
                         else{
                             tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
                         }
+
+                        const callStatus = callInfo.getCallStatus();
+                        const isStartVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === false;
+                        const isStopVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === true;
+
                         return (<tr key={idKey++} style={{
                             color: bodyFgColor,
                             backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
@@ -165,6 +190,32 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                             }}>
                                 {tdActive}
                             </td>
+                            {/*<td>*/}
+                            {/*    { isStartVideoButtonEnable === true && (*/}
+                            {/*        <Popconfirm title={i18n.t("are_you_sure")}*/}
+                            {/*                    onConfirm={() => {*/}
+                            {/*                        callInfo.startVideo();*/}
+                            {/*                        oc.setState({rerender:true});*/}
+                            {/*                    }}*/}
+                            {/*                    okText={i18n.t("yes")}*/}
+                            {/*                    cancelText={i18n.t("no")}*/}
+                            {/*        >*/}
+                            {/*            <div style={{width:videoButtonWidth,height:videoButtonHeight,margin:"0 auto"}}><button className="kbc-button kbc-button-fill-parent" style={{fontSize:videoButtonFontSize}} >{i18n.t("Start_video")}</button></div>*/}
+                            {/*        </Popconfirm>*/}
+                            {/*    )}*/}
+                            {/*    { isStopVideoButtonEnable === true && (*/}
+                            {/*        <Popconfirm title={i18n.t("are_you_sure")}*/}
+                            {/*                    onConfirm={() =>{*/}
+                            {/*                        callInfo.stopVideo();*/}
+                            {/*                        oc.setState({rerender:true});*/}
+                            {/*                    }}*/}
+                            {/*                    okText={i18n.t("yes")}*/}
+                            {/*                    cancelText={i18n.t("no")}*/}
+                            {/*        >*/}
+                            {/*            <div style={{width:videoButtonWidth,height:videoButtonHeight,margin:"0 auto"}}><button className="kbc-button kbc-button-fill-parent" style={{fontSize:videoButtonFontSize}} >{i18n.t("Stop_video")}</button></div>*/}
+                            {/*        </Popconfirm>*/}
+                            {/*    )}*/}
+                            {/*</td>*/}
                         </tr>);
                     })}
                     <tr colSpan={cellCount}></tr>

@@ -8,6 +8,34 @@ export default class ACallInfo {
         this._CallInfosAsParent = callInfosAsParent;
         this._CallInfoUuid = uuidv4();
         this._isTransferring = false;
+        this._isHangupSelf = false;
+        this._isDisconnected = false;
+        this._isVideoActive = false;
+    }
+
+    isVideoActive(){
+        const b = this._isVideoActive;
+        return b;
+    }
+
+    isVideoEnable() {
+        throw new Error("Not implemented.");
+    }
+
+    getIsHangupSelf(){
+        return this._isHangupSelf;
+    }
+
+    setIsDisconnectedToTrue(){
+        if( this._isDisconnected === true ){
+            console.error("IsDisconnected is already true! callInfoUuid=" + this._CallInfoUuid );
+            return;
+        }
+        this._isDisconnected = true;
+    }
+
+    getIsDisconnected(){
+        return this._isDisconnected;
     }
 
     /**

@@ -43,7 +43,9 @@ export default class LegacyButtonEditorSubWidgetSettings_parkCallButton extends 
             sNumber = "";
         }
 
-        const iconSelectJsx = this._getIconSelectJsx();
+        //const iconSelectJsx = this._getIconSelectJsx();
+        const iconSelectJsx = this._getSelectIconModalJsx();
+
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
             <>

@@ -180,6 +180,7 @@ export default class ACallInfos{
         if( !callInfo ){
             return;
         }
+        callInfo.setIsDisconnectedToTrue();
 
         const removeCallIndex = this.getCallIndexByCallId(callId);
 

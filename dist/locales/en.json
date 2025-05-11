@@ -1,5 +1,11 @@
 {
   "en": {
+	"There_is_a_missed_call" : "There is a missed call",
+	"RemoveIcon" : "Remove",
+	"SelectAnIcon" : "Select an icon",
+	"Video_button" : "Video button",
+	"Start_video" : "Start video",
+	"Stop_video" : "Stop video",
 	"RevertToInitial" : "Revert to initial",
 	"Tooltip" : "Tooltip",
 	"Year" : "Year",

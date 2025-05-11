@@ -322,13 +322,19 @@ export default class AutoDialView_ver2 extends React.Component {
         // }
     }
 
+    _getArrayTabs(){
+        const tabs = document.getElementsByClassName('tab');
+        const arrayTabs = Array.prototype.slice.call(tabs);
+        return arrayTabs;
+    }
+
     _tabSwitchMain(tgt){
         document.getElementsByClassName('is-active')[0].classList.remove('is-active');
         tgt.classList.add('is-active');
 
         document.getElementsByClassName('is-show')[0].classList.remove('is-show');
         const tabs = document.getElementsByClassName('tab');
-        const arrayTabs = Array.prototype.slice.call(tabs);
+        const arrayTabs = this._getArrayTabs();
         const index = arrayTabs.indexOf(tgt);
         document.getElementsByClassName('panel')[index].classList.add('is-show');
         //this._resetAutoDialViewRightStyleToElementForBug();
@@ -341,6 +347,8 @@ export default class AutoDialView_ver2 extends React.Component {
         //     eTable.style.position = "relative";
         //     eTable.style.visibility = "unset";
         // },1000);
+        this._checkMissedCall();
+
     }
 
     _onClickClose(){
@@ -1425,6 +1433,24 @@ export default class AutoDialView_ver2 extends React.Component {
         this.setState({rerender:true});
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        this._checkMissedCall();
+    }
+
+    _checkMissedCall(){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        if( oc.getHasMissedCallFromState() === true ){
+            const eRecentTab = document.getElementById("tabA_AutoDialView_ver2_brOC");
+            if( eRecentTab ) {
+                const bContain = eRecentTab.classList.contains("is-active");
+                if (bContain) {
+                    oc.setHasMissedCallToFalseToState();
+                    //this.setState({rerender:true});
+                }
+            }
+        }
+    }
+
     render() {
         const oc = BrekekeOperatorConsole.getStaticInstance();
         if (!this.props.isVisible ) {
@@ -1471,9 +1497,6 @@ export default class AutoDialView_ver2 extends React.Component {
                 toDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
             }
         }
-
-
-
 
 
         return (<>

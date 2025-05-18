@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.27";
+const VERSION = "2.1.28";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -4827,30 +4827,30 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     //On end(disconnect) call
     onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
+        if( this.state.hasMissedCall !== true ) {
+            const bIsIncoming = callInfo.getIsIncoming();
+            const bAnswered = callInfo.getIsAnswered();
+            const bMissedCall = bIsIncoming === true && bAnswered !== true && callInfo.getIsHangupSelf() !== true;
+            let hasMissedCall = false;
+            if (bMissedCall) {
+                hasMissedCall = true;
+            } else {
+                const index = this._MissedCallInfoCandidates.indexOf(callInfo);
+                this._MissedCallInfoCandidates.splice(index, 1);
 
-        const bIsIncoming = callInfo.getIsIncoming();
-        const bAnswered = callInfo.getIsAnswered();
-        const bMissedCall = bIsIncoming === true && bAnswered !== true && callInfo.getIsHangupSelf() !== true;
-        let hasMissedCall = false;
-        if( bMissedCall ){
-            hasMissedCall = true;
-        }
-		else{
-            const index = this._MissedCallInfoCandidates.indexOf( callInfo );
-            this._MissedCallInfoCandidates.splice( index, 1 );
-
-            for( let i = 0; i < this._MissedCallInfoCandidates.length; i++ ){
-                const missedCallInfo = this._MissedCallInfoCandidates[i];
-                if( missedCallInfo.getIsDisconnected() ){
-                    const bMissedCall = missedCallInfo.getIsAnswered() !== true && missedCallInfo.getIsIncoming() === true && missedCallInfo.getIsHangupSelf() !== true;
-                    if( bMissedCall ){
-                        hasMissedCall = true;
-                        break;
+                for (let i = 0; i < this._MissedCallInfoCandidates.length; i++) {
+                    const missedCallInfo = this._MissedCallInfoCandidates[i];
+                    if (missedCallInfo.getIsDisconnected()) {
+                        const bMissedCall = missedCallInfo.getIsAnswered() !== true && missedCallInfo.getIsIncoming() === true && missedCallInfo.getIsHangupSelf() !== true;
+                        if (bMissedCall) {
+                            hasMissedCall = true;
+                            break;
+                        }
                     }
                 }
             }
-		}
-        this.setState({hasMissedCall:hasMissedCall}); //With rerender
+            this.setState({hasMissedCall:hasMissedCall}); //With rerender
+        }
 
         this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
 
@@ -5490,7 +5490,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         //     return false;
         // }
         this._aphone.callByPhoneClient(  sDialing, sUsingLine );
-        this.setHasMissedCallToFalseToState();
+        //this.setHasMissedCallToFalseToState();
         this._resetCallInput( false, true );
         if( !dialing ) {
             this._clearDialing();

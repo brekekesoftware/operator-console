@@ -183,7 +183,14 @@ function TransferButton({ callInfo, title,
     const [modalOpen, setModalOpen] = useState(null);
     const showModal = ({ camponExtension, callInfo, title } ) => {
         setModalOpen( {camponExtension, callInfo, title } );
+        oc.addDisableKeydownToDialingCounter();
+        oc.addDisablePasteToDialingCounter();
     };
+    const closeModal = () =>{
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
+        setModalOpen(null); //close modal
+    }
 
     const handleBlindTransferNow = () =>{
         const transferMode =  "attended";
@@ -208,7 +215,7 @@ function TransferButton({ callInfo, title,
                 }
             }
         );
-        setModalOpen(null); //close modal
+        closeModal();
     };
 
     const handleAttendedTransferNowWithSwitchCall = () =>{
@@ -278,11 +285,11 @@ function TransferButton({ callInfo, title,
                 }
             }
         );
-        setModalOpen(null); //close modal
+        closeModal();
     };
 
     const handleModalCancel = () => {
-        setModalOpen(null); //close modal
+        closeModal();
     };
 
     const handleOpenChange = (flag) => {
@@ -292,10 +299,17 @@ function TransferButton({ callInfo, title,
     const [modalForBusyOpen, setModalForBusyOpen] = useState(null);
     const showModalForBusy = ({ camponExtension, callInfo, title } ) => {
         setModalForBusyOpen( {camponExtension, callInfo, title } );
+        oc.addDisableKeydownToDialingCounter();
+        oc.addDisablePasteToDialingCounter();
     };
+    const closeModalForBusy = ()=>{
+        setModalForBusyOpen(null);
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
+    }
 
     const handleModalForBusyCancel = () => {
-        setModalForBusyOpen(null);
+        closeModalForBusy();
     };
 
     const handleCamponBlind = () =>{
@@ -304,7 +318,7 @@ function TransferButton({ callInfo, title,
     }
 
     const _handleCampon = ( isBlindTransfer ) =>{
-        setModalForBusyOpen(null);  //close modal
+        closeModalForBusy();
 
         const callInfo = modalForBusyOpen.callInfo;
         const camponExtension = modalForBusyOpen.camponExtension;
@@ -325,7 +339,7 @@ function TransferButton({ callInfo, title,
     }
 
     const _handleshowSelectTransferMethodModalOk = () => {
-        setModalOpen(null); //close modal
+        closeModal();
 
         const eAttendedTransferCallWithSwitchCall = document.getElementById("attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC");
         const bAttendedTransferWithSwitchCall =  eAttendedTransferCallWithSwitchCall.checked;
@@ -384,6 +398,7 @@ function TransferButton({ callInfo, title,
                 title={i18n.t("Select_a_transfer_method")}
                 onOk={_handleshowSelectTransferMethodModalOk}
                 onCancel={handleModalCancel}
+                maskClosable = {false}
             >
                 {/*//!warn //!forBug These ID are not unique.*/}
                 <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
@@ -435,6 +450,7 @@ function TransferButton({ callInfo, title,
                 width={700}
                 onOk={handleCamponBlind}
                 onCancel={handleModalForBusyCancel}
+                maskClosable = {false}
                 footer={[
                     <div key="1" style={{whiteSpace:"nowrap"}}>
                         <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponAttended} className="brOCMarginLeftButtonToButton">

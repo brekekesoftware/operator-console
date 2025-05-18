@@ -40,6 +40,7 @@ export default function OpenLayoutModalForNoScreensView(props ) {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={footer}
+        maskClosable={false}
     >
         {noteNamesContent}
     </Modal> );

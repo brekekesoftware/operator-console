@@ -7,6 +7,7 @@ import AutoDialView_ver2 from "./AutoDialView_ver2";
 import QuickBusy_ver2 from "./QuickBusy_ver2";
 import {Modal} from "antd";
 import i18n from "../i18n";
+import BrekekeOperatorConsole from "../index";
 
 export default class RuntimeScreenView_ver2 extends React.Component{
 
@@ -21,7 +22,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
   }
 
   _handleshowSelectCallingMethodModalOk(){
-    this.setState({showSelectCallingMethodModal: false});
+    //this.setState({showSelectCallingMethodModal: false});
 
     let dialing;
     if( this.state.dialingForSelectCallingMethodModal ){
@@ -99,6 +100,15 @@ export default class RuntimeScreenView_ver2 extends React.Component{
     //   }
     // }
     this.setState({showSelectCallingMethodModal: b, dialingForSelectCallingMethodModal : dialing});
+    const oc = BrekekeOperatorConsole.getStaticInstance();
+    if( b ){
+      oc.addDisableKeydownToDialingCounter();
+      oc.addDisablePasteToDialingCounter();
+    }
+    else{
+      oc.subtractDisableKeydownToDialingCounter();
+      oc.subtractDisablePasteToDialingCounter();
+    }
   }
 
 
@@ -121,7 +131,9 @@ export default class RuntimeScreenView_ver2 extends React.Component{
             <QuickBusy_ver2 />
             <Modal title={i18n.t("Select_a_calling_method_TITLE")} open={this.state.showSelectCallingMethodModal}
                    onOk={() => this._handleshowSelectCallingMethodModalOk()}
-                   onCancel={() => this._handleshowSelectCallingMethodModalCancel()}>
+                   onCancel={() => this._handleshowSelectCallingMethodModalCancel()}
+                   maskClosable={false}
+            >
               <p><input type="radio" name="selectCallingMethod_RuntimeScreenView_ver2_brOC"
                         id="attendedTransferCall_selectCallingMethod_RuntimeScreenView_ver2_brOC"
                         value="attendedTransferCall"

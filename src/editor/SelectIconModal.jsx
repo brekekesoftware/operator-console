@@ -24,23 +24,39 @@ export  default class SelectIconModal extends React.Component{
             onCancelFunction : null
         };
         this._FontAwesomeIconArray = new Array(); //Value is Object({fontAwesomeIcon,iconName,iconNameUpperCase,iconValue})
+
+        const arIconNames = new Array();
         const arFas = Object.values(fas);
         for( let i = 0; i < arFas.length; i++){
             const fontAwesomeIcon = arFas[i];
-            const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject( fontAwesomeIcon );
-            this._FontAwesomeIconArray.push( oFontAwesomeIcon );
+            if( arIconNames.includes( fontAwesomeIcon.iconName ) !== true ) {
+                const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject( fontAwesomeIcon );
+                this._FontAwesomeIconArray.push(oFontAwesomeIcon);
+                arIconNames.push(fontAwesomeIcon.iconName);
+            }
         }
+
+        arIconNames.length = 0;
         const arFar = Object.values(far);
+        const arFarIconNames = new Array();
         for( let i = 0; i < arFar.length; i++){
             const fontAwesomeIcon = arFar[i];
-            const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject( fontAwesomeIcon );
-            this._FontAwesomeIconArray.push( oFontAwesomeIcon );
+            if( arIconNames.includes( fontAwesomeIcon.iconName ) !== true ) {
+                const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject( fontAwesomeIcon );
+                this._FontAwesomeIconArray.push(oFontAwesomeIcon);
+                arIconNames.push(fontAwesomeIcon.iconName);
+            }
         }
+
+        arIconNames.length = 0;
         const arFab = Object.values(fab);
         for( let i = 0; i < arFab.length; i++){
             const fontAwesomeIcon = arFab[i];
-            const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject( fontAwesomeIcon );
-            this._FontAwesomeIconArray.push( oFontAwesomeIcon );
+            if( arIconNames.includes( fontAwesomeIcon.iconName ) !== true ) {
+                const oFontAwesomeIcon = SelectIconModal._createFontAwesomeIconObject(fontAwesomeIcon);
+                this._FontAwesomeIconArray.push(oFontAwesomeIcon);
+                arIconNames.push(fontAwesomeIcon.iconName);
+            }
         }
 
         this._DefaultButtonFileIcons = new Array(); //Value is Object({fileInfo,iconName,iconNameUpperCase,iconValue})
@@ -115,6 +131,11 @@ export  default class SelectIconModal extends React.Component{
                 const eInput = document.getElementById("SelectIconModal_filterTextInput-brekeke_operatorConsole_editor_SelectIconModal");
                 eInput.focus();
             });
+        if( this.state.isVisible !== true ) {
+            const oc = BrekekeOperatorConsole.getStaticInstance();
+            oc.addDisableKeydownToDialingCounter();
+            oc.addDisablePasteToDialingCounter();
+        }
     }
 
     getSelectedIconValueFromState(){
@@ -153,6 +174,9 @@ export  default class SelectIconModal extends React.Component{
                 onCancelFunction( this );
             }
         });
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
     }
 
     _onOkModal(){
@@ -163,6 +187,9 @@ export  default class SelectIconModal extends React.Component{
                 onOkFunction( this, selectedIconValue);
             }
         });
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
     }
 
     render( props ){
@@ -218,6 +245,7 @@ export  default class SelectIconModal extends React.Component{
 				className="SelectIconModal_modal-brekeke_operatorConsole_editor_SelectIconModal"
                 wrapClassName="SelectIconModal-brekeke_operatorConsole"
                 width="calc(100vw - 40px)"
+                maskClosable={false}
             >
                 <div>
                     {i18n.t("Filter")}:

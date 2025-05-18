@@ -370,6 +370,7 @@ function TransferButton({ context, lineInfo, callInfo, title,
             onOk={handleBlindTransferNow}
             onCancel={handleModalCancel}
             width={700}
+            maskClosable={false}
             footer={[
                 <div key="0" style={{whiteSpace:"nowrap"}}>
                     <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>
@@ -392,6 +393,7 @@ function TransferButton({ context, lineInfo, callInfo, title,
                 title={i18n.t("transfer")}
                 onOk={handleCamponAuto}
                 onCancel={handleModalForBusyCancel}
+                maskClosable={false}
                 footer={[
                     <div key="1" style={{whiteSpace:"nowrap"}}>
                         <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponAuto}>

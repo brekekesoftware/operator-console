@@ -399,6 +399,7 @@ export default function NoScreensView( props ){
                 title={i18n.t("newLayout")}
                 onOk={   handleNewLayoutOk }
                 onCancel={handleNewLayoutCancel}
+                maskClosable={false}
                 footer={[
                     <Button key="back" onClick={handleNewLayoutCancel}>
                         {i18n.t("cancel")}
@@ -440,6 +441,7 @@ export default function NoScreensView( props ){
                 title={newOrOpenLayoutTitle}
                 onOk={handleOk}
                 onCancel={ () => handleCancel( operatorConsoleAsParent ) }
+                maskClosable={false}
                 footer={newOrOpenLayoutFooter}
             >
                 {newOrOpenLayoutText}

@@ -34,8 +34,29 @@ export default function DropDownMenu( { operatorConsole } ){
     const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
     const [isLoading, setIsLoading ] = useState(false);
     const showOpenLayoutModalFunc = ( ) =>{
-        setOpenLayoutModalOpen( true );
-        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalOpen, setIsLoading  );;
+
+        const setOpenLayoutModalFunc = (b) =>{
+            if( b ) {
+                operatorConsole.addDisableKeydownToDialingCounter();
+                operatorConsole.addDisablePasteToDialingCounter();
+            }
+            else{
+                operatorConsole.subtractDisableKeydownToDialingCounter()
+                operatorConsole.subtractDisablePasteToDialingCounter();
+            }
+            setOpenLayoutModalOpen(b);
+        }
+
+        setOpenLayoutModalFunc( true );
+        // const setIsLoadingFunc = (b) =>{
+        //     //if( b !== true && isLoading === true ){
+        //     if( b !== true ){
+        //         operatorConsole.subtractDisableKeydownToDialingCounter();
+        //         operatorConsole.subtractDisablePasteToDialingCounter();
+        //     }
+        //     setIsLoading(b);
+        // }
+        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalFunc, setIsLoading  );;
     }
 
     //let layoutNamesForDeleteLayouts;
@@ -66,6 +87,10 @@ export default function DropDownMenu( { operatorConsole } ){
     // };
 
     const showDeleteLayoutsModalFunc = ( ) =>{
+        if( deleteLayoutsModalOpen !== true ) {
+            operatorConsole.addDisableKeydownToDialingCounter();
+            operatorConsole.addDisablePasteToDialingCounter();
+        }
         setDeleteLayoutsModalOpen( true );
         refreshNoteNamesForDeleteLayoutsModalForDropDownMenu( operatorConsole, setNoteNamesFunctionForDeleteLayouts, setIsLoadingNoteNamesFunctionForDeleteLayouts);;
     }
@@ -272,6 +297,18 @@ export default function DropDownMenu( { operatorConsole } ){
     if( spinScreen.current ){
         spinScreen.current.style.display = displayLoadingStyle;
     }
+
+    // const setDeleteLayoutsModalOpenFunc = (b) =>{
+    //     if(b) {
+    //         operatorConsole.addDisableKeydownToDialingCounter();
+    //         operatorConsole.addDisablePasteToDialingCounter();
+    //     }
+    //     else{
+    //         operatorConsole.subtractDisableKeydownToDialingCounter();
+    //         operatorConsole.subtractDisablePasteToDialingCounter();
+    //     }
+    //     setDeleteLayoutsModalOpen(b);
+    // }
 
     return (
         <>
@@ -655,6 +692,7 @@ export default function DropDownMenu( { operatorConsole } ){
                                 {i18n.t("Close")}
                             </Button>
                     ]}
+                    maskClosable={false}
                 >
                     <div>Brekeke Operator Console, {i18n.t("Version")} {BrekekeOperatorConsole.BREKEKE_OPERATOR_CONSOLE_VERSION }</div>
                 </Modal>
@@ -666,6 +704,7 @@ export default function DropDownMenu( { operatorConsole } ){
                     title={i18n.t("newLayout")}
                     onOk={  () => handleOk() }
                     onCancel={handleCancel}
+                    maskClosable={false}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                             {i18n.t("cancel")}

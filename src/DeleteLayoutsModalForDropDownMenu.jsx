@@ -89,6 +89,9 @@ export default function DeleteLayoutsModalForDropDownMenu( props ){
         setCheckAll(false);
         setChecks({});
         setOpen(false);
+        operatorConsole.subtractDisableKeydownToDialingCounter();
+        operatorConsole.subtractDisablePasteToDialingCounter();
+
         //setNewOrOpenLayoutOpen(true);
     };
 
@@ -181,6 +184,7 @@ export default function DeleteLayoutsModalForDropDownMenu( props ){
         onOk={handleDelete}
         onCancel={handleCancel}
         footer={footer}
+        maskClosable={false}
     >
         <div className="brOCReset">
             { mainJsx }

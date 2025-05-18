@@ -16,13 +16,19 @@ export default function OpenLayoutModalForDropDownMenu(props  ) {
     //const setNewOrOpenLayoutOpen = props.useStateSetNewOrOpenLayoutOpen;
     //const noteNamesContent =  props.useStateNoteNamesContent;
 
-    const [openLayoutOpen, setOpenLayoutOpen] = useState(false);
+    //const [openLayoutOpen, setOpenLayoutOpen] = useState(false);
 
-    const handleOk = () => {
+    const close = () =>{
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        oc.subtractDisableKeydownToDialingCounter();
+        oc.subtractDisablePasteToDialingCounter();
         setOpen(false);
+    }
+    const handleOk = () => {
+        close();
     };
     const handleCancel = () => {
-        setOpen(false);
+        close();
         //setNewOrOpenLayoutOpen(true);
     };
 
@@ -39,6 +45,7 @@ export default function OpenLayoutModalForDropDownMenu(props  ) {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={footer}
+        maskClosable={false}
     >
         <div className="brOCReset">
             {noteNamesContent}

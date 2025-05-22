@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.29";
+const VERSION = "2.1.30";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -3186,6 +3186,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         const isScreenView = this.state.displayState === brOcDisplayStates.showScreen;
         const isShowScreenView_ver2 = this.state.displayState === brOcDisplayStates.showScreen_ver2;
         if( !isScreenView && !isShowScreenView_ver2 ){
+            // if( this.state.displayState === brOcDisplayStates.editingScreen_ver2 ){
+            //     //EditScreenView.getEditScreenViewInstance().onKeyDownByOperatorConsole(this,e);    //!Did not work
+            //     return;
+            // }
             return;
         }
 
@@ -4421,7 +4425,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         //     return;
         // }
 
-        //alert( document.activeElement );    //!temp
 
 
     }

@@ -432,7 +432,7 @@ export default class EditScreenView extends React.Component {
   render() {
     const settingsAreaJsx = this._getSettingsAreaJsx();
     return (
-        <div id={"root_EditScreenView_OperatorConsole_Brekeke"}>
+        <>
         <SelectIconModal editScreenViewAsParent={this} />
         <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
           <div style={{display: "flex", alignItems: "center",height:"47ox"}}>
@@ -515,7 +515,7 @@ export default class EditScreenView extends React.Component {
             </div>
           </div>
         </div>
-        </div>
+        </>
     )
   }
 

@@ -323,7 +323,8 @@ export default class EditorPane extends BasePane {
         else {
             const css = {
                 color:this.props.foregroundColor,
-                backgroundColor: this.props.backgroundColor
+                backgroundColor: this.props.backgroundColor,
+                //outline:"none"
             };
 
             // if( dividerData ){

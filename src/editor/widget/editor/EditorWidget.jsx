@@ -279,6 +279,10 @@ export default class EditorWidget extends React.Component {
             onDragStop={ (ev,data) => this._onDragStop(ev,data, widgetData )}
             onResizeStop={ (e, dir, ref, delta, pos)  => this._onResizeStop( e,dir,ref,delta,pos, widgetData ) }
             onMouseDown={ (ev)=> this._onMouseDown( ev, widgetData  )}
+            //tabIndex={-1}   //for enable onKeyDown
+            //onKeyDown={ (ev) => this._onKeyDown(ev, widgetData, ev.target )}
+            //style={{outline:0}}
+            //
             // onResize={(e) => {
             //     e.stopPropagation();
             //     e.preventDefault();

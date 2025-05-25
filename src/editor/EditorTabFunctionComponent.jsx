@@ -194,6 +194,7 @@ export default function EditorTabFunctionComponent(props){
     const className = props["className"] + " overflowAuto";
     const paneId = props["data-br-container-id"];
     const css = props["css"];
+    //css["outline"] = "none";
     const jsx = (
         <Tabs
             style={css}

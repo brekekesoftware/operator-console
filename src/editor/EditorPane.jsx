@@ -261,11 +261,12 @@ export default class EditorPane extends BasePane {
         const offsetX = parseInt(ev.dataTransfer.getData('offsetX'));
         const offsetY = parseInt(ev.dataTransfer.getData('offsetY'));
         const eEditorPanel = document.querySelector('[data-br-container-id="' +  editorPanelId + '"]');
-        const panelRect = eEditorPanel.getBoundingClientRect();
+        const eGridLines = eEditorPanel.querySelector(".editingGridLines");
+        const panelRect = eGridLines.getBoundingClientRect();
         const editingScreenGrid = this.getEditScreenView().getEditingScreenGrid();
 
-        let  widgetRelativePositionX = ev.clientX - panelRect.left - offsetX;
-        let widgetRelativePositionY = ev.clientY - panelRect.top - offsetY;
+        let  widgetRelativePositionX = eGridLines.scrollLeft + ev.clientX - panelRect.left - offsetX;
+        let widgetRelativePositionY = eGridLines.scrollTop + ev.clientY - panelRect.top - offsetY;
 
         widgetRelativePositionX -= widgetRelativePositionX % editingScreenGrid;
         widgetRelativePositionY -= widgetRelativePositionY % editingScreenGrid;

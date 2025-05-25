@@ -64,8 +64,8 @@ const _onDrop = function( ev, editorPane, tabData, tabId ){
     const boundingRect = eTabRoot.getBoundingClientRect();
     const editingScreenGrid = editorPane.getEditScreenView().getEditingScreenGrid();
 
-    let  widgetRelativePositionX = ev.clientX - boundingRect.left - offsetX;
-    let widgetRelativePositionY = ev.clientY - boundingRect.top - offsetY;
+    let  widgetRelativePositionX = eTabRoot.scrollLeft +  ev.clientX - boundingRect.left - offsetX;
+    let widgetRelativePositionY = eTabRoot.scrollTop +  ev.clientY - boundingRect.top - offsetY;
 
     widgetRelativePositionX -= widgetRelativePositionX % editingScreenGrid;
     widgetRelativePositionY -= widgetRelativePositionY  % editingScreenGrid;

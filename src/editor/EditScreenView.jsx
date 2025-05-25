@@ -5,7 +5,7 @@ import Space from "antd/lib/space";
 import Popconfirm from "antd/lib/popconfirm";
 import i18n from "../i18n";
 import Button from "antd/lib/button";
-import {brOcDisplayStates} from "../index";
+import BrekekeOperatorConsole, {brOcDisplayStates} from "../index";
 import EditorRootPane from "./EditorRootPane";
 import EditorPane from "./EditorPane";
 import EditorDivider from "./EditorDivider";
@@ -19,6 +19,7 @@ import InputNumber from "antd/lib/input-number";
 import Dropdown from "antd/lib/dropdown";
 import {SketchPicker} from "react-color";
 import SelectIconModal from "./SelectIconModal";
+import EditorWidget from "./widget/editor/EditorWidget";
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
   disable : false,
@@ -48,6 +49,41 @@ export default class EditScreenView extends React.Component {
     this._RootPaneData = rootPaneData;
     //const rootPaneData = this._OperatorConsoleAsParent.getOperatorConsoleData().getScreenData().addPaneData();
     //this._RootPaneData = rootPaneData;
+  }
+
+  // _setOutlineNoneToTabPanes(){
+  //   const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+  //   const eTabpanes = eRoot.querySelectorAll(".ant-tabs-tabpane");
+  //   for( let i = 0; i < eTabpanes.length; i++ ){
+  //     const eTabpane =  eTabpanes[i];
+  //     eTabpane.style
+  //   }
+  // }
+
+
+  // componentDidUpdate(){
+  //   this._setOutlineNoneToTabPanes();
+  // }
+
+  componentDidMount() {
+
+    //const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+
+    this._KeydownFunction = (ev) =>{
+      this._onKeyDown(ev);
+    } ;
+
+    //eRoot.addEventListener("keydown", this._KeydownFunction );  //Dit not work
+    document.body.addEventListener("keydown", this._KeydownFunction );
+
+    //this._setOutlineNoneToTabPanes();
+
+  }
+
+  componentWillUnmount() {
+    //const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+    //eRoot.removeEventListener("keydown", this._KeydownFunction );
+    document.body.removeEventListener("keydown", this._KeydownFunction );
   }
 
   static getEditScreenViewInstance(){
@@ -81,13 +117,32 @@ export default class EditScreenView extends React.Component {
     return this._ScreenData;
   }
 
-  setSelectingEditorWidgetDataToState( selectingEditorWidgetData, onSetStateFunc ){
-    this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget}, onSetStateFunc );
+  // setSelectingEditorWidgetDataToState( selectingEditorWidgetData, onSetStateFunc ){
+  //   this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget}, onSetStateFunc );
+  // }
+
+  setSelectingEditorWidgetDataToState( selectingEditorWidgetData ){
+    this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget} );
   }
 
   getSelectingEditorWidgetDataFromState(){
     const widgetData = this.state.selectingEditorWidgetData;
     return widgetData;
+  }
+
+  //!bad. The onKeyDown event will not occur unless you activate the widget by clicking it twice, so we provide a callback here.
+  _onKeyDown( ev ){
+    const oc = BrekekeOperatorConsole.getStaticInstance();
+    if( oc.state.displayState !== brOcDisplayStates.editingScreen_ver2 ){
+        return;
+    }
+
+    const widgetData = this.getSelectingEditorWidgetDataFromState();
+    if( !widgetData ){
+      return;
+    }
+
+    EditorWidget.onSelectingEditorWidgetKeyDownByEditScreenView_static( this, ev, widgetData );
   }
 
   _abortEditingScreen(){
@@ -232,6 +287,8 @@ export default class EditScreenView extends React.Component {
     if( b !== true ){
       throw new Error("Remove EditorWidget failed.");
     }
+    EditorWidget.onRemoveWidgetByEditScreenView_static( this, editorWidgetData );
+
     this.setState({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
   }
 

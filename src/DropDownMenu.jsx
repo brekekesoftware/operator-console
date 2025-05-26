@@ -124,7 +124,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <a style={signOutStyle} onClick={signOutOnClick}>
+                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuItem_OcBr">
                                     {i18n.t("signout")}
                                 </a>
                             )
@@ -139,7 +139,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <a onClick={operatorConsole.startEditingScreen_ver2}>
+                    <a onClick={operatorConsole.startEditingScreen_ver2} className="dropdownMenuItem_OcBr">
                         {i18n.t("editLayout")}
                     </a>
                 ),
@@ -195,7 +195,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '2',
                 label: (
-                    <a onClick={showNewLayoutModalFunc}>
+                    <a onClick={showNewLayoutModalFunc} className="dropdownMenuItem_OcBr">
                         {i18n.t("newLayout")}
                     </a>
                 ),
@@ -203,7 +203,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '3',
                 label: (
-                    <a onClick={showOpenLayoutModalFunc}>
+                    <a onClick={showOpenLayoutModalFunc} className="dropdownMenuItem_OcBr">
                         {i18n.t("openLayout")}
                     </a>
                 ),
@@ -211,7 +211,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '4',
                 label: (
-                    <a onClick={showDeleteLayoutsModalFunc}>
+                    <a onClick={showDeleteLayoutsModalFunc} className="dropdownMenuItem_OcBr">
                         {i18n.t("DeleteLayouts")}
                     </a>
                 ),
@@ -219,7 +219,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '5',
                 label: (
-                    <a onClick={operatorConsole.startSettingsScreen}>
+                    <a onClick={operatorConsole.startSettingsScreen} className="dropdownMenuItem_OcBr">
                         {i18n.t("settings_screen")}
                     </a>
                 ),
@@ -227,7 +227,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '6',
                 label: (
-                    <a onClick={ () => operatorConsole.openAboutOCModalByState() }>
+                    <a onClick={ () => operatorConsole.openAboutOCModalByState() } className="dropdownMenuItem_OcBr">
                         {i18n.t("About_OperatorConsole")}
                     </a>
                 ),
@@ -246,7 +246,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <a style={signOutStyle} onClick={signOutOnClick}>
+                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuItem_OcBr">
                                     {i18n.t("signout")}
                                 </a>
                             )
@@ -269,7 +269,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <a onClick={showOpenLayoutModalFunc}>
+                    <a onClick={showOpenLayoutModalFunc} className="dropdownMenuItem_OcBr">
                         {i18n.t("openLayout")}
                     </a>
                 ),
@@ -285,7 +285,7 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '2',
                 label: (
-                    <a onClick={() => operatorConsole.openAboutOCModalByState()}>
+                    <a onClick={() => operatorConsole.openAboutOCModalByState()} className="dropdownMenuItem_OcBr">
                         {i18n.t("About_OperatorConsole")}
                     </a>
                 ),

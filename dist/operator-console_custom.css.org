@@ -2994,3 +2994,10 @@ a.kbc-button-lg.kbc-lineTable-button-callInfo-success::after {
   right: 4px;
   z-index: 15;
 }
+
+/* Drop-down items on the top right of the screen */
+.dropdownMenuItem_OcBr{
+	margin-top:4px;
+	margin-bottom:4px;
+	display:block;
+}

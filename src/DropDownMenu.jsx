@@ -109,14 +109,14 @@ export default function DropDownMenu( { operatorConsole } ){
         signOutOnClick =  operatorConsole.logout;
     }
 
-
-
     if( operatorConsole.getIsAdmin() === true ) {
         items = [
             {
                 key: '100',
                 label: (
-                    loginLabel
+                    <div className="dropdownMenuLoginlabel_OcBr">
+                        {loginLabel}
+                    </div>
                 )
                 ,
                 children:
@@ -124,7 +124,7 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuItem_OcBr">
+                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuSignout_OcBr">
                                     {i18n.t("signout")}
                                 </a>
                             )

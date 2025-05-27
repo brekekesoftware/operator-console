@@ -3001,3 +3001,12 @@ a.kbc-button-lg.kbc-lineTable-button-callInfo-success::after {
 	margin-bottom:4px;
 	display:block;
 }
+
+/* Sign out from the drop-down menu on the top right of the screen */
+.dropdownMenuSignout_OcBr{
+	display:block;
+}
+
+/* Login information in the drop-down menu on the top right of the screen */
+.dropdownMenuLoginlabel_OcBr{
+}

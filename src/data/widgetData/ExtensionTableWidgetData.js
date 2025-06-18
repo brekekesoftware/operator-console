@@ -8,6 +8,7 @@ export default class ExtensionTableWidgetData extends WidgetData{
         this._extensiontableOuterBorderColor = options["extensiontableOuterBorderColor"];
         this._extensiontableOuterBorderRadius = options["extensiontableOuterBorderRadius"];
         this._extensiontableHeaderFgColor = options["extensiontableHeaderFgColor"];
+        this._extensiontableHeaderBgColor = options["extensiontableHeaderBgColor"];
         this._extensiontableHeaderRowUnderlineThickness = options["extensiontableHeaderRowUnderlineThickness"];
         this._extensiontableHeaderRowUnderlineColor = options["extensiontableHeaderRowUnderlineColor"];
         this._extensiontableBodyFgColor = options["extensiontableBodyFgColor"];
@@ -52,6 +53,13 @@ export default class ExtensionTableWidgetData extends WidgetData{
         }
         else{
             delete o["extensiontableHeaderFgColor"];
+        }
+
+        if( this._extensiontableHeaderBgColor ){
+            o["extensiontableHeaderBgColor"] = this._extensiontableHeaderBgColor;
+        }
+        else{
+            delete o["extensiontableHeaderBgColor"];
         }
 
         if( this._extensiontableHeaderRowUnderlineThickness || this._extensiontableHeaderRowUnderlineThickness === 0 ){
@@ -160,6 +168,14 @@ export default class ExtensionTableWidgetData extends WidgetData{
         this._extensiontableHeaderFgColor = color;
     }
 
+    getExtensiontableHeaderBgColor(){
+        return this._extensiontableHeaderBgColor;
+    }
+
+    setExtensiontableHeaderBgColor( color ){
+        this._extensiontableHeaderBgColor = color;
+    }
+
     getExtensiontableHeaderRowUnderlineThickness(){
         return this._extensiontableHeaderRowUnderlineThickness;
     }
@@ -234,4 +250,73 @@ export default class ExtensionTableWidgetData extends WidgetData{
         }
     }
 
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._extensiontableBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ) {
+            this._extensiontableOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR ) === true ) {
+            this._extensiontableOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS ) === true ) {
+            this._extensiontableOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR ) === true ) {
+            this._extensiontableHeaderFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR ) === true ) {
+            this._extensiontableHeaderBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE ) === true ) {
+            this._extensiontableHeaderFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS ) === true ) {
+            this._extensiontableHeaderRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR ) === true ) {
+            this._extensiontableHeaderRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE ) === true ) {
+            this._extensiontableBodyFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR ) === true ) {
+            this._extensiontableBodyFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS ) === true ) {
+            this._extensiontableBodyRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR ) === true ) {
+            this._extensiontableBodyRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR);
+        }
+
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._extensiontableBgColor );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._extensiontableOuterBorderThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._extensiontableOuterBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._extensiontableOuterBorderRadius );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR, this._extensiontableHeaderFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR, this._extensiontableHeaderBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE, this._extensiontableHeaderFontSize );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS, this._extensiontableHeaderRowUnderlineThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR, this._extensiontableHeaderRowUnderlineColor );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE, this._extensiontableBodyFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR, this._extensiontableBodyFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS, this._extensiontableBodyRowUnderlineThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR, this._extensiontableBodyRowUnderlineColor );
+    }
 }

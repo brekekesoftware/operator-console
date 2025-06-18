@@ -1,4 +1,5 @@
 import LegacyButtonWidgetSubData from "./LegacyButtonWidgetSubData";
+import WidgetData from "../WidgetData";
 
 export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends LegacyButtonWidgetSubData {
 
@@ -18,6 +19,7 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         }
 
         this._holdIcon = currentOptions["holdIcon"];
+        this._holdIconName = currentOptions["holdIconName"];
         this._holdIconWidth = currentOptions["holdIconWidth"];
         this._holdIconHeight = currentOptions["holdIconHeight"];
         this._holdFontSize = currentOptions["holdFontSize"];
@@ -28,6 +30,7 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         this._holdOuterBorderThickness = currentOptions["holdOuterBorderThickness"];
         this._holdLabel = currentOptions["holdLabel"];
         this._unholdIcon = currentOptions["unholdIcon"];
+        this._unholdIconName = currentOptions["unholdIconName"];
         this._unholdIconWidth = currentOptions["unholdIconWidth"];
         this._unholdIconHeight = currentOptions["unholdIconHeight"];
         this._unholdFontSize = currentOptions["unholdFontSize"];
@@ -46,6 +49,13 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         }
         else{
             delete o["holdIcon"];
+        }
+
+        if( this._holdIconName ){
+            o["holdIconName"] = this._holdIconName;
+        }
+        else{
+            delete o["holdIconName"];
         }
 
         if( this._holdIconWidth ){
@@ -118,6 +128,13 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
             delete o["unholdIcon"];
         }
 
+        if( this._unholdIconName ){
+            o["unholdIconName"] = this._unholdIconName;
+        }
+        else{
+            delete o["unholdIconName"];
+        }
+
         if( this._unholdIconWidth ){
             o["unholdIconWidth"] = this._unholdIconWidth;
         }
@@ -188,6 +205,14 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
 
     getHoldIcon(){
         return this._holdIcon;
+    }
+
+    setHoldIconName( iconName ){
+        this._holdIconName = iconName;
+    }
+
+    getHoldIconName(){
+        return this._holdIconName;
     }
 
     getHoldIconWidth(){
@@ -270,6 +295,14 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         return this._unholdIcon;
     }
 
+    setUnholdIconName( iconName ){
+        this._unholdIconName = iconName;
+    }
+
+    getUnholdIconName(){
+        return this._unholdIconName;
+    }
+
     getUnholdIconWidth(){
         return this._unholdIconWidth;
     }
@@ -346,4 +379,101 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
     importLegacyButtonWidgetSubDataFromWidget_ver0_1( widget_ver0_1 ){
     }
 
+    //!override
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_LABEL, this._holdLabel );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON, this._holdIcon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_NAME, this._holdIconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_WIDTH, this._holdIconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_HEIGHT, this._holdIconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FONT_SIZE, this._holdFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FG_COLOR, this._holdFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_BG_COLOR, this._holdBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_COLOR, this._holdOuterBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_RADIUS, this._holdOuterBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_THICKNESS, this._holdOuterBorderThickness );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_LABEL, this._unholdLabel );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON, this._unholdIcon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_NAME, this._unholdIconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_WIDTH, this._unholdIconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_HEIGHT, this._unholdIconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FONT_SIZE, this._unholdFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FG_COLOR, this._unholdFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_BG_COLOR, this._unholdBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_COLOR, this._unholdOuterBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS, this._unholdOuterBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS, this._unholdOuterBorderThickness );
+    }
+
+    //!override
+    _importLegacyButtonWidgetSubDataFromWidgetSettingsTemplateMain( wst ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_LABEL ) === true ) {
+            this._holdLabel = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON ) === true ) {
+            this._holdIcon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_NAME ) === true ) {
+            this._holdIconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_WIDTH ) === true ) {
+            this._holdIconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_HEIGHT ) === true ) {
+            this._holdIconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FONT_SIZE ) === true ) {
+            this._holdFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FG_COLOR ) === true ) {
+            this._holdFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_BG_COLOR ) === true ) {
+            this._holdBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_COLOR ) === true ) {
+            this._holdOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_RADIUS ) === true ) {
+            this._holdOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_THICKNESS ) === true ) {
+            this._holdOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_THICKNESS);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_LABEL ) === true ) {
+            this._unholdLabel = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON ) === true ) {
+            this._unholdIcon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_NAME ) === true ) {
+            this._unholdIconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_WIDTH ) === true ) {
+            this._unholdIconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_HEIGHT ) === true ) {
+            this._unholdIconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FONT_SIZE ) === true ) {
+            this._unholdFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FG_COLOR ) === true ) {
+            this._unholdFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_BG_COLOR ) === true ) {
+            this._unholdBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_COLOR ) === true ) {
+            this._unholdOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS ) === true ) {
+            this._unholdOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS ) === true ) {
+            this._unholdOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS);
+        }
+    }
 }

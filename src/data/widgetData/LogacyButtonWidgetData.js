@@ -123,5 +123,34 @@ export default class LegacyButtonWidgetData extends WidgetData{
 		}
 	}
 
+    //Override
+    loadFromWidgetSettingsTemplateMain( wst ) {
+        const bIncludeButtonFunction = true;
+        this.loadFromWidgetSettingsTemplate( wst , bIncludeButtonFunction );
+    }
 
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( bIncludeButtonFunction === true ){
+            const subTypeId = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME__LEGACY_BUTTON_WIDGET_SUB_TYPE_ID);
+            this.setSubDataBySubtypeId( subTypeId );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_EN ) === true ) {
+            this._tooltipOfButtonWidget_en = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOOLTIP_EN);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_JA ) === true ) {
+            this._tooltipOfButtonWidget_ja = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOOLTIP_JA);
+        }
+
+        this._subData.importLegacyButtonWidgetSubDataFromWidgetSettingsTemplate( wst );
+
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        const subTypeId = this.getSubData().getLegacyButtonWidgetSubTypeId();
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME__LEGACY_BUTTON_WIDGET_SUB_TYPE_ID, subTypeId );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_EN, this._tooltipOfButtonWidget_en );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_JA, this._tooltipOfButtonWidget_ja );
+        this._subData.exportLegacyButtonWidgetSubDataToWidgetSettingsTemplate( wst );
+    }
 }

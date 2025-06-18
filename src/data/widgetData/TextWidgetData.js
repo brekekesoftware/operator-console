@@ -105,4 +105,32 @@ export default class TextWidgetData extends WidgetData {
             this._textBorderRadius = widget_ver0_1.textBorderRadius;
         }
     }
+
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT ) === true ) {
+            this._text = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE ) === true ) {
+            this._textFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FG_COLOR ) === true ) {
+            this._textFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._textBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS ) === true ) {
+            this._textBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS);
+        }
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT, this._text );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE, this._textFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FG_COLOR, this._textFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._textBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS, this._textBorderRadius );
+    }
 }

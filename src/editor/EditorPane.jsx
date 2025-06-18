@@ -227,36 +227,18 @@ export default class EditorPane extends BasePane {
         const widgetDatas = paneData.getWidgetDatasForNoTabs();
 
         const editorWidgetTemplate = EditorWidgetTemplateFactory.getStaticEditorWidgetSettingsFactoryInstance().getEditorWidgetTemplateByWidgetTypeId( widgetTypeId );
+
         let widgetWidth = editorWidgetTemplate.getWidth();
         let widgetHeight = editorWidgetTemplate.getHeight();
-        //Set editor widget value
-        switch( widgetTypeId ){
-            case WidgetData.WIDGET_TYPE_IDS.callTable:
-                    widgetWidth = 640;
-                    widgetHeight = 128;
-                break;
-            case WidgetData.WIDGET_TYPE_IDS.extensionTable:
-                    widgetWidth = 640;
-                    widgetHeight = 128;
-                break;
-            case WidgetData.WIDGET_TYPE_IDS.text:
-                    widgetWidth = 160;
-                    widgetHeight = 160;
-                break;
-            case WidgetData.WIDGET_TYPE_IDS.note:
-                    widgetWidth = 160;
-                    widgetHeight = 160;
-                break;
-            case WidgetData.WIDGET_TYPE_IDS.lineTable:
-                    widgetWidth = 640;
-                    widgetHeight = 128;
-                break;
-            case WidgetData.WIDGET_TYPE_IDS.legacyUccac:
-                    widgetWidth = 470;
-                    widgetHeight = 300;
-                break;
-        }
 
+        const widgetDefaultWidth = WidgetData.WIDGET_TYPE_DEFAULT_WIDTHS[ widgetTypeId ];
+        if( widgetDefaultWidth ){
+            widgetWidth = widgetDefaultWidth;
+        }
+        const widgetDefaultHeight = WidgetData.WIDGET_TYPE_DEFAULT_HEIGHTS[ widgetTypeId ];
+        if( widgetDefaultHeight ){
+            widgetHeight = widgetDefaultHeight;
+        }
 
         const offsetX = parseInt(ev.dataTransfer.getData('offsetX'));
         const offsetY = parseInt(ev.dataTransfer.getData('offsetY'));
@@ -321,9 +303,18 @@ export default class EditorPane extends BasePane {
             jsx = this._getChildrenJsx( dividerDirection, widthClassName, heightClassName  );
         }
         else {
+            const paneData = this.props["paneData"];
+
+			let backgroundImage;
+			const bgImageUrl = paneData.getPaneBackgroundImageBase64DataUrl()
+			if( bgImageUrl ){
+				backgroundImage = "url('" + bgImageUrl + "')";
+			}
+			else{
+				backgroundImage = null;
+			}
+			
             const css = {
-                color:this.props.foregroundColor,
-                backgroundColor: this.props.backgroundColor
             };
 
             // if( dividerData ){
@@ -349,7 +340,6 @@ export default class EditorPane extends BasePane {
                 }
             //}
             const className =  "containerContent " +  this._ClassName;
-            const paneData = this.props["paneData"];
 
             const paneWidth = paneData.getPaneWidth();
             if( paneWidth && paneWidth !== -1 ){
@@ -376,6 +366,14 @@ export default class EditorPane extends BasePane {
                 const editingScreenGrid = editScreenView.getEditingScreenGrid();
                 const widgetDatas = paneData.getWidgetDatasForNoTabs();
                 const widgetDataArray = widgetDatas.getWidgetDataArray();
+				
+				css["color"] = paneData.getPaneForegroundColor();
+				css["backgroundColor"] = paneData.getPaneBackgroundColor();
+				css["backgroundImage"] = backgroundImage;
+				css["backgroundSize"] = "cover";
+				css["backgroundRepeat"] = "no-repeat";
+				css["backgroundPosition"] = "center center";
+				
                 jsx = <div
                     data-br-container-id={paneData.getPaneNumber() }
                     // parent-container={this.state.parentContainer}
@@ -409,9 +407,10 @@ export default class EditorPane extends BasePane {
                     >
                         {
                             widgetDataArray.map( ( widgetData, index ) => {
+                                const renderWidgetData =widgetDataArray[index];
                                 const widgetJsx = EditorWidgetFactory.getStaticEditorWidgetFactoryInstance().getEditorWidgetJsx({
                                     editorPane: this,
-                                    widgetData: widgetDataArray[index],
+                                    widgetData: renderWidgetData,
                                     jsxKey : index
                                 });
                                 return widgetJsx;

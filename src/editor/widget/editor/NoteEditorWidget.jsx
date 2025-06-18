@@ -14,11 +14,12 @@ export default class NoteEditorWidget extends EditorWidget{
     constructor( props ) {
         super( props );
         this._readonly = false;
+        this._lastNoteName = null;
         this.state = {loading:false, content: ""};
     }
 
     componentDidMount(){
-        super.componentDidMount();
+        //super.componentDidMount();
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
@@ -57,43 +58,48 @@ export default class NoteEditorWidget extends EditorWidget{
     }
 
     componentDidUpdate() {
-        super.componentDidUpdate();
+        //super.componentDidUpdate();
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
 
         const widgetData = this.getWidgetData();
         const noteName = widgetData.getNoteName();
-        if( this.state.loading === false && noteName  && this._lastNoteName !== noteName ) {
-            const getNoteOptions = {
-                methodName : "getNote",
-                methodParams : JSON.stringify({
-                    tenant:oc.getLoggedinTenant(),
-                    name:noteName
-                }),
-                onSuccessFunction: (res) =>{
-                    if( res ){
-                        const note = res["note"];
-                        const useraccess = res["useraccess"];
-                        this._readonly = useraccess != 2;
+        if( this.state.loading === false && this._lastNoteName !== noteName && ( this._lastNoteName === null && noteName === undefined ) === false   ) {
+            if( noteName ) {
+                const getNoteOptions = {
+                    methodName: "getNote",
+                    methodParams: JSON.stringify({
+                        tenant: oc.getLoggedinTenant(),
+                        name: noteName
+                    }),
+                    onSuccessFunction: (res) => {
+                        if (res) {
+                            const note = res["note"];
+                            const useraccess = res["useraccess"];
+                            this._readonly = useraccess != 2;
+                            this._lastNoteName = noteName;
+                            this.setState({loading: false, content: note});
+                        } else {
+                            //Note not found.
+                            this._lastNoteName = noteName;
+                            this.setState({loading: false});
+                        }
+                    },
+                    onFailFunction: (errorOrResponse) => {
+                        console.log('Failed  to getNote.', errorOrResponse);
                         this._lastNoteName = noteName;
-                        this.setState({loading: false, content: note});
+                        this._readonly = false;
+                        //throw err;
+                        this.setState({loading: false, content: "", error: true});
                     }
-                    else {
-                        //Note not found.
-                        this._lastNoteName = noteName;
-                        this.setState({loading: false});
-                    }
-                },
-                onFailFunction : ( errorOrResponse ) => {
-                    console.log('Failed  to getNote.', errorOrResponse);
-                    this._lastNoteName = noteName;
-                    this._readonly = false;
-                    //throw err;
-                    this.setState({loading:false,content:"",error:true});
                 }
+                oc.getPalRestApi().callPalRestApiMethod(getNoteOptions);
+                this.setState({loading: true});
             }
-            oc.getPalRestApi().callPalRestApiMethod( getNoteOptions );
-            this.setState({loading:true});
+            else{
+                this._lastNoteName = null;
+                this.setState({loading: false, content: ""});
+            }
         }
     }
 

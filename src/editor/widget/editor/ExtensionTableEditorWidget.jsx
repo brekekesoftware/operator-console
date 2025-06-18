@@ -41,6 +41,7 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
         const outerBorderThickness = ( widgetData.getExtensiontableOuterBorderThickness() || widgetData.getExtensiontableOuterBorderThickness() === 0 ) ? widgetData.getExtensiontableOuterBorderThickness()  : 0; //!default
         const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableOuterBorderColor(), "rgb(0,0,0,0)" );
         const headerFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableHeaderFgColor() , "" );
+        const headerBgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableHeaderBgColor() , "" );
         const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableBodyFgColor() , "" );
         //const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBodyActiveRowBgColor, "'#B9DFA9'" );   //!default
         const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableBgColor(), "" );
@@ -55,13 +56,20 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
         return (
             <table className="brOCExtensiontable" style={{
                 borderRadius:outerBorderRadius,
-                border: outerBorderThickness + "px solid " + outerBorderColor,
                 backgroundColor:backgroundColor,
+                //border: outerBorderThickness + "px solid " + outerBorderColor,
+                borderStyle : "solid",
+                borderColor : outerBorderColor,
+                borderWidth: outerBorderThickness +  "px"
             }}>
                 <thead>
                 <tr style={{
                     color:headerFgColor,
-                    borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
+                    backgroundColor:headerBgColor,
+                    borderBottomStyle : "solid",
+                    borderBottomColor : headerRowUnderlineColor,
+                    borderBottomWidth: headerRowUnderlineThickness +  "px"
+                    //borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
                         fontSize : headerFontSize + "px",
@@ -89,7 +97,10 @@ export default class ExtensionTableEditorWidget extends EditorWidget{
                     <tr key={key++}
                         style={{
                             color: bodyFgColor,
-                            borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
+                            borderBottomStyle : "solid",
+                            borderBottomColor : bodyRowUnderlineColor,
+                            borderBottomWidth: bodyRowUnderlineThickness +  "px"
+                            //borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
                         }}
                     >
                         <td style={{

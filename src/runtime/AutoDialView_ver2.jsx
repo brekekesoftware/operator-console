@@ -293,7 +293,7 @@ export default class AutoDialView_ver2 extends React.Component {
                 Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
             },
             ( errorOrResponse ) =>{
-                OCUtil.logErrorWithNotification("Faild to clear call histories.", i18n.t("failed_to_save_data_to_pbx"), errorOrResponse );
+                OCUtil.logErrorWithNotification("Failed to clear call histories.", i18n.t("failed_to_save_data_to_pbx"), errorOrResponse );
             },
             oc.getPalRestApi()
         );

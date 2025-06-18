@@ -193,4 +193,57 @@ export default class NoteWidgetData extends WidgetData {
             this._noteTextFgColor = widget_ver0_1.noteTextFgColor;
         }
     }
+
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS ) === true ) {
+            this._noteBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_NAME_NAME ) === true ) {
+            this._noteName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_NAME_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_NAME_LABEL ) === true ) {
+            this._noteLabel = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_NAME_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_NAME_FONT_SIZE ) === true ) {
+            this._noteTitleFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_NAME_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_NAME_FG_COLOR ) === true ) {
+            this._noteNameFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_NAME_BG_COLOR ) === true ) {
+            this._noteNameBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_NAME_BG_COLOR);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT_FONT_SIZE ) === true ) {
+            this._noteBodyFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT_FG_COLOR ) === true ) {
+            this._noteTextFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT_BG_START_COLOR ) === true ) {
+            this._noteBgStartColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT_BG_START_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT_BG_END_COLOR ) === true ) {
+            this._noteBgEndColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT_BG_END_COLOR);
+        }
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS, this._noteBorderRadius );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_NAME_NAME, this._noteName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_NAME_LABEL, this._noteLabel );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_NAME_FONT_SIZE, this._noteTitleFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_NAME_FG_COLOR, this._noteNameFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_NAME_BG_COLOR, this._noteNameBgColor );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT_FONT_SIZE, this._noteBodyFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT_FG_COLOR, this._noteTextFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT_BG_START_COLOR, this._noteBgStartColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT_BG_END_COLOR, this._noteBgEndColor );
+
+    }
 }

@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.33";
+const VERSION = "2.1.34";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -125,6 +125,7 @@ import ScreenPaneDatas from "./data/ScreenPaneDatas";
 import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
 import DateFormatStringFactory from "./util/DateFormatStringFactory";
 import LegacyButtonWidgetSubData from "./data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
+import WidgetSettingsTemplates from "./editor/widget/settings/template/WidgetSettingsTemplates";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -3394,13 +3395,21 @@ export default class BrekekeOperatorConsole extends React.Component {
             case 91: //meta
             case 29: //NonConvert
             case 0: //char key ( with F12?) //for Firefox
-            case 229: //char key ( with F12?)
             case 27:    //escape key
-                return;
+                    return;
                 break;
         }
 
+        if( keyCode >= 191 && keyCode <= 254 ){ //Special keys
+            return;
+        }
+
         let sKey = e.key;
+		
+		if( sKey === "Unidentified" || sKey === "Fn" ){	//Fn key
+			return;
+		}
+		
         this._appendKeyValue(sKey);
 
     }
@@ -3726,43 +3735,81 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
 
 
+        let backgroundImage_ver2;
+        if( this.state.displayState === brOcDisplayStates.showScreen_ver2 ) {
+            const bgImageUrl = this.state.screenData_ver2.getScreenBackgroundImageBase64DataUrl();
+            if (bgImageUrl) {
+                backgroundImage_ver2 = "url(" + bgImageUrl + ")";
+            } else {
+                backgroundImage_ver2 = null;
+            }
+        }
+
         const configProviderLocale = this._getAntdConfigProviderLocale();
         return (<>
             {!!this.state.isInitialized ? (
-                <div style={{height:"100%"}}>
-                    <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
-                    {this.state._downedLayoutAndSystemSettings ? (
+                this.state._downedLayoutAndSystemSettings ? (
                             this.state.displayState === brOcDisplayStates.editingScreen ? ( //editMode
-                                <></> /* for ver1 */
+                                <div style={{height: "100%"}}>
+                                    <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                    <></> /* for ver1 */
+                                </div>
                             // ) : this.state.displayState === brOcDisplayStates.editingScreen_ver2 ? (
                             //     <EditScreen_ver2
                             //         operatorConsoleAsParent={this}
                             //     />
                             ) : this.state.displayState === brOcDisplayStates.waitQuickCallKey ? (
-                                <></>   /* for ver1 */
+                                    <div style={{height: "100%"}}>
+                                        <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                        <></>   /* for ver1 */
+                                    </div>
                                 )
                                 : this.state.displayState === brOcDisplayStates.systemSettingsView ? (
-                                    <ConfigProvider locale={ configProviderLocale}>
-                                        <Suspense fallback={<Empty image={null} description={<div style={{height: "100%"}}><Spin/></div>}/>}>
-                                        <SystemSettingsView operatorConsole={this}/>
-                                        </Suspense>
-                                    </ConfigProvider>
+                                    <div style={{height: "100%"}}>
+                                        <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                            <ConfigProvider locale={ configProviderLocale}>
+                                                <Suspense fallback={<Empty image={null} description={<div style={{height: "100%"}}><Spin/></div>}/>}>
+                                                <SystemSettingsView operatorConsole={this}/>
+                                                </Suspense>
+                                            </ConfigProvider>
+                                    </div>
                                     ) : this.state.displayState === brOcDisplayStates.showScreen_ver2 ? (
-                                    <ConfigProvider locale={ configProviderLocale}>
-                                        <Suspense fallback={<Empty image={null} description={<div style={{height:"100%"}}><Spin/></div>}/>}>
-                                            <ShowScreenView_ver2 operatorConsoleAsParent={this} />
-                                        </Suspense>
-                                    </ConfigProvider>
-                                ) :
-                                    (<></> /* for ver1 */ )
+                                        <div style={{
+                                            height: "100%",
+                                            color: this.state.screenData_ver2.getScreenForegroundColor(),
+                                            backgroundColor: this.state.screenData_ver2.getScreenBackgroundColor(),
+                                            backgroundImage:backgroundImage_ver2
+                                        }}
+                                        className="background_Runtime">
+                                            <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                            <ConfigProvider locale={configProviderLocale}>
+                                                <Suspense fallback={<Empty image={null}
+                                                                           description={<div style={{height: "100%"}}>
+                                                                               <Spin/></div>}/>}>
+                                                    <ShowScreenView_ver2 operatorConsoleAsParent={this}/>
+                                                </Suspense>
+                                            </ConfigProvider>
+                                        </div>
+                                    ) :
+                                    (
+                                        <div style={{height: "100%"}}>
+                                        <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                                <></> /* for ver1 */
+                                        </div>
+                                    )
                         )
                         : this.state.displayState === brOcDisplayStates.noScreens ? (
-                                <NoScreensView operatorConsoleAsParent={this} />
-                            )
-                            : (
+                            <div style={{height: "100%"}}>
+                                <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                <NoScreensView  operatorConsoleAsParent={this}/>
+                            </div>
+                        )
+                        : (
+                            <div style={{height: "100%"}}>
+                                <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                                 <Empty image={null} description={<Spin/>}/>
-                            )}
-                </div>
+                            </div>
+                            )
             ) :  (
                 <div className='brOCLoginPage'>
                     <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
@@ -6522,21 +6569,34 @@ export default class BrekekeOperatorConsole extends React.Component {
         else{
             screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
         }
-        this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
-            //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
-            this._CallHistory2. loadCallHistory2(
-                this._PalRestApi,
-                () =>{
-                    this._toSetNoteSuccess(setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
-                },
-                (errorOrResponse) =>{
-                    if( setOCNoteFailFunction ) {
-                        setOCNoteFailFunction(errorOrResponse);
-                    }
-                }
-            );
 
-        } );
+        const widgetSettingsTemplatesOnCommonFunction = ( ) =>{
+            this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
+                //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
+                this._CallHistory2. loadCallHistory2(
+                    this._PalRestApi,
+                    () =>{
+                        this._toSetNoteSuccess(setLastLayoutShortName, shortName, setOCNoteSuccessFunction);
+                    },
+                    (errorOrResponse) =>{
+                        if( setOCNoteFailFunction ) {
+                            setOCNoteFailFunction(errorOrResponse);
+                        }
+                    }
+                );
+
+            } );
+        };
+
+        WidgetSettingsTemplates.getWidgetSettingsTemplates().reloadWidgetSettingsTemplatesAsync( this._PalRestApi,
+            ( widgetSettingsTemplatesAsCaller ) =>{
+                widgetSettingsTemplatesOnCommonFunction();
+            },
+            ( widgetSettingsTemplatesAsCaller, errOrResponse ) =>{
+                widgetSettingsTemplatesOnCommonFunction();
+            }
+        );
+
     }
 
     _toSetNoteSuccess( setLastLayoutShortName, shortName, setOCNoteSuccessFunction ){

@@ -31,7 +31,7 @@ export default class RuntimeRootPane extends RuntimePane  {
         const paneData = this.props["paneData"];
         const paneNumber = paneData.getPaneNumber();
         const screenPaneDatas = paneData.getScreenDatasAsParent();
-        const screenData = screenPaneDatas.getScreenDataAsParent();
+        //const screenData = screenPaneDatas.getScreenDataAsParent();
 
         switch( dividerDirection ) {
             case BaseDividerData.DIVIDER_DIRECTIONS.horizontal: {
@@ -45,8 +45,6 @@ export default class RuntimeRootPane extends RuntimePane  {
                 paneCss["flexFlow"] = "column";
                 paneCss["alignItems"] = "stretch";
                 paneCss["position"] = "relative";
-                paneCss["backgroundColor"] = screenData.getScreenBackgroundColor();
-                paneCss["color"] = screenData.getScreenForegroundColor();
                 const paneWidth = paneData.getPaneWidth();
                 if (paneWidth && paneWidth !== -1) {
                     const dividerHalfWidthPx = getComputedStyle(document.documentElement).getPropertyValue("--broc_dividerHalfWidth");
@@ -84,8 +82,6 @@ export default class RuntimeRootPane extends RuntimePane  {
 
                 const paneCss = {};
                 paneCss["display"] = "flex";
-                paneCss["backgroundColor"] = screenData.getScreenBackgroundColor();
-                paneCss["color"] = screenData.getScreenForegroundColor();
 
                 const paneWidth = paneData.getPaneWidth();
                 if (paneWidth && paneWidth !== -1) {

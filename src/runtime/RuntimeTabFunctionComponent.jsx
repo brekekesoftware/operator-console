@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import {Tabs} from "antd";
+import {ConfigProvider, Tabs} from "antd";
 import {DndContext, PointerSensor, useSensor} from "@dnd-kit/core";
 import {arrayMove, horizontalListSortingStrategy, SortableContext, useSortable} from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
-import GridLines from "react-gridlines";
 import RuntimeWidgetFactory from "./widget/runtime/RuntimeWidgetFactory";
 
 const DraggableTabNode = ({ className, ...props }) => {
@@ -54,11 +53,32 @@ export default function RuntimeTabFunctionComponent(props){
         const tabData = tabsData.getTabDataAt(i);
         const widgetDataArray = tabData.getWidgetDatas().getWidgetDataArray();
 
-        const tabId= runtimePaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
+		let backgroundImage;
+		const bgImageDataUrl = tabData.getTabBackgroundImageBase64DataUrl();
+		if( bgImageDataUrl ){
+			backgroundImage = "url('" + bgImageDataUrl + "')";
+		}
+		else{
+			backgroundImage = null;
+		}
+		
+		const outerCss = {
+			width:"100%",
+			height:"100%",
+			color: tabData.getTabForegroundColor(),
+			backgroundColor:  tabData.getTabBackgroundColor(),
+			backgroundImage: backgroundImage,
+			backgroundSize: "cover",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "center center"
+		};	
+		
 
+        const tabId = runtimePaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
         const tabChildren = (
             <div
                 data-broc-tab-id={tabId}
+				style={outerCss}
             >
                 {widgetDataArray.map( (widgetData,index) =>{
                     const options = {
@@ -129,34 +149,79 @@ export default function RuntimeTabFunctionComponent(props){
         runtimePaneAsParent.setState({rerender:true});
     }
 
+	let backgroundImage;
+	const bgImageDataUrl = tabsData.getTabsBackgroundImageBase64DataUrl();
+	if( bgImageDataUrl ){
+		backgroundImage = "url('" + bgImageDataUrl + "')";
+	}
+	else{
+		backgroundImage = null;
+	}
+
+    const tabBarCss = {
+        //color:"#00FFFF",	//It makes no sense
+        backgroundColor: tabsData.getTabsBackgroundColor(),
+		backgroundImage : backgroundImage,
+		backgroundSize : "cover",
+		backgroundRepeat : "no-repeat",
+		backgroundPosition : "center center",
+		//fontSize:"10px"	//No effect
+    }
+	
+	const componentsTabs =  {
+		itemSelectedColor : tabsData.getTabsItemSelectedColor(),	//"#FFFFFF"
+		itemHoverColor : tabsData.getTabsItemHoverColor(),	//"#0000FF"
+		itemColor : tabsData.getTabsItemColor()	//"#000000"
+	};
+	const tabsInkBarColor = tabsData.getTabsInkBarColor();
+	if( tabsInkBarColor ){
+		componentsTabs["inkBarColor"] = tabsInkBarColor;
+	}
+	
+	const tabsTitleFontSize = tabsData.getTabsTitleFontSize();
+	if( tabsTitleFontSize || tabsTitleFontSize === 0 ){
+		componentsTabs["titleFontSize"] = tabsTitleFontSize;
+	}
+
+
     const activeKey = tabsData.getSelectedTabKeyAsString();
     const className = props["className"] + " overflowAuto";
     const paneId = props["data-br-container-id"];
     const css = props["css"];
     const jsx = (
-        <Tabs
-            style={css}
-            data-br-container-id={paneId}
-            className={className}
-            //tabBarStyle={{overflow:"auto"}}
-            activeKey={activeKey}
-            onChange={(selectedKey) => _onChangeByTabs(selectedKey) }
-            onTabClick={(tabKey,mouseEvent) => _onTabClick(tabKey, mouseEvent, runtimePaneAsParent ) }
-            items={tabItems}
-            renderTabBar={(tabBarProps, DefaultTabBar) => (
-                <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-                    <SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
-                        <DefaultTabBar {...tabBarProps}>
-                            {(node) => (
-                                <DraggableTabNode {...node.props} key={node.key}>
-                                    {node}
-                                </DraggableTabNode>
-                            )}
-                        </DefaultTabBar>
-                    </SortableContext>
-                </DndContext>
-            )}
-        />
+		<ConfigProvider
+		  theme={{
+			components: {
+			  Tabs:componentsTabs,
+			},
+		  }}
+		>
+			<Tabs
+				tabBarStyle={tabBarCss}
+				style={css}
+				data-br-container-id={paneId}
+				className={className}
+				//tabBarStyle={{overflow:"auto"}}
+				activeKey={activeKey}
+				onChange={(selectedKey) => _onChangeByTabs(selectedKey) }
+				onTabClick={(tabKey,mouseEvent) => _onTabClick(tabKey, mouseEvent, runtimePaneAsParent ) }
+				items={tabItems}
+				////Draggable
+				// renderTabBar={(tabBarProps, DefaultTabBar) => (
+				// 	<DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+				// 		<SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
+				// 			<DefaultTabBar {...tabBarProps}>
+				// 				{(node) => (
+				// 					<DraggableTabNode {...node.props} key={node.key}>
+				// 						{node}
+				// 					</DraggableTabNode>
+				// 				)}
+				// 			</DefaultTabBar>
+				// 		</SortableContext>
+				// 	</DndContext>
+				// )}
+			/>
+		</ConfigProvider>
     );
     return jsx;
 }

@@ -9,6 +9,7 @@ export default class CallTableWidgetData extends WidgetData{
         this._calltableOuterBorderColor = options["calltableOuterBorderColor"];
         this._calltableOuterBorderRadius = options["calltableOuterBorderRadius"];
         this._calltableHeaderFgColor = options["calltableHeaderFgColor"];
+        this._calltableHeaderBgColor = options["calltableHeaderBgColor"];
         this._calltableHeaderRowUnderlineThickness = options["calltableHeaderRowUnderlineThickness"];
         this._calltableHeaderRowUnderlineColor = options["calltableHeaderRowUnderlineColor"];
         this._calltableBodyFgColor = options["calltableBodyFgColor"];
@@ -20,6 +21,7 @@ export default class CallTableWidgetData extends WidgetData{
         this._calltableActiveButtonFontSize = options["calltableActiveButtonFontSize"];
         this._calltableActiveButtonWidth = options["calltableActiveButtonWidth"];
         this._calltableActiveButtonHeight = options["calltableActiveButtonHeight"];
+        this._calltableBodyActiveRowFgColor = options["calltableBodyActiveRowFgColor"];
     }
 
     //!override
@@ -64,6 +66,13 @@ export default class CallTableWidgetData extends WidgetData{
         }
         else{
             delete o["calltableHeaderFgColor"];
+        }
+
+        if( this._calltableHeaderBgColor ){
+            o["calltableHeaderBgColor"] = this._calltableHeaderBgColor;
+        }
+        else{
+            delete o["calltableHeaderBgColor"];
         }
 
         if( this._calltableHeaderRowUnderlineThickness || this._calltableHeaderRowUnderlineThickness !== 0 ){
@@ -143,6 +152,12 @@ export default class CallTableWidgetData extends WidgetData{
             delete o["calltableActiveButtonHeight"];
         }
 
+        if( this._calltableBodyActiveRowFgColor ){
+            o["calltableBodyActiveRowFgColor"] = this._calltableBodyActiveRowFgColor;
+        }
+        else{
+            delete o["calltableBodyActiveRowFgColor"];
+        }
     }
 
     getCalltableBgColor(){
@@ -183,6 +198,14 @@ export default class CallTableWidgetData extends WidgetData{
 
     setCalltableHeaderFgColor( color ){
         this._calltableHeaderFgColor = color;
+    }
+
+    getCalltableHeaderBgColor(){
+        return this._calltableHeaderBgColor;
+    }
+
+    setCalltableHeaderBgColor( color ){
+        this._calltableHeaderBgColor = color;
     }
 
     getCalltableHeaderRowUnderlineThickness(){
@@ -231,6 +254,14 @@ export default class CallTableWidgetData extends WidgetData{
 
     setCalltableBodyActiveRowBgColor( color ){
         this._calltableBodyActiveRowBgColor = color;
+    }
+
+    getCalltableBodyActiveRowFgColor(){
+        return this._calltableBodyActiveRowFgColor;
+    }
+
+    setCalltableBodyActiveRowFgColor( color ){
+        this._calltableBodyActiveRowFgColor = color;
     }
 	
 	getCalltableHeaderFontSize(){
@@ -311,4 +342,83 @@ export default class CallTableWidgetData extends WidgetData{
 
     }
 
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._calltableBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ) {
+            this._calltableOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR ) === true ) {
+            this._calltableOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS ) === true ) {
+            this._calltableOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR ) === true ) {
+            this._calltableHeaderFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR ) === true ) {
+            this._calltableHeaderBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS ) === true ) {
+            this._calltableHeaderRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR ) === true ) {
+            this._calltableHeaderRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR ) === true ) {
+            this._calltableBodyFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS ) === true ) {
+            this._calltableBodyRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR) === true ) {
+            this._calltableBodyRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_BG_COLOR) === true ) {
+            this._calltableBodyActiveRowBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE) === true ) {
+            this._calltableHeaderFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE) === true ) {
+            this._calltableBodyFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_FONT_SIZE) === true ) {
+            this._calltableActiveButtonFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_WIDTH) === true ) {
+            this._calltableActiveButtonWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_HEIGHT) === true ) {
+            this._calltableActiveButtonHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_FG_COLOR) === true ) {
+            this._calltableBodyActiveRowFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_FG_COLOR);
+        }
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._calltableBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._calltableOuterBorderThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._calltableOuterBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._calltableOuterBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR, this._calltableHeaderFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR, this._calltableHeaderBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS, this._calltableHeaderRowUnderlineThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR, this._calltableHeaderRowUnderlineColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR, this._calltableBodyFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS, this._calltableBodyRowUnderlineThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR, this._calltableBodyRowUnderlineColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_BG_COLOR, this._calltableBodyActiveRowBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE, this._calltableHeaderFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE, this._calltableBodyFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_FONT_SIZE, this._calltableActiveButtonFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_WIDTH, this._calltableActiveButtonWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ACTIVE_BUTTON_HEIGHT, this._calltableActiveButtonHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_FG_COLOR, this._calltableBodyActiveRowFgColor );
+    }
 }

@@ -3,8 +3,6 @@ import VerticalDividerData from "../data/VerticalDividerData";
 import HorizontalDividerData from "../data/HorizontalDividerData";
 import BasePane from "../base/BasePane";
 import BaseDividerData from "../data/BaseDividerData";
-import PaneData from "../data/PaneData";
-import GridLines from "react-gridlines";
 import RuntimeTabFunctionComponent from "./RuntimeTabFunctionComponent";
 import RuntimeWidgetFactory from "./widget/runtime/RuntimeWidgetFactory";
 
@@ -109,16 +107,13 @@ export default class RuntimePane extends BasePane {
         this._RuntimeHorizontalAreaClassName = runtimeHorizontalAreaClassName;
         this._HeightWithPercent = height + "%";
 
-        const backgroundColor = props["backgroundColor"];
-
         // if( parentContainer && parentContainer.getDividerData() ){
         //     const parentDividerData = parentContainer.getDividerData();
         //
         // }
 
         this.state = {
-            parentContainer : parentContainer,
-            backgroundColor : backgroundColor,
+            parentContainer : parentContainer
         };
     }
 
@@ -223,9 +218,6 @@ export default class RuntimePane extends BasePane {
             //}
             const className =  "containerContent " +  this.props.className;
             const paneData = this.props["paneData"];
-            const screenData = paneData.getPaneDatasAsParent().getScreenDataAsParent();
-            css["color"] = screenData.getScreenForegroundColor();
-            css["backgroundColor"] = screenData.getScreenBackgroundColor();
 
             const paneWidth = paneData.getPaneWidth();
             if( paneWidth && paneWidth !== -1 ){
@@ -251,6 +243,22 @@ export default class RuntimePane extends BasePane {
                 const runtimeScreenView = this.getRuntimeScreenView();
                 const widgetDatas = paneData.getWidgetDatasForNoTabs();
                 const widgetDataArray = widgetDatas.getWidgetDataArray();
+
+                let backgroundImage;
+                const bgImageDataUrl = paneData.getPaneBackgroundImageBase64DataUrl();
+                if( bgImageDataUrl ){
+					backgroundImage = "url('" + bgImageDataUrl + "')";
+				}
+				else{
+					backgroundImage = null;
+				}
+
+                css["backgroundColor"] = paneData.getPaneBackgroundColor();
+                css["backgroundImage"] = backgroundImage;
+                css["backgroundSize"] = "cover";
+                css["backgroundRepeat"] = "no-repeat";
+                css["backgroundPosition"] = "center center";
+
                 jsx = <div
                     data-br-container-id={paneData.getPaneNumber() }
                     // parent-container={this.state.parentContainer}

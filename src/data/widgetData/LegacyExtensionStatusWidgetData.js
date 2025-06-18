@@ -96,4 +96,33 @@ export default class LegacyExtensionStatusWidgetData extends WidgetData {
             this.setExtensionStatusFgColor( widget_ver0_1.exStatusFgColor );
         }
     }
+
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_EXTENSION ) === true ) {
+            this._extension = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_EXTENSION);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FG_COLOR ) === true ) {
+            this._extensionStatusFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE ) === true ) {
+            this._extensionStatusLampSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TEXT_TOP_MARGIN ) === true ) {
+            this._extensionStatusExtensionTextTopMargin = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TEXT_TOP_MARGIN);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE ) === true ) {
+            this._extensionStatusExtensionFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FONT_SIZE);
+        }
+
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_EXTENSION, this._extension );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FG_COLOR, this._extensionStatusFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE, this._extensionStatusLampSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TEXT_TOP_MARGIN, this._extensionStatusExtensionTextTopMargin );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE, this._extensionStatusExtensionFontSize );
+    }
 }

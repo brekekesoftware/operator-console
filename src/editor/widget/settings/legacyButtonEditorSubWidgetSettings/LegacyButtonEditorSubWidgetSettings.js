@@ -23,10 +23,11 @@ export default class LegacyButtonEditorSubWidgetSettings{
         throw new Error("Not implemented.");
     }
 
-    _onOkSelectIconModal(selectIconModalAsCaller, selectedIconValue){
+    _onOkSelectIconModal(selectIconModalAsCaller, selectedIconValue, selectedIconName ){
         if( selectedIconValue ) {
             const subWidgetData = this._LegacyButtonEditorSubWidgetData;
             subWidgetData.setIcon(selectedIconValue);
+            subWidgetData.setIconName( selectedIconName );
             const esv = EditScreenView.getEditScreenViewInstance();
             esv.setState({rerender: true});
         }
@@ -36,11 +37,11 @@ export default class LegacyButtonEditorSubWidgetSettings{
 
     }
 
-    _onClickSelectIconModalButton( ev, iconValue, okFunction = null, cancelFunction = null ){
+    _onClickSelectIconModalButton( ev, iconValue, iconName, okFunction = null, cancelFunction = null ){
 
         let okFunc = okFunction;
         if( !okFunc ){
-            okFunc = (selectIconModalAsCaller, selectedIconValue) => this._onOkSelectIconModal( selectIconModalAsCaller,selectedIconValue );
+            okFunc = (selectIconModalAsCaller, selectedIconValue, selectedIconName ) => this._onOkSelectIconModal( selectIconModalAsCaller,selectedIconValue, selectedIconName );
         }
 
         let cancelFunc = cancelFunction;
@@ -51,7 +52,8 @@ export default class LegacyButtonEditorSubWidgetSettings{
         const selectIconModal = SelectIconModal.getSelectIconModalInstance();
         const args = {
             selectedIconValue:iconValue,
-            onOkFunction: (selectIconModalAsCaller, selectedIconValue) => okFunc(selectIconModalAsCaller, selectedIconValue),
+            selectedIconName :iconName,
+            onOkFunction: (selectIconModalAsCaller, selectedIconValue, selectedIconName ) => okFunc(selectIconModalAsCaller, selectedIconValue, selectedIconName ),
             onCancelFunction: (selectIconModalAsCaller) => cancelFunc(selectIconModalAsCaller)
         };
         selectIconModal.setSelectIconModalVisibleToState(args);
@@ -60,14 +62,28 @@ export default class LegacyButtonEditorSubWidgetSettings{
     _onClickRemoveIcon(ev){
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setIcon(null);
+        subWidgetData.setIconName(null);
         const esv = EditScreenView.getEditScreenViewInstance();
         esv.setState({rerender:true});
     }
 
-    _getSelectIconModalJsx( sIcon = null, okFunction = null, cancelFunction = null, onClickRemoveIconButtonFunction = null  ){
+    _getSelectIconModalJsx( sIcon = null, sIconName = null, okFunction = null, cancelFunction = null, onClickRemoveIconButtonFunction = null, getIconFunction = null, getIconNameFunction = null  ){
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         if( !sIcon && subWidgetData.getIcon ) {
-            sIcon = subWidgetData.getIcon();
+            if( getIconFunction ){
+                sIcon = getIconFunction();
+            }
+            else if( subWidgetData.getIcon ) {
+                sIcon = subWidgetData.getIcon();
+            }
+        }
+        if( !sIconName ) {
+            if( getIconNameFunction ){
+                sIconName = getIconNameFunction();
+            }
+            else if( subWidgetData.getIconName  ){
+                sIconName = subWidgetData.getIconName();
+            }
         }
         let iconJsx;
         if( sIcon ){
@@ -93,8 +109,14 @@ export default class LegacyButtonEditorSubWidgetSettings{
                 <div>
                     {iconJsx}
                 </div>
+                { sIconName ? (
+                    <div>
+                        {sIconName}
+                    </div>)
+                    : (null)
+                }
                 <div className="brOCMarginTopButtonToElement_short">
-                    <Button onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
+                    <Button onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, sIconName, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
                     <Button className="brOCMarginLeftButtonToButton" onClick={(ev) => onClickRemoveIconButtonFunction_(ev) } disabled={!sIcon}>{ i18n.t("RemoveIcon")}</Button>
                 </div>
             </>
@@ -174,8 +196,9 @@ export default class LegacyButtonEditorSubWidgetSettings{
     )
   }
 
-    _onFormIconSelected( icon ){
+    _onFormIconSelected( icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setIcon( icon );
+        this._LegacyButtonEditorSubWidgetData.setIconName( iconName );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 

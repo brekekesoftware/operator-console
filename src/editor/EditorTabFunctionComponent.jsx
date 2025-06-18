@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Tabs} from "antd";
+import {ConfigProvider, Tabs} from "antd";
 import {DndContext, PointerSensor, useSensor} from "@dnd-kit/core";
 import {arrayMove, horizontalListSortingStrategy, SortableContext, useSortable} from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
@@ -7,6 +7,7 @@ import GridLines from "react-gridlines";
 import EditorWidgetFactory from "./widget/editor/EditorWidgetFactory";
 import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
 import EditScreenView from "./EditScreenView";
+import WidgetData from "../data/widgetData/WidgetData";
 
 const DraggableTabNode = ({ className, ...props }) => {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -30,7 +31,7 @@ const DraggableTabNode = ({ className, ...props }) => {
 
 const _onTabClick = ( tabKey, mouseEvent, editorPaneAsParent  ) =>{
     const pane = editorPaneAsParent;
-    const paneId = pane.getPaneId();
+    //const paneId = pane.getPaneId();
     pane.onTabClickByEditorTabFunctionComponent( tabKey, mouseEvent );
 }
 
@@ -55,10 +56,20 @@ const _onDrop = function( ev, editorPane, tabData, tabId ){
     //const paneData = this.props["paneData"];
     const widgetTypeId = parseInt( sWidgetTypeId );
     const editorWidgetTemplate = EditorWidgetTemplateFactory.getStaticEditorWidgetSettingsFactoryInstance().getEditorWidgetTemplateByWidgetTypeId( widgetTypeId );
-    const widgetWidth = editorWidgetTemplate.getWidth();
-    const widgetHeight = editorWidgetTemplate.getHeight();
 
-    const offsetX = parseInt(ev.dataTransfer.getData('offsetX'));
+    let widgetWidth = editorWidgetTemplate.getWidth();
+    let widgetHeight = editorWidgetTemplate.getHeight();
+
+	const widgetDefaultWidth = WidgetData.WIDGET_TYPE_DEFAULT_WIDTHS[ widgetTypeId ];
+	if( widgetDefaultWidth ){
+		widgetWidth = widgetDefaultWidth;
+	}
+	const widgetDefaultHeight = WidgetData.WIDGET_TYPE_DEFAULT_HEIGHTS[ widgetTypeId ];
+	if( widgetDefaultHeight ){
+		widgetHeight = widgetDefaultHeight;
+	}
+
+	const offsetX = parseInt(ev.dataTransfer.getData('offsetX'));
     const offsetY = parseInt(ev.dataTransfer.getData('offsetY'));
     const eTabRoot = document.querySelector('[data-broc-tab-id="' + tabId + '"]');
     const boundingRect = eTabRoot.getBoundingClientRect();
@@ -88,48 +99,69 @@ export default function EditorTabFunctionComponent(props){
     const editingScreenGrid = editScreenView.getEditingScreenGrid();
     for( let i = 0; i < tabItems.length; i++ ){
         const tabData = tabsData.getTabDataAt(i);
+		
+		let backgroundImage;
+		const bgImageDataUrl = tabData.getTabBackgroundImageBase64DataUrl();
+		if( bgImageDataUrl ){
+			backgroundImage = "url('" + bgImageDataUrl + "')";
+		}
+		else{
+			backgroundImage = null;
+		}
+		
+		const outerCss = {
+			width:"100%",
+			height:"100%",
+			color: tabData.getTabForegroundColor(),
+			backgroundColor:  tabData.getTabBackgroundColor(),
+			backgroundImage: backgroundImage,
+			backgroundSize: "cover",
+			backgroundRepeat: "no-repeat",
+			backgroundPosition: "center center"
+		};
+		
         const widgetDataArray = tabData.getWidgetDatas().getWidgetDataArray();
-
-        const tabId= editorPaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
-
+        const tabId = editorPaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
         const tabChildren = (
-            <GridLines
-                data-broc-tab-id={tabId}
-                component="div"
-                className="editingGridLinesForTab"
-                strokeWidth={2}
-                cellWidth={editingScreenGrid * 10}
-                cellWidth2={editingScreenGrid}
-                cellHeight={editingScreenGrid * 10}
-                cellHeight2={editingScreenGrid}
-                onDragEnter={ (ev)=> _onDragEnter(ev)}
-                onDragOver={(ev) =>{ _onDragOver(ev)}}
-                onDrop={ (ev) => _onDrop(ev, editorPaneAsParent, tabData, tabId ) }
-                onMouseDown = {
-                    (ev) =>{
-                        editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
-                    }
-                }
-                //style={{width:"300px",height:"300px",position:"relative"}}
-                //height={"1000px"}
-                //style={{width:"auto"}}
-                //  style={{height:"100%"}}
-                //style={{overflow:"auto"}}
-                //style={{height:"100px",width:"100px"}}
-                //style={{overflow:"auto",position:"relative"}}
-                //style={{whiteSpace:"nowrap"}}
-                // style={{height:"auto",width:"auto"}}
-            >
-                {widgetDataArray.map( (widgetData,index) =>{
-                    const options = {
-                        editorPane:editorPaneAsParent,
-                        widgetData:widgetDataArray[index],
-                        jsxKey:index
-                    };
-                    const widgetJsx = EditorWidgetFactory.getStaticEditorWidgetFactoryInstance().getEditorWidgetJsx( options );
-                    return widgetJsx;
-                })}
-            </GridLines>
+			<div style={outerCss}>
+				<GridLines
+					data-broc-tab-id={tabId}
+					component="div"
+					className="editingGridLinesForTab"
+					strokeWidth={2}
+					cellWidth={editingScreenGrid * 10}
+					cellWidth2={editingScreenGrid}
+					cellHeight={editingScreenGrid * 10}
+					cellHeight2={editingScreenGrid}
+					onDragEnter={ (ev)=> _onDragEnter(ev)}
+					onDragOver={(ev) =>{ _onDragOver(ev)}}
+					onDrop={ (ev) => _onDrop(ev, editorPaneAsParent, tabData, tabId ) }
+					onMouseDown = {
+						(ev) =>{
+							editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+						}
+					}
+					//style={{width:"300px",height:"300px",position:"relative"}}
+					//height={"1000px"}
+					//style={{width:"auto"}}
+					//  style={{height:"100%"}}
+					//style={{overflow:"auto"}}
+					//style={{height:"100px",width:"100px"}}
+					//style={{overflow:"auto",position:"relative"}}
+					//style={{whiteSpace:"nowrap"}}
+					// style={{height:"auto",width:"auto"}}
+				>
+					{widgetDataArray.map( (widgetData,index) =>{
+						const options = {
+							editorPane:editorPaneAsParent,
+							widgetData:widgetDataArray[index],
+							jsxKey:index
+						};
+						const widgetJsx = EditorWidgetFactory.getStaticEditorWidgetFactoryInstance().getEditorWidgetJsx( options );
+						return widgetJsx;
+					})}
+				</GridLines>
+			</div>
         );
 
         const tabItem = {
@@ -193,40 +225,85 @@ export default function EditorTabFunctionComponent(props){
     const activeKey = tabsData.getSelectedTabKeyAsString();
     const className = props["className"] + " overflowAuto";
     const paneId = props["data-br-container-id"];
+
+	let backgroundImage;
+	const bgImageDataUrl = tabsData.getTabsBackgroundImageBase64DataUrl();
+	if( bgImageDataUrl ){
+		backgroundImage = "url('" + bgImageDataUrl + "')";
+	}
+	else{
+		backgroundImage = null;
+	}
+
+    const tabBarCss = {
+        //color:"#00FFFF",	//It makes no sense
+        backgroundColor: tabsData.getTabsBackgroundColor(),
+		backgroundImage : backgroundImage,
+		backgroundSize : "cover",
+		backgroundRepeat : "no-repeat",
+		backgroundPosition : "center center",
+		//fontSize:"10px"	//No effect
+    }
+	
+	const componentsTabs =  {
+		itemSelectedColor : tabsData.getTabsItemSelectedColor(),	//"#FFFFFF"
+		itemHoverColor : tabsData.getTabsItemHoverColor(),	//"#0000FF"
+		itemColor : tabsData.getTabsItemColor()	//"#000000"
+	};
+	const tabsInkBarColor = tabsData.getTabsInkBarColor();
+	if( tabsInkBarColor ){
+		componentsTabs["inkBarColor"] = tabsInkBarColor;
+	}
+	
+	const tabsTitleFontSize = tabsData.getTabsTitleFontSize();
+	if( tabsTitleFontSize || tabsTitleFontSize === 0 ){
+		componentsTabs["titleFontSize"] = tabsTitleFontSize;
+	}
+	
     const css = props["css"];
     const jsx = (
-        <Tabs
-            style={css}
-            data-br-container-id={paneId}
-            // onMouseDown={ (ev) => {
-            //         ev.stopPropagation();
-            //         //ev.preventDefault();
-            //         editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
-            //     }
-            // }
-            className={className}
-            //tabBarStyle={{overflow:"auto"}}
-            activeKey={activeKey}
-            onChange={(selectedKey) => _onChangeByTabs(selectedKey) }
-            onTabClick={(tabKey,mouseEvent) => {
-                mouseEvent.stopPropagation();
-                _onTabClick(tabKey, mouseEvent, editorPaneAsParent );
-            } }
-            items={tabItems}
-            renderTabBar={(tabBarProps, DefaultTabBar) => (
-                <DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
-                    <SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
-                        <DefaultTabBar {...tabBarProps}>
-                            {(node) => (
-                                <DraggableTabNode {...node.props} key={node.key}>
-                                    {node}
-                                </DraggableTabNode>
-                            )}
-                        </DefaultTabBar>
-                    </SortableContext>
-                </DndContext>
-            )}
-        />
+		<ConfigProvider
+		  theme={{
+			components: {
+			  Tabs:componentsTabs,
+			},
+		  }}
+		>
+			<Tabs
+				tabBarStyle={tabBarCss}
+				style={css}
+				data-br-container-id={paneId}
+				// onMouseDown={ (ev) => {
+				//         ev.stopPropagation();
+				//         //ev.preventDefault();
+				//         editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+				//     }
+				// }
+				className={className}
+				//tabBarStyle={{overflow:"auto"}}
+				activeKey={activeKey}
+				onChange={(selectedKey) => _onChangeByTabs(selectedKey) }
+				onTabClick={(tabKey,mouseEvent) => {
+					mouseEvent.stopPropagation();
+					_onTabClick(tabKey, mouseEvent, editorPaneAsParent );
+				} }
+				items={tabItems}
+				renderTabBar={(tabBarProps, DefaultTabBar) => (
+					<DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
+						<SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
+							<DefaultTabBar {...tabBarProps}>
+								{(node) => (
+									<DraggableTabNode {...node.props} key={node.key}>
+										{node}
+									</DraggableTabNode>
+								)}
+							</DefaultTabBar>
+						</SortableContext>
+					</DndContext>
+				)}
+			/>		
+		</ConfigProvider>
+
     );
     return jsx;
 }

@@ -37,6 +37,12 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeCalltableHeaderBgColor( color ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableHeaderBgColor(color);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     _onChangeCalltableHeaderRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderRowUnderlineThickness(n);
@@ -70,6 +76,12 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
     _onChangeCalltableBodyActiveRowBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyActiveRowBgColor(color);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCalltableBodyActiveRowFgColor( color ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCalltableBodyActiveRowFgColor(color);
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
@@ -127,6 +139,9 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableHeaderFgColor()}
                              onChange={(color) => this._onChangeCalltableHeaderFgColor(color)}/>
+                <p>{i18n.t("bgColor")}</p>
+                <Colorpicker format="rgb" value={widgetData.getCalltableHeaderBgColor()}
+                             onChange={(color) => this._onChangeCalltableHeaderBgColor(color)}/>
                 <p>{i18n.t("rowUnderlineThickness")}</p>
                 <InputNumber min="0" value={widgetData.getCalltableHeaderRowUnderlineThickness()}
                              onChange={(n) => this._onChangeCalltableHeaderRowUnderlineThickness(n)}/>
@@ -146,6 +161,9 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
                 <p>{i18n.t("rowUnderlineColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableBodyRowUnderlineColor()}
                              onChange={(color) => this._onChangeCalltableBodyRowUnderlineColor(color)}/>
+                <p>{i18n.t("activeRowFgColor")}</p>
+                <Colorpicker format="rgb" value={widgetData.getCalltableBodyActiveRowFgColor()}
+                             onChange={(color) => this._onChangeCalltableBodyActiveRowFgColor(color)}/>
                 <p>{i18n.t("activeRowBgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getCalltableBodyActiveRowBgColor()}
                              onChange={(color) => this._onChangeCalltableBodyActiveRowBgColor(color)}/>

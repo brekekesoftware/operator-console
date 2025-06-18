@@ -23,6 +23,8 @@ export default class LineTableWidgetData extends WidgetData {
         this._linetableOuterBorderRadius = options["linetableOuterBorderRadius"];
 
         this._linetableHeaderFgColor = options["linetableHeaderFgColor"];
+        this._linetableHeaderBgColor = options["linetableHeaderBgColor"];
+
         this._linetableHeaderRowUnderlineThickness = options["linetableHeaderRowUnderlineThickness"];
         this._linetableHeaderRowUnderlineColor = options["linetableHeaderRowUnderlineColor"];
 
@@ -119,6 +121,13 @@ export default class LineTableWidgetData extends WidgetData {
         }
         else{
             delete o["linetableHeaderFgColor"];
+        }
+
+        if( this._linetableHeaderBgColor ){
+            o["linetableHeaderBgColor"] = this._linetableHeaderBgColor;
+        }
+        else{
+            delete o["linetableHeaderBgColor"];
         }
 
         if( this._linetableHeaderRowUnderlineThickness || this._linetableHeaderRowUnderlineThickness === 0  ){
@@ -445,6 +454,14 @@ export default class LineTableWidgetData extends WidgetData {
 
     setLinetableHeaderFgColor( color ){
         this._linetableHeaderFgColor = color;
+    }
+
+    getLinetableHeaderBgColor(){
+        return this._linetableHeaderBgColor;
+    }
+
+    setLinetableHeaderBgColor( color ){
+        this._linetableHeaderBgColor = color;
     }
 
     getLinetableHeaderRowUnderlineThickness(){
@@ -784,4 +801,196 @@ export default class LineTableWidgetData extends WidgetData {
         }
     }
 
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_DATA_ARRAY ) === true ) {
+            const lineDataArray = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_LINE_DATA_ARRAY);
+            const lineCount = lineDataArray.length;
+            this._LineDataArray.length = lineCount;
+            for( let i = 0; i < lineCount; i++ ){
+                const lineDataOptions = structuredClone( lineDataArray[i] );
+                lineDataOptions["lineTableWidgetDataAsParent"] = this;
+                const lineData = new LineTableWidgetLineData( lineDataOptions );
+                this._LineDataArray[i] = lineData;
+            }
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_METHOD) === true ){
+            this._linetableTransferMethod = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_METHOD );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ){
+            this._linetableBgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_BG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ){
+            this._linetableOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR ) === true ){
+            this._linetableOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS ) === true ){
+            this._linetableOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS );
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE ) === true ){
+            this._linetableHeaderFontSize = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR ) === true ){
+            this._linetableHeaderFgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR ) === true ){
+            this._linetableHeaderBgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS ) === true ){
+            this._linetableHeaderRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR ) === true ){
+            this._linetableHeaderRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR );
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE ) === true ){
+            this._linetableBodyFontSize = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR ) === true ){
+            this._linetableBodyFgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS ) === true ){
+            this._linetableBodyRowUnderlineThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR ) === true ){
+            this._linetableBodyRowUnderlineColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR );
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FONT_SIZE ) === true ){
+            this._lineButtonFontSize = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FONT_SIZE );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_WIDTH ) === true ){
+            this._lineButtonWidth = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_WIDTH );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_HEIGHT ) === true ){
+            this._lineButtonHeight = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_HEIGHT );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FG_COLOR ) === true ){
+            this._lineButtonFgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_BG_COLOR ) === true ){
+            this._lineButtonBgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_BG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_COLOR ) === true ){
+            this._lineButtonOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_RADIUS ) === true ){
+            this._lineButtonOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_RADIUS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_THICKNESS ) === true ){
+            this._lineButtonOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_THICKNESS );
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FONT_SIZE ) === true ){
+            this._transferButtonFontSize = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FONT_SIZE );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_WIDTH ) === true ){
+            this._transferButtonWidth = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_WIDTH );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_HEIGHT ) === true ){
+            this._transferButtonHeight = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_HEIGHT );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FG_COLOR ) === true ){
+            this._transferButtonFgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_BG_COLOR ) === true ){
+            this._transferButtonBgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_BG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_COLOR ) === true ){
+            this._transferButtonOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_RADIUS ) === true ){
+            this._transferButtonOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_RADIUS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS ) === true ){
+            this._transferButtonOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS );
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FONT_SIZE ) === true ){
+            this._transferCancelButtonFontSize = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FONT_SIZE );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_WIDTH ) === true ){
+            this._transferCancelButtonWidth = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_WIDTH );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_HEIGHT ) === true ){
+            this._transferCancelButtonHeight = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_HEIGHT );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FG_COLOR ) === true ){
+            this._transferCancelButtonFgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_BG_COLOR ) === true ){
+            this._transferCancelButtonBgColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_BG_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_COLOR ) === true ){
+            this._transferCancelButtonOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_COLOR );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_RADIUS ) === true ){
+            this._transferCancelButtonOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_RADIUS );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS ) === true ){
+            this._transferCancelButtonOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS );
+        }
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        const lineCount = this._LineDataArray.length;
+        //wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_COUNT, lineCount  );
+
+        const lineDataArray = new Array( lineCount );
+        for( let i = 0; i < lineCount; i++ ){
+            const oLineData = new Object();
+            const lineData = this._LineDataArray[i];
+            lineData.setLineTableWidgetLineDataToObject( oLineData );
+            lineDataArray[i] = oLineData;
+        }
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_DATA_ARRAY, lineDataArray );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_METHOD, this._linetableTransferMethod );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._linetableBgColor );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._linetableOuterBorderThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._linetableOuterBorderColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._linetableOuterBorderRadius );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FONT_SIZE, this._linetableHeaderFontSize  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_FG_COLOR, this._linetableHeaderFgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_BG_COLOR, this._linetableHeaderBgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_THICKNESS, this._linetableHeaderRowUnderlineThickness  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_HEADER_ROW_UNDERLINE_COLOR, this._linetableHeaderRowUnderlineColor  );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FONT_SIZE, this._linetableBodyFontSize  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_FG_COLOR, this._linetableBodyFgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_THICKNESS, this._linetableBodyRowUnderlineThickness  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BODY_ROW_UNDERLINE_COLOR, this._linetableBodyRowUnderlineColor  );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FONT_SIZE, this._lineButtonFontSize  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_WIDTH, this._lineButtonWidth  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_HEIGHT, this._lineButtonHeight  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_FG_COLOR, this._lineButtonFgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_BG_COLOR, this._lineButtonBgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_COLOR, this._lineButtonOuterBorderColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_RADIUS, this._lineButtonOuterBorderRadius  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LINE_BUTTON_OUTER_BORDER_THICKNESS, this._lineButtonOuterBorderThickness  );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FONT_SIZE, this._transferButtonFontSize  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_WIDTH, this._transferButtonWidth  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_HEIGHT, this._transferButtonHeight  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_FG_COLOR, this._transferButtonFgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_BG_COLOR, this._transferButtonBgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_COLOR, this._transferButtonOuterBorderColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_RADIUS, this._transferButtonOuterBorderRadius  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS, this._transferButtonOuterBorderThickness  );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FONT_SIZE, this._transferCancelButtonFontSize  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_WIDTH, this._transferCancelButtonWidth  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_HEIGHT, this._transferCancelButtonHeight  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_FG_COLOR, this._transferCancelButtonFgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_BG_COLOR, this._transferCancelButtonBgColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_COLOR, this._transferCancelButtonOuterBorderColor  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_RADIUS, this._transferCancelButtonOuterBorderRadius  );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_CANCEL_TRANSFER_BUTTON_OUTER_BORDER_THICKNESS, this._transferCancelButtonOuterBorderThickness  );
+    }
 }

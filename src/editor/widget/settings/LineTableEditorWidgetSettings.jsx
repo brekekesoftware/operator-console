@@ -77,6 +77,12 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         this._EditScreenViewAsParent.setState({rerender:true});
     }
 
+    _onChangeLinetableHeaderBgColor( color ){
+        const widgetData = this._getWidgetData();
+        widgetData.setLinetableHeaderBgColor(color);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
     _onChangeLinetableHeaderRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderRowUnderlineThickness(n);
@@ -302,7 +308,8 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                     onSelect={(e) => this._onChangeLinetableTransferMethod(e)}
                 >
                     <Select.Option value="selectTransferMethod">{i18n.t("Select_a_transfer_method")}</Select.Option>
-                    <Select.Option value="attendedTransferWithSwitchCall">{i18n.t("Attended_transfer(Switch_a_call)")}</Select.Option>
+                    <Select.Option
+                        value="attendedTransferWithSwitchCall">{i18n.t("Attended_transfer(Switch_a_call)")}</Select.Option>
                     <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
                     <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
                 </Select>
@@ -325,6 +332,9 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                 <p>{i18n.t("fgColor")}</p>
                 <Colorpicker format="rgb" value={widgetData.getLinetableHeaderFgColor()}
                              onChange={(color) => this._onChangeLinetableHeaderFgColor(color)}/>
+                <p>{i18n.t("bgColor")}</p>
+                <Colorpicker format="rgb" value={widgetData.getLinetableHeaderBgColor()}
+                             onChange={(color) => this._onChangeLinetableHeaderBgColor(color)}/>
                 <p>{i18n.t("rowUnderlineThickness")}</p>
                 <InputNumber min="0" value={widgetData.getLinetableHeaderRowUnderlineThickness()}
                              onChange={(n) => this._onChangeLinetableHeaderRowUnderlineThickness(n)}/>

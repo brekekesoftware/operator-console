@@ -45,8 +45,8 @@ export default class EditorRootPane extends EditorPane  {
                 paneCss["display"] = "flex";
                 paneCss["flexFlow"] = "column";
                 paneCss["alignItems"] = "stretch";
-                paneCss["color"] = this.props.foregroundColor;
-                paneCss["backgroundColor"] = this.props.backgroundColor;
+                // paneCss["color"] = this.props.foregroundColor;
+                // paneCss["backgroundColor"] = this.props.backgroundColor;
                 const paneWidth = paneData.getPaneWidth();
                 if (paneWidth && paneWidth !== -1) {
                     const dividerHalfWidthPx = getComputedStyle(document.documentElement).getPropertyValue("--broc_dividerHalfWidth");
@@ -92,8 +92,8 @@ export default class EditorRootPane extends EditorPane  {
                 if (paneHeight && paneHeight !== -1) {
                     paneCss["height"] = paneHeight + "%";
                 }
-                paneCss["color"] = this.props.foregroundColor;
-                paneCss["backgroundColor"] = this.props.backgroundColor;
+                // paneCss["color"] = this.props.foregroundColor;
+                // paneCss["backgroundColor"] = this.props.backgroundColor;
 
                 jsx = (
                     <div data-br-container-id={paneNumber} style={paneCss}

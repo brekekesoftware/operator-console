@@ -210,6 +210,10 @@ export default class EditorWidget extends React.Component {
     static onSelectingEditorWidgetKeyDownByEditScreenView_static( editScreenViewAsCaller, ev, widgetData ){
         const editorWidget = _EDITOR_WIDGETS[ widgetData ];
         const eWidget = ev.target.querySelector(".brOCSelectingWidget");
+        if( !eWidget ){
+            //Another element has focus etc.
+            return;
+        }
         editorWidget._onKeyDownFromEditScreenView( ev, widgetData, eWidget );
     }
 
@@ -279,6 +283,8 @@ export default class EditorWidget extends React.Component {
             onDragStop={ (ev,data) => this._onDragStop(ev,data, widgetData )}
             onResizeStop={ (e, dir, ref, delta, pos)  => this._onResizeStop( e,dir,ref,delta,pos, widgetData ) }
             onMouseDown={ (ev)=> this._onMouseDown( ev, widgetData  )}
+            //onFocus={ (ev) => alert("focus") }    //No effect
+            //onBlur={ (ev) => alert("blur")}   //No effect
             // onResize={(e) => {
             //     e.stopPropagation();
             //     e.preventDefault();

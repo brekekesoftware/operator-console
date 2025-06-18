@@ -17,8 +17,13 @@ export default class ScreenData{
             this._editingScreenGrid = cloneSrcScreenData.getEditingScreenGrid();
             this._screenBackgroundColor = cloneSrcScreenData.getScreenBackgroundColor();
             this._screenForegroundColor = cloneSrcScreenData.getScreenForegroundColor();
+            this._screenBackgroundImageBase64DataUrl = cloneSrcScreenData.getScreenBackgroundImageBase64DataUrl();
         }
 
+    }
+
+    getScreenBackgroundImageBase64DataUrl(){
+        return this._screenBackgroundImageBase64DataUrl;
     }
 
     getScreenPaneDatas(){
@@ -49,6 +54,14 @@ export default class ScreenData{
         this._editingScreenGrid = editingScreenGrid;
     }
 
+    setBackgroundImageBase64DataUrl(base64 ){
+        this._screenBackgroundImageBase64DataUrl = base64;
+    }
+
+    deleteBackgroundImageBase64DataUrl(){
+        this._screenBackgroundImageBase64DataUrl = null;
+    }
+
     cloneScreenData(){
         const  screenData = new ScreenData(this);
         return screenData;
@@ -62,6 +75,7 @@ export default class ScreenData{
         o["editingScreenGrid"] = this._editingScreenGrid;
         o["screenBackgroundColor"] = this._screenBackgroundColor;
         o["screenForegroundColor"] = this._screenForegroundColor;
+        o["screenBackgroundImageBase64"] = this._screenBackgroundImageBase64DataUrl;
         return o;
     }
 
@@ -74,7 +88,7 @@ export default class ScreenData{
         screenData._editingScreenGrid = oScreenData["editingScreenGrid"];
         screenData._screenBackgroundColor = oScreenData["screenBackgroundColor"];
         screenData._screenForegroundColor = oScreenData["screenForegroundColor"];
-
+        screenData._screenBackgroundImageBase64DataUrl = oScreenData["screenBackgroundImageBase64"];
         return screenData;
     }
 
@@ -87,6 +101,7 @@ export default class ScreenData{
         screenData._editingScreenGrid = oScreenData["editingScreenGrid"];
         screenData._screenBackgroundColor = oScreenData["screenBackgroundColor"];
         screenData._screenForegroundColor = oScreenData["screenForegroundColor"];
+        screenData._screenBackgroundImageBase64DataUrl = oScreenData["screenBackgroundImageBase64"];
 
         return screenData;
     }

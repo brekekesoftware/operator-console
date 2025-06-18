@@ -2,13 +2,26 @@ import React from 'react';
 import Button from "antd/lib/button";
 import i18n from "../../../i18n";
 import Popconfirm from "antd/lib/popconfirm";
-import {Modal} from "antd";
+import {Checkbox, Divider, Input, Modal} from "antd";
+import AutoComplete from "antd/lib/auto-complete";
+import WidgetSettingsTemplates from "./template/WidgetSettingsTemplates";
+import Notification from "antd/lib/notification";
+import BrekekeOperatorConsole from "../../../index";
+import EditScreenView from "../../EditScreenView";
+import WidgetSettingsTemplate from "./template/WidgetSettingsTemplate";
+import WidgetData from "../../../data/widgetData/WidgetData";
 
+
+let _select_widget_settings_template_name = null;
+let _new_widget_settings_template_name = null;
+let _load_button_function = true;
 //!abstract
 export default class EditorWidgetSettings extends React.Component {
     constructor( props ) {
         super( props );
         this._EditScreenViewAsParent = props["editScreenViewAsParent"];
+        this.state = {
+        };
     }
 
     _getWidgetData(){
@@ -32,9 +45,297 @@ export default class EditorWidgetSettings extends React.Component {
         return this._EditScreenViewAsParent;
     }
 
+    _onChangeLoadButtonFunction(e){
+        const eLoadButtonFunction = document.getElementById("loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke");
+        const checked = eLoadButtonFunction.checked;
+        _load_button_function = checked === true;
+        this.setState({rerender:true});
+    }
+
+    _onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateName  ){
+        _select_widget_settings_template_name = widgetSettingsTemplateName;
+        this.setState({rerender:true});
+    }
+
+    _onChangeNewWidgetSettingsTemplateName( ev ){
+        const widgetSettingsTemplateName = ev.target.value;
+        _new_widget_settings_template_name = widgetSettingsTemplateName;
+        this.setState({rerender:true});
+    }
+
+    _onClickRenameTemplateButton(){
+        const oldName = _select_widget_settings_template_name;
+        if( !oldName  ){
+            Notification.warning({ message:i18n.t("No_template_specified")});
+            return;
+        }
+        const name = _new_widget_settings_template_name;
+        if( !name ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+            return;
+        }
+        const nameTrimmed = name.trim();
+        if( nameTrimmed.length === 0  ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+            return;
+        }
+
+        if( nameTrimmed.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH ){
+            Notification.warning({ message:i18n.t("The_name_is_too_long") });
+            return;
+        }
+
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                const wsta = wsts.getWidgetSettingsTemplateArray();
+                const wst = wsta.find( (itm) =>{
+                   const b =  itm.getWidgetSettingsTemplateName() === oldName;
+                   return b;
+                });
+                if( !wst ){
+                    Notification.warning({ message:i18n.t("The_specified_template_does_not_exist") });
+                    return;
+                }
+                const index = wsta.findIndex( (itm) =>{
+                    const b =  itm.getWidgetSettingsTemplateName() === nameTrimmed;
+                    return b;
+                });
+                if( index !== -1 ){
+                    Notification.warning({ message:i18n.t("The_specified_template_name_already_exists") });
+                    return;
+                }
+
+                wst.setWidgetSettingsTemplateName( nameTrimmed );
+                wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+                        _select_widget_settings_template_name = _new_widget_settings_template_name;
+                        this.setState({rerender:true});
+                    },
+                    (errorOrResponse) =>{
+                        this.setState({rerender:true});
+                    }
+                );
+            },
+            ( errorOrResponse ) =>{
+                this.setState({rerender:true});
+            }
+        );
+
+    }
+
+    // _onClickCreateTemplateButton(){
+    //     const name = _new_widget_settings_template_name;
+    //     if( !name ){
+    //         Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+    //         return;
+    //     }
+    //     const nameTrimmed = name.trim();
+    //     if( nameTrimmed.length === 0  ){
+    //         Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+    //         return;
+    //     }
+    //
+    //     if( nameTrimmed.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+    //         Notification.warning({ message:i18n.t("The_name_is_too_long") });
+    //         return;
+    //     }
+    //
+    //     // //check name exists
+    //     // const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+    //     // const wsta = wsts.getWidgetSettingsTemplateArray();
+    //     // for( let i = 0; i < wsta.length; i++ ){
+    //     //     const sTitle = wsta[i].getWidgetSettingsTemplateName();
+    //     //     if( sTitle === nameTrimmed ){
+    //     //         Notification.warning({ message:i18n.t("The_title_you_entered_already_exists") });
+    //     //         return;
+    //     //     }
+    //     // }
+    //
+    //     const oc = BrekekeOperatorConsole.getStaticInstance();
+    //
+    //     const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+    //     wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+    //
+    //             const index = wsts.getWidgetSettingsTemplateArray().findIndex( (itm) =>{
+    //                const b = itm.getWidgetSettingsTemplateName() === nameTrimmed;
+    //                return b;
+    //             });
+    //             if( index !== -1 ){
+    //                 Notification.warning({ message:i18n.t("The_specified_template_name_already_exists") });
+    //                 this.setState({rerender:true});
+    //                 return;
+    //             }
+    //
+    //             wsts.insertWidgetSettingsTemplate( nameTrimmed);
+    //             wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+    //                 Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+    //                 this.setState({rerender:true});
+    //             },
+    //                 (errorOrResponse) =>{
+    //                     this.setState({rerender:true});
+    //
+    //                 }
+    //             );
+    //         },
+    //         ( errorOrResponse ) =>{
+    //             this.setState({rerender:true});
+    //         }
+    //     );
+    //
+    // }
+
+    _onClickSaveWidgetSettingsTemplateButton(){
+        const name = _select_widget_settings_template_name;
+        if( !name ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+            return;
+        }
+        const nameTrimmed = name.trim();
+        if( nameTrimmed.length === 0  ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+            return;
+        }
+
+        if( nameTrimmed.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+            Notification.warning({ message:i18n.t("The_name_is_too_long") });
+            return;
+        }
+
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                let wst = wsts.getWidgetSettingsTemplateArray().find( (itm) =>{
+                    const b = itm.getWidgetSettingsTemplateName() === nameTrimmed;
+                    return b;
+                });
+                if( !wst ){
+                    //add
+                    wst = wsts.insertWidgetSettingsTemplate( nameTrimmed );
+                }
+
+                const widgetData = this._getWidgetData();
+                widgetData.saveToWidgetSettingsTemplate(wst);
+
+                wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+                        this.setState({ rerender:true});
+                    },
+                    (errorOrResponse) =>{
+                        this.setState({rerender:true});
+                    }
+                );
+            },
+            ( errorOrResponse ) =>{
+                this.setState({rerender:true});
+            }
+        );
+    }
+
+    _onConfirmOkDeleteWidgetSettingsTemplate(){
+        const name = _select_widget_settings_template_name;
+        if( !name  ){
+            Notification.warning({ message:i18n.t("No_template_specified")});
+            return;
+        }
+        if( name.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+            Notification.warning({ message:i18n.t("The_name_is_too_long") });
+            return;
+        }
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+
+                const index = wsts.getWidgetSettingsTemplateArray().findIndex( (itm) =>{
+                    const b = itm.getWidgetSettingsTemplateName() === name;
+                    return b;
+                });
+                if( index === -1 ){
+                    Notification.warning({ message:i18n.t("The_specified_template_does_not_exist") });
+                    this.setState({rerender:true});
+                    return;
+                }
+
+                wsts.deleteWidgetSettingsTemplateByIndex( index );
+                wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+                        _select_widget_settings_template_name = "";
+                        this.setState({rerender:true});
+                    },
+                    (errorOrResponse) =>{
+                        this.setState({rerender:true});
+                    }
+                );
+            },
+            ( errorOrResponse ) =>{
+                this.setState({rerender:true});
+            }
+        );
+    }
+
+    _onClickLoadWidgetSettingsTemplateButton(){
+        const name = _select_widget_settings_template_name;
+        if( !name  ){
+            Notification.warning({ message:i18n.t("No_template_specified")});
+            return;
+        }
+        if( name.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+            Notification.warning({ message:i18n.t("The_name_is_too_long") });
+            return;
+        }
+
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+
+                const wst = wsts.getWidgetSettingsTemplateArray().find( (itm) =>{
+                    const b = itm.getWidgetSettingsTemplateName() === name;
+                    return b;
+                });
+                if( !wst ){
+                    Notification.warning({ message:i18n.t("The_specified_template_does_not_exist") });
+                    this.setState({rerender:true});
+                    return;
+                }
+
+                const widgetData = this._getWidgetData();
+                if( widgetData.getWidgetTypeId() === WidgetData.WIDGET_TYPE_ID__LEGACY_BUTTON ) {
+                    widgetData.loadFromWidgetSettingsTemplate(wst, _load_button_function );
+                }
+                else {
+                    widgetData.loadFromWidgetSettingsTemplate(wst);
+                }
+
+                Notification.success({ message: i18n.t("Loaded_from_the_template") });
+                EditScreenView.getEditScreenViewInstance().setState({rerender:true});
+            },
+            ( errorOrResponse ) =>{
+                this.setState({rerender:true});
+            }
+        );
+    }
+
     render() {
         const widgetData = this._getWidgetData();
         const widgetNameForII18n = widgetData.getWidgetNameForI18n();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        const wsta = wsts.getWidgetSettingsTemplateArray();
+
+        const widgetSettingsTemplateOptions = new Array( );
+        for( let i = 0; i < wsta.length; i++ ){
+            const wstn = wsta[i].getWidgetSettingsTemplateName();
+            //!for old version
+            if( !wstn ){
+                continue;
+            }
+            widgetSettingsTemplateOptions.push( { value :  wstn });
+        }
+
         const jsx = (
             <>
                 <div style={{padding: "12px 12px 0px 12px"}}>{i18n.t(`widget_description.${widgetNameForII18n}`)}</div>
@@ -46,14 +347,71 @@ export default class EditorWidgetSettings extends React.Component {
                     paddingRight: 12
                 }}>
                     {this._getRenderMainJsx()}
+                    <Divider>{i18n.t("Template")}</Divider>
+                    {/*<h3>{i18n.t("Template")}</h3>*/}
+					{ widgetData.getWidgetTypeId() === WidgetData.WIDGET_TYPE_ID__LEGACY_BUTTON  ? (
+                        <div>
+                            <Checkbox
+                                id="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke"
+                                    checked={_load_button_function === true }
+                                onChange={(e) => this._onChangeLoadButtonFunction(e)}
+                             />
+                            <label style={{marginLeft: "2px"}}
+                                   htmlFor="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke">{i18n.t("Load_function")}</label>
+                        </div>
+					)
+					: null
+					}
+                    <div class={"defaultElementMarginTop_s"}>
+                        <AutoComplete
+                            style={{width: "100%"}}
+                            options={widgetSettingsTemplateOptions}
+                            value={_select_widget_settings_template_name}
+                            onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}
+                            placeholder={i18n.t("Select_or_enter_a_template")}
+                            allowClear={true}
+                            filterOption={(inputValue, option) => {
+                                const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());
+                                return b;
+                            }
+                            }
+                        />
+                    </div>
+                    <div className={"defaultButtonMarginTop"}>
+                        <Button
+                            onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>
+                        <Button className={"defaultButtonMarginLeft"}
+                                onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
+                    </div>
+                    <div className={"defaultButtonMarginTop"}>
+                        <Popconfirm title={i18n.t("are_you_sure")}
+                                    onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
+                                    okText={i18n.t("yes")}
+                                    cancelText={i18n.t("no")}
+                        >
+                            <Button>{i18n.t("Delete")}</Button>
+                        </Popconfirm>
+                    </div>
+                    <p>{i18n.t("Rename_a_template")}</p>
+                    <div><Input
+                        style={{width: "100%"}}
+                        placeholder={i18n.t("Enter_a_new_name")}
+                        onChange={(ev) => this._onChangeNewWidgetSettingsTemplateName(ev)}
+                    /></div>
+                    <div className={"defaultButtonMarginTop"}>
+                        {/*<Button onClick={() => this._onClickCreateTemplateButton()}>{i18n.t("Create")}</Button>*/}
+                        {/*<Button onClick={() => this._onClickRenameTemplateButton()}*/}
+                        {/*        className={"defaultButtonMarginLeft"}>{i18n.t("Rename")}</Button>*/}
+                        <Button onClick={() => this._onClickRenameTemplateButton()}>{i18n.t("Rename")}</Button>
+                    </div>
                 </div>
                 <div style={{padding: "0px 12px 12px 12px"}}>
-                    {/*<Button type="secondary"*/}
+                {/*<Button type="secondary"*/}
                     {/*        onClick={() => this.duplicateWidget(this.state.selectingWidgetIndex)}>*/}
                     {/*    {i18n.t("duplicate")}*/}
                     {/*</Button>*/}
                     <Popconfirm title={i18n.t("are_you_sure")}
-                                onConfirm={() => this._EditScreenViewAsParent.onConfirmOkRemoveEditorWidget( widgetData ) }
+                                onConfirm={() => this._EditScreenViewAsParent.onConfirmOkRemoveEditorWidget(widgetData)}
                                 okText={i18n.t("yes")}
                                 cancelText={i18n.t("no")}
                     >

@@ -260,4 +260,66 @@ export default class CallPanelWidgetData extends WidgetData{
         }
 
     }
+
+    //!override
+    loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction = undefined ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FG_COLOR ) === true ) {
+            this._callpanelFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._callpanelBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS ) === true ) {
+            this._callpanelBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_HORIZONTAL_OFFSET ) === true ) {
+            this._insideShadow_horizontalOffset = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_HORIZONTAL_OFFSET);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_VERTICAL_OFFSET ) === true ) {
+            this._insideShadow_verticalOffset = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_VERTICAL_OFFSET);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_BLUR ) === true ) {
+            this._insideShadow_blur = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_BLUR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_SPREAD ) === true ) {
+            this._insideShadow_spread = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_SPREAD);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_COLOR ) === true ) {
+            this._insideShadow_color = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_HORIZONTAL_OFFSET ) === true ) {
+            this._outsideShadow_horizontalOffset = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_HORIZONTAL_OFFSET);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_VERTICAL_OFFSET ) === true ) {
+            this._outsideShadow_verticalOffset = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_VERTICAL_OFFSET);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_BLUR ) === true ) {
+            this._outsideShadow_blur = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_BLUR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_SPREAD ) === true ) {
+            this._outsideShadow_spread = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_SPREAD);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_COLOR ) === true ) {
+            this._outsideShadow_color = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_COLOR);
+        }
+    }
+
+    //!override
+    saveToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FG_COLOR, this._callpanelFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._callpanelBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BORDER_RADIUS, this._callpanelBorderRadius );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_HORIZONTAL_OFFSET, this._insideShadow_horizontalOffset );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_VERTICAL_OFFSET, this._insideShadow_verticalOffset );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_BLUR, this._insideShadow_blur );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_SPREAD, this._insideShadow_spread );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INSIDE_SHADOW_COLOR, this._insideShadow_color );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_HORIZONTAL_OFFSET, this._outsideShadow_horizontalOffset );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_VERTICAL_OFFSET, this._outsideShadow_verticalOffset );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_BLUR, this._outsideShadow_blur );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_SPREAD, this._outsideShadow_spread );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTSIDE_SHADOW_COLOR, this._outsideShadow_color );
+    }
 }

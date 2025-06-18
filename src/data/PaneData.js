@@ -26,6 +26,9 @@ export default class PaneData {
             this._ParentPaneNumber = paneDataObject["parentPaneNumber"];
             this._paneWidth = paneDataObject["paneWidth"];
             this._paneHeight = paneDataObject["paneHeight"];
+            this._paneForegroundColor = paneDataObject["paneForegroundColor"];
+            this._paneBackgroundColor = paneDataObject["paneBackgroundColor"];
+            this._paneBackgroundImageBase64DataUrl = paneDataObject["paneBackgroundImageBase64DataUrl"];
 
             const childPaneNumbers = paneDataObject["childPaneNumbers"];
             const enSrcChildPaneNumber = Object.entries( childPaneNumbers );
@@ -59,6 +62,10 @@ export default class PaneData {
             if (!options.cloneSrcPaneData) {
                 this._paneWidth = options["paneWidth"];
                 this._paneWidth = options["paneHeight"];
+                this._paneForegroundColor = options["paneForegroundColor"];
+                this._paneBackgroundColor = options["paneBackgroundColor"];
+                this._paneBackgroundImageBase64DataUrl = options["paneBackgroundImageBase64DataUrl"];
+
                 this._enableTabs = false;
                 this._dividerData = null;
                 this._WidgetDatasForNoTabs = new WidgetDatasForNoTabs(this);    //Widget datas for no tabs.
@@ -67,6 +74,10 @@ export default class PaneData {
                 this._enableTabs = options.cloneSrcPaneData._enableTabs;
                 this._paneWidth = options.cloneSrcPaneData._paneWidth;
                 this._paneHeight = options.cloneSrcPaneData._paneHeight;
+                this._paneForegroundColor = options.cloneSrcPaneData._paneForegroundColor;
+                this._paneBackgroundColor = options.cloneSrcPaneData._paneBackgroundColor;
+                this._paneBackgroundImageBase64DataUrl = options.cloneSrcPaneData._paneBackgroundImageBase64DataUrl;
+
                 const srcWidgetDatasForNoTabs = options.cloneSrcPaneData._WidgetDatasForNoTabs;
                 this._WidgetDatasForNoTabs = new WidgetDatasForNoTabs(this, srcWidgetDatasForNoTabs);
                 const srcTabsData = options.cloneSrcPaneData._TabsData;
@@ -103,6 +114,15 @@ export default class PaneData {
         }
         if( this._paneHeight  ){
             o["paneHeight"] = this._paneHeight;
+        }
+        if( this._paneForegroundColor  ){
+            o["paneForegroundColor"] = this._paneForegroundColor;
+        }
+        if( this._paneBackgroundColor  ){
+            o["paneBackgroundColor"] = this._paneBackgroundColor;
+        }
+        if( this._paneBackgroundImageBase64DataUrl  ){
+            o["paneBackgroundImageBase64DataUrl"] = this._paneBackgroundImageBase64DataUrl;
         }
 
         o["parentPaneNumber"] = this._ParentPaneNumber;
@@ -229,7 +249,34 @@ export default class PaneData {
         return this._paneHeight;
     }
 
+    setPaneForegroundColor(s){
+        this._paneForegroundColor = s;
+    }
+	
+	getPaneForegroundColor(){
+		return this._paneForegroundColor;
+	}
+	
+    setPaneBackgroundColor(s){
+        this._paneBackgroundColor = s;
+    }
+	
+	getPaneBackgroundColor(){
+		return this._paneBackgroundColor;
+	}
+	
+	setPaneBackgroundImageBase64DataUrl( base64DataUrl ){
+		this._paneBackgroundImageBase64DataUrl = base64DataUrl;
+	}
+	
+	getPaneBackgroundImageBase64DataUrl(){
+		return this._paneBackgroundImageBase64DataUrl;
+	}
 
+    deletePaneBackgroundImageBase64DataUrl(){
+        this._paneBackgroundImageBase64DataUrl = null;
+    }
+	
     getTabsData(){
         return this._TabsData;
     }

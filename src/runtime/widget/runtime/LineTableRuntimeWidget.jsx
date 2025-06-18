@@ -512,7 +512,10 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
 
     return (<tr key={index} className={lightClassname} style={{
         color: bodyFgColor,
-        borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
+        borderBottomStyle : "solid",
+        borderBottomColor : bodyRowUnderlineColor,
+        borderBottomWidth: bodyRowUnderlineThickness +  "px"
+        //borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
     }}>
         <td style={{
             fontSize: bodyFontSize + "px",
@@ -643,6 +646,7 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
         const outerBorderThickness = ( widgetData.getLinetableOuterBorderThickness() || widgetData.getLinetableOuterBorderThickness() === 0 ) ? widgetData.getLinetableOuterBorderThickness() : 0; //!default
         const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getLinetableOuterBorderColor(), "rgb(0,0,0,0)" );
         const headerFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getLinetableHeaderFgColor() , "" );
+        const headerBgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getLinetableHeaderBgColor() , "" );
         const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getLinetableBodyFgColor() , "" );
         //const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.linetableBodyActiveRowBgColor, "#B9DFA9" );   //!default
         const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getLinetableBgColor(), "" );
@@ -662,14 +666,21 @@ export default class LineTableRuntimeWidget extends RuntimeWidget{
 
         return (
             <table className="brOCLinetable" style={{
-                borderRadius:outerBorderRadius,
-                border: outerBorderThickness + "px solid " + outerBorderColor,
                 backgroundColor:backgroundColor,
+                borderRadius:outerBorderRadius,
+                borderStyle : "solid",
+                borderColor : outerBorderColor,
+                borderWidth: outerBorderThickness +  "px"
+                //border: outerBorderThickness + "px solid " + outerBorderColor,
             }}>
                 <thead>
                 <tr style={{
                     color:headerFgColor,
-                    borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
+                    backgroundColor:headerBgColor,
+                    borderBottomStyle : "solid",
+                    borderBottomColor : headerRowUnderlineColor,
+                    borderBottomWidth: headerRowUnderlineThickness +  "px"
+                    //borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
                 }}>
                     <th style={{
                         fontSize : headerFontSize + "px",

@@ -113,6 +113,11 @@ export default class OCUtil{
         return typeof value === 'number' && isFinite(value);
     }
 
+    static isObject( v ) {
+        const b = !!v && typeof v === "object";
+        return b;
+    }
+
     static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
         if( oErr ){
             if( consoleErrorMessage ) {

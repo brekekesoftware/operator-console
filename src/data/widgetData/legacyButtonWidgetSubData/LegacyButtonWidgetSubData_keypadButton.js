@@ -1,4 +1,5 @@
 import LegacyButtonWidgetSubData from "./LegacyButtonWidgetSubData";
+import WidgetData from "../WidgetData";
 
 export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButtonWidgetSubData {
 
@@ -20,6 +21,7 @@ export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButton
             this._symbol = currentOptions["symbol"];
         }
         this._icon = currentOptions["icon"];
+        this._iconName = currentOptions["iconName"];
         this._iconWidth = currentOptions["iconWidth"];
         this._iconHeight = currentOptions["iconHeight"];
         this._fontSize = currentOptions["fontSize"];
@@ -37,6 +39,13 @@ export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButton
         }
         else{
             delete o["icon"];
+        }
+
+        if( this._iconName ){
+            o["iconName"] = this._iconName;
+        }
+        else{
+            delete o["iconName"];
         }
 
         if( this._iconWidth ){
@@ -109,6 +118,14 @@ export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButton
 
     getIcon(){
         return this._icon;
+    }
+
+    setIconName( iconName ){
+        this._iconName = iconName;
+    }
+
+    getIconName(){
+        return this._iconName;
     }
 
     getIconWidth(){
@@ -208,6 +225,58 @@ export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButton
         // }
         if( widget_ver0_1.symbol ){
             this._symbol = widget_ver0_1.symbol
+        }
+    }
+
+    //!override
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SYMBOL, this._symbol );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON, this._icon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_NAME, this._iconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH, this._iconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT, this._iconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE, this._fontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FG_COLOR, this._fgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._bgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._outerBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._outerBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._outerBorderThickness );
+    }
+
+    //!override
+    _importLegacyButtonWidgetSubDataFromWidgetSettingsTemplateMain( wst ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SYMBOL ) === true ) {
+            this._symbol = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SYMBOL );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON ) === true ) {
+            this._icon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_NAME ) === true ) {
+            this._iconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH ) === true ) {
+            this._iconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT ) === true ) {
+            this._iconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE ) === true ) {
+            this._fontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FG_COLOR ) === true ) {
+            this._fgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._bgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR ) === true ) {
+            this._outerBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS ) === true ) {
+            this._outerBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ) {
+            this._outerBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS);
         }
     }
 

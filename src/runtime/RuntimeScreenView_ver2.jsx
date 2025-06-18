@@ -120,7 +120,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
     const isVisibleAutoDialView_Ver2 =  this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2 && this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2.length !== 0;
     return (
         <div style={{height: "100%"}}>
-          <div style={{color:screenData_ver2.getScreenForegroundColor(),backgroundColor:screenData_ver2.getScreenBackgroundColor()}}>
+          <div>
             <div>
               <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
             </div>

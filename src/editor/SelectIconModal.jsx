@@ -7,6 +7,7 @@ import {far} from "@fortawesome/free-regular-svg-icons";
 import {fab} from "@fortawesome/free-brands-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BrekekeOperatorConsole from "../index";
+import EditScreenView from "./EditScreenView";
 
 let _SELECT_ICON_MODAL_INSTANCE = null;
 export  default class SelectIconModal extends React.Component{
@@ -20,6 +21,7 @@ export  default class SelectIconModal extends React.Component{
             filterText : "",
             filterTextUpperCase : "",
             selectedIconValue : null,
+            selectedIconName : null,
             onOkFunction : null,
             onCancelFunction : null
         };
@@ -122,11 +124,38 @@ export  default class SelectIconModal extends React.Component{
 		//this.setState({rerender:true});
     }
 
+    _findIconObject( selectedIconValue ){
+        for( let i = 0; i < this._DefaultButtonFileIcons.length; i++ ){
+            const oDefaultButtonFileIcon = this._DefaultButtonFileIcons[i];
+            const iconValue = oDefaultButtonFileIcon["iconValue"];
+            if( iconValue === selectedIconValue ){
+                return oDefaultButtonFileIcon;
+            }
+        }
+        for( let i = 0; i < this._FontAwesomeIconArray.length; i++ ){
+            const oFontAwesomeIcon = this._FontAwesomeIconArray[i];
+            const iconValue = oFontAwesomeIcon["iconValue"];
+            if( iconValue === selectedIconValue ){
+                return oFontAwesomeIcon;
+            }
+        }
+        return null;
+    }
+
     setSelectIconModalVisibleToState( args ){
         const selectedIconValue = args["selectedIconValue"];
+        const iconObject = this._findIconObject( selectedIconValue );
+        //const selectedIconName = args["selectedIconName"];
+        let selectedIconName;
+        if( iconObject ){
+            selectedIconName = iconObject["iconName"];
+        }
+        else {
+            selectedIconName = null;
+        }
         const onOkFunction = args["onOkFunction"];
         const onCancelFunction = args["onCancelFunction"];
-        this.setState({isVisible:true,selectedIconValue:selectedIconValue,filterText:"",filterTextUpperCase:"",onOkFunction:onOkFunction,onCancelFunction:onCancelFunction},
+        this.setState({isVisible:true,selectedIconValue:selectedIconValue,selectedIconName:selectedIconName,filterText:"",filterTextUpperCase:"",onOkFunction:onOkFunction,onCancelFunction:onCancelFunction},
             ()=>{
                 const eInput = document.getElementById("SelectIconModal_filterTextInput-brekeke_operatorConsole_editor_SelectIconModal");
                 eInput.focus();
@@ -138,13 +167,13 @@ export  default class SelectIconModal extends React.Component{
         }
     }
 
-    getSelectedIconValueFromState(){
-        return this.state.selectedIconValue;
-    }
-
-    getSelectIconModalVisibleFromState() {
-        return this.state.isVisible;
-    }
+    // getSelectedIconValueFromState(){
+    //     return this.state.selectedIconValue;
+    // }
+    //
+    // getSelectIconModalVisibleFromState() {
+    //     return this.state.isVisible;
+    // }
 
     _onChangeFilterText( e ){
         const s = e.target.value;
@@ -157,19 +186,21 @@ export  default class SelectIconModal extends React.Component{
 
     _onClickFileIcon( ev, oFileIcon ){
         const iconValue = oFileIcon["iconValue"];
-        this.setState({selectedIconValue:iconValue});
+        const iconName = oFileIcon["iconName"];
+        this.setState({selectedIconValue:iconValue,selectedIconName:iconName});
     }
 
     _onClickFontAwesomeIcon( ev, oFontAwesomeIcon ){
         const iconValue = oFontAwesomeIcon["iconValue"];
-        this.setState({selectedIconValue:iconValue});
+        const iconName = oFontAwesomeIcon["iconName"];
+        this.setState({selectedIconValue:iconValue,selectedIconName:iconName});
     }
 
     _onCancelModal(){
         const onCancelFunction = this.state.onCancelFunction;
         const eInput = document.getElementById("SelectIconModal_filterTextInput-brekeke_operatorConsole_editor_SelectIconModal");
         eInput.blur();
-        this.setState({isVisible:false,selectedIconValue:null,filterText:"", filterTextUpperCase:"",onOkFunction: null, onCancelFunction : null}, () =>{
+        this.setState({isVisible:false,selectedIconValue:null,selectedIconName:null,filterText:"", filterTextUpperCase:"",onOkFunction: null, onCancelFunction : null}, () =>{
             if( onCancelFunction ){
                 onCancelFunction( this );
             }
@@ -182,11 +213,16 @@ export  default class SelectIconModal extends React.Component{
     _onOkModal(){
         const onOkFunction = this.state.onOkFunction;
         const selectedIconValue = this.state.selectedIconValue;
-        this.setState({isVisible:false,selectedIconValue:null,filterText:"", filterTextUpperCase:"", onOkFunction: null, onCancelFunction : null}, () =>{
+        const selectedIconName = this.state.selectedIconName;
+        this.setState({isVisible:false,selectedIconValue:null,selectedIconName:null,filterText:"", filterTextUpperCase:"", onOkFunction: null, onCancelFunction : null}, () =>{
             if( onOkFunction ){
-                onOkFunction( this, selectedIconValue);
+                onOkFunction( this, selectedIconValue, selectedIconName );
             }
         });
+
+        const eInput = document.getElementById("SelectIconModal_filterTextInput-brekeke_operatorConsole_editor_SelectIconModal");
+        eInput.blur();
+
         const oc = BrekekeOperatorConsole.getStaticInstance();
         oc.subtractDisableKeydownToDialingCounter();
         oc.subtractDisablePasteToDialingCounter();
@@ -198,6 +234,7 @@ export  default class SelectIconModal extends React.Component{
         }
 
         const iconsJsx = new Array();
+        let key = 0;
         for( let i = 0; i < this._DefaultButtonFileIcons.length; i++ ){
             const oFileIcon = this._DefaultButtonFileIcons[i];
             const iconNameUpperCase = oFileIcon["iconNameUpperCase"];
@@ -209,13 +246,14 @@ export  default class SelectIconModal extends React.Component{
             const iconName = oFileIcon["iconName"];
             const iconValue = oFileIcon["iconValue"];
             const sSelectIconModal_fileIcon_selected = this.state.selectedIconValue === iconValue ? " selectIconModal_fileIcon_selected-brekeke_operatorConsole_editor_SelectIconModal" : "";
-            const fileIconJsx = (<div className={"selectIconModal_fileIcon-brekeke_operatorConsole_editor_SelectIconModal" + sSelectIconModal_fileIcon_selected } onClick={ (ev) => this._onClickFileIcon( ev, oFileIcon )}>
+            const fileIconJsx = (<div key={key} className={"selectIconModal_fileIcon-brekeke_operatorConsole_editor_SelectIconModal" + sSelectIconModal_fileIcon_selected } onClick={ (ev) => this._onClickFileIcon( ev, oFileIcon )}>
                 <img src={fileInfo.url} alt={iconName} className="selectIconModal_fileIconImage-brekeke_operatorConsole_editor_SelectIconModal"/>
                 <p className="selectIconModal_fileIconName-brekeke_operatorConsole_editor_SelectIconModal">
                     {iconName}
                 </p>
             </div>);
             iconsJsx.push( fileIconJsx);
+            key++;
         }
         for( let i = 0; i < this._FontAwesomeIconArray.length; i++ ){
             const oFontAwesomeIcon = this._FontAwesomeIconArray[i];
@@ -226,13 +264,14 @@ export  default class SelectIconModal extends React.Component{
             }
             const iconValue = oFontAwesomeIcon["iconValue"];
             const sSelectIconModal_fontAwesomeIcon_selected = this.state.selectedIconValue === iconValue ? " selectIconModal_fontAwesomeIcon_selected-brekeke_operatorConsole_editor_SelectIconModal" : "";
-            const fontAwesomeIconJsx = (<div className={"selectIconModal_fontAwesomeIcon-brekeke_operatorConsole_editor_SelectIconModal" + sSelectIconModal_fontAwesomeIcon_selected} onClick={ (ev) => this._onClickFontAwesomeIcon( ev, oFontAwesomeIcon )}>
+            const fontAwesomeIconJsx = (<div key={key} className={"selectIconModal_fontAwesomeIcon-brekeke_operatorConsole_editor_SelectIconModal" + sSelectIconModal_fontAwesomeIcon_selected} onClick={ (ev) => this._onClickFontAwesomeIcon( ev, oFontAwesomeIcon )}>
                 <FontAwesomeIcon fixedWidth icon={oFontAwesomeIcon.fontAwesomeIcon} className="selectIconModal_fontAwesomeIconImage-brekeke_operatorConsole_editor_SelectIconModal"/>
                 <p className="selectIconModal_fontAwesomeIconName-brekeke_operatorConsole_editor_SelectIconModal">
                     {oFontAwesomeIcon.iconName}
                 </p>
             </div>);
             iconsJsx.push( fontAwesomeIconJsx );
+            key++;
         }
 
         return (

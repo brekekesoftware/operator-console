@@ -1,4 +1,5 @@
 import LegacyButtonWidgetSubData from "./LegacyButtonWidgetSubData";
+import WidgetData from "../WidgetData";
 
 export default class LegacyButtonWidgetSubData_transferButton extends LegacyButtonWidgetSubData {
 
@@ -21,6 +22,7 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         }
 
         this._icon = currentOptions["icon"];
+        this._iconName = currentOptions["iconName"];
         this._iconWidth = currentOptions["iconWidth"];
         this._iconHeight = currentOptions["iconHeight"];
         this._fontSize = currentOptions["fontSize"];
@@ -32,6 +34,7 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
 
         //Added - version 2.1.5
         this._cancelTransferIcon = currentOptions["cancelTransferIcon"];
+        this._cancelTransferIconName = currentOptions["cancelTransferIconName"];
         this._cancelTransferIconWidth = currentOptions["cancelTransferIconWidth"];
         this._cancelTransferIconHeight = currentOptions["cancelTransferIconHeight"];
         this._cancelTransferFontSize = currentOptions["cancelTransferFontSize"];
@@ -53,6 +56,13 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         }
         else{
             delete o["icon"];
+        }
+
+        if( this._iconName ){
+            o["iconName"] = this._iconName;
+        }
+        else{
+            delete o["iconName"];
         }
 
         if( this._iconWidth ){
@@ -124,6 +134,13 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         }
         else{
             delete o["cancelTransferIcon"];
+        }
+
+        if( this._cancelTransferIconName ){
+            o["cancelTransferIconName"] = this._cancelTransferIconName;
+        }
+        else{
+            delete o["cancelTransferIconName"];
         }
 
         if( this._cancelTransferIconWidth ){
@@ -205,6 +222,14 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         return this._icon;
     }
 
+    setIconName( iconName ){
+        this._iconName = iconName;
+    }
+
+    getIconName(){
+        return this._iconName;
+    }
+
     getIconWidth(){
         return this._iconWidth;
     }
@@ -275,6 +300,14 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
 
     getLabel(){
         return this._label;
+    }
+
+    setCancelTransferIconName( iconName ){
+        this._cancelTransferIconName = iconName;
+    }
+
+    getCancelTransferIconName(){
+        return this._cancelTransferIconName;
     }
 
     setCancelTransferIcon( icon ){
@@ -390,4 +423,108 @@ export default class LegacyButtonWidgetSubData_transferButton extends LegacyButt
         }
     }
 
+    //!override
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_LABEL, this._label );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON, this._icon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_NAME, this._iconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_WIDTH, this._iconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_HEIGHT, this._iconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FONT_SIZE, this._fontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FG_COLOR, this._fgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_BG_COLOR, this._bgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_COLOR, this._outerBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_RADIUS, this._outerBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_THICKNESS, this._outerBorderThickness );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_LABEL, this._cancelTransferLabel );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON, this._cancelTransferIcon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_NAME, this._cancelTransferIconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_WIDTH, this._cancelTransferIconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_HEIGHT, this._cancelTransferIconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FONT_SIZE, this._cancelTransferFontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FG_COLOR, this._cancelTransferFgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_BG_COLOR, this._cancelTransferBgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_COLOR, this._cancelTransferOuterBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_RADIUS, this._cancelTransferOuterBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_THICKNESS, this._cancelTransferOuterBorderThickness );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__MODE, this._transferMode );
+
+    }
+
+    //!override
+    _importLegacyButtonWidgetSubDataFromWidgetSettingsTemplateMain( wst ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_LABEL ) === true ) {
+            this._label = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON ) === true ) {
+            this._icon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_NAME ) === true ) {
+            this._iconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_WIDTH ) === true ) {
+            this._iconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_HEIGHT ) === true ) {
+            this._iconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FONT_SIZE ) === true ) {
+            this._fontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FG_COLOR ) === true ) {
+            this._fgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_BG_COLOR ) === true ) {
+            this._bgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_COLOR ) === true ) {
+            this._outerBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_RADIUS ) === true ) {
+            this._outerBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_THICKNESS ) === true ) {
+            this._outerBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__TRANSFER_OUTER_BORDER_THICKNESS);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_LABEL ) === true ) {
+            this._cancelTransferLabel = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON ) === true ) {
+            this._cancelTransferIcon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_NAME ) === true ) {
+            this._cancelTransferIconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_WIDTH ) === true ) {
+            this._cancelTransferIconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_HEIGHT ) === true ) {
+            this._cancelTransferIconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FONT_SIZE ) === true ) {
+            this._cancelTransferFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FG_COLOR ) === true ) {
+            this._cancelTransferFgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_BG_COLOR ) === true ) {
+            this._cancelTransferBgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_COLOR ) === true ) {
+            this._cancelTransferOuterBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_RADIUS ) === true ) {
+            this._cancelTransferOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_THICKNESS ) === true ) {
+            this._cancelTransferOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_THICKNESS);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__MODE ) === true ) {
+            this._transferMode = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TRANSFER_BUTTON__MODE);
+        }
+    }
 }

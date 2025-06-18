@@ -73,8 +73,10 @@ export default class CallTableEditorWidget extends EditorWidget{
         const outerBorderThickness = ( widgetData.getCalltableOuterBorderThickness() || widgetData.getCalltableOuterBorderThickness() === 0 ) ? widgetData.getCalltableOuterBorderThickness() : 0; //!default
         const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getCalltableOuterBorderColor(), "rgba(0,0,0,0)" );
         const headerFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getCalltableHeaderFgColor() , "" );
+        const headerBgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getCalltableHeaderBgColor() , "" );
         const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getCalltableBodyFgColor() , "" );
         const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyActiveRowBgColor(), "#B9DFA9" );   //!default
+        const bodyActiveRowFgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyActiveRowFgColor(), bodyFgColor );
         const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBgColor(), "" );
         const headerRowUnderlineThickness = ( widgetData.getCalltableHeaderRowUnderlineThickness() || widgetData.getCalltableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getCalltableHeaderRowUnderlineThickness() : 1; //!default
         const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableHeaderRowUnderlineColor() , "#e0e0e0" );   //!default
@@ -87,13 +89,20 @@ export default class CallTableEditorWidget extends EditorWidget{
             <div className="brOCCalltableWrapper">
                 <table className="brOCCalltable"  style={{
                     borderRadius:outerBorderRadius,
-                    border: outerBorderThickness + "px solid " + outerBorderColor,
                     backgroundColor:backgroundColor,
+                    borderStyle : "solid",
+                    borderColor : outerBorderColor,
+                    borderWidth: outerBorderThickness +  "px",
+                    //border: outerBorderThickness + "px solid " + outerBorderColor,
                 }}>
                     <thead>
                     <tr style={{
                         color:headerFgColor,
-                        borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
+                        backgroundColor:headerBgColor,
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px",
+                        //borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor,
                         display:"table-row",
                         tableLayout:"unset",
                         height:callTableTheadRowHeight
@@ -141,11 +150,14 @@ export default class CallTableEditorWidget extends EditorWidget{
                             tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} disabled={true}>{i18n.t("active")}</button></div>;
                         }
                         return (<tr key={idKey++} style={{
-                            color: bodyFgColor,
+                            color: i === currentCallIndex ? bodyActiveRowFgColor : bodyFgColor,
                             backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
                             paddingTop:0,
                             paddingBottom:0,
-                            borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
+                            borderBottomStyle : "solid",
+                            borderBottomColor : bodyRowUnderlineColor,
+                            borderBottomWidth: bodyRowUnderlineThickness +  "px",
+                            //borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
                             display:"table-row",
                             height: callTableTbodyRowHeight
                         }}>

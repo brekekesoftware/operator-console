@@ -15,6 +15,13 @@ export default class TabsData{
             }
             this._selectedTabKeyAsInt = cloneSrcTabsData._selectedTabKeyAsInt;
             this._selectedTabKeyAsString = cloneSrcTabsData._selectedTabKeyAsString;
+			this._tabsTitleFontSize = cloneSrcTabsData._tabsTitleFontSize;
+			this._tabsItemColor = cloneSrcTabsData._tabsItemColor;
+			this._tabsItemHoverColor = cloneSrcTabsData._tabsItemHoverColor;
+			this._tabsItemSelectedColor = cloneSrcTabsData._tabsItemSelectedColor;
+			this._tabsInkBarColor = cloneSrcTabsData._tabsInkBarColor;
+            this._tabsBackgroundColor = cloneSrcTabsData._tabsBackgroundColor;
+			this._tabsBackgroundImageBase64DataUrl = cloneSrcTabsData._tabsBackgroundImageBase64DataUrl;
         }
         else if( oTabsData ){
             const tabDataArray = oTabsData["tabDataArray"];
@@ -23,16 +30,38 @@ export default class TabsData{
                 this._addTabForObject( tabData, dataVersion );
             }
             this.setSelectedTabKeyAsInt( oTabsData["selectedTabKeyAsInt"] );
+			this.setTabsTitleFontSize( oTabsData["tabsTitleFontSize"] );
+			this.setTabsItemColor( oTabsData["tabsItemColor"] );
+			this.setTabsItemHoverColor( oTabsData["tabsItemHoverColor"] );
+			this.setTabsItemSelectedColor( oTabsData["tabsItemSelectedColor"] );
+			this.setTabsInkBarColor( oTabsData["tabsInkBarColor"] );	
+			this.setTabsBackgroundColor( oTabsData["tabsBackgroundColor"] );
+			this.setTabsBackgroundImageBase64DataUrl( oTabsData["tabsBackgroundImageBase64DataUrl"] );
         }
         else {
             this._selectedTabKeyAsInt = 0;
             this._selectedTabKeyAsString = this._selectedTabKeyAsInt.toString();
+			//this._tabsTitleFontSize = null;
+            //this._tabsBackgroundColor = null;
+			//this._tabsItemColor = null;
+			//this._tabsItemHoverColor = null;
+			//this._tabsItemSelectedColor = null;
+			//this._tabsInkBarColor = null;
+			//this._tabsBackgroundImageBase64DataUrl = null;
             this.addTab(i18n.t("UntitledTab"));
         }
     }
 
     setTabsDataToObject( o ){
         o["selectedTabKeyAsInt"] = this._selectedTabKeyAsInt;
+		o["tabsTitleFontSize"] = this._tabsTitleFontSize;
+		o["tabsItemColor"] = this._tabsItemColor;
+		o["tabsItemHoverColor"] = this._tabsItemHoverColor;
+		o["tabsItemSelectedColor"] = this._tabsItemSelectedColor;
+		o["tabsInkBarColor"] = this._tabsInkBarColor;		
+		o["tabsBackgroundColor"] = this._tabsBackgroundColor;
+		o["tabsBackgroundImageBase64DataUrl"] = this._tabsBackgroundImageBase64DataUrl;
+		
         const dstTabDataArray = new Array( this._TabDataArray.length );
         o["tabDataArray"] = dstTabDataArray;
         for( let i = 0; i < this._TabDataArray.length; i++ ){
@@ -189,7 +218,64 @@ export default class TabsData{
     //     }
     // }
 
+	setTabsBackgroundColor( s ){
+		this._tabsBackgroundColor = s;
+	}
+	
+	getTabsBackgroundColor(){
+		return this._tabsBackgroundColor;
+	}
 
+	setTabsTitleFontSize( s ){
+		this._tabsTitleFontSize = s;
+	}
+	
+	getTabsTitleFontSize(){
+		return this._tabsTitleFontSize;
+	}
+	
+	setTabsItemColor( s ){
+		this._tabsItemColor = s;
+	}
+	
+	getTabsItemColor(){
+		return this._tabsItemColor;
+	}
+	
+	setTabsItemHoverColor( s ){
+		this._tabsItemHoverColor = s;
+	}
+	
+	getTabsItemHoverColor(){
+		return this._tabsItemHoverColor;
+	}
+	
+	setTabsItemSelectedColor( s ){
+		this._tabsItemSelectedColor = s;
+	}
+	
+	getTabsItemSelectedColor(){
+		return this._tabsItemSelectedColor;
+	}
 
-
+	setTabsInkBarColor( s ){
+		this._tabsInkBarColor = s;
+	}
+	
+	getTabsInkBarColor(){
+		return this._tabsInkBarColor;
+	}
+	
+	setTabsBackgroundImageBase64DataUrl( base64DataUrl ){
+		this._tabsBackgroundImageBase64DataUrl = base64DataUrl;
+	}
+	
+	getTabsBackgroundImageBase64DataUrl(){
+		return this._tabsBackgroundImageBase64DataUrl;
+	}
+	
+	deleteTabsBackgroundImageBase64DataUrl(){
+		this._tabsBackgroundImageBase64DataUrl = null;		
+	}
+	
 }

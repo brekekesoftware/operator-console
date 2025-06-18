@@ -1,4 +1,5 @@
 import LegacyButtonWidgetSubData from "./LegacyButtonWidgetSubData";
+import WidgetData from "../WidgetData";
 
 export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyButtonWidgetSubData {
 
@@ -57,6 +58,7 @@ export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyBut
         }
 
         this._icon = currentOptions["icon"];
+        this._iconName = currentOptions["iconName"];
         this._iconWidth = currentOptions["iconWidth"];
         this._iconHeight = currentOptions["iconHeight"];
         this._fontSize = currentOptions["fontSize"];
@@ -75,6 +77,13 @@ export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyBut
         }
         else{
             delete o["icon"];
+        }
+
+        if( this._iconName ){
+            o["iconName"] = this._iconName;
+        }
+        else{
+            delete o["iconName"];
         }
 
         if( this._iconWidth ){
@@ -232,6 +241,14 @@ export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyBut
 
     getIcon(){
         return this._icon;
+    }
+
+    setIconName( iconName ){
+        this._iconName = iconName;
+    }
+
+    getIconName(){
+        return this._iconName;
     }
 
     getIconWidth(){
@@ -460,6 +477,108 @@ export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyBut
         }
         if( widget_ver0_1.keypad_sharp ){
             this._keypadSharp = widget_ver0_1.keypad_sharp;
+        }
+    }
+
+    //!override
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ZERO, this._keypadZero );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ONE, this._keypadOne );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__TWO, this._keypadTwo );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__THREE, this._keypadThree );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FOUR, this._keypadFour );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FIVE, this._keypadFive );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SIX, this._keypadSix );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SEVEN, this._keypadSeven );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__EIGHT, this._keypadEight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__NINE, this._keypadNine );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ASTERISK, this._keypadAsterisk );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SHARP, this._keypadSharp );
+
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LABEL, this._label );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON, this._icon );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_NAME, this._iconName );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH, this._iconWidth );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT, this._iconHeight );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE, this._fontSize );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_FG_COLOR, this._fgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BG_COLOR, this._bgColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._outerBorderColor );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._outerBorderRadius );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._outerBorderThickness );
+    }
+
+    //!override
+    _importLegacyButtonWidgetSubDataFromWidgetSettingsTemplateMain( wst ){
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ZERO ) === true ) {
+            this._keypadZero = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ZERO);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ONE ) === true ) {
+            this._keypadOne = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ONE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__TWO ) === true ) {
+            this._keypadTwo = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__TWO);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__THREE ) === true ) {
+            this._keypadThree = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__THREE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FOUR ) === true ) {
+            this._keypadFour = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FOUR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FIVE ) === true ) {
+            this._keypadFive = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__FIVE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SIX ) === true ) {
+            this._keypadSix = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SIX);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SEVEN ) === true ) {
+            this._keypadSeven = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SEVEN);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__EIGHT ) === true ) {
+            this._keypadEight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__EIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__NINE ) === true ) {
+            this._keypadNine = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__NINE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ASTERISK ) === true ) {
+            this._keypadAsterisk = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__ASTERISK);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SHARP ) === true ) {
+            this._keypadSharp = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_KEYPAD_BUTTON__SHARP);
+        }
+
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LABEL ) === true ) {
+            this._label = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_LABEL);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON ) === true ) {
+            this._icon = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_NAME ) === true ) {
+            this._iconName = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_NAME);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH ) === true ) {
+            this._iconWidth = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_WIDTH);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT ) === true ) {
+            this._iconHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_HEIGHT);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FONT_SIZE ) === true ) {
+            this._fontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FONT_SIZE);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_FG_COLOR ) === true ) {
+            this._fgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_FG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BG_COLOR ) === true ) {
+            this._bgColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BG_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR ) === true ) {
+            this._outerBorderColor = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS ) === true ) {
+            this._outerBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS);
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ) {
+            this._outerBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS);
         }
     }
 }

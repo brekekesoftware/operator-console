@@ -59,7 +59,8 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
         const jsx =   (
             <>
                 <p>{i18n.t("text")}</p>
-                <Input.TextArea style={{width:"100%",height:"160px"}} value={widgetData.getText()} onChange={(e) => this._onChangeTextArea(e)}/>
+                <Input.TextArea style={{width: "100%", height: "160px"}} value={widgetData.getText()}
+                                onChange={(e) => this._onChangeTextArea(e)}/>
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={widgetData.getTextFontSize()}
                              onChange={(n) => this._onChangeTextFontSize(n)}/>

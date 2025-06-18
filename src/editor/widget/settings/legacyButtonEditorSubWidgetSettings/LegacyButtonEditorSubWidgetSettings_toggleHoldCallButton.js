@@ -19,8 +19,9 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
     //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     // }
 
-    _onHoldIconSelected( selectIconModalAsCaller, icon ){
+    _onHoldIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setHoldIcon( icon );
+        this._LegacyButtonEditorSubWidgetData.setHoldIconName( iconName );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -30,6 +31,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
     _onClickRemoveHoldIcon(ev){
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setHoldIcon(null);
+        subWidgetData.setHoldIconName(null);
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -84,8 +86,9 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
     //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     // }
 
-    _onUnholdIconSelected( selectIconModalAsCaller, icon ){
+    _onUnholdIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setUnholdIcon( icon );
+        this._LegacyButtonEditorSubWidgetData.setUnholdIconName( iconName );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -95,6 +98,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
     _onClickRemoveUnholdIcon(ev){
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setUnholdIcon(null);
+        subWidgetData.setUnholdIconName(null);
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -166,14 +170,16 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         //const holdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getHoldIcon(), this._onFormHoldIconSelected );
         const holdIconSelectJsx = this._getSelectIconModalJsx(
 			subWidgetData.getHoldIcon(),
-			( selectIconModalAsCaller, icon ) => this._onHoldIconSelected( selectIconModalAsCaller, icon ),
+            subWidgetData.getHoldIconName(),
+			( selectIconModalAsCaller, icon, iconName ) => this._onHoldIconSelected( selectIconModalAsCaller, icon, iconName ),
 			(selectIconModalAsCaller) => this._onHoldIconSelectCanceled(selectIconModalAsCaller),
 			(ev) => this._onClickRemoveHoldIcon(ev)
 		);
         //const unholdIconSelectJsx = this._getIconSelectJsx( subWidgetData.getUnholdIcon(), this._onFormUnholdIconSelected );
         const unholdIconSelectJsx = this._getSelectIconModalJsx(
 			subWidgetData.getUnholdIcon(),
-			( selectIconModalAsCaller, icon ) => this._onUnholdIconSelected( selectIconModalAsCaller, icon ),
+            subWidgetData.getUnholdIconName(),
+			( selectIconModalAsCaller, icon, iconName ) => this._onUnholdIconSelected( selectIconModalAsCaller, icon, iconName ),
 			(selectIconModalAsCaller) => this._onUnholdIconSelectCanceled(selectIconModalAsCaller),
 			(ev) => this._onClickRemoveUnholdIcon(ev)
 		);

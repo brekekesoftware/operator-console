@@ -12,8 +12,8 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onTransferIconSelected( selectIconModalAsCaller, selectedIconValue ){
-        this._onFormIconSelected( selectedIconValue );
+    _onTransferIconSelected( selectIconModalAsCaller, selectedIconValue, selectedIconName ){
+        this._onFormIconSelected( selectedIconValue, selectedIconName  );
     }
 
     _onTransferIconSelectCanceled( selectIconModalAsCaller ){
@@ -23,8 +23,9 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         this._onFormIconSelected( null );
     }
 
-    _onCancelTransferIconSelected( selectIconModalAsCaller, icon ){
+    _onCancelTransferIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferIcon( icon );
+        this._LegacyButtonEditorSubWidgetData.setCancelTransferIconName( iconName );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -34,6 +35,7 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
     _onClickRemoveCancelTransferIcon(ev){
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setCancelTransferIcon(null);
+        subWidgetData.setCancelTransferIconName(null);
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
@@ -122,7 +124,8 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         //const transferIconSelectJsx = this._getIconSelectJsx( subWidgetData.getIcon(), subWidgetData._onFormIconSelected );
         const transferIconSelectJsx = this._getSelectIconModalJsx(
 			subWidgetData.getIcon(),
-			( selectIconModalAsCaller, selectedIconValue ) => this._onTransferIconSelected( selectIconModalAsCaller, selectedIconValue ),
+            subWidgetData.getIconName(),
+			( selectIconModalAsCaller, selectedIconValue, selectedIconName ) => this._onTransferIconSelected( selectIconModalAsCaller, selectedIconValue, selectedIconName ),
 			( selectIconModalAsCaller ) => this._onTransferIconSelectCanceled( selectIconModalAsCaller ),
 			( ev ) => this._onClickRemoveTransferIcon(ev)
 		);
@@ -131,9 +134,12 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         //const cancelTransferIconSelectJsx = this._getIconSelectJsx( subWidgetData.getCancelTransferIcon(), (icon) => this._onFormCancelTransferIconSelected(icon), bGetIconDisabled  );
         const cancelTransferIconSelectJsx = this._getSelectIconModalJsx(
 			subWidgetData.getCancelTransferIcon(),
-			( selectIconModalAsCaller, selectedIconValue ) => this._onCancelTransferIconSelected( selectIconModalAsCaller, selectedIconValue ),
+            subWidgetData.getCancelTransferIconName(),
+			( selectIconModalAsCaller, selectedIconValue, selectedIconName ) => this._onCancelTransferIconSelected( selectIconModalAsCaller, selectedIconValue, selectedIconName ),
 			( selectIconModalAsCaller ) => this._onCancelTransferIconSelectCanceled( selectIconModalAsCaller ),
-			( ev ) => this._onClickRemoveCancelTransferIcon(ev)
+			( ev ) => this._onClickRemoveCancelTransferIcon(ev),
+            () => subWidgetData.getCancelTransferIcon(),
+            () =>subWidgetData.getCancelTransferIconName()
 		);
 
         const transferMode = this._LegacyButtonEditorSubWidgetData.getTransferMode() ? this._LegacyButtonEditorSubWidgetData.getTransferMode() : "attendedTransfer";

@@ -1,5 +1,7 @@
 {
   "ja": {
+	"Header" : "ヘッダ",
+	"Body" : "ボディ",
 	"Load_function" : "関数も読み込む",
 	"Loaded_from_the_template" : "テンプレートから読み込みました",
 	"Load" : "読込",
@@ -16,8 +18,6 @@
 	"Select_or_enter_a_template" : "テンプレートを選択もしくは入力してください",
 	"Failed_to_load_widget_template_settings" : "ウィジェット設定テンプレートの読み込みに失敗しました。",
 	"Template" : "テンプレート",
-	"Tabs_header_background_color" : "タブヘッダの背景色",
-	"Tabs_header_background_image" : "タブヘッダの背景画像",
 	"Item_font_size":"項目のフォントサイズ",
 	"Item_color":"項目の色",
 	"Item_color_on_hover" : "項目のホバー色",

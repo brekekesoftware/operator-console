@@ -1,5 +1,7 @@
 {
   "en": {
+	"Header" : "Header",
+	"Body" : "Body",
 	"Load_function" : "Load function",
 	"Loaded_from_the_template" : "Loaded from the template.",
 	"Load" : "Load",
@@ -16,8 +18,6 @@
 	"Select_or_enter_a_template" : "Select or enter a template",
 	"Failed_to_load_widget_template_settings" : "Failed to load widget template settings",
 	"Template" : "Template",
-	"Tabs_header_background_color" : "Tabs header background color",
-	"Tabs_header_background_image" : "Tabs header background image",  
 	"Item_font_size":"Item font size",
 	"Item_color":"Item color",
 	"Item_color_on_hover" : "Item color on hover",

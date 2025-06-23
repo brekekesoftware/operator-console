@@ -10,7 +10,7 @@ import EditorRootPane from "./EditorRootPane";
 import EditorPane from "./EditorPane";
 import EditorDivider from "./EditorDivider";
 import BaseDividerData from "../data/BaseDividerData";
-import {Input, Select} from "antd";
+import {Divider, Input, Select} from "antd";
 import PaneData from "../data/PaneData";
 import Notification from "antd/lib/notification";
 import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
@@ -719,67 +719,6 @@ export default class EditScreenView extends React.Component {
               </div>
               </>
 			  ) : null }
-              { enableTabs ? (
-                  <>
-                    <div>
-                      <div className="defaultSectionMarginTop">
-                        {i18n.t("foreground")}:
-                      </div>
-                      <div>
-                        <Dropdown overlay={<SketchPicker
-                            color={selectedTabData.getTabForegroundColor()}
-                            onChangeComplete={this._setTabForegroundColor}
-                        />}>
-                          <div style={{
-                            width: 48,
-                            height: 30,
-                            display: 'inline-block',
-                            border: 'solid 1px #e0e0e0',
-                            background: selectedTabData.getTabForegroundColor()
-                          }}></div>
-                        </Dropdown>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="defaultSectionMarginTop">
-                        {i18n.t("background")}:
-                      </div>
-                      <div>
-                        <Dropdown overlay={<SketchPicker
-                            color={selectedTabData.getTabBackgroundColor()}
-                            onChangeComplete={this._setTabBackgroundColor}
-                        />}>
-                          <div style={{
-                            width: 48,
-                            height: 30,
-                            display: 'inline-block',
-                            border: 'solid 1px #e0e0e0',
-                            background: selectedTabData.getTabBackgroundColor()
-                          }}></div>
-                        </Dropdown>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="defaultSectionMarginTop">
-                        {i18n.t("BackgroundImage")}:
-                      </div>
-                      <div>
-                        <input type="file" id="tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
-                               onChange={(ev) => this._onChangeTabBackgroundImageFile(ev)}/>
-                        { selectedTabData.getTabBackgroundImageBase64DataUrl() ? ( <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteTabBackgroundImage() }
-                                                                                         okText={i18n.t("yes")}
-                                                                                         cancelText={i18n.t("no")}
-                        >
-                          <a style={{marginLeft: "0px"}} className="icon_general">
-                            {<FontAwesomeIcon
-                                size="lg"
-                                icon="fa fa-trash"/>}
-                          </a>
-                        </Popconfirm> ) : null }
-                      </div>
-                    </div>
-                  </>
-              ) : null }
             </div>
       )
         ;
@@ -807,142 +746,208 @@ export default class EditScreenView extends React.Component {
         jsx = (
             <div className="editorRightFrameRoot">
               <div>
+                <Input type="text" name="tabLabel" defaultValue={tabLabel}/>
+              </div>
+              <div style={{whiteSpace: "nowrap"}}>
                 {/*<Input type="text" name="tabLabel" defaultValue={i18n.t("UntitledTab")} />*/}
-                <Input type="text" name="tabLabel" defaultValue={tabLabel} />
-                <Button className="defaultElementMarginTop" onClick={ (ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
-                <Button className="defaultButtonMarginLeft" onClick={ (ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
+                <Button className="defaultElementMarginTop"
+                        onClick={(ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
+                <Button className="defaultButtonMarginLeft"
+                        onClick={(ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
               </div>
               <div className="defaultButtonMarginTop">
-                <Popconfirm title={i18n.t("Are_you_sure_you_want_to_remove_the_tab")} onConfirm={() => this._onClickRemoveTab()}
+                <Popconfirm title={i18n.t("Are_you_sure_you_want_to_remove_the_tab")}
+                            onConfirm={() => this._onClickRemoveTab()}
                             okText={i18n.t("yes")}
                             cancelText={i18n.t("no")}
                 >
                   <Button>{i18n.t("Remove_tab")}</Button>
                 </Popconfirm>
               </div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Item_font_size")}:
-				  </div>
-				  <div>
-					<InputNumber min="0" value={tabsData.getTabsTitleFontSize()}
-						onChange={(n) => this._onChangeTabsTitleFontSize(n)}/>
-				  </div>
+              <Divider>{i18n.t("Header")}</Divider>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("Item_font_size")}:
                 </div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Item_color")}:
-				  </div>
-				  <div>
-					<Dropdown overlay={<SketchPicker
-						color={tabsData.getTabsItemColor()}
-						onChangeComplete={this._setTabsItemColor}
-					/>}>
-					  <div style={{
-						width: 48,
-						height: 30,
-						display: 'inline-block',
-						border: 'solid 1px #e0e0e0',
-						background: tabsData.getTabsItemColor()
-					  }}></div>
-					</Dropdown>
-				  </div>
-				</div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Item_color_on_hover")}:
-				  </div>
-				  <div>
-					<Dropdown overlay={<SketchPicker
-						color={tabsData.getTabsItemHoverColor()}
-						onChangeComplete={this._setTabsItemHoverColor}
-					/>}>
-					  <div style={{
-						width: 48,
-						height: 30,
-						display: 'inline-block',
-						border: 'solid 1px #e0e0e0',
-						background: tabsData.getTabsItemHoverColor()
-					  }}></div>
-					</Dropdown>
-				  </div>
-				</div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Item_color_on_selected")}:
-				  </div>
-				  <div>
-					<Dropdown overlay={<SketchPicker
-						color={tabsData.getTabsItemSelectedColor()}
-						onChangeComplete={this._setTabsItemSelectedColor}
-					/>}>
-					  <div style={{
-						width: 48,
-						height: 30,
-						display: 'inline-block',
-						border: 'solid 1px #e0e0e0',
-						background: tabsData.getTabsItemSelectedColor()
-					  }}></div>
-					</Dropdown>
-				  </div>
-				</div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Item_bar_color")}:
-				  </div>
-				  <div>
-					<Dropdown overlay={<SketchPicker
-						color={tabsData.getTabsInkBarColor()}
-						onChangeComplete={this._setTabsInkBarColor}
-					/>}>
-					  <div style={{
-						width: 48,
-						height: 30,
-						display: 'inline-block',
-						border: 'solid 1px #e0e0e0',
-						background: tabsData.getTabsInkBarColor()
-					  }}></div>
-					</Dropdown>
-				  </div>
-				</div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Tabs_header_background_color")}:
-				  </div>
-				  <div>
-					<Dropdown overlay={<SketchPicker
-						color={tabsData.getTabsBackgroundColor()}
-						onChangeComplete={this._setTabsBackgroundColor}
-					/>}>
-					  <div style={{
-						width: 48,
-						height: 30,
-						display: 'inline-block',
-						border: 'solid 1px #e0e0e0',
-						background: tabsData.getTabsBackgroundColor()
-					  }}></div>
-					</Dropdown>
-				  </div>
-				</div>
-				<div>
-				  <div className="defaultSectionMarginTop">
-					{i18n.t("Tabs_header_background_image")}:
-				  </div>
-					<div>
-					  <input type="file" id="tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
-							 onChange={(ev) => this._onChangeTabsBackgroundImageFile(ev)}/>
-						{ tabsData.getTabsBackgroundImageBase64DataUrl() ? ( <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteTabsBackgroundImage() }
-								  okText={i18n.t("yes")}
-								  cancelText={i18n.t("no")}
-					  >
-						<a style={{marginLeft: "0px"}} className="icon_general">
-						  {<FontAwesomeIcon
-							  size="lg"
-							  icon="fa fa-trash"/>}
-						</a>
-					</Popconfirm> ) : null }
-					</div>
-				</div>
+                <div>
+                  <InputNumber min="0" value={tabsData.getTabsTitleFontSize()}
+                               onChange={(n) => this._onChangeTabsTitleFontSize(n)}/>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("Item_color")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemColor()}
+                      onChangeComplete={this._setTabsItemColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("Item_color_on_hover")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemHoverColor()}
+                      onChangeComplete={this._setTabsItemHoverColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemHoverColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("Item_color_on_selected")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemSelectedColor()}
+                      onChangeComplete={this._setTabsItemSelectedColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemSelectedColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("Item_bar_color")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsInkBarColor()}
+                      onChangeComplete={this._setTabsInkBarColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsInkBarColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("background")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsBackgroundColor()}
+                      onChangeComplete={this._setTabsBackgroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsBackgroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("BackgroundImage")}:
+                </div>
+                <div>
+                  <input type="file" id="tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
+                         onChange={(ev) => this._onChangeTabsBackgroundImageFile(ev)}/>
+                  {tabsData.getTabsBackgroundImageBase64DataUrl() ? (
+                      <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._deleteTabsBackgroundImage()}
+                                  okText={i18n.t("yes")}
+                                  cancelText={i18n.t("no")}
+                      >
+                        <a style={{marginLeft: "0px"}} className="icon_general">
+                          {<FontAwesomeIcon
+                              size="lg"
+                              icon="fa fa-trash"/>}
+                        </a>
+                      </Popconfirm>) : null}
+                </div>
+              </div>
+              <Divider>{i18n.t("Body")}</Divider>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("foreground")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={selectedTabData.getTabForegroundColor()}
+                      onChangeComplete={this._setTabForegroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: selectedTabData.getTabForegroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("background")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={selectedTabData.getTabBackgroundColor()}
+                      onChangeComplete={this._setTabBackgroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: selectedTabData.getTabBackgroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMarginTop">
+                  {i18n.t("BackgroundImage")}:
+                </div>
+                <div>
+                  <input type="file" id="tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
+                         onChange={(ev) => this._onChangeTabBackgroundImageFile(ev)}/>
+                  {selectedTabData.getTabBackgroundImageBase64DataUrl() ? (
+                      <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._deleteTabBackgroundImage()}
+                                  okText={i18n.t("yes")}
+                                  cancelText={i18n.t("no")}
+                      >
+                        <a style={{marginLeft: "0px"}} className="icon_general">
+                          {<FontAwesomeIcon
+                              size="lg"
+                              icon="fa fa-trash"/>}
+                        </a>
+                      </Popconfirm>) : null}
+                </div>
+              </div>
             </div>
         );
         break;
@@ -956,15 +961,14 @@ export default class EditScreenView extends React.Component {
         //       {mainJsx}
         //     </div>
         // );
-        jsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx( this, widgetData );
+        jsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx(this, widgetData);
         break;
       }
-      default:
-      {
+      default: {
         jsx = (
-        <div className="editorRightFrameRoot">
-          {i18n.t("Click_on_any_area_or_splitter_or_widget_or_tab_on_the_left")}
-        </div>
+            <div className="editorRightFrameRoot">
+              {i18n.t("Click_on_any_area_or_splitter_or_widget_or_tab_on_the_left")}
+            </div>
         );
         break;
       }
@@ -976,47 +980,46 @@ export default class EditScreenView extends React.Component {
     const settingsAreaJsx = this._getSettingsAreaJsx();
     let backgroundImage;
     const bgImageBase64DataUrl = this._ScreenData.getScreenBackgroundImageBase64DataUrl();
-    if( bgImageBase64DataUrl ){
+    if (bgImageBase64DataUrl) {
       backgroundImage = "url(" + bgImageBase64DataUrl + ")";
-    }
-    else{
+    } else {
       backgroundImage = null;
     }
     return (
         <>
-        <SelectIconModal editScreenViewAsParent={this} />
-        <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
-          <div style={{display: "flex", alignItems: "center",height:"47ox"}}>
-            <div style={{width:"240px"}}>
-              <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
-            </div>
-            {/*<DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>*/}
-            <Space>
-              <label>{i18n.t("grid")}{": "}
-                <InputNumber value={this.getEditingScreenGrid()}
-                             onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
-                             onStep={(v) => this.setEditingScreenGrid(v)}
-                />
-              </label>
-              <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
-                {i18n.t("foreground")}{": "}
-                <Dropdown overlay={<SketchPicker
-                    color={this._ScreenData.getScreenForegroundColor()}
-                    onChangeComplete={this.setScreenForegroundColor}
-                />}>
-                  <div style={{
-                    width: 48,
-                    height: 30,
-                    display: 'inline-block',
-                    border: 'solid 1px #e0e0e0',
-                    background: this._ScreenData.getScreenForegroundColor()
-                  }}></div>
-                </Dropdown>
-              </label>
-              <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
-                {i18n.t("background")}{": "}
-                <Dropdown overlay={<SketchPicker
-                    color={this._ScreenData.getScreenBackgroundColor()}
+          <SelectIconModal editScreenViewAsParent={this}/>
+          <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
+            <div style={{display: "flex", alignItems: "center", height: "47ox"}}>
+              <div style={{width: "240px"}}>
+                <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
+              </div>
+              {/*<DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>*/}
+              <Space>
+                <label style={{whiteSpace: "nowrap"}}>{i18n.t("grid")}{": "}
+                  <InputNumber value={this.getEditingScreenGrid()}
+                               onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
+                               onStep={(v) => this.setEditingScreenGrid(v)}
+                  />
+                </label>
+                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
+                  {i18n.t("foreground")}{": "}
+                  <Dropdown overlay={<SketchPicker
+                      color={this._ScreenData.getScreenForegroundColor()}
+                      onChangeComplete={this.setScreenForegroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: this._ScreenData.getScreenForegroundColor()
+                    }}></div>
+                  </Dropdown>
+                </label>
+                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
+                  {i18n.t("background")}{": "}
+                  <Dropdown overlay={<SketchPicker
+                      color={this._ScreenData.getScreenBackgroundColor()}
                     onChangeComplete={this.setScreenBackgroundColor}
                 />}>
                   <div style={{

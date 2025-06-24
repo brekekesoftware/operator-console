@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.35";
+const VERSION = "2.1.36";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -3407,7 +3407,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         let sKey = e.key;
 		
 		//if( sKey === "Unidentified" || sKey === "Fn" ){	//Fn key
-		if( !sKey && sKey.length > 1 ){	//Probably special key
+		if( sKey && sKey.length > 1 ){	//Probably special key
 			return;
 		}
 		

@@ -327,6 +327,7 @@ export default class EditorWidgetSettings extends React.Component {
         const wsta = wsts.getWidgetSettingsTemplateArray();
 
         const widgetSettingsTemplateOptions = new Array( );
+		let bOverwriteTemplate = false;
         for( let i = 0; i < wsta.length; i++ ){
             const wstn = wsta[i].getWidgetSettingsTemplateName();
             //!for old version
@@ -334,7 +335,14 @@ export default class EditorWidgetSettings extends React.Component {
                 continue;
             }
             widgetSettingsTemplateOptions.push( { value :  wstn });
+			
+			if( bOverwriteTemplate === false && _select_widget_settings_template_name === wstn ){
+				bOverwriteTemplate = true;
+			}
+			
         }
+		
+		
 
         const jsx = (
             <>
@@ -378,8 +386,19 @@ export default class EditorWidgetSettings extends React.Component {
                         />
                     </div>
                     <div className={"defaultButtonMarginTop"}>
-                        <Button
-                            onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>
+						{ bOverwriteTemplate ? (
+	                        <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}
+								onConfirm={() => this._onClickSaveWidgetSettingsTemplateButton()}
+								okText={i18n.t("yes")}
+								cancelText={i18n.t("no")}
+							>
+								<Button>{i18n.t("Save")}</Button>
+							</Popconfirm>
+						) 
+						: (
+							<Button
+								onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>
+						)}
                         <Button className={"defaultButtonMarginLeft"}
                                 onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
                     </div>

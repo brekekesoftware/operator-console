@@ -135,8 +135,8 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
             sNoteLabel = widgetData.getNoteName();
         }
 
-        const noteTitleFontSize = widgetData.getNoteTitleFontSize() ? widgetData.getNoteTitleFontSize() : 14;
-        const noteBodyFontSize = widgetData.getNoteBodyFontSize() ? widgetData.getNoteBodyFontSize() : 14;
+        const noteTitleFontSize = widgetData.getNoteTitleFontSize() ? widgetData.getNoteTitleFontSize() + "px" : null;
+        const noteBodyFontSize = widgetData.getNoteBodyFontSize() ? widgetData.getNoteBodyFontSize() + "px" : null;
         const noteNameFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameFgColor() , "" );
         const noteNameBackground = Util.getRgbaCSSStringFromAntdColor(  widgetData.getNoteNameBgColor(), "" );
 

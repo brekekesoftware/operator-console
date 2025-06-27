@@ -4,7 +4,6 @@ import LegacyButtonRuntimeSubWidgetFactory from "./legacyButtonRuntimeSubWidget/
 import i18n from "../../../i18n";
 import BrekekeOperatorConsole from "../../../index";
 import Util from "../../../Util";
-import Popconfirm from "antd/lib/popconfirm";
 import ACallInfo from "../../../ACallInfo";
 const CELL_MARGIN = 4;
 export default class CallTableRuntimeWidget extends RuntimeWidget{

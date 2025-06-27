@@ -1071,7 +1071,7 @@ export default class EditScreenView extends React.Component {
                 backgroundColor:this._ScreenData.getScreenBackgroundColor(),
                 backgroundImage:backgroundImage
               }}
-                 className="background_EditScreenView"
+                 className="ScreenView_general"
             >
               <EditorRootPane
                   paneData={this._RootPaneData}

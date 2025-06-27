@@ -22,7 +22,7 @@ export default class NoteEditorWidgetTemplate extends EditorWidgetTemplate{
     //!overload
     getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
         return (
-            <div className="brOCStickyNote">{i18n.t("Note")}</div>
+            <div className="brOCStickyNote brOCStickyNoteAddForTemplate">{i18n.t("Note")}</div>
         );
     }
 

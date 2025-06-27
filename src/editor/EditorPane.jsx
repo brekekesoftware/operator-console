@@ -370,14 +370,11 @@ export default class EditorPane extends BasePane {
 				css["color"] = paneData.getPaneForegroundColor();
 				css["backgroundColor"] = paneData.getPaneBackgroundColor();
 				css["backgroundImage"] = backgroundImage;
-				css["backgroundSize"] = "cover";
-				css["backgroundRepeat"] = "no-repeat";
-				css["backgroundPosition"] = "center center";
-				
+
                 jsx = <div
                     data-br-container-id={paneData.getPaneNumber() }
                     // parent-container={this.state.parentContainer}
-                    className={className}
+                    className={className + " PaneView_general"}
                     style={css}
                     onMouseDown={ (ev)=>   this.getEditScreenView().onMouseDownEditorPaneInSettingsMode(ev) }
                     onDragEnter={ (ev)=> this._onDragEnter(ev)}

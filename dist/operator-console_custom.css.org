@@ -3010,3 +3010,24 @@ a.kbc-button-lg.kbc-lineTable-button-callInfo-success::after {
 /* Login information in the drop-down menu on the top right of the screen */
 .dropdownMenuLoginlabel_OcBr{
 }
+
+/* Runtime or editor screen view */
+.brOC .ScreenView_general {
+	background-size: cover;
+	background-repeat: no-repeat;
+    /* background-position: center center; */
+}
+
+/* Runtime or editor pane view */
+.brOC .PaneView_general {
+	background-size: cover;
+	background-repeat: no-repeat;
+    /* background-position: center center; */
+}
+
+/* Runtime or editor tab bar */
+.brOC .Tabs_general > div:first-child {
+	background-size: cover;
+	background-repeat: no-repeat;
+    /* background-position: center center; */
+}

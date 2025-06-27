@@ -1,5 +1,6 @@
 {
   "en": {
+	"Are_you_sure_you_want_to_overwrite_it?" : "Are you sure you want to overwrite it?",
 	"Header" : "Header",
 	"Body" : "Body",
 	"Load_function" : "Load function",

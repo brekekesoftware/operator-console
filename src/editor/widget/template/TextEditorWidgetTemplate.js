@@ -22,16 +22,7 @@ export default class TextEditorWidgetTemplate extends EditorWidgetTemplate{
     //!overload
     getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
         return (
-            <div style={{
-                textOverflow: 'ellipsis',
-                whiteSpace: 'pre-wrap',
-                overflow: 'hidden',
-                wordBreak: 'break-all',
-                width: '100%',
-                height: '100%',
-                textAlign: 'center',
-                backgroundColor:"rgb(245,245,245)"
-            }}>{i18n.t("text")}</div>
+            <div className="TextEditorWidgetTemplate">{i18n.t("text")}</div>
         );
     }
 

@@ -1,5 +1,6 @@
 {
   "ja": {
+	"Are_you_sure_you_want_to_overwrite_it?" : "上書きしてもよろしいですか?",
 	"Header" : "ヘッダ",
 	"Body" : "ボディ",
 	"Load_function" : "関数も読み込む",

@@ -67,11 +67,8 @@ export default function RuntimeTabFunctionComponent(props){
 			height:"100%",
 			color: tabData.getTabForegroundColor(),
 			backgroundColor:  tabData.getTabBackgroundColor(),
-			backgroundImage: backgroundImage,
-			backgroundSize: "cover",
-			backgroundRepeat: "no-repeat",
-			backgroundPosition: "center center"
-		};	
+			backgroundImage: backgroundImage
+		};
 		
 
         const tabId = runtimePaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
@@ -79,6 +76,7 @@ export default function RuntimeTabFunctionComponent(props){
             <div
                 data-broc-tab-id={tabId}
 				style={outerCss}
+                className="PaneView_general"
             >
                 {widgetDataArray.map( (widgetData,index) =>{
                     const options = {
@@ -162,9 +160,6 @@ export default function RuntimeTabFunctionComponent(props){
         //color:"#00FFFF",	//It makes no sense
         backgroundColor: tabsData.getTabsBackgroundColor(),
 		backgroundImage : backgroundImage,
-		backgroundSize : "cover",
-		backgroundRepeat : "no-repeat",
-		backgroundPosition : "center center",
 		//fontSize:"10px"	//No effect
     }
 	
@@ -200,7 +195,7 @@ export default function RuntimeTabFunctionComponent(props){
 				tabBarStyle={tabBarCss}
 				style={css}
 				data-br-container-id={paneId}
-				className={className}
+				className={className + " Tabs_general"}
 				//tabBarStyle={{overflow:"auto"}}
 				activeKey={activeKey}
 				onChange={(selectedKey) => _onChangeByTabs(selectedKey) }

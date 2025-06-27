@@ -115,15 +115,12 @@ export default function EditorTabFunctionComponent(props){
 			color: tabData.getTabForegroundColor(),
 			backgroundColor:  tabData.getTabBackgroundColor(),
 			backgroundImage: backgroundImage,
-			backgroundSize: "cover",
-			backgroundRepeat: "no-repeat",
-			backgroundPosition: "center center"
 		};
 		
         const widgetDataArray = tabData.getWidgetDatas().getWidgetDataArray();
         const tabId = editorPaneAsParent.getPaneId() + '_' + tabData.getTabKeyAsString();
         const tabChildren = (
-			<div style={outerCss}>
+			<div style={outerCss} className="PaneView_general">
 				<GridLines
 					data-broc-tab-id={tabId}
 					component="div"
@@ -239,9 +236,6 @@ export default function EditorTabFunctionComponent(props){
         //color:"#00FFFF",	//It makes no sense
         backgroundColor: tabsData.getTabsBackgroundColor(),
 		backgroundImage : backgroundImage,
-		backgroundSize : "cover",
-		backgroundRepeat : "no-repeat",
-		backgroundPosition : "center center",
 		//fontSize:"10px"	//No effect
     }
 	
@@ -279,7 +273,7 @@ export default function EditorTabFunctionComponent(props){
 				//         editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
 				//     }
 				// }
-				className={className}
+				className={className + " Tabs_general"}
 				//tabBarStyle={{overflow:"auto"}}
 				activeKey={activeKey}
 				onChange={(selectedKey) => _onChangeByTabs(selectedKey) }

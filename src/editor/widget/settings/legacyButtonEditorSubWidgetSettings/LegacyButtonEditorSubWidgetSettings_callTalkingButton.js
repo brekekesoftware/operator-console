@@ -6,6 +6,7 @@ import Input from "antd/lib/input";
 import BrekekeOperatorConsole from "../../../../index";
 import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
+import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_callTalkingButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -13,8 +14,8 @@ export default class LegacyButtonEditorSubWidgetSettings_callTalkingButton exten
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onChangeLabel(e){
-        const label = e.currentTarget.value;
+    _onChangeLabel(label){
+        //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
@@ -45,8 +46,14 @@ export default class LegacyButtonEditorSubWidgetSettings_callTalkingButton exten
                 <InputNumber min="0" value={subWidgetData.getIconHeight()}
                              onChange={(n) => this._onChangeIconHeight(n)}/>
                 <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
-                       defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
+                <TextArea maxLength={1000} style={{minHeight:68}}
+                    /* placeholder={i18n.t("label")} */
+                    /* allowClear */
+                          value={sLabel}
+                          defaultValue={sLabel}
+                          rows={3}
+                          onChange={(e) => this._onChangeLabel(e.target.value)}
+                />
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getFontSize()}
                              onChange={(n) => this._onChangeFontSize(n)}/>

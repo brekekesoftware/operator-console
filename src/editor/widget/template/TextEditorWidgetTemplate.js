@@ -11,7 +11,7 @@ export default class TextEditorWidgetTemplate extends EditorWidgetTemplate{
 
     //!overload
     getWidth(){
-        return 64;
+        return 80;
     }
 
     //!overload

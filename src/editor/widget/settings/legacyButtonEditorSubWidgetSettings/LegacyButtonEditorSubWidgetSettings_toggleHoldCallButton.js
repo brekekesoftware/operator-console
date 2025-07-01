@@ -7,6 +7,7 @@ import {Divider} from "antd";
 import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
 import EditScreenView from "../../../EditScreenView";
+import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -75,8 +76,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
-    _onChangeHoldLabel(e){
-        const holdLabel = e.currentTarget.value;
+    _onChangeHoldLabel(holdLabel){
+        //const holdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setHoldLabel( holdLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
@@ -142,8 +143,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
 
-    _onChangeUnholdLabel(e){
-        const unholdLabel = e.currentTarget.value;
+    _onChangeUnholdLabel(unholdLabel){
+        //const unholdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setUnholdLabel( unholdLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
@@ -195,8 +196,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                 <InputNumber min="0" value={subWidgetData.getHoldIconHeight()}
                              onChange={(n) => this._onChangeHoldIconHeight(n)}/>
                 <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`Hold`)} allowClear value={sHoldLabel}
-                       defaultValue={sHoldLabel} onChange={(e) => this._onChangeHoldLabel(e)}/>
+                <TextArea maxLength={1000} style={{minHeight:68}}
+                    /* placeholder={i18n.t("Hold")} */
+                    /* allowClear */
+                          value={sHoldLabel}
+                          defaultValue={sHoldLabel}
+                          rows={3}
+                          onChange={(e) => this._onChangeHoldLabel(e.target.value)}
+                />
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getHoldFontSize()}
                              onChange={(n) => this._onChangeHoldFontSize(n)}/>
@@ -225,8 +232,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                 <InputNumber min="0" value={subWidgetData.getUnholdIconHeight()}
                              onChange={(n) => this._onChangeUnholdIconHeight(n)}/>
                 <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`Unhold`)} allowClear value={sUnholdLabel}
-                       defaultValue={sUnholdLabel} onChange={(e) => this._onChangeUnholdLabel(e)}/>
+                <TextArea maxLength={1000} style={{minHeight:68}}
+                    /* placeholder={i18n.t("Unhold")} */
+                    /* allowClear */
+                          value={sUnholdLabel}
+                          defaultValue={sUnholdLabel}
+                          rows={3}
+                          onChange={(e) => this._onChangeUnholdLabel(e.target.value)}
+                />
                 <p>{i18n.t("Text_size")}</p>
                 <InputNumber min="0" value={subWidgetData.getUnholdFontSize()}
                              onChange={(n) => this._onChangeUnholdFontSize(n)}/>

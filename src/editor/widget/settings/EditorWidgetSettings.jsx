@@ -2,8 +2,8 @@ import React from 'react';
 import Button from "antd/lib/button";
 import i18n from "../../../i18n";
 import Popconfirm from "antd/lib/popconfirm";
-import {Checkbox, Divider, Input, Modal} from "antd";
-import AutoComplete from "antd/lib/auto-complete";
+import {Checkbox, Divider, Input, Modal, Select} from "antd";
+//import AutoComplete from "antd/lib/auto-complete";
 import WidgetSettingsTemplates from "./template/WidgetSettingsTemplates";
 import Notification from "antd/lib/notification";
 import BrekekeOperatorConsole from "../../../index";
@@ -186,8 +186,8 @@ export default class EditorWidgetSettings extends React.Component {
     //
     // }
 
-    _onClickSaveWidgetSettingsTemplateButton(){
-        const name = _select_widget_settings_template_name;
+    _onClickCreateWidgetSettingsTemplateButton(){
+        const name = _new_widget_settings_template_name;
         if( !name ){
             Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
             return;
@@ -211,9 +211,58 @@ export default class EditorWidgetSettings extends React.Component {
                     const b = itm.getWidgetSettingsTemplateName() === nameTrimmed;
                     return b;
                 });
+                if( wst ){
+                    Notification.warning({ message:i18n.t("The_specified_template_name_already_exists") });
+                    return;
+                }
+
+                wst = wsts.insertWidgetSettingsTemplate( nameTrimmed );
+                const widgetData = this._getWidgetData();
+                widgetData.saveToWidgetSettingsTemplate(wst);
+
+                wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                        Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+                        this.setState({ rerender:true});
+                    },
+                    (errorOrResponse) =>{
+                        this.setState({rerender:true});
+                    }
+                );
+            },
+            ( errorOrResponse ) =>{
+                this.setState({rerender:true});
+            }
+        );
+    }
+
+    _onClickOverwriteSaveWidgetSettingsTemplateButton(){
+        const name = _select_widget_settings_template_name;
+        if( !name ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_selected") });
+            return;
+        }
+        const nameTrimmed = name.trim();
+        if( nameTrimmed.length === 0  ){
+            Notification.warning({ message:i18n.t("The_name_has_not_been_selected") });
+            return;
+        }
+
+        // if( nameTrimmed.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+        //     Notification.warning({ message:i18n.t("The_name_is_too_long") });
+        //     return;
+        // }
+
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+
+        const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+        wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+                let wst = wsts.getWidgetSettingsTemplateArray().find( (itm) =>{
+                    const b = itm.getWidgetSettingsTemplateName() === nameTrimmed;
+                    return b;
+                });
                 if( !wst ){
-                    //add
-                    wst = wsts.insertWidgetSettingsTemplate( nameTrimmed );
+                    Notification.warning({ message:i18n.t("The_specified_template_does_not_exist") });
+                    return;
                 }
 
                 const widgetData = this._getWidgetData();
@@ -233,6 +282,54 @@ export default class EditorWidgetSettings extends React.Component {
             }
         );
     }
+
+    // _onClickSaveWidgetSettingsTemplateButton(){
+    //     const name = _select_widget_settings_template_name;
+    //     if( !name ){
+    //         Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+    //         return;
+    //     }
+    //     const nameTrimmed = name.trim();
+    //     if( nameTrimmed.length === 0  ){
+    //         Notification.warning({ message:i18n.t("The_name_has_not_been_entered") });
+    //         return;
+    //     }
+    //
+    //     if( nameTrimmed.length > WidgetSettingsTemplate.WIDGET_SETTINGS_TEMPLATE_NAME_MAX_LENGTH  ){
+    //         Notification.warning({ message:i18n.t("The_name_is_too_long") });
+    //         return;
+    //     }
+    //
+    //     const oc = BrekekeOperatorConsole.getStaticInstance();
+    //
+    //     const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
+    //     wsts.reloadWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+    //             let wst = wsts.getWidgetSettingsTemplateArray().find( (itm) =>{
+    //                 const b = itm.getWidgetSettingsTemplateName() === nameTrimmed;
+    //                 return b;
+    //             });
+    //             if( !wst ){
+    //                 //add
+    //                 wst = wsts.insertWidgetSettingsTemplate( nameTrimmed );
+    //             }
+    //
+    //             const widgetData = this._getWidgetData();
+    //             widgetData.saveToWidgetSettingsTemplate(wst);
+    //
+    //             wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
+    //                     Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+    //                     this.setState({ rerender:true});
+    //                 },
+    //                 (errorOrResponse) =>{
+    //                     this.setState({rerender:true});
+    //                 }
+    //             );
+    //         },
+    //         ( errorOrResponse ) =>{
+    //             this.setState({rerender:true});
+    //         }
+    //     );
+    // }
 
     _onConfirmOkDeleteWidgetSettingsTemplate(){
         const name = _select_widget_settings_template_name;
@@ -326,21 +423,21 @@ export default class EditorWidgetSettings extends React.Component {
         const wsts = WidgetSettingsTemplates.getWidgetSettingsTemplates();
         const wsta = wsts.getWidgetSettingsTemplateArray();
 
-        const widgetSettingsTemplateOptions = new Array( );
-		let bOverwriteTemplate = false;
-        for( let i = 0; i < wsta.length; i++ ){
-            const wstn = wsta[i].getWidgetSettingsTemplateName();
-            //!for old version
-            if( !wstn ){
-                continue;
-            }
-            widgetSettingsTemplateOptions.push( { value :  wstn });
-			
-			if( bOverwriteTemplate === false && _select_widget_settings_template_name === wstn ){
-				bOverwriteTemplate = true;
-			}
-			
-        }
+        // const widgetSettingsTemplateOptions = new Array( );
+		// let bOverwriteTemplate = false;
+        // for( let i = 0; i < wsta.length; i++ ){
+        //     const wstn = wsta[i].getWidgetSettingsTemplateName();
+        //     //!for old version
+        //     if( !wstn ){
+        //         continue;
+        //     }
+        //     widgetSettingsTemplateOptions.push( { value :  wstn });
+		//
+		// 	if( bOverwriteTemplate === false && _select_widget_settings_template_name === wstn ){
+		// 		bOverwriteTemplate = true;
+		// 	}
+		//
+        // }
 		
 		
 
@@ -371,37 +468,75 @@ export default class EditorWidgetSettings extends React.Component {
 					: null
 					}
                     <div class={"defaultElementMarginTop_s"}>
-                        <AutoComplete
-                            style={{width: "100%"}}
-                            options={widgetSettingsTemplateOptions}
-                            value={_select_widget_settings_template_name}
-                            onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}
-                            placeholder={i18n.t("Select_or_enter_a_template")}
-                            allowClear={true}
-                            filterOption={(inputValue, option) => {
-                                const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());
-                                return b;
+                        {/*<AutoComplete*/}
+                        {/*    style={{width: "100%"}}*/}
+                        {/*    options={widgetSettingsTemplateOptions}*/}
+                        {/*    value={_select_widget_settings_template_name}*/}
+                        {/*    onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}*/}
+                        {/*    placeholder={i18n.t("Select_or_enter_a_template")}*/}
+                        {/*    allowClear={true}*/}
+                        {/*    filterOption={(inputValue, option) => {*/}
+                        {/*        const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());*/}
+                        {/*        return b;*/}
+                        {/*    }*/}
+                        {/*    }*/}
+                        {/*/>*/}
+                        {/*<AutoComplete*/}
+                        {/*    style={{width: "100%"}}*/}
+                        {/*    options={widgetSettingsTemplateOptions}*/}
+                        {/*    value={_select_widget_settings_template_name}*/}
+                        {/*    onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}*/}
+                        {/*    placeholder={i18n.t("Select_or_enter_a_template")}*/}
+                        {/*    allowClear={true}*/}
+                        {/*    filterOption={(inputValue, option) => {*/}
+                        {/*        const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());*/}
+                        {/*        return b;*/}
+                        {/*    }*/}
+                        {/*    }*/}
+                        {/*/>*/}
+                        <Select
+                                style={{width:"100%"}}
+                                onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}
+                                value={_select_widget_settings_template_name}
+                                placeholder={i18n.t("Select_a_template")}
+                        >
+                            { wsta && wsta.map( ( wst, i ) => {
+                                    const wstn = wst.getWidgetSettingsTemplateName();
+                                    if( wstn ) {
+                                        return <Select.Option value={wstn}>{wstn}</Select.Option>
+                                    }
+                                })
                             }
-                            }
-                        />
+                        </Select>
                     </div>
                     <div className={"defaultButtonMarginTop"}>
-						{ bOverwriteTemplate ? (
-	                        <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}
-								onConfirm={() => this._onClickSaveWidgetSettingsTemplateButton()}
-								okText={i18n.t("yes")}
-								cancelText={i18n.t("no")}
-							>
-								<Button>{i18n.t("Save")}</Button>
-							</Popconfirm>
-						) 
-						: (
-							<Button
-								onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>
-						)}
-                        <Button className={"defaultButtonMarginLeft"}
-                                onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
+                            <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}
+                    			onConfirm={() => this._onClickOverwriteSaveWidgetSettingsTemplateButton()}
+                    			okText={i18n.t("yes")}
+                    			cancelText={i18n.t("no")}
+                    		>
+                    			<Button>{i18n.t("Save")}</Button>
+                    		</Popconfirm>
+                            <Button className={"defaultButtonMarginLeft"}
+                                    onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
                     </div>
+                    {/*<div className={"defaultButtonMarginTop"}>*/}
+					{/*	{ bOverwriteTemplate ? (*/}
+	                {/*        <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}*/}
+					{/*			onConfirm={() => this._onClickSaveWidgetSettingsTemplateButton()}*/}
+					{/*			okText={i18n.t("yes")}*/}
+					{/*			cancelText={i18n.t("no")}*/}
+					{/*		>*/}
+					{/*			<Button>{i18n.t("Save")}</Button>*/}
+					{/*		</Popconfirm>*/}
+					{/*	) */}
+					{/*	: (*/}
+					{/*		<Button*/}
+					{/*			onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>*/}
+					{/*	)}*/}
+                    {/*    <Button className={"defaultButtonMarginLeft"}*/}
+                    {/*            onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>*/}
+                    {/*</div>*/}
                     <div className={"defaultButtonMarginTop"}>
                         <Popconfirm title={i18n.t("are_you_sure")}
                                     onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
@@ -411,7 +546,7 @@ export default class EditorWidgetSettings extends React.Component {
                             <Button>{i18n.t("Delete")}</Button>
                         </Popconfirm>
                     </div>
-                    <p>{i18n.t("Rename_a_template")}</p>
+                    <p>{i18n.t("Create_or_rename_a_template")}</p>
                     <div><Input
                         style={{width: "100%"}}
                         placeholder={i18n.t("Enter_a_new_name")}
@@ -421,7 +556,8 @@ export default class EditorWidgetSettings extends React.Component {
                         {/*<Button onClick={() => this._onClickCreateTemplateButton()}>{i18n.t("Create")}</Button>*/}
                         {/*<Button onClick={() => this._onClickRenameTemplateButton()}*/}
                         {/*        className={"defaultButtonMarginLeft"}>{i18n.t("Rename")}</Button>*/}
-                        <Button onClick={() => this._onClickRenameTemplateButton()}>{i18n.t("Rename")}</Button>
+                        <Button onClick={() => this._onClickCreateWidgetSettingsTemplateButton()}>{i18n.t("Create")}</Button>
+                        <Button onClick={() => this._onClickRenameTemplateButton()} className="brOCMarginLeftButtonToButton" >{i18n.t("Rename")}</Button>
                     </div>
                 </div>
                 <div style={{padding: "0px 12px 12px 12px"}}>

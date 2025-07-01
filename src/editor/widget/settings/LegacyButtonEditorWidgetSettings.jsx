@@ -104,8 +104,8 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
                 <TextArea maxLength={1000} style={{minHeight:68}}
                           placeholder={i18n.t("Tooltip")} value={sTooltipOfButtonWidget}
                           defaultValue={sTooltipOfButtonWidget}
+						  /* allowClear */
                           rows={3}
-                          maxLength={1000}
                           onChange={(e) => this._onChangeTooltipOfButtonWidget(e.target.value)}/>
                 <Popconfirm key="submitConfirm" title={i18n.t("are_you_sure")} onConfirm={()=> this._setTooltipOfButtonWidgetToInitial()}
                             okText={i18n.t("yes")}

@@ -5,6 +5,7 @@ import i18n from "../../../../i18n";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
+import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_lineButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -12,8 +13,8 @@ export default class LegacyButtonEditorSubWidgetSettings_lineButton extends Lega
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onChangeLabel(e){
-        const label = e.currentTarget.value;
+    _onChangeLabel(label){
+        //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
     }
@@ -57,8 +58,14 @@ export default class LegacyButtonEditorSubWidgetSettings_lineButton extends Lega
                 <InputNumber min="0" value={subWidgetData.getIconHeight()}
                              onChange={(n) => this._onChangeIconHeight(n)}/>
                 <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`legacy_button_label.${subtypeName}`)} allowClear value={sLabel}
-                       defaultValue={sLabel} onChange={(e) => this._onChangeLabel(e)}/>
+                <TextArea maxLength={1000} style={{minHeight:68}}
+                    /* placeholder={i18n.t("label")} */
+                    /* allowClear */
+                          value={sLabel}
+                          defaultValue={sLabel}
+                          rows={3}
+                          onChange={(e) => this._onChangeLabel(e.target.value)}
+                />
                 <p>{i18n.t("line")}</p>
                 <Input allowClear value={sLine} defaultValue={sLine}
                        onChange={(e) => this._onChangeLine(e)}/>

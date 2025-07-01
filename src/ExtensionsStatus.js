@@ -47,7 +47,19 @@ export default class ExtensionsStatus{
         const extensionId = extensionStatusEvent.user;
         const talkerId = extensionStatusEvent.talker_id;
         //const bRemoved = Object.hasOwn(  extensionsStatus, extensionId ) === false || Object.keys( extensionsStatus[extensionId] ).length === 0 || Object.keys( extensionsStatus[extensionId]["callStatus"] ).length === 0;
-        const bRemoved = Object.hasOwn(  extensionsStatus, extensionId ) === false || Object.keys( extensionsStatus[extensionId] ).length === 0 || Object.hasOwn( extensionsStatus[extensionId]["callStatus"], talkerId ) === false;
+        const extensionStatus = extensionsStatus[extensionId];
+        let extensionStatusKeys;
+        if( extensionStatus ){
+            extensionStatusKeys = Object.keys( extensionStatus  );
+        }
+        else{
+            extensionStatusKeys = null;
+        }
+
+        const bRemoved =
+			Object.hasOwn(  extensionsStatus, extensionId ) === false ||
+			!extensionStatusKeys || extensionStatusKeys.length === 0 ||
+			( extensionStatus && Object.hasOwn( extensionStatus["callStatus"], talkerId ) === false );
         if( bRemoved ){
             this._operatorConsoleAsParent.getCampon().onDeleteExtensionStatusFromExtensionsStatus( this, extensionId, talkerId  );
         }

@@ -8,6 +8,7 @@ export default class WebphoneCallInfo extends ACallInfo {
 
     constructor( webphoneCallInfosAsParent, callObject) {
         super( webphoneCallInfosAsParent );
+        this._callObject = callObject;
         this._WebphoneCallInfosAsParent = webphoneCallInfosAsParent;
         this._OnHoldFunctions = new Array();    //!const
         this._Id = callObject.id;
@@ -27,8 +28,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleHoldWithCheck = callObject.toggleHoldWithCheck;
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
-        this._setHolding = callObject.setHolding;
-        this._CallObject = callObject;
+        this._setHoldWithCallkeep = callObject.setHoldWithCallkeep;
         this._isVideoEnable = true;
     }
 
@@ -42,13 +42,13 @@ export default class WebphoneCallInfo extends ACallInfo {
     }
 
     startVideo(){
-        const callObject = this._CallObject;
+        const callObject = this._callObject;
         callObject.videoStreamActive = true;
         this._isVideoActive = true;
     }
 
     stopVideo(){
-        const callObject = this._CallObject;
+        const callObject = this._callObject;
         callObject.videoStreamActive = false;
         this._isVideoActive = false;
     }
@@ -74,7 +74,7 @@ export default class WebphoneCallInfo extends ACallInfo {
      * overload method
      */
     setHolding( b ){
-        this._setHolding(b);
+        this.setHoldWithCallkeep(b);
     }
 
 
@@ -173,6 +173,7 @@ export default class WebphoneCallInfo extends ACallInfo {
     onUpdateWebphoneCallObject(callObject) {
         const wasAnsweredAt = this._answeredAt;
 
+		this._callObject = callObject;
         this._hangup = callObject.hangup;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
@@ -188,7 +189,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleHoldWithCheck = callObject.toggleHoldWithCheck;
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
-        this._setHolding = callObject.setHolding;
+        this._setHoldWithCallkeep = callObject.setHoldWithCallkeep;
 
         if( this._incoming ) {
             if (!wasAnsweredAt || wasAnsweredAt === 0) {
@@ -335,8 +336,8 @@ export default class WebphoneCallInfo extends ACallInfo {
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.unhold:
                 const bHolding = this.getIsHolding();
                 if( bHolding ){
+                    this._setHoldWithCallkeep(false);
                     this._holding = false;
-                    this._setHolding(false);
                 }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferResponse:

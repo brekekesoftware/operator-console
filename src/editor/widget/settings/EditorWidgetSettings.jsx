@@ -440,7 +440,7 @@ export default class EditorWidgetSettings extends React.Component {
         // }
 		
 		
-
+        const bDisabled = !wsta || wsta.length === 0;
         const jsx = (
             <>
                 <div style={{padding: "12px 12px 0px 12px"}}>{i18n.t(`widget_description.${widgetNameForII18n}`)}</div>
@@ -510,14 +510,14 @@ export default class EditorWidgetSettings extends React.Component {
                         </Select>
                     </div>
                     <div className={"defaultButtonMarginTop"}>
-                            <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}
+                            <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")} disabled={bDisabled}
                     			onConfirm={() => this._onClickOverwriteSaveWidgetSettingsTemplateButton()}
                     			okText={i18n.t("yes")}
                     			cancelText={i18n.t("no")}
                     		>
-                    			<Button>{i18n.t("Save")}</Button>
+                    			<Button disabled={bDisabled}>{i18n.t("Save")}</Button>
                     		</Popconfirm>
-                            <Button className={"defaultButtonMarginLeft"}
+                            <Button className={"defaultButtonMarginLeft"} disabled={bDisabled}
                                     onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
                     </div>
                     {/*<div className={"defaultButtonMarginTop"}>*/}
@@ -538,12 +538,12 @@ export default class EditorWidgetSettings extends React.Component {
                     {/*            onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>*/}
                     {/*</div>*/}
                     <div className={"defaultButtonMarginTop"}>
-                        <Popconfirm title={i18n.t("are_you_sure")}
+                        <Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
                                     onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
                                     okText={i18n.t("yes")}
                                     cancelText={i18n.t("no")}
                         >
-                            <Button>{i18n.t("Delete")}</Button>
+                            <Button disabled={bDisabled}>{i18n.t("Delete")}</Button>
                         </Popconfirm>
                     </div>
                     <p>{i18n.t("Create_or_rename_a_template")}</p>
@@ -557,7 +557,7 @@ export default class EditorWidgetSettings extends React.Component {
                         {/*<Button onClick={() => this._onClickRenameTemplateButton()}*/}
                         {/*        className={"defaultButtonMarginLeft"}>{i18n.t("Rename")}</Button>*/}
                         <Button onClick={() => this._onClickCreateWidgetSettingsTemplateButton()}>{i18n.t("Create")}</Button>
-                        <Button onClick={() => this._onClickRenameTemplateButton()} className="brOCMarginLeftButtonToButton" >{i18n.t("Rename")}</Button>
+                        <Button disabled={bDisabled} onClick={() => this._onClickRenameTemplateButton()} className="brOCMarginLeftButtonToButton" >{i18n.t("Rename")}</Button>
                     </div>
                 </div>
                 <div style={{padding: "0px 12px 12px 12px"}}>

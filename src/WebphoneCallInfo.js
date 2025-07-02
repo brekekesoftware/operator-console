@@ -74,7 +74,7 @@ export default class WebphoneCallInfo extends ACallInfo {
      * overload method
      */
     setHolding( b ){
-        this.setHoldWithCallkeep(b);
+        this._setHoldWithCallkeep(b);
     }
 
 

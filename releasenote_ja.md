@@ -39,7 +39,7 @@
 		position:absolute;
 		left:0;
 		margin-left:150px;
-		top:9px;
+		top:12px;
 	}
 
     などと記述してファイルを保存します。

@@ -81,7 +81,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.40";
+const VERSION = "2.1.41";
 
 import { CallHistory } from './CallHistory';
 import DropDownMenu from "./DropDownMenu";
@@ -2854,6 +2854,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         const b = this.state.isAboutOCModalOpen;
         return b;
     }
+	
 
     onAnsweredCallByWebphoneCallInfo( webphoneCallInfoAsCaller ){
         this._onAnsweredCallByCallInfo( webphoneCallInfoAsCaller );
@@ -2909,18 +2910,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-
-    onDeinitUccacWrapperByUccacWrapper( uccacWrapperAsCaller ){
-        // const screen = this._getCurrentScreen();
-        // const widgets = screen.widgets;
-        // for( let i = 0; i < widgets.length; i++ ){
-        //     const widget = widgets[i];
-        //     const widgetType = widget.type;
-        //     if( widgetType === "LegacyUccacWidget") {
-        //         widget.onDeinitUccacWrapperByOperatorConsole(this, uccacWrapperAsCaller );
-        //     }
-        // }
-    }
 
     onInitUccacWrapperSuccessByUccacWrapper( uccacWrapperAsCaller ){
         // const screen = this._getCurrentScreen();
@@ -3195,6 +3184,17 @@ export default class BrekekeOperatorConsole extends React.Component {
         if( newLayoutModalOpen === true ){
             return;
         }
+		
+		//Ignore Textarea/Input text (with UC Chat Agent Components)
+		const eActive = document.activeElement;
+		if( eActive ){
+			const tagNameLower = eActive.tagName.toLowerCase();
+			const bInputText = tagNameLower === "textarea" || ( tagNameLower === "input" && eActive.getAttribute("type") && eActive.getAttribute("type").toLowerCase() === "text" );
+			if( bInputText ){
+				return;
+			}
+		}
+		
 
         if( e.getModifierState ) {   //check for datalist input
             if (
@@ -3767,10 +3767,10 @@ export default class BrekekeOperatorConsole extends React.Component {
                                 )
                                 : this.state.displayState === brOcDisplayStates.systemSettingsView ? (
                                     <div style={{height: "100%"}}>
-                                        <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+											<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                                             <ConfigProvider locale={ configProviderLocale}>
                                                 <Suspense fallback={<Empty image={null} description={<div style={{height: "100%"}}><Spin/></div>}/>}>
-                                                <SystemSettingsView operatorConsole={this}/>
+													<SystemSettingsView operatorConsole={this}/>
                                                 </Suspense>
                                             </ConfigProvider>
                                     </div>
@@ -3782,11 +3782,10 @@ export default class BrekekeOperatorConsole extends React.Component {
                                             backgroundImage:backgroundImage_ver2
                                         }}
                                         className="ScreenView_general">
-                                            <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                                             <ConfigProvider locale={configProviderLocale}>
-                                                <Suspense fallback={<Empty image={null}
-                                                                           description={<div style={{height: "100%"}}>
-                                                                               <Spin/></div>}/>}>
+                                                <Suspense fallback={
+													<Empty image={null} description={<div style={{height: "100%"}}><img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/><Spin/></div>}/>}
+												>
                                                     <ShowScreenView_ver2 operatorConsoleAsParent={this}/>
                                                 </Suspense>
                                             </ConfigProvider>
@@ -3801,13 +3800,13 @@ export default class BrekekeOperatorConsole extends React.Component {
                         )
                         : this.state.displayState === brOcDisplayStates.noScreens ? (
                             <div style={{height: "100%"}}>
-                                <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+								<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                                 <NoScreensView  operatorConsoleAsParent={this}/>
                             </div>
                         )
                         : (
                             <div style={{height: "100%"}}>
-                                <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+								<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
                                 <Empty image={null} description={<Spin/>}/>
                             </div>
                             )

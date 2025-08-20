@@ -118,12 +118,45 @@ export default class RuntimeScreenView_ver2 extends React.Component{
     const screenData_ver2 = this._OperatorConsoleAsParent.getScreenData_ver2();
     const rootPaneData = screenData_ver2.getScreenPaneDatas().getOrAddRootPaneData();
     const isVisibleAutoDialView_Ver2 =  this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2 && this._OperatorConsoleAsParent.state.showAutoDialWidgetSubDatas_ver2.length !== 0;
+	
+	const oc = this._OperatorConsoleAsParent;
+
+	let loggedInUserInfo_header_jsx;
+	
+	const loggedinUserExtension =  oc.getLoggedinUsername();
+	if( loggedinUserExtension ) {
+        const extInfos =  oc.getExtensions();
+		let loggedinUserName;
+		if( extInfos ){
+			const extInfo = extInfos.find( info => info.id === loggedinUserExtension );
+			if( extInfo ){
+				loggedinUserName = extInfo["name"];
+			}
+		}
+		let loggedinUserString;
+		if( loggedinUserName && loggedinUserName.length !== 0 ){
+			loggedinUserString = loggedinUserName + " / " + loggedinUserExtension;
+		}
+		else{
+			loggedinUserString = loggedinUserExtension;
+		}
+
+		loggedInUserInfo_header_jsx = (
+			<div className="loggedinUserInfo_header_RuntimeScreenView_ver2">
+				<span>{loggedinUserString}</span>
+			</div>
+		);
+	} else {
+		loggedInUserInfo_header_jsx = <></>;
+	}
+	
     return (
         <div style={{height: "100%"}}>
-          <div>
-            <div>
-              <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
-            </div>
+			<div className="header_RuntimeScreenView_ver2">
+				<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+				{loggedInUserInfo_header_jsx}
+			</div>
+			<div>
             <DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>
             <AutoDialView_ver2
                 isVisible={isVisibleAutoDialView_Ver2}
@@ -168,7 +201,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
             {/*</div>*/}
           </div>
           <div style={{display: "flex", height: "calc(100% - 47px)"}}>
-            <div style={{width: "100%",overflow:"auto",marginLeft:"10px",marginBottom:"10px"}}>
+            <div className="RutimeRootPane_parent">
               <RuntimeRootPane paneData={ rootPaneData } runtimeScreenViewAsParent={this}  className="width100percentAndHeight100percent" />
             </div>
           </div>

@@ -4,6 +4,7 @@ import LegacyButtonRuntimeSubWidgetFactory from "./legacyButtonRuntimeSubWidget/
 import i18n from "../../../i18n";
 import BrekekeOperatorConsole from "../../../index";
 import Util from "../../../Util";
+import AutoDialView_ver2 from "../../AutoDialView_ver2";
 
 export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
 
@@ -22,12 +23,16 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
         };
         this._UccacWrapper.addOnUccacInitSuccessFunction(this._onUccacInitSuccessFunction);
 
-        this._onUccacDeinitFunction = function (uccacWrapperAsCaller) {
-            this_._onDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller);
+        this._onUccacBeforeDeinitFunction = function (uccacWrapperAsCaller) {
+            this_._onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller);
         };
-        this._UccacWrapper.addOnUccacDeinitFunction(this._onUccacDeinitFunction);
+        this._UccacWrapper.addOnUccacBeforeDeinitFunction(this._onUccacBeforeDeinitFunction);
 
     }
+	
+	getUccacAc(){
+		return this._uccacAc;
+	}
 
     _refreshUccacAc(){
         if( this._UccacWrapper.isInitialized() === true ){
@@ -46,7 +51,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
     componentWillUnmount() {
         this._destroyUccacAc();
         this._UccacWrapper.removeOnUccacInitSuccessFunction( this._onUccacInitSuccessFunction );
-        this._UccacWrapper.removeOnUccacDeinitFunction( this._onUccacDeinitFunction );
+        this._UccacWrapper.removeOnUccacBeforeDeinitFunction( this._onUccacBeforeDeinitFunction );
         super.componentWillUnmount();
     }
 
@@ -54,7 +59,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
         this._initUccacAc();
     }
 
-    _onDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller  ){
+    _onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller  ){
         this._destroyUccacAc();
     }
 
@@ -62,6 +67,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
         if( !this._uccacAc ) {
             return false;
         }
+        AutoDialView_ver2.getStaticInstance().onBeforeDestroyUccacAc(this);
         this._uccacAc.destroy();
         this._uccacAc = null;
         return true;
@@ -70,6 +76,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
     _initUccacAc(){
 
         if( this._uccacAc ){
+			AutoDialView_ver2.getStaticInstance().onBeforeDestroyUccacAc(this);
             this._uccacAc.destroy();
             this._uccacAc = null;
         }
@@ -99,6 +106,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
         this.setState({isRestartButtonDisabled:true}, ()=> {
             this._uccacAc.startUCClient(startUCClientOptions);
             setTimeout( ()=>{ this.setState({isRestartButtonDisabled:false})},8000);
+			AutoDialView_ver2.getStaticInstance().onStartUCClient( this );
         });
     }
 
@@ -111,6 +119,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
 
         this.setState({isRestartButtonDisabled:true}, ()=>
         {
+			AutoDialView_ver2.getStaticInstance().onBeforeStopUCClient( this );
             this._uccacAc.stopUCClient();
             const eUccacRoot = this._uccacRootElementRef.current;
             const eUcclientPanelRoot = eUccacRoot.querySelector('div[name="ucclientPanelRoot"]');
@@ -124,6 +133,7 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
             }
             this._uccacAc.startUCClient(startUCClientOptions);
             setTimeout( ()=>{ this.setState({isRestartButtonDisabled:false})},8000);
+			AutoDialView_ver2.getStaticInstance().onStartUCClient( this );
         });
     }
 

@@ -952,3 +952,22 @@ table.brOCLinetable tbody tr td
 :where(.css-dev-only-do-not-override-14h6oq1).ant-input{
 	font-size:unset;
 }
+
+.brOC .RutimeRootPane_parent{
+	width:100%;
+	overflow:auto;
+	margin-left:10px;
+	margin-bottom:10px;
+}
+
+.brOC .header_RuntimeScreenView_ver2{
+	position:relative;
+	height:47px;
+}
+
+.brOC .loggedinUserInfo_header_RuntimeScreenView_ver2{
+	position:absolute;
+	left:0;
+	margin-left:150px;
+	top:9px;
+}

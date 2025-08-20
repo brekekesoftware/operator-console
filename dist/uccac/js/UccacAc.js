@@ -8,6 +8,10 @@ class UccacAc{
         this._onAcErrorOccurredFunctionForUser = null;
         this._confirmMessageWhenClosingWebchat = null;
     }
+	
+	getAgentComponent(){
+		return this._AgentComponent;
+	}
 
     getUccacAcNo(){
         return this._UccacAcNo;

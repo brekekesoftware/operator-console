@@ -46,6 +46,13 @@ export default class AutoDialView_ver2 extends React.Component {
         //this._PhonebookScrollableDivElement = null;
         //this._AutoDialViewRef = React.createRef();
         this._callInfoArrayForDisplay = null;
+		this._UcUserStatuses = {};
+		this._UcHandlerObject = { 
+			buddyStatusChanged: ev => {
+				this._UcUserStatuses[ ev.user_id ] = ev.status;
+				this.setState({rerender:true});
+			} 
+		};
     }
 
     clearLatestSearchInfo(){
@@ -80,6 +87,51 @@ export default class AutoDialView_ver2 extends React.Component {
         eScript.src = src;
         parentElement.appendChild(eScript);
     }
+	
+	onStartUCClient( legacyUccacRuntimeWidgetAsCaller ){
+		if( !this._usingUccacAc ){
+			this._usingUccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();	
+			const ac = this._usingUccacAc.getAgentComponent();
+			ac.ucUiStore.chatClient.addHandler( this._UcHandlerObject );
+			
+			
+			setTimeout(
+				() => {
+					const oc = BrekekeOperatorConsole.getStaticInstance();
+					const extensionInfoArray =  oc.getExtensions();
+					const tenant = oc.getLoggedinTenant();
+					for( let i = 0; i < extensionInfoArray.length; i++ ){
+						const extInfo = extensionInfoArray[i];
+						const ext = extInfo["id"];
+						const o = { tenant: tenant, user_id: ext };
+						const oUserStatus = ac.ucUiStore.chatClient.getBuddyStatus(o);
+						const ucUserStatus = oUserStatus.status;
+						this._UcUserStatuses[ ext ] = ucUserStatus;
+					}
+					this.setState({rerender:true});
+				}
+			,1);
+		}
+	}
+	
+	onBeforeStopUCClient( legacyUccacRuntimeWidgetAsCaller ){
+		const uccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();
+		if( uccacAc === this._usingUccacAc ){
+			this._usingUccacAc = null;
+			const ac = uccacAc.getAgentComponent();
+			ac.ucUiStore.chatClient.removeHandler( this._UcHandlerObject );
+			
+			//clear UcUserStatuses
+			const props = Object.getOwnPropertyNames(this._UcUserStatuses);
+			for (const p of props ) {
+			  delete this._UcUserStatuses[p];
+			}
+		}
+	}
+
+	onBeforeDestroyUccacAc( legacyUccacRuntimeWidgetAsCaller  ){
+		this.onBeforeStopUCClient( legacyUccacRuntimeWidgetAsCaller );
+	}
 
      componentDidMount(){
          //const eAutoDialView_ver2 = document.getElementById("brOC_AutoDialView_Ver2");
@@ -1450,6 +1502,25 @@ export default class AutoDialView_ver2 extends React.Component {
             }
         }
     }
+	
+	static _getUcUserStatusClassName( extensionId, status ) {
+		let className = null;
+		switch( status ){
+			case 0:
+				className = "led-grey";
+			break;
+			case 1:
+				className = "led-green";
+			break;
+			case 2:
+				className = "led-yellow";
+			break;
+			case 3:
+				className = "led-red";
+			break;
+		}
+        return className;
+    }
 
     render() {
         const oc = BrekekeOperatorConsole.getStaticInstance();
@@ -2371,6 +2442,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         <th>{i18n.t("ExtensionNumber")}</th>
                                                                         <th>{i18n.t("Name")}</th>
                                                                         <th style={{width:10}}>{i18n.t("Status")}</th>
+																		{ this._usingUccacAc && <th style={{width:10}}>{i18n.t("UcStatus")}</th> }
                                                                         <th style={{width:10}}></th>
                                                                     </tr>
                                                                     </thead>
@@ -2388,6 +2460,18 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         const extensionsStatus = oc.state.extensionsStatus;
                                                                         const statusClassName = OCUtil.getExtensionStatusClassName(ext.id, extensionsStatus);
 
+																		let ucUserStatusJsx;
+																		if( this._usingUccacAc ){
+																			const ucUserStatus = this._UcUserStatuses[ ext.id ];
+																			if( ucUserStatus || ucUserStatus === 0 ){
+																				const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( ext.id, ucUserStatus );
+																				ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																			}
+																			else{
+																				ucUserStatusJsx = <></>;
+																			}
+																		}
+
                                                                         return (
                                                                             <tr key={i}>
                                                                             <td>{ext.id}</td>
@@ -2396,6 +2480,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <div
                                                                                         className={statusClassName}></div>
                                                                                 </td>
+                                                                                { this._usingUccacAc && 
+																					<td style={{width: 10,textAlign:"center"}}>
+																						{ucUserStatusJsx}
+																					</td>
+																				}
                                                                                 <td style={{width:10,textAlign:"center"}}>
                                                                                     <div style={{
                                                                                         display: "flex",

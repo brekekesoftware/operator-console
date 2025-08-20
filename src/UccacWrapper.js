@@ -7,18 +7,18 @@ export default  class UccacWrapper{
         this._onUccacInitFailFunctionForCaller =  null;
         this._onUccacInitSuccessFunctionForCaller =  null;
         this._initialized = false;
-        this._OnUccacDeinitFunctions = new Array();
+        this._OnUccacBeforeDeinitFunctions = new Array();
         this._OnUccacInitSuccessFunctions = new Array();
     }
 
-    addOnUccacDeinitFunction( func ){
-        this._OnUccacDeinitFunctions.push( func );
+    addOnUccacBeforeDeinitFunction( func ){
+        this._OnUccacBeforeDeinitFunctions.push( func );
     }
 
-    removeOnUccacDeinitFunction( func ){
-        const index = this._OnUccacDeinitFunctions.indexOf( func );
+    removeOnUccacBeforeDeinitFunction( func ){
+        const index = this._OnUccacBeforeDeinitFunctions.indexOf( func );
         if( index !== -1 ){
-            this._OnUccacDeinitFunctions.splice( index, 1 );
+            this._OnUccacBeforeDeinitFunctions.splice( index, 1 );
         }
         return index;
     }
@@ -59,16 +59,13 @@ export default  class UccacWrapper{
     }
 
     deinitUccacWrapper(){
+		for( let i = 0; i < this._OnUccacBeforeDeinitFunctions.length; i++ ){
+			const func = this._OnUccacBeforeDeinitFunctions[i];
+			func( this );
+		}
         const bDeinited = this._Uccac.deinit();
         this._onUccacInitFailFunctionForCaller =  null;
         this._onUccacInitSuccessFunctionForCaller = null;
-        if( bDeinited === true ) {
-            this._OperatorConsoleAsParent.onDeinitUccacWrapperByUccacWrapper(this);
-            for( let i = 0; i < this._OnUccacDeinitFunctions.length; i++ ){
-                const func = this._OnUccacDeinitFunctions[i];
-                func( this );
-            }
-        }
         this._initialized = false;
         return bDeinited;
     }

@@ -23,10 +23,10 @@ export default class UccacWidget extends React.Component {
             };
             this._UccacWrapper.addOnUccacInitSuccessFunction(this._onUccacInitSuccessFunction);
 
-            this._onUccacDeinitFunction = function (uccacWrapperAsCaller) {
-                this_._onDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller);
+            this._onUccacBeforeDeinitFunction = function (uccacWrapperAsCaller) {
+                this_._onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller);
             };
-            this._UccacWrapper.addOnUccacDeinitFunction(this._onUccacDeinitFunction);
+            this._UccacWrapper.addOnUccacBeforeDeinitFunction(this._onUccacBeforeDeinitFunction);
         }
         else{
             this._uccacRootElementRef = null;
@@ -57,7 +57,7 @@ export default class UccacWidget extends React.Component {
         if( !this._IsEditMode ) {
             this._destroyUccacAc();
             this._UccacWrapper.removeOnUccacInitSuccessFunction( this._onUccacInitSuccessFunction );
-            this._UccacWrapper.removeOnUccacDeinitFunction( this._onUccacDeinitFunction );
+            this._UccacWrapper.removeOnUccacBeforeDeinitFunction( this._onUccacBeforeDeinitFunction );
         }
 
     }
@@ -66,7 +66,7 @@ export default class UccacWidget extends React.Component {
         this._initUccacAc();
     }
 
-    _onDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller  ){
+    _onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller  ){
         this._destroyUccacAc();
     }
 

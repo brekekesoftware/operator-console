@@ -467,7 +467,7 @@ export default class EditorWidgetSettings extends React.Component {
 					)
 					: null
 					}
-                    <div class={"defaultElementMarginTop_s"}>
+                    <div className={"defaultElementMarginTop_s"}>
                         {/*<AutoComplete*/}
                         {/*    style={{width: "100%"}}*/}
                         {/*    options={widgetSettingsTemplateOptions}*/}

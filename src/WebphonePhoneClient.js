@@ -18,6 +18,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
         options_["phoneClient"] = this;
         this._RootURLString = Util.getRootUrlString();
         this._webphoneCallInfos = new WebphoneCallInfos( options_ );
+		
+		this._WebrtcclientSessionStatusChangedFunction = ( session ) =>{
+			this._onWebrtcclientSessionStatusChanged(session);
+		};
+
+
     }
 
     /**
@@ -58,6 +64,11 @@ export default class WebphonePhoneClient  extends APhoneClient {
         };
         return this.pal.call_pal('barge', bargeOptions);
     }
+	
+	_onWebrtcclientSessionStatusChanged( session ){
+	    const headers = session.rtcSession._request.headers;
+		const temp = 0;	//!temp
+	}
 
 
     /**
@@ -92,28 +103,22 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
         this._onWebphoneError = e => {
             console.log("Webphone event:error", e);
-            const temp = 0;
         };
         this._onWebphoneOnError = e => {
             console.log("Webphone event:onError", e);
-            const temp = 0;
         };
         this._onWebphoneOnerror = e => {
             console.log("Webphone event:onerror", e);
-            const temp = 0;
         };
 
         this._onWebphoneClose = e => {
             console.log("Webphone event:close", e);
-            const temp = 0;
         };
         this._onWebphoneOnClose = e => {
             console.log("Webphone event:onClose", e);
-            const temp = 0;
         };
         this._onWebphoneOnclose = e => {
             console.log("Webphone event:onclose", e);
-            const temp = 0;
         };
 
         this._webphone.on("error", this._onWebphoneError );
@@ -126,7 +131,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
         const this_ = this;
         this._webphone.on("webrtcclient", function( webrcclient ) {
             this_._webphone.removeAllListeners("webrtcclient");
+			if( this_._webrtcclient ){
+				this_._webrtcclient.removeEventListener("sessionStatusChanged", this_._WebrtcclientSessionStatusChangedFunction );
+			}
             this_._webrtcclient = webrcclient;
+			this_._webrtcclient.addEventListener("sessionStatusChanged", this_._WebrtcclientSessionStatusChangedFunction );
+
         });
 
         this._webphone.on('call', c => {
@@ -534,7 +544,11 @@ export default class WebphonePhoneClient  extends APhoneClient {
      */
     deinitPhoneClient(){
         this._isPalReady = false;
-        this._webrtcclient = null;
+		
+		if( this._webrtcclient ){
+			this._webrtcclient.removeEventListener("sessionStatusChanged", this._WebrtcclientSessionStatusChangedFunction );
+		}
+		this._webrtcclient = null;
 		
 		if( this._webphone ){
 			this._webphone.removeAllListeners("call");

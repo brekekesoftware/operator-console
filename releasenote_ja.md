@@ -1,3 +1,63 @@
+###### [バージョン 2.1.41]
+1. レイアウト表示ビューの左・左下の余白を、カスタムCSSで調整できるようにしました。<br />
+    ```
+    [使い方:レイアウト表示欄の左・左下の余白を無くす例]
+    1.OperatorConsoleのフォルダにあるoperator-console_custom.css.orgを、
+    operator-console_custom.cssに事前にファイル名を変更されていない場合は、ファイル名を変更する。
+
+	2.operator-console_custom.cssに、
+	
+    .brOC .RutimeRootPane_parent{
+	    margin-left:0px;
+	    margin-bottom:0px;
+    }
+
+    と記述してファイルを保存します。
+	
+	3.OperatorConsoleのフォルダにある、operator-console.htmlの
+    <link rel="stylesheet" href="./operator-console_custom.css?v=(OperatorConsoleのバージョン)">
+	という記述のv=(OperatorConsoleのバージョン)の(OperatorConsoleのバージョン)の部分の文字列を、
+	任意の文字列に変更してoperator-console.htmlを保存します。
+	(例)2.1.41.2
+	
+	もしくは、ブラウザのキャッシュをリフレッシュするために、OperatorConsoleを使用するユーザーは、
+	ブラウザでOperatorConsoleを開き、ブラウザをスーパーリロードしてもらいます。
+    ```
+1. 各テキスト入力欄にフォーカスが当たっている場合は、OperatorConsole本体側に入力内容を入力されないようにしました。
+
+1. レイアウト表示ビューの左上に、(ログインユーザーの名前) / (ログインユーザーの内線番号)を表示するようにしました。<br />
+(設定画面やレイアウト編集ビューには表示されません。)<br />
+表示位置やテキストの詳細設定は、カスタムCSSにスタイルシートを定義することで変更することができます。<br />
+    ```
+    [カスタムCSSでの定義のし方(左寄せ)]
+    1.OperatorConsoleのフォルダにあるoperator-console_custom.css.orgを、
+    operator-console_custom.cssに事前にファイル名を変更されていない場合は、ファイル名を変更する。
+
+	2.operator-console_custom.cssに、
+	
+	.brOC .loggedinUserInfo_header_RuntimeScreenView_ver2{
+		position:absolute;
+		left:0;
+		margin-left:150px;
+		top:9px;
+	}
+
+    などと記述してファイルを保存します。
+	
+	3.OperatorConsoleのフォルダにある、operator-console.htmlの
+    <link rel="stylesheet" href="./operator-console_custom.css?v=(OperatorConsoleのバージョン)">
+	という記述のv=(OperatorConsoleのバージョン)の(OperatorConsoleのバージョン)の部分の文字列を、
+	任意の文字列に変更してoperator-console.htmlを保存します。
+	(例)2.1.41.2
+	
+	もしくは、ブラウザのキャッシュをリフレッシュするために、OperatorConsoleを使用するユーザーは、
+	ブラウザでOperatorConsoleを開き、ブラウザをスーパーリロードしてもらいます。
+    ```
+1. オートダイヤルビューのユーザータブの表に、ユーザーのUCステータスの列を追加しました。<br />
+UC Chat Agent Componentウィジェットがレイアウト表示画面に配置されていて有効な場合のみUCステータスの列が表示され、<br />
+各ユーザーの行のUCステータスの列に、該当のユーザーのUCステータスを示すランプが表示されます。<br/>
+ランプの色はそれぞれ、灰色がオフライン、緑色が利用可能(連絡可能)、黄色がアイドル、赤色がビジー(取り込み中)を示します。
+
 ###### [バージョン 2.1.40]
 1. 保留を有効化・無効化できない不具合を修正しました(再修正)。
 ###### [バージョン 2.1.39]

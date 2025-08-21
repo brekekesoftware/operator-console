@@ -510,6 +510,7 @@ export default function DropDownMenu( { operatorConsole } ){
 
                                     operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                                             Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                                            operatorConsole.abortAutoDialView_ver2();
                                             operatorConsole.setState({newLayoutModalOpen:false});
                                         },
                                         function(e){
@@ -605,6 +606,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 onSuccessFunction : ( res ) =>{
                     operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
                             Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                            BrekekeOperatorConsole.getStaticInstance().abortAutoDialView_ver2();
                             operatorConsole.setState({newLayoutModalOpen:false});
                         },
                         function( e){

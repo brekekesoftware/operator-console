@@ -8,13 +8,11 @@ import CallPanel from './callPanel'
 // import CloseOutlined from '@ant-design/icons/CloseOutlined'
 // import CheckCircleOutlined from '@ant-design/icons/CheckCircleOutlined'
 import clsx from 'clsx'
-import Dropdown from 'antd/lib/dropdown';
 import 'antd/lib/dropdown/style';
 import 'antd/lib/menu/style';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style';
 import 'antd/lib/carousel/style';
-import { Rnd } from 'react-rnd';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style';
 import 'antd-button-color/dist/css/style.less';
@@ -81,10 +79,9 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.41";
+const VERSION = "2.1.42";
 
 import { CallHistory } from './CallHistory';
-import DropDownMenu from "./DropDownMenu";
 import LineTableSettings from "./LineTableSettings"
 import LineTable from "./LineTable"
 import Notification from "antd/lib/notification";

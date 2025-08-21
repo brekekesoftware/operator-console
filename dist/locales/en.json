@@ -1,6 +1,7 @@
 {
   "en": {
-	"UcStatus" : "UC Status",
+	"CallStatus" : "Call status",
+	"UcStatus" : "UC status",
 	"Are_you_sure_you_want_to_overwrite_it?" : "Are you sure you want to overwrite it?",
 	"Header" : "Header",
 	"Body" : "Body",

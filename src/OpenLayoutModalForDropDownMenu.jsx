@@ -80,6 +80,7 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                     operatorConsole.setOCNote(shortname, oNote, function () {
                             //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
                             setIsLoading(false);
+                            BrekekeOperatorConsole.getStaticInstance().abortAutoDialView_ver2();
                             setOpenLayoutModalOpenFunc(false);
                         },
                         function (e) {

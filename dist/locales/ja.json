@@ -1,6 +1,7 @@
 {
   "ja": {
-	"UcStatus" : "UCステータス",
+	"CallStatus" : "通話状態",
+	"UcStatus" : "UC状態",
 	"Are_you_sure_you_want_to_overwrite_it?" : "上書きしてもよろしいですか?",
 	"Header" : "ヘッダ",
 	"Body" : "ボディ",

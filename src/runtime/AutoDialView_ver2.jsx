@@ -1647,8 +1647,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <thead>
                                                                 <tr className="defaultItemPaddingForTr">
                                                                     <th>{i18n.t("CallNo")}</th>
-                                                                    <th style={{width: 10}}>{i18n.t("Status")}</th>
-                                                                    <th style={{width:10}}></th>
+                                                                    <th style={{width: 10}}>{i18n.t("CallStatus")}</th>
+																	{ this._usingUccacAc && <th style={{width: 10}}>{i18n.t("UcStatus")}</th> }
+                                                                    <th style={{width:10}}>{i18n.t("Call")}</th>
                                                                     <th>{i18n.t("LatestStartedAt")}</th>
                                                                 </tr>
                                                                 </thead>
@@ -1659,12 +1660,35 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     const extensionsStatus = oc.state.extensionsStatus;
                                                                     const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(partyNumber, extensionsStatus) : "";
                                                                     const sAddDateTime = dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAddCallMillisTime() ) );
+																	
+																	let ucUserStatusJsx;
+																	if( this._usingUccacAc ){
+																		if( isExtension ){
+																			const ucUserStatus = this._UcUserStatuses[ partyNumber ];
+																			if( ucUserStatus || ucUserStatus === 0 ){
+																				const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( partyNumber, ucUserStatus );
+																				ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																			}
+																			else{
+																				ucUserStatusJsx = <></>;
+																			}
+																		}
+																		else{
+																			ucUserStatusJsx = <></>;
+																		}
+																	}
+																	
                                                                     return (
                                                                         <tr key={i}>
                                                                             <td>{partyNumber}</td>
                                                                             <td style={{textAlign: "center",width:10}}>
                                                                                 <div className={statusClassName}></div>
                                                                             </td>
+																			{ this._usingUccacAc && (
+																				<td style={{textAlign: "center",width:10}}>
+																					{ucUserStatusJsx}
+																				</td>
+																			)}
                                                                             <td style={{width:10}}>
                                                                                 {partyNumber && (<div style={{
                                                                                     display: "flex",
@@ -2304,7 +2328,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <thead>
                                                                             <tr className="defaultItemPaddingForTr">
                                                                                 <th>{i18n.t("Tel")}</th>
-                                                                                <th style={{width:10}}>{i18n.t("Status")}</th>
+                                                                                <th style={{width:10}}>{i18n.t("CallStatus")}</th>
+																				{ this._usingUccacAc && <th style={{width:10}}>{i18n.t("UcStatus")}</th> }
                                                                                 <th style={{width:10}}></th>
                                                                                 <th>{i18n.t("Incoming")}</th>
                                                                                 <th>{i18n.t("Transfer")}</th>
@@ -2336,6 +2361,24 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAnsweredAt())) : "";
                                                                                 const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getEndCallMillisTime())) : "";
                                                                                 const sIsTransfer = callHistory2CallInfo.getIsTransfer() ? "✓" : "";
+																				
+																				let ucUserStatusJsx;
+																				if( this._usingUccacAc ){
+																					if( isExtension ){
+																						const ucUserStatus = this._UcUserStatuses[ partyNumber ];
+																						if( ucUserStatus || ucUserStatus === 0 ){
+																							const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( partyNumber, ucUserStatus );
+																							ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																						}
+																						else{
+																							ucUserStatusJsx = <></>;
+																						}
+																					}
+																					else{
+																						ucUserStatusJsx = <></>;
+																					}
+																				}
+																				
                                                                                 return (
                                                                                     <tr key={i}>
                                                                                         <td style={{width: 10}}>{partyNumber}</td>
@@ -2343,6 +2386,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                             <div
                                                                                                 className={statusClassName}></div>
                                                                                         </td>
+																						{ this._usingUccacAc && (
+																										<td style={{textAlign: "center",width:10}}>
+																											{ucUserStatusJsx}
+																										</td>
+																						)}																						
                                                                                         <td style={{width:10}}>
                                                                                             {partyNumber && (
                                                                                                 <div style={{
@@ -2441,9 +2489,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     <tr className="defaultItemPaddingForTr">
                                                                         <th>{i18n.t("ExtensionNumber")}</th>
                                                                         <th>{i18n.t("Name")}</th>
-                                                                        <th style={{width:10}}>{i18n.t("Status")}</th>
+                                                                        <th style={{width:10}}>{i18n.t("CallStatus")}</th>
 																		{ this._usingUccacAc && <th style={{width:10}}>{i18n.t("UcStatus")}</th> }
-                                                                        <th style={{width:10}}></th>
+                                                                        <th style={{width:10}}>{i18n.t("Call")}</th>
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>

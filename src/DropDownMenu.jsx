@@ -16,7 +16,6 @@ import OCUtil from "./OCUtil";
 import DeleteLayoutsModalForDropDownMenu, {
     refreshNoteNamesForDeleteLayoutsModalForDropDownMenu
 } from "./DeleteLayoutsModalForDropDownMenu";
-
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
 export default function DropDownMenu( { operatorConsole } ){
@@ -604,7 +603,7 @@ export default function DropDownMenu( { operatorConsole } ){
                     note : noteContent
                 }),
                 onSuccessFunction : ( res ) =>{
-                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, () => {
                             Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
                             BrekekeOperatorConsole.getStaticInstance().abortAutoDialView_ver2();
                             operatorConsole.setState({newLayoutModalOpen:false});

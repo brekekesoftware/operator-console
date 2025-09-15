@@ -1,7 +1,7 @@
 import React from 'react';
 import EditorWidget from "./EditorWidget";
 import BrekekeOperatorConsole from "../../../index";
-import {IconKeyboard, IconPhoneIncoming, IconPhoneOutgoing} from "../../../icons";
+//import {IconKeyboard, IconPhoneIncoming, IconPhoneOutgoing} from "../../../icons";
 import Util from "../../../Util";
 import i18n from "../../../i18n";
 
@@ -98,6 +98,27 @@ export default class CallPanelEditorWidget extends EditorWidget{
         const hasPartyName = partyName && partyName.length !== 0;
         const bHasMissedCall = oc.getHasMissedCallFromState();
 
+        const callIconWidth = widgetData.getCallIconWidth();
+        const callIconHeight = widgetData.getCallIconHeight();
+        const callerNameSize = widgetData.getCallerNameSize();
+        const callerNumberSizeWithoutCallerName = widgetData.getCallerNumberSizeWithoutCallerName();
+        const callerNumberSizeWithCallerName = widgetData.getCallerNumberSizeWithCallerName();
+        const iCallerNumberSize = hasPartyName ?  callerNumberSizeWithCallerName : callerNumberSizeWithoutCallerName;
+        const callDurationSize = widgetData.getCallDurationSize();
+        const keyboardIconWidth = widgetData.getKeyboardIconWidth();
+        const keyboardIconHeight = widgetData.getKeyboardIconHeight();
+        const inputTextSIze = widgetData.getInputTextSize();
+        const missedCallSize = widgetData.getMissedCallSize();
+		
+		const iCallIconWidth = callIconWidth || callIconWidth === 0 ? callIconWidth : 18;
+		const iCallIconHeight = callIconHeight || callIconHeight === 0 ? callIconHeight : 18;
+		const iKeyboardIconWidth = keyboardIconWidth || keyboardIconWidth === 0 ? keyboardIconWidth : 20;
+		const iKeyboardIconHeight = keyboardIconHeight || keyboardIconHeight === 0 ? keyboardIconHeight : 14;
+
+        const IconPhoneIncoming = <svg viewBox="3 3 18 18" width={iCallIconWidth} height={iCallIconHeight} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M4,3A1,1 0 0,0 3,4A17,17 0 0,0 20,21A1,1 0 0,0 21,20V16.5A1,1 0 0,0 20,15.5C18.75,15.5 17.55,15.3 16.43,14.93C16.08,14.82 15.69,14.9 15.41,15.17L13.21,17.37C10.38,15.93 8.06,13.62 6.62,10.78L8.82,8.57C9.1,8.31 9.18,7.92 9.07,7.57C8.7,6.45 8.5,5.25 8.5,4A1,1 0 0,0 7.5,3H4M19,11V9.5H15.5L21,4L20,3L14.5,8.5V5H13V11H19Z"/></svg>
+        const IconPhoneOutgoing = <svg viewBox="3 3 18 18" width={iCallIconWidth} height={iCallIconHeight} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M4,3A1,1 0 0,0 3,4A17,17 0 0,0 20,21A1,1 0 0,0 21,20V16.5A1,1 0 0,0 20,15.5C18.75,15.5 17.55,15.3 16.43,14.93C16.08,14.82 15.69,14.9 15.41,15.17L13.21,17.37C10.38,15.93 8.06,13.62 6.62,10.78L8.82,8.57C9.1,8.31 9.18,7.92 9.07,7.57C8.7,6.45 8.5,5.25 8.5,4A1,1 0 0,0 7.5,3H4M15,3V4.5H18.5L13,10L14,11L19.5,5.5V9H21V3H15Z"/></svg>
+        const IconKeyboard = <svg viewBox="2 5 20 14" width={iKeyboardIconWidth} height={iKeyboardIconHeight} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M19,10H17V8H19M19,13H17V11H19M16,10H14V8H16M16,13H14V11H16M16,17H8V15H16M7,10H5V8H7M7,13H5V11H7M8,11H10V13H8M8,8H10V10H8M11,11H13V13H11M11,8H13V10H11M20,5H4C2.89,5 2,5.89 2,7V17A2,2 0 0,0 4,19H20A2,2 0 0,0 22,17V7C22,5.89 21.1,5 20,5Z"/></svg>
+
         return (
             <div className="brOCCallPanel" style={{
                 borderRadius: callpanelBorderRadius,
@@ -110,7 +131,7 @@ export default class CallPanelEditorWidget extends EditorWidget{
                         {IconPhoneIncoming}
                     </div>
                     <div className="brOCCallPanelMain">
-                        <div className="brOCCallPanelMissedCall">{i18n.t("There_is_a_missed_call")}</div>
+                        <div className="brOCCallPanelMissedCall" style={{fontSize:missedCallSize}}>{i18n.t("There_is_a_missed_call")}</div>
                     </div>
                 </div>)}
                 <div className="brOCCallPanelRow">
@@ -118,10 +139,12 @@ export default class CallPanelEditorWidget extends EditorWidget{
                         {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
                     </div>
                     <div className="brOCCallPanelMainForRows">
-                        {hasPartyName && <div className="brOCCallPanelPartyName">{partyName}</div>}
+                        {hasPartyName && <div className="brOCCallPanelPartyName" style={{fontSize:callerNameSize}}>{partyName}</div>}
                         <div
-                            className={hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber"}>{currentCallInfo?.getPartyNumber()}</div>
-                        <div className="brOCCallPanelDuration">{this.state.duration}</div>
+                            className={hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber"}
+                            style={{fontSize:iCallerNumberSize}}
+                        >{currentCallInfo?.getPartyNumber()}</div>
+                        <div className="brOCCallPanelDuration" style={{fontSize:callDurationSize}}>{this.state.duration}</div>
                     </div>
                 </div>
                 <div className="brOCCallPanelRow">
@@ -129,7 +152,7 @@ export default class CallPanelEditorWidget extends EditorWidget{
                         <div className="brOCCallPanelLeft">{IconKeyboard}</div>
                     )}
                     <div className="brOCCallPanelMain">
-                        <div className="brOCCallPanelDialing">{dialing}</div>
+                        <div className="brOCCallPanelDialing" style={{fontSize:inputTextSIze}}>{dialing}</div>
                     </div>
                 </div>
             </div>

@@ -129,7 +129,6 @@ const _WIDGET_FIELD_NAME_OUTSIDE_SHADOW_COLOR = "outsideShadowColor";
 //
 const _WIDGET_FIELD_NAME_EXTENSION = "extension";
 //const _WIDGET_FIELD_NAME_FG_COLOR = "fgColor";
-const _WIDGET_FIELD_NAME_LAMP_SIZE = "lampSize";
 const _WIDGET_FIELD_NAME_TEXT_TOP_MARGIN = "textTopMargin";
 //const _WIDGET_FIELD_NAME_FONT_SIZE = "fontSize";
 
@@ -190,6 +189,17 @@ const _WIDGET_FIELD_NAME_BODY_ACTIVE_ROW_FG_COLOR = "bodyActiveRowFgColor";
 //const _WIDGET_FIELD_NAME_OUTSIDE_SHADOW_BLUR = "outsideShadowBlur";
 //const _WIDGET_FIELD_NAME_OUTSIDE_SHADOW_SPREAD = "outsideShadowSpread";
 //const _WIDGET_FIELD_NAME_OUTSIDE_SHADOW_COLOR = "outsideShadowColor";
+const _WIDGET_FIELD_NAME_CALL_ICON_WIDTH = "callIconWidth";
+const _WIDGET_FIELD_NAME_CALL_ICON_HEIGHT = "callIconHeight";
+const _WIDGET_FIELD_NAME_CALLER_NAME_SIZE = "callerNameSize";
+const _WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITH_CALLER_NAME = "callerNumberSizeWithCallerName";
+const _WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITHOUT_CALLER_NAME = "callerNumberSizeWithoutCallerName";
+const _WIDGET_FIELD_NAME_CALL_DURATION_SIZE = "callDurationSize";
+const _WIDGET_FIELD_NAME_KEYBOARD_ICON_WIDTH = "keyboardIconWidth";
+const _WIDGET_FIELD_NAME_KEYBOARD_ICON_HEIGHT = "keyboardIconHeight";
+const _WIDGET_FIELD_NAME_INPUT_TEXT_SIZE = "inputTextSize";
+const _WIDGET_FIELD_NAME_MISSED_CALL_SIZE = "missedCallSize";
+
 
 //LegacyButtonWidget widget's fields
 //Not include subtype datas
@@ -276,6 +286,17 @@ const _WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_BG_COLOR = "transfer-b
 const _WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_COLOR = "transfer-button_cancelTransfer-outerBorderColor";
 const _WIDGET_FIELD_NAME_CANCEL_TRANSFER_OUTER_BORDER_RADIUS = "transfer-button_cancelTransfer-outerBorderRadius";
 const _WIDGET_FIELD_NAME_TRANSFER_BUTTON__CANCEL_TRANSFER_OUTER_BORDER_THICKNESS = "transfer-button_cancelTransfer-outerBorderThickness";
+
+const _WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE = "tableHeaderFontSize";
+const _WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE = "tableBodyFontSize";
+const _WIDGET_FIELD_NAME_SWITCH_SIZE = "switchSize";
+const _WIDGET_FIELD_NAME_LAMP_SIZE = "lampSize";
+const _WIDGET_FIELD_NAME_ICON_SIZE = "iconSize";
+const _WIDGET_FIELD_NAME_BUTTON_SIZE = "buttonSize";
+const _WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT = "inputFieldHeight";
+const _WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE = "inputFieldFontSize";
+const _WIDGET_FIELD_NAME_TAB_FONT_SIZE = "tabFontSize";
+const _WIDGET_FIELD_NAME_OTHER_FONT_SIZE = "otherFontSize";
 
 //!abstract
 export default class WidgetData{
@@ -409,11 +430,11 @@ export default class WidgetData{
         this.loadFromWidgetSettingsTemplateMain( wst, bIncludeButtonFunction );
     }
 
-    saveToWidgetSettingsTemplate( wst ){
+    saveToWidgetSettingsTemplate( wst, editorWidgetSettingsAsCaller ){
         wst.clearWidgetSettingsTemplateFields();
         wst.setWidgetSettingsTemplateField( _WIDGET_FIELD_NAME_WIDTH, this._widgetWidth );
         wst.setWidgetSettingsTemplateField( _WIDGET_FIELD_NAME_HEIGHT, this._widgetHeight );
-        this.saveToWidgetSettingsTemplateMain(wst);
+        this.saveToWidgetSettingsTemplateMain(wst, editorWidgetSettingsAsCaller );
     }
 
     //!abstract
@@ -422,7 +443,7 @@ export default class WidgetData{
     }
 
     //!abstract
-    saveToWidgetSettingsTemplateMain( wst ){
+    saveToWidgetSettingsTemplateMain( wst, editorWidgetSettingsAsCaller ){
         throw new Error("Not implemented.");
     }
 
@@ -986,6 +1007,82 @@ export default class WidgetData{
 
     static get WIDGET_FIELD_NAME_TRANSFER_BUTTON__MODE(){
         return _WIDGET_FIELD_NAME_TRANSFER_BUTTON__MODE;
+    }
+
+    static get WIDGET_FIELD_NAME_CALL_ICON_WIDTH(){
+        return _WIDGET_FIELD_NAME_CALL_ICON_WIDTH;
+    }
+
+    static get WIDGET_FIELD_NAME_CALL_ICON_HEIGHT(){
+        return _WIDGET_FIELD_NAME_CALL_ICON_HEIGHT;
+    }
+
+    static get WIDGET_FIELD_NAME_CALLER_NAME_SIZE(){
+        return _WIDGET_FIELD_NAME_CALLER_NAME_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITH_CALLER_NAME(){
+        return _WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITH_CALLER_NAME;
+    }
+
+    static get WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITHOUT_CALLER_NAME(){
+        return _WIDGET_FIELD_NAME_CALLER_NUMBER_SIZE_WITHOUT_CALLER_NAME;
+    }
+
+    static get WIDGET_FIELD_NAME_CALL_DURATION_SIZE(){
+        return _WIDGET_FIELD_NAME_CALL_DURATION_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_KEYBOARD_ICON_WIDTH(){
+        return _WIDGET_FIELD_NAME_KEYBOARD_ICON_WIDTH;
+    }
+
+    static get WIDGET_FIELD_NAME_KEYBOARD_ICON_HEIGHT(){
+        return _WIDGET_FIELD_NAME_KEYBOARD_ICON_HEIGHT;
+    }
+
+    static get WIDGET_FIELD_NAME_INPUT_TEXT_SIZE(){
+        return _WIDGET_FIELD_NAME_INPUT_TEXT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_MISSED_CALL_SIZE(){
+        return _WIDGET_FIELD_NAME_MISSED_CALL_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_SWITCH_SIZE(){
+        return _WIDGET_FIELD_NAME_SWITCH_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_ICON_SIZE(){
+        return _WIDGET_FIELD_NAME_ICON_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_BUTTON_SIZE(){
+        return _WIDGET_FIELD_NAME_BUTTON_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT(){
+        return _WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT;
+    }
+
+    static get WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_TAB_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_TAB_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_OTHER_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_OTHER_FONT_SIZE;
     }
 
 }

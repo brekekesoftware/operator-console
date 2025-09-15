@@ -6,6 +6,8 @@ import i18n from "./i18n";
 import BrekekeOperatorConsole from "./index";
 import Notification from "antd/lib/notification";
 import OCUtil from "./OCUtil";
+import RuntimeHiddenUccacUcClient from "./runtime/RuntimeHiddenUccacUcClient";
+import LegacyUccacRuntimeWidget from "./runtime/widget/runtime/LegacyUccacRuntimeWidget";
 
 
 export default function OpenLayoutModalForDropDownMenu(props  ) {
@@ -77,10 +79,16 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
                         return;
                     }
 
-                    operatorConsole.setOCNote(shortname, oNote, function () {
+                    operatorConsole.setOCNote(shortname, oNote, () => {
                             //operatorConsole.onSelectOCNoteByShortnameFromNoScreensView(  this );
                             setIsLoading(false);
                             BrekekeOperatorConsole.getStaticInstance().abortAutoDialView_ver2();
+                            const ct = LegacyUccacRuntimeWidget.getLegacyUccacRuntimeWidgetCount();
+                            for( let i = 0; i < ct; i++ ){
+                                const legacyUccacRuntimeWidget = LegacyUccacRuntimeWidget.getLegacyUccacRuntimeWidgetAt(i);
+                                legacyUccacRuntimeWidget.onSetOCNoteByOpenLayoutModalForDropDownMenu(this);
+                            }
+                            RuntimeHiddenUccacUcClient.getRuntimeHiddenUccacUcClientStaticInstance().onSetOCNoteByOpenLayoutModalForDropDownMenu(this);
                             setOpenLayoutModalOpenFunc(false);
                         },
                         function (e) {

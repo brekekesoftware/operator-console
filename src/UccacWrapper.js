@@ -59,6 +59,9 @@ export default  class UccacWrapper{
     }
 
     deinitUccacWrapper(){
+        if( this._initialized !== true ){
+            return false;
+        }
 		for( let i = 0; i < this._OnUccacBeforeDeinitFunctions.length; i++ ){
 			const func = this._OnUccacBeforeDeinitFunctions[i];
 			func( this );
@@ -93,7 +96,6 @@ export default  class UccacWrapper{
     }
 
     onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsData , onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript  = false  ) {
-        let initAsync = false;
         const lastData = systemSettingsData.getData();
         const newUcUrl = newData.ucUrl;
         const lastUcUrl = lastData.ucUrl;
@@ -101,30 +103,18 @@ export default  class UccacWrapper{
         const lastUcChatAgentComponentEnabled = lastData.ucChatAgentComponentEnabled;
 
         const uccacState = this._Uccac.getState();
-        if( newUcChatAgentComponentEnabled === true && uccacState !== UCCAC_UCCAC_STATES.init ){
-            this._initUccacWrapper( newUcUrl, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript  );
-            initAsync = true;
-        }
-
-        if( initAsync !== true && newUcChatAgentComponentEnabled !== lastUcChatAgentComponentEnabled  ){
-            if( newUcChatAgentComponentEnabled !== true ){
-                this.deinitUccacWrapper();
-            }
-            else{
-                this._initUccacWrapper( newUcUrl, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript  );
-                initAsync = true;
-            }
-        }
-
-        if( initAsync !== true && newUcChatAgentComponentEnabled && newUcUrl && newUcUrl !== lastUcUrl ){
-            //Reinit
+        if( uccacState === UCCAC_UCCAC_STATES.init){
             this.deinitUccacWrapper();
+        }
+
+        let initAsync;
+        if( newUcUrl ){
             this._initUccacWrapper( newUcUrl, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript  );
             initAsync = true;
         }
-
-        if( initAsync === false ){
+        else{
             onInitSuccessUccacFunction();
+            initAsync = false;
         }
 
         return initAsync;

@@ -1,5 +1,6 @@
 import LegacyButtonWidgetSubData from "./LegacyButtonWidgetSubData";
 import WidgetData from "../WidgetData";
+import EditScreenView from "../../../editor/EditScreenView";
 
 export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButtonWidgetSubData {
 
@@ -32,6 +33,7 @@ export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButt
         this._outerBorderRadius = currentOptions["outerBorderRadius"];
         this._outerBorderThickness = currentOptions["outerBorderThickness"];
     }
+	
 
     //!override
     _setWidgetSubDataToObjectMain( o ){
@@ -228,7 +230,7 @@ export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButt
     }
 
     //!override
-    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst, editorWidgetSettings ){
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LABEL, this._label );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON, this._icon );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_NAME, this._iconName );
@@ -240,6 +242,18 @@ export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButt
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_COLOR, this._outerBorderColor );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_RADIUS, this._outerBorderRadius );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS, this._outerBorderThickness );
+
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE, cloneSystemSettingsData.getAutoDialTableHeaderFontSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE, cloneSystemSettingsData.getAutoDialTableBodyFontSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_SWITCH_SIZE, cloneSystemSettingsData.getAutoDialSwitchSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE, cloneSystemSettingsData.getAutoDialLampSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_ICON_SIZE, cloneSystemSettingsData.getAutoDialIconSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_BUTTON_SIZE, cloneSystemSettingsData.getAutoDialButtonSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT, cloneSystemSettingsData.getAutoDialInputFieldHeight() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE, cloneSystemSettingsData.getAutoDialInputFieldFontSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TAB_FONT_SIZE, cloneSystemSettingsData.getAutoDialTabFontSize() );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_OTHER_FONT_SIZE, cloneSystemSettingsData.getAutoDialOtherFontSize() );
     }
 
     //!override
@@ -276,6 +290,47 @@ export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButt
         }
         if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS ) === true ) {
             this._outerBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OUTER_BORDER_THICKNESS);
+        }
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE ) === true ) {
+            const headerFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TABLE_HEADER_FONT_SIZE);
+            cloneSystemSettingsData.setAutoDialTableHeaderFontSize( headerFontSize );
+        }		
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE ) === true ) {
+            const bodyFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TABLE_BODY_FONT_SIZE);
+            cloneSystemSettingsData.setAutoDialTableBodyFontSize( bodyFontSize );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_SWITCH_SIZE ) === true ) {
+            const switchSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_SWITCH_SIZE);
+            cloneSystemSettingsData.setAutoDialSwitchSize( switchSize );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE ) === true ) {
+            const lampSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_LAMP_SIZE);
+            cloneSystemSettingsData.setAutoDialLampSize( lampSize );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_ICON_SIZE ) === true ) {
+            const iconSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_ICON_SIZE);
+            cloneSystemSettingsData.setAutoDialIconSize( iconSize  );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_BUTTON_SIZE ) === true ) {
+            const buttonSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_BUTTON_SIZE);
+            cloneSystemSettingsData.setAutoDialButtonSize( buttonSize  );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT ) === true ) {
+            const inputFieldHeight = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT);
+            cloneSystemSettingsData.setAutoDialInputFieldHeight( inputFieldHeight  );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE ) === true ) {
+            const inputFieldFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE );
+            cloneSystemSettingsData.setAutoDialInputFieldFontSize( inputFieldFontSize  );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TAB_FONT_SIZE ) === true ) {
+            const tabFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TAB_FONT_SIZE );
+            cloneSystemSettingsData.setAutoDialTabFontSize( tabFontSize  );
+        }
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_OTHER_FONT_SIZE ) === true ) {
+            const otherFontSize = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_OTHER_FONT_SIZE );
+            cloneSystemSettingsData.setAutoDialOtherFontSize( otherFontSize  );
         }
     }
 }

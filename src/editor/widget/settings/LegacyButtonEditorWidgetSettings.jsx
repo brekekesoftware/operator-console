@@ -63,14 +63,28 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
 	}
 
     //!override
+    _onLoadFromWidgetSettingsTemplate( wst, _load_button_function ){
+        super._onLoadFromWidgetSettingsTemplate( wst, _load_button_function );
+        this._latestLegacyButtonEditorSubWidgetSettings.onLoadFromWidgetSettingsTemplateByLegacyButtonEditorWidgetSettings(this, wst, _load_button_function );
+    }
+
+    //!override
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        //this._latestLegacyButtonEditorSubWidgetSettings = null;
+    }
+
+
+
+    //!override
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const legacyButtonWidgetData = widgetData;
         const legacyButtonWidgetSubData = legacyButtonWidgetData.getSubData();
         const editingWidgetSubtypeName = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeName();
         const editingWidgetSubtypeId = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeId();
-        const legacyButtonEditorSubWidgetSettings = LegacyButtonEditorSubWidgetSettingsFactory.getStaticLegacyButtonEditorSubWidgetSettingsFactoryInstance().newLegacyButtonEditorSubWidgetSettings( this, legacyButtonWidgetSubData );
-
+        const legacyButtonEditorSubWidgetSettings = LegacyButtonEditorSubWidgetSettingsFactory.getStaticLegacyButtonEditorSubWidgetSettingsFactoryInstance().newLegacyButtonEditorSubWidgetSettings( this, legacyButtonWidgetSubData ); //!bad  //!overhead
+        this._latestLegacyButtonEditorSubWidgetSettings = legacyButtonEditorSubWidgetSettings;
         const enSubtype = Object.entries( LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES_MAP );
 
         const subWidgetSettingsJsx = legacyButtonEditorSubWidgetSettings.getRenderJsx();

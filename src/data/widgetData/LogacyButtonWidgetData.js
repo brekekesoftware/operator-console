@@ -146,11 +146,11 @@ export default class LegacyButtonWidgetData extends WidgetData{
     }
 
     //!override
-    saveToWidgetSettingsTemplateMain( wst ){
+    saveToWidgetSettingsTemplateMain( wst, editorWidgetSettings ){
         const subTypeId = this.getSubData().getLegacyButtonWidgetSubTypeId();
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME__LEGACY_BUTTON_WIDGET_SUB_TYPE_ID, subTypeId );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_EN, this._tooltipOfButtonWidget_en );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOOLTIP_JA, this._tooltipOfButtonWidget_ja );
-        this._subData.exportLegacyButtonWidgetSubDataToWidgetSettingsTemplate( wst );
+        this._subData.exportLegacyButtonWidgetSubDataToWidgetSettingsTemplate( wst, editorWidgetSettings  );
     }
 }

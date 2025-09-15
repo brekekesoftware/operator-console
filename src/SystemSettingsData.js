@@ -8,18 +8,22 @@ import i18n from "./i18n";
 import Notification from "antd/lib/notification";
 import {CallHistory2} from "./CallHistory2";
 
-export default class SystemSettingsData{
-    constructor( operatorConsoleAsParent ) {
+export default class SystemSettingsData {
+    constructor(operatorConsoleAsParent, cloneSystemSettingsData) {
         this._OperatorConsoleAsParent = operatorConsoleAsParent;
-        this._Data = {};
-        this._setDefaultDatas();
+        if (!cloneSystemSettingsData) {
+            this._Data = {};
+            this._setDefaultDatas();
+        } else {
+            this.setCloneDatas(cloneSystemSettingsData);
+        }
     }
 
-    getAutoDialMaxDisplayCount(){
+    getAutoDialMaxDisplayCount() {
         return this._Data.autoDialMaxSaveCount;
     }
 
-    getAutoDialMaxSaveCount(){
+    getAutoDialMaxSaveCount() {
         return this._Data.autoDialMaxSaveCount;
     }
 
@@ -27,18 +31,33 @@ export default class SystemSettingsData{
         return this._Data.quickBusyClickToCall;
     }
 
-    getAutoDialRecentDisplayOrder(){
+    getAutoDialRecentDisplayOrder() {
         return this._Data.autoDialRecentDisplayOrder;
     }
-	
-	getAutoDialPhonebookName(){
-		return this._Data.autoDialPhonebookName;
-	}
+
+    getAutoDialPhonebookName() {
+        return this._Data.autoDialPhonebookName;
+    }
 
     getAutoDialOneTouchCall() {
         return this._Data.autoDialOneTouchCall;
     }
 
+    setAutoDialSwitchSize(n) {
+        this._Data.autoDialSwitchSize = n;
+    }
+
+    getAutoDialSwitchSize() {
+        return this._Data.autoDialSwitchSize;
+    }
+
+    getAutoDialLampSize() {
+        return this._Data.autoDialLampSize;
+    }
+
+    setAutoDialLampSize(n){
+        this._Data.autoDialLampSize = n;
+    }
 
     /**
      *
@@ -80,7 +99,16 @@ export default class SystemSettingsData{
         this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
         this._Data.autoDialRecentDisplayOrder = appData.autoDialRecentDisplayOrder;
 		this._Data.autoDialPhonebookName = appData.autoDialPhonebookName;
-        this._Data.autoDialOneTouchCall = appData.autoDialOneTouchCall;
+        this._Data.autoDialTableHeaderFontSize = appData.autoDialTableHeaderFontSize;
+        this._Data.autoDialTableBodyFontSize = appData.autoDialTableBodyFontSize;
+        this._Data.autoDialSwitchSize = appData.autoDialSwitchSize;
+        this._Data.autoDialLampSize = appData.autoDialLampSize;
+        this._Data.autoDialIconSize = appData.autoDialIconSize;
+        this._Data.autoDialButtonSize = appData.autoDialButtonSize;
+        this._Data.autoDialInputFieldHeight = appData.autoDialInputFieldHeight;
+        this._Data.autoDialInputFieldFontSize = appData.autoDialInputFieldFontSize;
+        this._Data.autoDialTabFontSize = appData.autoDialTabFontSize;
+        this._Data.autoDialOtherFontSize = appData.autoDialOtherFontSize;
         initSuccessFunction();
     }
 
@@ -208,6 +236,55 @@ export default class SystemSettingsData{
         this._Data.autoDialRecentDisplayOrder = CallHistory2.RECENT_DISPLAY_ORDERS.ADD_DATETIME_DESC;
 		this._Data.autoDialPhonebookName = "";
        this._Data.autoDialOneTouchCall = true;
+       this._Data.autoDial = true;
+       this._Data.autoDialTableHeaderFontSize = undefined;
+       this._Data.autoDialTableBodyFontSize = undefined;
+       this._Data.autoDialSwitchSize = undefined;
+       this._Data.autoDialLampSize = undefined;
+       this._Data.autoDialIconSize = undefined;
+       this._Data.autoDialButtonSize = undefined;
+       this._Data.autoDialInputFieldHeight = undefined;
+       this._Data.autoDialInputFieldFontSize = undefined;
+       this._Data.autoDialTabFontSize = undefined;
+       this._Data.autoDialOtherFontSize = undefined;
+    }
+
+    setCloneDatas( srcSystemSettingsData ) {
+        this._camponTimeoutMillis = srcSystemSettingsData._camponTimeoutMillis;
+		this._Data = structuredClone( srcSystemSettingsData._Data );
+		/*
+        this._Data.autoDialMaxDisplayCount = srcSystemSettingsData._Data.autoDialMaxDisplayCount;
+        this._Data.autoDialMaxSaveCount = srcSystemSettingsData._Data.autoDialMaxSaveCount;
+        this._Data.camponTimeoutMillis = srcSystemSettingsData._Data.camponTimeoutMillis;
+        this._Data.camponTimeoutSeconds = srcSystemSettingsData._Data.camponTimeoutSeconds;
+        this._Data.quickBusyClickToCall = srcSystemSettingsData._Data.quickBusyClickToCall;
+        if (srcSystemSettingsData._Data.shortDials) {
+            this._Data.shortDials = structuredClone(srcSystemSettingsData._Data.shortDials);	//!testit //!forBug
+        } else {
+            this._Data.shortDials = srcSystemSettingsData._Data.shortDials;
+        }
+        if (srcSystemSettingsData._Data.ringtoneInfos) {
+            this._Data.ringtoneInfos = structuredClone(srcSystemSettingsData._Data.ringtoneInfos);	//!testit //!forBug
+        } else {
+            this._Data.ringtoneInfos = srcSystemSettingsData._Data.ringtoneInfos;
+        }
+        if (srcSystemSettingsData._Data.ringtoneInfos2){
+            this._Data.ringtoneInfos2 = structuredClone( srcSystemSettingsData._Data.ringtoneInfos2 );  	//!testit //!forBug
+        }
+        else{
+            this._Data.ringtoneInfos2 = srcSystemSettingsData._Data.ringtoneInfos2;
+        }
+        this._Data.ucUrl = srcSystemSettingsData._Data.ucUrl;
+        this._Data.ucChatAgentComponentEnabled = srcSystemSettingsData._Data.ucChatAgentComponentEnabled;
+        this._Data.extensionScript = srcSystemSettingsData._Data.extensionScript;
+        this._Data.phoneTerminal = srcSystemSettingsData._Data.phoneTerminal;
+        this._Data.autoDialRecentDisplayOrder = srcSystemSettingsData._Data.autoDialRecentDisplayOrder;
+        this._Data.autoDialPhonebookName = srcSystemSettingsData._Data.autoDialPhonebookName;
+        this._Data.autoDialOneTouchCall = srcSystemSettingsData._Data.autoDialOneTouchCall;
+        this._Data.autoDial = srcSystemSettingsData._Data.autoDial;
+        this._Data.autoDialTableHeaderFontSize = srcSystemSettingsData._Data.autoDialTableHeaderFontSize;
+        this._Data.autoDialTableBodyFontSize = srcSystemSettingsData._Data.autoDialTableBodyFontSize;
+		*/
     }
 
     getShortDials(){
@@ -236,6 +313,78 @@ export default class SystemSettingsData{
 
     getPhoneTerminal(){
         return this._Data.phoneTerminal;
+    }
+	
+	getAutoDialTableHeaderFontSize(){
+		return this._Data.autoDialTableHeaderFontSize;
+	}
+
+    setAutoDialTableHeaderFontSize(n){
+        this._Data.autoDialTableHeaderFontSize = n;
+    }
+
+    setAutoDialTableBodyFontSize(n){
+        this._Data.autoDialTableBodyFontSize = n;
+    }
+
+    getAutoDialTableBodyFontSize(n) {
+        return this._Data.autoDialTableBodyFontSize;
+    }
+
+    setAutoDialIconSize( n ){
+        this._Data.autoDialIconSize = n;
+    }
+
+    getAutoDialIconSize(){
+        return this._Data.autoDialIconSize;
+    }
+
+    setAutoDialButtonSize( n ){
+        this._Data.autoDialButtonSize = n;
+    }
+
+    getAutoDialButtonSize(){
+        return this._Data.autoDialButtonSize;
+    }
+
+    setAutoDialButtonSize( n ){
+        this._Data.autoDialButtonSize = n;
+    }
+
+    getAutoDialButtonSize(){
+        return this._Data.autoDialButtonSize;
+    }
+
+    setAutoDialInputFieldHeight( n ){
+        this._Data.autoDialInputFieldHeight = n;
+    }
+
+    getAutoDialInputFieldHeight(){
+        return this._Data.autoDialInputFieldHeight;
+    }
+
+    setAutoDialInputFieldFontSize( n ){
+        this._Data.autoDialInputFieldFontSize = n;
+    }
+
+    getAutoDialInputFieldFontSize(){
+        return this._Data.autoDialInputFieldFontSize;
+    }
+
+    setAutoDialTabFontSize( n ){
+        this._Data.autoDialTabFontSize = n;
+    }
+
+    getAutoDialTabFontSize(){
+        return this._Data.autoDialTabFontSize;
+    }
+
+    setAutoDialOtherFontSize( n ){
+        this._Data.autoDialOtherFontSize = n;
+    }
+
+    getAutoDialOtherFontSize(){
+        return this._Data.autoDialOtherFontSize;
     }
 
     _formatSystemSettingsAppData(appData){

@@ -1,5 +1,7 @@
 .brOCCallPanel {
   //background-color: #A8C64E;
+  overflow-y:auto;
+  scrollbar-width:thin;
   box-sizing:border-box;
   border-radius: 8px;
   display: inline-flex;
@@ -11,11 +13,9 @@
   color: #304701;
   background-color: #A8C64E;
   box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px;
-  overflow:hidden;
 
   .brOCCallPanelRow {
     display: flex;
-    min-height: 10px;
   }
 
   .brOCCallPanelMainForRows{
@@ -23,18 +23,20 @@
   }
 
   .brOCCallPanelDialing {
+	height:max-content;
     font-size: 16px;
     font-variant-numeric: tabular-nums;
     white-space: pre-wrap;
     word-break: break-all;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
 
   .brOCCallPanelLeft {
-    width: 24px;
     display: flex;
     justify-content: center;
     flex-shrink: 0;
+	margin-top:1px;
   }
   .brOCCallPanelMain {
 	align-items:center;
@@ -43,34 +45,40 @@
   }
   
   .brOCCallPanelPartyName {
+	height:max-content;
     font-size: 17px;
-	height:17px;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
   
   .brOCCallPanelMissedCall {
+	height:max-content;
     font-size: 17px;
-    height: 17px;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
   .brOCCallPanelPartyNumber {
+	height:max-content;
     font-size: 17px;
-    height: 17px;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
   .brOCCallPanelPartyNumber_small {
+	height:max-content;
     font-size: 14px;
-    height: 14px;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
   .brOCCallPanelDuration {
+	height:max-content;
     font-size: 16px;
-    height: 16px;
     font-variant-numeric: tabular-nums;
+    word-break: break-all;
   }
 }
 .missedCallRow-callPanel-brekeke_operatorConsole{
+	height:max-content;
     display: flex;
-    min-height: 16px;
+    word-break: break-all;
 }
 

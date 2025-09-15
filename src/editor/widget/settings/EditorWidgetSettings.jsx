@@ -10,6 +10,8 @@ import BrekekeOperatorConsole from "../../../index";
 import EditScreenView from "../../EditScreenView";
 import WidgetSettingsTemplate from "./template/WidgetSettingsTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
+import LegacyButtonEditorSubWidgetSettingsFactory
+    from "./legacyButtonEditorSubWidgetSettings/LegacyButtonEditorSubWidgetSettingsFactory";
 
 
 let _select_widget_settings_template_name = null;
@@ -38,6 +40,10 @@ export default class EditorWidgetSettings extends React.Component {
     }
 
     componentDidMount(){
+        //empty( for subclass )
+    }
+
+    componentWillUnmount(){
         //empty( for subclass )
     }
 
@@ -218,7 +224,7 @@ export default class EditorWidgetSettings extends React.Component {
 
                 wst = wsts.insertWidgetSettingsTemplate( nameTrimmed );
                 const widgetData = this._getWidgetData();
-                widgetData.saveToWidgetSettingsTemplate(wst);
+                widgetData.saveToWidgetSettingsTemplate(wst,this);
 
                 wsts.saveWidgetSettingsTemplatesAsync( oc.getPalRestApi(), () =>{
                         Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
@@ -402,11 +408,12 @@ export default class EditorWidgetSettings extends React.Component {
                 const widgetData = this._getWidgetData();
                 if( widgetData.getWidgetTypeId() === WidgetData.WIDGET_TYPE_ID__LEGACY_BUTTON ) {
                     widgetData.loadFromWidgetSettingsTemplate(wst, _load_button_function );
+                    this._onLoadFromWidgetSettingsTemplate( wst, _load_button_function  );
                 }
                 else {
                     widgetData.loadFromWidgetSettingsTemplate(wst);
+                    this._onLoadFromWidgetSettingsTemplate( wst );
                 }
-
                 Notification.success({ message: i18n.t("Loaded_from_the_template") });
                 EditScreenView.getEditScreenViewInstance().setState({rerender:true});
             },
@@ -414,6 +421,11 @@ export default class EditorWidgetSettings extends React.Component {
                 this.setState({rerender:true});
             }
         );
+    }
+
+    //!virtual
+    _onLoadFromWidgetSettingsTemplate( wst, _load_button_function ){
+
     }
 
     render() {

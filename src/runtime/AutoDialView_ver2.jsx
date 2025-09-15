@@ -21,6 +21,8 @@ import PhonebookContact_AutoDialView_ver2 from "./PhonebookContact_AutoDialView_
 import Select from "antd/lib/select";
 import LegacyButtonRuntimeSubWidget_autoDialButton
     from "./widget/runtime/legacyButtonRuntimeSubWidget/LegacyButtonRuntimeSubWidget_autoDialButton";
+import RuntimeUcUserStatuses from "./RuntimeUcUserStatuses";
+import RuntimeUccacUcClients from "./RuntimeUccacUcClients";
 let AUTO_DIAL_VIEW_VER2;
 const _GET_CONTACT_LIST_LIMIT = 1000;   //!limit max 1000
 const _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE = "extensionNumber";
@@ -46,13 +48,8 @@ export default class AutoDialView_ver2 extends React.Component {
         //this._PhonebookScrollableDivElement = null;
         //this._AutoDialViewRef = React.createRef();
         this._callInfoArrayForDisplay = null;
-		this._UcUserStatuses = {};
-		this._UcHandlerObject = { 
-			buddyStatusChanged: ev => {
-				this._UcUserStatuses[ ev.user_id ] = ev.status;
-				this.setState({rerender:true});
-			} 
-		};
+        //this.onBeforeStopUCClientByHiddenUccacUcclient(HiddenUccacUcclient.getUccacUcclientStaticInstance() );
+        //this.onStartUCClientByHiddenUccacUcclient( HiddenUccacUcclient.getUccacUcclientStaticInstance() );
     }
 
     clearLatestSearchInfo(){
@@ -61,7 +58,7 @@ export default class AutoDialView_ver2 extends React.Component {
         this._latestSearchPhonebookKeywords = null;
         this._latestSearchPhonebookDate = null;
     }
-
+	
     _getPhonebookScrollableDivElement(){
 
         return document.getElementById("phonebookScrollableDiv_brOC_AutoDialView_ver2");
@@ -88,50 +85,66 @@ export default class AutoDialView_ver2 extends React.Component {
         parentElement.appendChild(eScript);
     }
 	
+
 	onStartUCClient( legacyUccacRuntimeWidgetAsCaller ){
-		if( !this._usingUccacAc ){
-			this._usingUccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();	
-			const ac = this._usingUccacAc.getAgentComponent();
-			ac.ucUiStore.chatClient.addHandler( this._UcHandlerObject );
-			
-			
-			setTimeout(
-				() => {
-					const oc = BrekekeOperatorConsole.getStaticInstance();
-					const extensionInfoArray =  oc.getExtensions();
-					const tenant = oc.getLoggedinTenant();
-					for( let i = 0; i < extensionInfoArray.length; i++ ){
-						const extInfo = extensionInfoArray[i];
-						const ext = extInfo["id"];
-						const o = { tenant: tenant, user_id: ext };
-						const oUserStatus = ac.ucUiStore.chatClient.getBuddyStatus(o);
-						const ucUserStatus = oUserStatus.status;
-						this._UcUserStatuses[ ext ] = ucUserStatus;
-					}
-					this.setState({rerender:true});
-				}
-			,1);
-		}
+        this.setState({rerender:true});
+
+		// if( !this._usingUccacAc ){
+		// 	this._usingUccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();
+		// 	const ac = this._usingUccacAc.getAgentComponent();
+		// 	ac.ucUiStore.chatClient.addHandler( this._UcHandlerObject );
+		//
+		//
+		// 	setTimeout(
+		// 		() => {
+		// 			const oc = BrekekeOperatorConsole.getStaticInstance();
+		// 			const extensionInfoArray =  oc.getExtensions();
+		// 			const tenant = oc.getLoggedinTenant();
+		// 			for( let i = 0; i < extensionInfoArray.length; i++ ){
+		// 				const extInfo = extensionInfoArray[i];
+		// 				const ext = extInfo["id"];
+		// 				const o = { tenant: tenant, user_id: ext };
+		// 				const oUserStatus = ac.ucUiStore.chatClient.getBuddyStatus(o);
+		// 				const ucUserStatus = oUserStatus.status;
+		// 				this._UcUserStatuses[ ext ] = ucUserStatus;
+		// 			}
+		// 			this.setState({rerender:true});
+		// 		}
+		// 	,1);
+		// }
 	}
-	
-	onBeforeStopUCClient( legacyUccacRuntimeWidgetAsCaller ){
-		const uccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();
-		if( uccacAc === this._usingUccacAc ){
-			this._usingUccacAc = null;
-			const ac = uccacAc.getAgentComponent();
-			ac.ucUiStore.chatClient.removeHandler( this._UcHandlerObject );
-			
-			//clear UcUserStatuses
-			const props = Object.getOwnPropertyNames(this._UcUserStatuses);
-			for (const p of props ) {
-			  delete this._UcUserStatuses[p];
-			}
-		}
+
+    onUcBuddyStatusChangedByRuntimeUcUserStatuses( runtimeUcUserStatusesAsCaller, extension, status ){
+        this.setState({rerender:true});
+    }
+
+    onStopUCClient( legacyUccacRuntimeWidgetAsCaller ){
+        this.setState({rerender:true});
+    }
+
+        onBeforeStopUCClient( legacyUccacRuntimeWidgetAsCaller ){
+        //
+		// const uccacAc = legacyUccacRuntimeWidgetAsCaller.getUccacAc();
+		// if( uccacAc === this._usingUccacAc ){
+		// 	this._usingUccacAc = null;
+		// 	const ac = uccacAc.getAgentComponent();
+		// 	ac.ucUiStore.chatClient.removeHandler( this._UcHandlerObject );
+		//
+		// 	//clear UcUserStatuses
+		// 	const props = Object.getOwnPropertyNames(this._UcUserStatuses);
+		// 	for (const p of props ) {
+		// 	  delete this._UcUserStatuses[p];
+		// 	}
+		// }
 	}
 
 	onBeforeDestroyUccacAc( legacyUccacRuntimeWidgetAsCaller  ){
 		this.onBeforeStopUCClient( legacyUccacRuntimeWidgetAsCaller );
 	}
+
+    onDestroyUccacAc( legacyUccacRuntimeWidgetAsCaller  ){
+        this.setState({rerender:true});
+    }
 
      componentDidMount(){
          //const eAutoDialView_ver2 = document.getElementById("brOC_AutoDialView_Ver2");
@@ -1377,6 +1390,26 @@ export default class AutoDialView_ver2 extends React.Component {
         this.setState({rerender:true});
     }
 
+    _onChangeFromHour( sHour ) {
+        this._callInfosFromHour = sHour;
+        this.setState({rerender:true});
+    }
+
+    _onChangeToHour( sHour ) {
+        this._callInfosToHour = sHour;
+        this.setState({rerender:true});
+    }
+
+    _onChangeFromMinute( sMinute ) {
+        this._callInfosFromMinute = sMinute;
+        this.setState({rerender:true});
+    }
+
+    _onChangeToMinute( sMinute ) {
+        this._callInfosToMinute = sMinute;
+        this.setState({rerender:true});
+    }
+
     _onChangeToYear( sYear ){
         this._callInfosToYear = sYear;
 
@@ -1413,6 +1446,10 @@ export default class AutoDialView_ver2 extends React.Component {
         this.setState({rerender:true});
     }
 
+    onGetAndSetUcUserStatusesByRuntimeUcUserStatuses( runtimeUcUserStatusesAsCaller ){
+        this.setState({rerender:true});
+    }
+
     _onChangeFromMonth( sMonth ){
         this._callInfosFromMonth = sMonth;
 
@@ -1428,6 +1465,14 @@ export default class AutoDialView_ver2 extends React.Component {
         if( date.getMonth() !== dateMax.getMonth()){
             this._callInfosFromDay = iMaxDay.toString();
         }
+        this.setState({rerender:true});
+    }
+
+    onUcSignedOutByRuntimeUcUserStatuses( runtimeUcUserStatusesAsCaller ){
+        this.setState({rerender:true});
+    }
+
+    onBeforeUnuseRuntimeUccacUcClientByRuntimeUcUserStatuses( runtimeUcUserStatusesAsCaller ){
         this.setState({rerender:true});
     }
 
@@ -1525,6 +1570,7 @@ export default class AutoDialView_ver2 extends React.Component {
     render() {
         const oc = BrekekeOperatorConsole.getStaticInstance();
         if (!this.props.isVisible ) {
+            //return (null);
             return (null);
         }
 
@@ -1535,6 +1581,7 @@ export default class AutoDialView_ver2 extends React.Component {
         callHistory2.sortIfNeed( systemSettingsData.getAutoDialRecentDisplayOrder()  ); //!bad Not a render logic
         const recentDisplayOrder = systemSettingsData.getAutoDialRecentDisplayOrder();
         const recentDisplayCount = systemSettingsData.getAutoDialMaxDisplayCount();
+        const inputFieldFontSize = systemSettingsData.getAutoDialInputFieldFontSize();
 
         //!bad Not a render logic
         let fromDaySelectOptionsJsx;
@@ -1559,17 +1606,44 @@ export default class AutoDialView_ver2 extends React.Component {
             fromDaySelectOptionsJsx = new Array();
             const iMaxFromDay = this._callInfosMaxFromDate.getDate();
             for( let i = 1; i <= iMaxFromDay; i++ ){
-                fromDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
+                fromDaySelectOptionsJsx.push(<Select.Option value={ i.toString() }><span style={{fontSize:inputFieldFontSize}}>{i}</span></Select.Option>);
             }
 
             toDaySelectOptionsJsx = new Array();
             const iMaxToDay = this._callInfosMaxToDate.getDate();
             for( let i = 1; i <= iMaxToDay; i++ ){
-                toDaySelectOptionsJsx.push(<Select.Option value={i}>{i}</Select.Option>);
+                toDaySelectOptionsJsx.push(<Select.Option value={ i.toString() }><span style={{fontSize:inputFieldFontSize}}>{i}</span></Select.Option>);
             }
         }
 
+        const ucClients = RuntimeUccacUcClients.getRuntimeUccacUcClientsStaticInstance();
+        const ucClientCount = ucClients.getRuntimeUccacUcClientCount();
+        let isUsingUc = false;
+        for( let i = 0; i < ucClientCount; i++ ){
+            const ucClient = ucClients.getRuntimeUccacUcClientAt(i);
+            const uccacAc = ucClient.getUccacAc();
+            isUsingUc = !!uccacAc;
+            if( isUsingUc ){
+                break;
+            }
+        }
 
+        const tableHeaderFontSize = systemSettingsData.getAutoDialTableHeaderFontSize();
+        const tableBodyFontSize = systemSettingsData.getAutoDialTableBodyFontSize();
+        let switchSize;
+        const sSwitchSize = systemSettingsData.getAutoDialSwitchSize();
+        if( OCUtil.isString( sSwitchSize) && sSwitchSize.toLowerCase() === "small"){
+            switchSize = "small";
+        }
+        else{
+            switchSize = undefined;
+        }
+
+        const lampSize = systemSettingsData.getAutoDialLampSize();
+        const iconSize = systemSettingsData.getAutoDialIconSize();
+        const buttonSize = systemSettingsData.getAutoDialButtonSize();
+        const svgButtonSize = buttonSize || buttonSize === 0 ? buttonSize : 24; //!default
+        const otherFontSize = systemSettingsData.getAutoDialOtherFontSize();
         return (<>
             <PhonebookContactInfozInfoView/>
             <PhonebookContactInfozTelsView/>
@@ -1612,9 +1686,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                     <td>
                                         <div className="tab-panel">
                                             <ul className="tab-group">
-                                                <li className="tab tab-A is-active" id="tabA_AutoDialView_ver2_brOC"
+                                                <li className="tab tab-A is-active" id="tabA_AutoDialView_ver2_brOC" style={{fontSize:systemSettingsData.getAutoDialTabFontSize()}}
                                                     onClick={(e) => this._tabSwitchAndSortIfNeedCallHistory2(e.target)}>{i18n.t("Recent")}</li>
-                                                <li className="tab tab-B"
+                                                <li className="tab tab-B" style={{fontSize:systemSettingsData.getAutoDialTabFontSize()}}
                                                     onClick={(e) => {
                                                         const eTarget2 = document.getElementById("tabA_AutoDialView_ver2_brOC");
                                                         this.tabSwitch(e.target, eTarget2 );
@@ -1625,7 +1699,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 },5);
                                                         }
                                                     }}>{i18n.t("User")}</li>
-                                                <li className="tab tab-C" id="tabB_AutoDialView_ver2_brOC"
+                                                <li className="tab tab-C" id="tabB_AutoDialView_ver2_brOC" style={{fontSize:systemSettingsData.getAutoDialTabFontSize()}}
                                                     onClick={(e) => {
                                                         // const eTarget2 = document.getElementById("tabA_AutoDialView_ver2_brOC");
                                                         // this.tabSwitch(e, eTarget2 );
@@ -1646,11 +1720,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                    className={"defaultContentTable"}>
                                                                 <thead>
                                                                 <tr className="defaultItemPaddingForTr">
-                                                                    <th>{i18n.t("CallNo")}</th>
-                                                                    <th style={{width: 10}}>{i18n.t("CallStatus")}</th>
-																	{ this._usingUccacAc && <th style={{width: 10}}>{i18n.t("UcStatus")}</th> }
-                                                                    <th style={{width:10}}>{i18n.t("Call")}</th>
-                                                                    <th>{i18n.t("LatestStartedAt")}</th>
+                                                                    <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("CallNo")}</th>
+                                                                    <th style={{fontSize:tableHeaderFontSize,width: 10}}>{i18n.t("CallStatus")}</th>
+																	{ isUsingUc && <th style={{fontSize:tableHeaderFontSize,width: 10}}>{i18n.t("UcStatus")}</th> }
+                                                                    <th style={{fontSIze:tableHeaderFontSize,width:10}}>{i18n.t("Call")}</th>
+                                                                    <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("LatestStartedAt")}</th>
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -1662,12 +1736,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     const sAddDateTime = dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAddCallMillisTime() ) );
 																	
 																	let ucUserStatusJsx;
-																	if( this._usingUccacAc ){
+																	if( isUsingUc ){
 																		if( isExtension ){
-																			const ucUserStatus = this._UcUserStatuses[ partyNumber ];
+																			const ucUserStatus = RuntimeUcUserStatuses.getRuntimeUcUserStatusesStaticInstance().getUcUserStatus( partyNumber );
 																			if( ucUserStatus || ucUserStatus === 0 ){
 																				const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( partyNumber, ucUserStatus );
-																				ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																				ucUserStatusJsx = <div style={{width:lampSize,height:lampSize}} className={ucUserStatusClassName}></div>;
 																			}
 																			else{
 																				ucUserStatusJsx = <></>;
@@ -1680,16 +1754,16 @@ export default class AutoDialView_ver2 extends React.Component {
 																	
                                                                     return (
                                                                         <tr key={i}>
-                                                                            <td>{partyNumber}</td>
-                                                                            <td style={{textAlign: "center",width:10}}>
-                                                                                <div className={statusClassName}></div>
+                                                                            <td style={{fontSize:tableBodyFontSize}}>{partyNumber}</td>
+                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center",width:10}}>
+                                                                                <div style={{width:lampSize,height:lampSize}} className={statusClassName}></div>
                                                                             </td>
-																			{ this._usingUccacAc && (
-																				<td style={{textAlign: "center",width:10}}>
-																					{ucUserStatusJsx}
-																				</td>
-																			)}
-                                                                            <td style={{width:10}}>
+                                                                            { isUsingUc && (
+                                                                                <td style={{fontSize:tableBodyFontSize,textAlign: "center",width:10}}>
+                                                                                    {ucUserStatusJsx}
+                                                                                </td>
+                                                                            )}
+                                                                            <td style={{fontSize:tableBodyFontSize,width:10}}>
                                                                                 {partyNumber && (<div style={{
                                                                                     display: "flex",
                                                                                     justifyContent: "center"
@@ -1701,12 +1775,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                             AutoDialView_ver2.onClickCallButtonForAutoDialView(e, partyNumber);
                                                                                         }
                                                                                         }>
-                                                                                        {<FontAwesomeIcon size="lg"
+                                                                                        {<FontAwesomeIcon style={{width:buttonSize,height:buttonSize}} size="lg"
                                                                                                           icon="fas fa-phone"/>}
                                                                                     </button>
                                                                                 </div>)}
                                                                             </td>
-                                                                            <td style={{textAlign: "center"}}>
+                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>
                                                                                 {sAddDateTime}
                                                                             </td>
                                                                         </tr>
@@ -1732,54 +1806,56 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     id="brOC_autoDialView_ver2_callInfos_fromYear"
                                                                                     maxLength={4}
                                                                                     // placeholder={i18n.t('Year')}
-                                                                                    allowClear
+                                                                                    //allowClear
                                                                                     defaultValue={this._callInfosFromYear}
                                                                                     value={this._callInfosFromYear}
                                                                                     onFocus={(e) => this._onCallInfosFromYearFocus(e)}
                                                                                     onBlur={(e) => this._onCallInfosFromYearBlur(e)}
                                                                                     style={{
                                                                                         width: "100px",
-                                                                                        size: "middle"
+                                                                                        height:systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                        fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                        //size: "middle"
                                                                                     }}
                                                                                     onChange={(e) => this._onChangeFromYear( e.target.value ) }
                                                                                 />
                                                                                 <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Year")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_fromMonth"
-                                                                                    style={{width: "60px"}} size="large"
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                     onChange={(val) => this._onChangeFromMonth( val ) }
                                                                                     defaultValue={this._callInfosFromMonth}
                                                                                     value={this._callInfosFromMonth}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={1}>1</Select.Option>
+                                                                                        value={"1"}><span style={{fontSize:inputFieldFontSize}}>1</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>2</Select.Option>
+                                                                                        value={"2"}><span style={{fontSize:inputFieldFontSize}}>2</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>3</Select.Option>
+                                                                                        value={"3"}><span style={{fontSize:inputFieldFontSize}}>3</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>4</Select.Option>
+                                                                                        value={"4"}><span style={{fontSize:inputFieldFontSize}}>4</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>5</Select.Option>
+                                                                                        value={"5"}><span style={{fontSize:inputFieldFontSize}}>5</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>6</Select.Option>
+                                                                                        value={"6"}><span style={{fontSize:inputFieldFontSize}}>6</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>7</Select.Option>
+                                                                                        value={"7"}><span style={{fontSize:inputFieldFontSize}}>7</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>8</Select.Option>
+                                                                                        value={"8"}><span style={{fontSize:inputFieldFontSize}}>8</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>9</Select.Option>
+                                                                                        value={"9"}><span style={{fontSize:inputFieldFontSize}}>9</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={10}>10</Select.Option>
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={11}>11</Select.Option>
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={12}>12</Select.Option>
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                                 </Select>
                                                                                 <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Month")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_fromDay"
-                                                                                    style={{width: "60px"}} size="large"
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                     onChange={(val) => this._onChangeFromDay( val ) }
                                                                                     defaultValue={this._callInfosFromDay}
                                                                                     value={this._callInfosFromDay}
@@ -1789,86 +1865,90 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <div style={{margin:"0 6px 0 4px"}}>{i18n.t("Day")}</div>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_fromHour"
-                                                                                    style={{width: "60px"}} size="large"
-                                                                                    onChange={(val) => this._callInfosFromHour = val}
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                    onChange={(val) => this._onChangeFromHour(val) }
                                                                                     defaultValue={this._callInfosFromHour}
+																					value={this._callInfosFromHour}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>00</Select.Option>
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={1}>01</Select.Option>
+                                                                                        value={"01"}><span style={{fontSize:inputFieldFontSize}}>01</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>02</Select.Option>
+                                                                                        value={"02"}><span style={{fontSize:inputFieldFontSize}}>02</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>03</Select.Option>
+                                                                                        value={"03"}><span style={{fontSize:inputFieldFontSize}}>03</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>04</Select.Option>
+                                                                                        value={"04"}><span style={{fontSize:inputFieldFontSize}}>04</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>05</Select.Option>
+                                                                                        value={"05"}><span style={{fontSize:inputFieldFontSize}}>05</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>06</Select.Option>
+                                                                                        value={"06"}><span style={{fontSize:inputFieldFontSize}}>06</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>07</Select.Option>
+                                                                                        value={"07"}><span style={{fontSize:inputFieldFontSize}}>07</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>08</Select.Option>
+                                                                                        value={"08"}><span style={{fontSize:inputFieldFontSize}}>08</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>09</Select.Option>
+                                                                                        value={"09"}><span style={{fontSize:inputFieldFontSize}}>09</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={10}>10</Select.Option>
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={11}>11</Select.Option>
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={12}>12</Select.Option>
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={13}>13</Select.Option>
+                                                                                        value={"13"}><span style={{fontSize:inputFieldFontSize}}>13</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={14}>14</Select.Option>
+                                                                                        value={"14"}><span style={{fontSize:inputFieldFontSize}}>14</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={15}>15</Select.Option>
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={16}>16</Select.Option>
+                                                                                        value={"16"}><span style={{fontSize:inputFieldFontSize}}>16</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={17}>17</Select.Option>
+                                                                                        value={"17"}><span style={{fontSize:inputFieldFontSize}}>17</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={18}>18</Select.Option>
+                                                                                        value={"18"}><span style={{fontSize:inputFieldFontSize}}>18</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={19}>19</Select.Option>
+                                                                                        value={"19"}><span style={{fontSize:inputFieldFontSize}}>19</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={20}>20</Select.Option>
+                                                                                        value={"20"}><span style={{fontSize:inputFieldFontSize}}>20</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={21}>21</Select.Option>
+                                                                                        value={"21"}><span style={{fontSize:inputFieldFontSize}}>21</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={22}>22</Select.Option>
+                                                                                        value={"22"}><span style={{fontSize:inputFieldFontSize}}>22</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={23}>23</Select.Option>
+                                                                                        value={"23"}><span style={{fontSize:inputFieldFontSize}}>23</span></Select.Option>
                                                                                 </Select>
                                                                                 <span style={{margin:"0 4px 0 4px"}}>:</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_fromMinute"
-                                                                                    style={{width: "60px"}} size="large"
-                                                                                    onChange={(val) => this._callInfosFromMinute = val}
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                    onChange={(val) => this._onChangeFromMinute(val) }
                                                                                     defaultValue={this._callInfosFromMinute}
+																					value={this._callInfosFromMinute}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>00</Select.Option>
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={15}>15</Select.Option>
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={30}>30</Select.Option>
+                                                                                        value={"30"}><span style={{fontSize:inputFieldFontSize}}>30</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={45}>45</Select.Option>
+                                                                                        value={"45"}><span style={{fontSize:inputFieldFontSize}}>45</span></Select.Option>
                                                                                 </Select>
                                                                                 <span style={{margin:"0 4px 0 4px"}}>~</span>
                                                                                 <Input
                                                                                     id="brOC_autoDialView_ver2_callInfos_toYear"
                                                                                     maxLength={4}
                                                                                     //placeholder={i18n.t('Year')}
-                                                                                    allowClear
+                                                                                    //allowClear
                                                                                     onFocus={(e) => this._onCallInfosToYearFocus(e)}
                                                                                     onBlur={(e) => this._onCallInfosToYearBlur(e)}
                                                                                     style={{
                                                                                         width: "100px",
-                                                                                        size: "middle"
+                                                                                        height:systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                        fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                        //size: "middle"
                                                                                     }}
                                                                                     defaultValue={this._callInfosToYear}
                                                                                     value={this._callInfosToYear}
@@ -1877,40 +1957,40 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Year")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toMonth"
-                                                                                    style={{width: "60px"}} size="large"
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                     onChange={(val) => this._onChangeToMonth( val ) }
                                                                                     defaultValue={this._callInfosToMonth}
                                                                                     value={this._callInfosToMonth}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={1}>1</Select.Option>
+                                                                                        value={"1"}><span style={{fontSize:inputFieldFontSize}}>1</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>2</Select.Option>
+                                                                                        value={"2"}><span style={{fontSize:inputFieldFontSize}}>2</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>3</Select.Option>
+                                                                                        value={"3"}><span style={{fontSize:inputFieldFontSize}}>3</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>4</Select.Option>
+                                                                                        value={"4"}><span style={{fontSize:inputFieldFontSize}}>4</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>5</Select.Option>
+                                                                                        value={"5"}><span style={{fontSize:inputFieldFontSize}}>5</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>6</Select.Option>
+                                                                                        value={"6"}><span style={{fontSize:inputFieldFontSize}}>6</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>7</Select.Option>
+                                                                                        value={"7"}><span style={{fontSize:inputFieldFontSize}}>7</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>8</Select.Option>
+                                                                                        value={"8"}><span style={{fontSize:inputFieldFontSize}}>8</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>9</Select.Option>
+                                                                                        value={"9"}><span style={{fontSize:inputFieldFontSize}}>9</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={10}>10</Select.Option>
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={11}>11</Select.Option>
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={12}>12</Select.Option>
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                                 </Select>
                                                                                 <span style={{margin:"0 4px 0 2px"}}>{i18n.t("Month")}</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toDay"
-                                                                                    style={{width: "60px"}} size="large"
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                     onChange={(val) => this._onChangeToDay( val ) }
                                                                                     defaultValue={this._callInfosToDay}
                                                                                     value={this._callInfosToDay}
@@ -1920,74 +2000,76 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 <div style={{margin: "0px 6px 0 4px"}}>{i18n.t("Day")}</div>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toHour"
-                                                                                    style={{width: "60px"}} size="large"
-                                                                                    onChange={(val) => this._callInfosToHour = val}
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                    onChange={(val) => this._onChangeToHour( val ) }
                                                                                     defaultValue={this._callInfosToHour}
+                                                                                    value={this._callInfosToHour}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>00</Select.Option>
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={1}>01</Select.Option>
+                                                                                        value={"01"}><span style={{fontSize:inputFieldFontSize}}>01</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={2}>02</Select.Option>
+                                                                                        value={"02"}><span style={{fontSize:inputFieldFontSize}}>02</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={3}>03</Select.Option>
+                                                                                        value={"03"}><span style={{fontSize:inputFieldFontSize}}>03</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={4}>04</Select.Option>
+                                                                                        value={"04"}><span style={{fontSize:inputFieldFontSize}}>04</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={5}>05</Select.Option>
+                                                                                        value={"05"}><span style={{fontSize:inputFieldFontSize}}>05</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={6}>06</Select.Option>
+                                                                                        value={"06"}><span style={{fontSize:inputFieldFontSize}}>06</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={7}>07</Select.Option>
+                                                                                        value={"07"}><span style={{fontSize:inputFieldFontSize}}>07</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={8}>08</Select.Option>
+                                                                                        value={"08"}><span style={{fontSize:inputFieldFontSize}}>08</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={9}>09</Select.Option>
+                                                                                        value={"09"}><span style={{fontSize:inputFieldFontSize}}>09</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={10}>10</Select.Option>
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={11}>11</Select.Option>
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={12}>12</Select.Option>
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={13}>13</Select.Option>
+                                                                                        value={"13"}><span style={{fontSize:inputFieldFontSize}}>13</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={14}>14</Select.Option>
+                                                                                        value={"14"}><span style={{fontSize:inputFieldFontSize}}>14</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={15}>15</Select.Option>
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={16}>16</Select.Option>
+                                                                                        value={"16"}><span style={{fontSize:inputFieldFontSize}}>16</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={17}>17</Select.Option>
+                                                                                        value={"17"}><span style={{fontSize:inputFieldFontSize}}>17</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={18}>18</Select.Option>
+                                                                                        value={"18"}><span style={{fontSize:inputFieldFontSize}}>18</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={19}>19</Select.Option>
+                                                                                        value={"19"}><span style={{fontSize:inputFieldFontSize}}>19</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={20}>20</Select.Option>
+                                                                                        value={"20"}><span style={{fontSize:inputFieldFontSize}}>20</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={21}>21</Select.Option>
+                                                                                        value={"21"}><span style={{fontSize:inputFieldFontSize}}>21</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={22}>22</Select.Option>
+                                                                                        value={"22"}><span style={{fontSize:inputFieldFontSize}}>22</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={23}>23</Select.Option>
+                                                                                        value={"23"}><span style={{fontSize:inputFieldFontSize}}>23</span></Select.Option>
                                                                                 </Select>
                                                                                 <span style={{margin:"0 4px 0 4px"}}>:</span>
                                                                                 <Select
                                                                                     id="brOC_autoDialView_ver2_callInfos_toMinute"
-                                                                                    style={{width: "60px"}} size="large"
-                                                                                    onChange={(val) => this._callInfosToMinute = val}
+                                                                                    style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                    onChange={(val) => this._onChangeToMinute(val) }
                                                                                     defaultValue={this._callInfosToMinute}
+                                                                                    value={this._callInfosToMinute}
                                                                                 >
                                                                                     <Select.Option
-                                                                                        value={0}>00</Select.Option>
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={15}>15</Select.Option>
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={30}>30</Select.Option>
+                                                                                        value={"30"}><span style={{fontSize:inputFieldFontSize}}>30</span></Select.Option>
                                                                                     <Select.Option
-                                                                                        value={45}>45</Select.Option>
+                                                                                        value={"45"}><span style={{fontSize:inputFieldFontSize}}>45</span></Select.Option>
                                                                                 </Select>
                                                                             </div>
                                                                         </td>
@@ -1996,10 +2078,10 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 title={i18n.t(`Search`)}
                                                                                 className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                                 onClick={(e) => this._onClickForGetDatetimeDescCallInfoArrayForDisplay()}
-                                                                                size={"middle"}
+                                                                                // size={"middle"}
                                                                             >
-                                                                                <svg height="24" viewBox="0 0 24 24"
-                                                                                     width="24">
+                                                                                <svg height={svgButtonSize} viewBox="3 3 17.5 17.5"
+                                                                                     width={svgButtonSize}>
                                                                                     <path
                                                                                         d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
                                                                                         fill="black">
@@ -2020,41 +2102,41 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         }}>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromMonth"
-                                                                                style={{width: "60px"}} size="large"
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                 onChange={(val) => this._onChangeFromMonth( val ) }
                                                                                 defaultValue={this._callInfosFromMonth}
                                                                                 value={this._callInfosFromMonth}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"1"}><span style={{fontSize:inputFieldFontSize}}>1</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"2"}><span style={{fontSize:inputFieldFontSize}}>2</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"3"}><span style={{fontSize:inputFieldFontSize}}>3</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"4"}><span style={{fontSize:inputFieldFontSize}}>4</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"5"}><span style={{fontSize:inputFieldFontSize}}>5</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"6"}><span style={{fontSize:inputFieldFontSize}}>6</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"7"}><span style={{fontSize:inputFieldFontSize}}>7</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"8"}><span style={{fontSize:inputFieldFontSize}}>8</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"9"}><span style={{fontSize:inputFieldFontSize}}>9</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                             </Select>
                                                                             <span
                                                                                 style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromDay"
-                                                                                style={{width: "60px"}} size="large"
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                 onChange={(val) => this._onChangeFromDay( val ) }
                                                                                 defaultValue={this._callInfosFromDay}
                                                                                 value={this._callInfosFromDay}
@@ -2067,129 +2149,133 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromYear"
                                                                                 maxLength={4}
                                                                                 // placeholder={i18n.t('Year')}
-                                                                                allowClear
+                                                                                //allowClear
                                                                                 defaultValue={this._callInfosFromYear}
                                                                                 value={this._callInfosFromYear}
                                                                                 onFocus={(e) => this._onCallInfosFromYearFocus(e)}
                                                                                 onBlur={(e) => this._onCallInfosFromYearBlur(e)}
                                                                                 style={{
                                                                                     width: "100px",
-                                                                                    size: "middle"
+                                                                                    height:systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                    fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                    //size: "middle"
                                                                                 }}
                                                                                 onChange={(e) => this._onChangeFromYear( e.target.value ) }
                                                                             />
                                                                             <span style={{marginLeft: "6px"}}></span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromHour"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={(val) => this._callInfosFromHour = val}
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                onChange={(val) => this._onChangeFromHour(val) }
                                                                                 defaultValue={this._callInfosFromHour}
+																				value={this._callInfosFromHour}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={0}>00</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={1}>01</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>02</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>03</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>04</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>05</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>06</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>07</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>08</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>09</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={13}>13</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={14}>14</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={16}>16</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={17}>17</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={18}>18</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={19}>19</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={20}>20</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={21}>21</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={22}>22</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={23}>23</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"01"}><span style={{fontSize:inputFieldFontSize}}>01</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"02"}><span style={{fontSize:inputFieldFontSize}}>02</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"03"}><span style={{fontSize:inputFieldFontSize}}>03</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"04"}><span style={{fontSize:inputFieldFontSize}}>04</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"05"}><span style={{fontSize:inputFieldFontSize}}>05</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"06"}><span style={{fontSize:inputFieldFontSize}}>06</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"07"}><span style={{fontSize:inputFieldFontSize}}>07</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"08"}><span style={{fontSize:inputFieldFontSize}}>08</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"09"}><span style={{fontSize:inputFieldFontSize}}>09</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"13"}><span style={{fontSize:inputFieldFontSize}}>13</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"14"}><span style={{fontSize:inputFieldFontSize}}>14</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"16"}><span style={{fontSize:inputFieldFontSize}}>16</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"17"}><span style={{fontSize:inputFieldFontSize}}>17</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"18"}><span style={{fontSize:inputFieldFontSize}}>18</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"19"}><span style={{fontSize:inputFieldFontSize}}>19</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"20"}><span style={{fontSize:inputFieldFontSize}}>20</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"21"}><span style={{fontSize:inputFieldFontSize}}>21</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"22"}><span style={{fontSize:inputFieldFontSize}}>22</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"23"}><span style={{fontSize:inputFieldFontSize}}>23</span></Select.Option>
                                                                             </Select>
                                                                             <span
                                                                                 style={{margin: "0 4px 0 4px"}}>:</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_fromMinute"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={(val) => this._callInfosFromMinute = val}
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                onChange={(val) => this._onChangeFromMinute(val) }
                                                                                 defaultValue={this._callInfosFromMinute}
+																				value={this._callInfosFromMinute}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={0}>00</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={30}>30</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={45}>45</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"30"}><span style={{fontSize:inputFieldFontSize}}>30</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"45"}><span style={{fontSize:inputFieldFontSize}}>45</span></Select.Option>
                                                                                </Select>
                                                                             <span
                                                                                 style={{margin: "0 4px 0 4px"}}>~</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toMonth"
-                                                                                style={{width: "60px"}} size="large"
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                 onChange={(val) => this._onChangeToMonth( val ) }
                                                                                 defaultValue={this._callInfosToMonth}
                                                                                 value={this._callInfosToMonth}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={1}>1</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>2</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>3</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>4</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>5</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>6</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>7</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>8</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>9</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"1"}><span style={{fontSize:inputFieldFontSize}}>1</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"2"}><span style={{fontSize:inputFieldFontSize}}>2</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"3"}><span style={{fontSize:inputFieldFontSize}}>3</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"4"}><span style={{fontSize:inputFieldFontSize}}>4</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"5"}><span style={{fontSize:inputFieldFontSize}}>5</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"6"}><span style={{fontSize:inputFieldFontSize}}>6</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"7"}><span style={{fontSize:inputFieldFontSize}}>7</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"8"}><span style={{fontSize:inputFieldFontSize}}>8</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"9"}><span style={{fontSize:inputFieldFontSize}}>9</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
                                                                             </Select>
                                                                             <span
                                                                                 style={{margin: "0 4px 0 4px"}}>/</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toDay"
-                                                                                style={{width: "60px"}} size="large"
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
                                                                                 onChange={(val) => this._onChangeToDay( val ) }
                                                                                 defaultValue={this._callInfosToDay}
                                                                                 value={this._callInfosToDay}
@@ -2202,12 +2288,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 id="brOC_autoDialView_ver2_callInfos_toYear"
                                                                                 maxLength={4}
                                                                                 //placeholder={i18n.t('Year')}
-                                                                                allowClear
+                                                                                //allowClear
                                                                                 onFocus={(e) => this._onCallInfosToYearFocus(e)}
                                                                                 onBlur={(e) => this._onCallInfosToYearBlur(e)}
                                                                                 style={{
                                                                                     width: "100px",
-                                                                                    size: "middle"
+                                                                                    height:systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                    fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                    //size: "middle"
                                                                                 }}
                                                                                 defaultValue={this._callInfosToYear}
                                                                                 value={this._callInfosToYear}
@@ -2216,75 +2304,77 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <span style={{marginLeft: "6px"}}></span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toHour"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={(val) => this._callInfosToHour = val}
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                onChange={(val) => this._onChangeToHour( val ) }
                                                                                 defaultValue={this._callInfosToHour}
+																				value={this._callInfosToHour}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={0}>00</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={1}>01</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={2}>02</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={3}>03</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={4}>04</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={5}>05</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={6}>06</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={7}>07</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={8}>08</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={9}>09</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={10}>10</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={11}>11</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={12}>12</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={13}>13</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={14}>14</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={16}>16</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={17}>17</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={18}>18</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={19}>19</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={20}>20</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={21}>21</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={22}>22</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={23}>23</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"01"}><span style={{fontSize:inputFieldFontSize}}>01</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"02"}><span style={{fontSize:inputFieldFontSize}}>02</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"03"}><span style={{fontSize:inputFieldFontSize}}>03</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"04"}><span style={{fontSize:inputFieldFontSize}}>04</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"05"}><span style={{fontSize:inputFieldFontSize}}>05</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"06"}><span style={{fontSize:inputFieldFontSize}}>06</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"07"}><span style={{fontSize:inputFieldFontSize}}>07</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"08"}><span style={{fontSize:inputFieldFontSize}}>08</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"09"}><span style={{fontSize:inputFieldFontSize}}>09</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"10"}><span style={{fontSize:inputFieldFontSize}}>10</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"11"}><span style={{fontSize:inputFieldFontSize}}>11</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"12"}><span style={{fontSize:inputFieldFontSize}}>12</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"13"}><span style={{fontSize:inputFieldFontSize}}>13</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"14"}><span style={{fontSize:inputFieldFontSize}}>14</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"16"}><span style={{fontSize:inputFieldFontSize}}>16</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"17"}><span style={{fontSize:inputFieldFontSize}}>17</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"18"}><span style={{fontSize:inputFieldFontSize}}>18</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"19"}><span style={{fontSize:inputFieldFontSize}}>19</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"20"}><span style={{fontSize:inputFieldFontSize}}>20</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"21"}><span style={{fontSize:inputFieldFontSize}}>21</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"22"}><span style={{fontSize:inputFieldFontSize}}>22</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"23"}><span style={{fontSize:inputFieldFontSize}}>23</span></Select.Option>
                                                                             </Select>
                                                                             <span
                                                                                 style={{margin: "0 4px 0 4px"}}>:</span>
                                                                             <Select
                                                                                 id="brOC_autoDialView_ver2_callInfos_toMinute"
-                                                                                style={{width: "60px"}} size="large"
-                                                                                onChange={(val) => this._callInfosToMinute = val}
+                                                                                style={{width: "60px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} size="large"
+                                                                                onChange={(val) => this._onChangeToMinute(val) }
                                                                                 defaultValue={this._callInfosToMinute}
+																				value={this._callInfosToMinute}
                                                                             >
-                                                                                <Select.Option
-                                                                                    value={0}>00</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={15}>15</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={30}>30</Select.Option>
-                                                                                <Select.Option
-                                                                                    value={45}>45</Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"00"}><span style={{fontSize:inputFieldFontSize}}>00</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"15"}><span style={{fontSize:inputFieldFontSize}}>15</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"30"}><span style={{fontSize:inputFieldFontSize}}>30</span></Select.Option>
+                                                                                    <Select.Option
+                                                                                        value={"45"}><span style={{fontSize:inputFieldFontSize}}>45</span></Select.Option>
                                                                             </Select>
                                                                         </div>
                                                                     </td>
@@ -2293,10 +2383,10 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             title={i18n.t(`Search`)}
                                                                             className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                             onClick={(e) => this._onClickForGetDatetimeDescCallInfoArrayForDisplay()}
-                                                                            size={"middle"}
+                                                                            //size={"middle"}
                                                                         >
-                                                                            <svg height="24" viewBox="0 0 24 24"
-                                                                                 width="24">
+                                                                            <svg height={svgButtonSize} viewBox="3 3 17.5 17.5"
+                                                                                 width={svgButtonSize}>
                                                                                 <path
                                                                                     d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
                                                                                     fill="black">
@@ -2318,8 +2408,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         <Checkbox
                                                                             id="recentShowDetail_brOC_AutoDialView_ver2"
                                                                             checked={this.state.recentShowDetailChecked}
-                                                                            onChange={(e) => this._onRecentShowDetailChange(e)}/>
-                                                                        <label style={{marginLeft: "2px"}}
+                                                                            onChange={(e) => this._onRecentShowDetailChange(e)}
+                                                                        />
+                                                                        <label style={{marginLeft: "2px",fontSize:otherFontSize}}
                                                                                htmlFor="recentShowDetail_brOC_AutoDialView_ver2">{i18n.t("Show_detail")}</label>
                                                                     </div>
                                                                     <div className={"autoDialView_ver2_tableParent"}>
@@ -2327,17 +2418,17 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                className={"defaultContentTable"}>
                                                                             <thead>
                                                                             <tr className="defaultItemPaddingForTr">
-                                                                                <th>{i18n.t("Tel")}</th>
-                                                                                <th style={{width:10}}>{i18n.t("CallStatus")}</th>
-																				{ this._usingUccacAc && <th style={{width:10}}>{i18n.t("UcStatus")}</th> }
-                                                                                <th style={{width:10}}></th>
-                                                                                <th>{i18n.t("Incoming")}</th>
-                                                                                <th>{i18n.t("Transfer")}</th>
-                                                                                <th>{i18n.t("StartedAt")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Tel")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize,width:10}}>{i18n.t("CallStatus")}</th>
+																				{ isUsingUc && <th style={{fontSize:tableHeaderFontSize,width:10}}>{i18n.t("UcStatus")}</th> }
+                                                                                <th style={{fontSize:tableHeaderFontSize,width:10}}></th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Incoming")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Transfer")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("StartedAt")}</th>
                                                                                 {this.state.recentShowDetailChecked &&
-                                                                                    <th>{i18n.t("AnsweredAt")}</th>}
+                                                                                    <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("AnsweredAt")}</th>}
                                                                                 {this.state.recentShowDetailChecked &&
-                                                                                    <th>{i18n.t("EndedAt")}</th>}
+                                                                                    <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("EndedAt")}</th>}
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -2363,12 +2454,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 const sIsTransfer = callHistory2CallInfo.getIsTransfer() ? "✓" : "";
 																				
 																				let ucUserStatusJsx;
-																				if( this._usingUccacAc ){
+																				if( isUsingUc ){
 																					if( isExtension ){
-																						const ucUserStatus = this._UcUserStatuses[ partyNumber ];
+																						const ucUserStatus = RuntimeUcUserStatuses.getRuntimeUcUserStatusesStaticInstance().getUcUserStatus( partyNumber );
 																						if( ucUserStatus || ucUserStatus === 0 ){
 																							const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( partyNumber, ucUserStatus );
-																							ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																							ucUserStatusJsx = <div style={{width:lampSize,height:lampSize}} className={ucUserStatusClassName}></div>;
 																						}
 																						else{
 																							ucUserStatusJsx = <></>;
@@ -2381,17 +2472,18 @@ export default class AutoDialView_ver2 extends React.Component {
 																				
                                                                                 return (
                                                                                     <tr key={i}>
-                                                                                        <td style={{width: 10}}>{partyNumber}</td>
-                                                                                        <td style={{textAlign:"center",width:10}}>
+                                                                                        <td style={{fontSize:tableBodyFontSize,width: 10}}>{partyNumber}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,textAlign:"center",width:10}}>
                                                                                             <div
+                                                                                                style={{width:lampSize,height:lampSize}}
                                                                                                 className={statusClassName}></div>
                                                                                         </td>
-																						{ this._usingUccacAc && (
-																										<td style={{textAlign: "center",width:10}}>
+																						{ isUsingUc && (
+																										<td style={{fontSize:tableBodyFontSize,textAlign: "center",width:10}}>
 																											{ucUserStatusJsx}
 																										</td>
 																						)}																						
-                                                                                        <td style={{width:10}}>
+                                                                                        <td style={{fontSize:tableBodyFontSize,width:10}}>
                                                                                             {partyNumber && (
                                                                                                 <div style={{
                                                                                                     display: "flex",
@@ -2406,18 +2498,19 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                         }>
                                                                                                         {
                                                                                                             <FontAwesomeIcon
+                                                                                                                style={{width:buttonSize,height:buttonSize}}
                                                                                                                 size="lg"
                                                                                                                 icon="fas fa-phone"/>}
                                                                                                     </button>
                                                                                                 </div>)}
                                                                                         </td>
-                                                                                        <td style={{textAlign: "center"}}>{sIsIncoming}</td>
-                                                                                        <td style={{textAlign: "center"}}>{sIsTransfer}</td>
-                                                                                        <td style={{textAlign: "center"}}>{sStartedAt}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sIsIncoming}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sIsTransfer}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sStartedAt}</td>
                                                                                         {this.state.recentShowDetailChecked &&
-                                                                                            <td style={{textAlign: "center"}}>{sAnsweredAt}</td>}
+                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sAnsweredAt}</td>}
                                                                                         {this.state.recentShowDetailChecked &&
-                                                                                            <td style={{textAlign: "center"}}>{sEndedAt}</td>}
+                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sEndedAt}</td>}
                                                                                     </tr>
                                                                                 )
                                                                             })}
@@ -2437,23 +2530,27 @@ export default class AutoDialView_ver2 extends React.Component {
                                                             <Input
                                                                 id="brOC_autoDialView_ver2_extension_filterWord"
                                                                 maxLength={1000}
-                                                                placeholder={i18n.t('Filter')} allowClear
+                                                                placeholder={i18n.t('Filter')}
+                                                                //allowClear
                                                                 defaultValue={''}
                                                                 onFocus={(e) => this._onExtensionsKeywordsFocus(e)}
                                                                 onBlur={(e) => this._onExtensionsKeywordsBlur(e)}
-                                                                style={{width: "300px", size: "middle"}}/>
+                                                                style={{width: "300px", height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                    //size: "middle"
+                                                            }}
+                                                            />
                                                         </td>
                                                         <td style={{paddingLeft: "0px"}}>
                                                             <Select
                                                                 id="brOC_autoDialView_ver2_extension_filterColumnName"
-                                                                style={{width:"120px"}}
+                                                                style={{width:"120px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}}
                                                                 defaultValue={ _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE } size="large" onChange={ (val) =>{
                                                                     this._currentExtensionFilterColumnName = val;
                                                                 }}>
                                                                 <Select.Option
-                                                                    value={ _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE }>{i18n.t("ExtensionNumber")}</Select.Option>
+                                                                    value={ _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE }><span style={{fontSize:inputFieldFontSize}}>{i18n.t("ExtensionNumber")}</span></Select.Option>
                                                                 <Select.Option
-                                                                    value="name">{i18n.t("Name")}</Select.Option>
+                                                                    value="name"><span style={{fontSize:inputFieldFontSize}}>{i18n.t("Name")}</span></Select.Option>
                                                             </Select>
                                                         </td>
                                                         <td style={{paddingLeft: "4px"}}>
@@ -2461,9 +2558,9 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 title={i18n.t(`Search`)}
                                                                 className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                 onClick={(e) => this._onClickGetExtensionList()}
-                                                                size={"middle"}
+                                                                //size={"middle"}
                                                             >
-                                                                <svg height="24" viewBox="0 0 24 24" width="24">
+                                                                <svg height={svgButtonSize} width={svgButtonSize} viewBox="3 3 17.5 17.5">
                                                                     <path
                                                                         d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
                                                                         fill="black">
@@ -2487,11 +2584,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                        style={{border: "0", width:"100%"}}>
                                                                     <thead>
                                                                     <tr className="defaultItemPaddingForTr">
-                                                                        <th>{i18n.t("ExtensionNumber")}</th>
-                                                                        <th>{i18n.t("Name")}</th>
-                                                                        <th style={{width:10}}>{i18n.t("CallStatus")}</th>
-																		{ this._usingUccacAc && <th style={{width:10}}>{i18n.t("UcStatus")}</th> }
-                                                                        <th style={{width:10}}>{i18n.t("Call")}</th>
+                                                                        <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("ExtensionNumber")}</th>
+                                                                        <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Name")}</th>
+                                                                        <th style={{fontSize:tableHeaderFontSize,width:10}}>{i18n.t("CallStatus")}</th>
+																		{ isUsingUc && <th style={{fontSize:tableHeaderFontSize,width:10}}>{i18n.t("UcStatus")}</th> }
+                                                                        <th style={{fontSize:tableHeaderFontSize,width:10}}>{i18n.t("Call")}</th>
                                                                     </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -2509,11 +2606,11 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         const statusClassName = OCUtil.getExtensionStatusClassName(ext.id, extensionsStatus);
 
 																		let ucUserStatusJsx;
-																		if( this._usingUccacAc ){
-																			const ucUserStatus = this._UcUserStatuses[ ext.id ];
+																		if( isUsingUc ){
+																			const ucUserStatus = RuntimeUcUserStatuses.getRuntimeUcUserStatusesStaticInstance().getUcUserStatus( ext.id );
 																			if( ucUserStatus || ucUserStatus === 0 ){
 																				const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( ext.id, ucUserStatus );
-																				ucUserStatusJsx = <div className={ucUserStatusClassName}></div>;
+																				ucUserStatusJsx = <div style={{width:lampSize,height:lampSize}} className={ucUserStatusClassName}></div>;
 																			}
 																			else{
 																				ucUserStatusJsx = <></>;
@@ -2522,18 +2619,19 @@ export default class AutoDialView_ver2 extends React.Component {
 
                                                                         return (
                                                                             <tr key={i}>
-                                                                            <td>{ext.id}</td>
-                                                                                <td>{ext.name}</td>
-                                                                                <td style={{width: 10,textAlign:"center"}}>
+                                                                            <td style={{fontSize:tableBodyFontSize}}>{ext.id}</td>
+                                                                                <td style={{fontSize:tableBodyFontSize}}>{ext.name}</td>
+                                                                                <td style={{fontSize:tableBodyFontSize,width: 10,textAlign:"center"}}>
                                                                                     <div
+                                                                                        style={{width:lampSize,height:lampSize}}
                                                                                         className={statusClassName}></div>
                                                                                 </td>
-                                                                                { this._usingUccacAc && 
-																					<td style={{width: 10,textAlign:"center"}}>
+                                                                                { isUsingUc &&
+																					<td style={{fontSize:tableBodyFontSize,width: 10,textAlign:"center"}}>
 																						{ucUserStatusJsx}
 																					</td>
 																				}
-                                                                                <td style={{width:10,textAlign:"center"}}>
+                                                                                <td style={{fontSize:tableBodyFontSize,width:10,textAlign:"center"}}>
                                                                                     <div style={{
                                                                                         display: "flex",
                                                                                         justifyContent: "center"
@@ -2546,6 +2644,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 }
                                                                                                 }>
                                                                                                 {<FontAwesomeIcon
+                                                                                                    style={{width:buttonSize,height:buttonSize}}
                                                                                                     size="lg"
                                                                                                     icon="fas fa-phone"/>}
                                                                                             </button>
@@ -2570,11 +2669,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 <Input
                                                                     id="brOC_autoDialView_ver2_phonebook_keywords"
                                                                     maxLength={1000}
-                                                                    placeholder={i18n.t('Keywords')} allowClear
+                                                                    placeholder={i18n.t('Keywords')}
+                                                                    //allowClear
                                                                     defaultValue={''}
                                                                     onFocus={(e) => this._onPhonebookKeywordsFocus(e)}
                                                                     onBlur={(e) => this._onPhonebookKeywordsBlur(e)}
-                                                                    style={{width: "300px"}}/>
+                                                                    style={{width: "300px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}}/>
                                                             </td>
                                                             <td style={{paddingLeft: "4px"}}>
                                                                 <button
@@ -2582,7 +2682,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                     className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
                                                                     onClick={(e) => this._onClickGetContactList()}
                                                                 >
-                                                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                                                    <svg width={svgButtonSize} height={svgButtonSize} viewBox="3 3 17.5 17.5">
                                                                         <path
                                                                             d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
                                                                             fill="black">
@@ -2601,12 +2701,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                         </tr>
                                                         <tr className="defaultItemPaddingForTr">
                                                             <td>
-                                                                {i18n.t("OnlySharedContacts")}
+                                                                <span style={{fontSize:otherFontSize}}>{i18n.t("OnlySharedContacts")}</span>
                                                             </td>
                                                             <td style={{paddingLeft: "0"}}>
                                                                 <Switch
                                                                     id="brOC_autoDialView_ver2_phonebook_onlySharedContacts"
                                                                     // defaultChecked={false}   //!bug? Sometimes it stops working.
+                                                                    size={switchSize}
                                                                     onChange={(checked, ev) => this._onChangeOnlySharedContacts(checked, ev)}
                                                                 />
                                                             </td>
@@ -2634,12 +2735,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                style={{border: "0", width: "100%"}}>
                                                                             <thead>
                                                                             <tr>
-                                                                                <th>{i18n.t("PhonebookName")}</th>
-                                                                                <th>{i18n.t("Shared")}</th>
-                                                                                <th>{i18n.t("DisplayName")}</th>
-                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Call")}</th>
-                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Info")}</th>
-                                                                                <th style={{textAlign: "center",width:10}}>{i18n.t("Delete")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("PhonebookName")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Shared")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("DisplayName")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize,textAlign: "center",width:10}}>{i18n.t("Call")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize,textAlign: "center",width:10}}>{i18n.t("Info")}</th>
+                                                                                <th style={{fontSize:tableHeaderFontSize,textAlign: "center",width:10}}>{i18n.t("Delete")}</th>
                                                                             </tr>
                                                                             </thead>
                                                                             <tbody>
@@ -2666,10 +2767,10 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 return (
                                                                                     <tr key={i}
                                                                                         style={{height: "42px"}}>
-                                                                                        <td>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
-                                                                                        <td style={{textAlign: "center"}}>{sShared}</td>
-                                                                                        <td>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
-                                                                                        <td style={{width:10}}>
+                                                                                        <td style={{fontSize:tableBodyFontSize}}>{autoDialViewzPhoneBookContact.getPhonebookName()}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sShared}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize}}>{autoDialViewzPhoneBookContact.getDisplayName()}</td>
+                                                                                        <td style={{fontSize:tableBodyFontSize,width:10}}>
                                                                                             <div style={{
                                                                                                 display: "flex",
                                                                                                 alignItems: "center",
@@ -2682,6 +2783,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                         onClick={(e) => this._callOrOpenPhonebookCallInfozTelsView(e, autoDialViewzPhoneBookContact)}
                                                                                                     >
                                                                                                         <FontAwesomeIcon
+                                                                                                            style={{width:buttonSize,height:buttonSize}}
                                                                                                             size="lg"
                                                                                                             icon="fas fa-phone"/>
                                                                                                     </button>
@@ -2693,6 +2795,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                         onClick={(e) => this._callPhonebookCallInfozTel(e, telInfoArray[0])}
                                                                                                     >
                                                                                                         <FontAwesomeIcon
+                                                                                                            style={{width:buttonSize,height:buttonSize}}
                                                                                                             size="lg"
                                                                                                             icon="fas fa-phone"/>
                                                                                                     </button>
@@ -2700,13 +2803,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 {telInfoArray && telInfoArray.length > 1 && (
                                                                                                     <a onClick={(e) => this._openPhonebookCallInfozTelsView(latestPbContactInfo)}>
                                                                                                         <FontAwesomeIcon
+                                                                                                            style={{width:iconSize,height:iconSize}}
                                                                                                             size="lg"
                                                                                                             icon="fas fa-phone"/>
                                                                                                     </a>
                                                                                                 )}
                                                                                             </div>
                                                                                         </td>
-                                                                                        <td style={{width:10}}>
+                                                                                        <td style={{fontSize:tableBodyFontSize,width:10}}>
                                                                                             <div style={{
                                                                                                 display: "flex",
                                                                                                 alignItems: "center",
@@ -2714,12 +2818,13 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                             }}>
                                                                                                 <a onClick={(e) => this._openPhonebookCallInfozInfoView2(autoDialViewzPhoneBookContact)}>
                                                                                                     {<FontAwesomeIcon
+                                                                                                        style={{width:iconSize,height:iconSize}}
                                                                                                         size="lg"
                                                                                                         icon="fas fa-info-circle"/>}
                                                                                                 </a>
                                                                                             </div>
                                                                                         </td>
-                                                                                        <td style={{width:10}}>
+                                                                                        <td style={{fontSize:tableBodyFontSize,width:10}}>
                                                                                             {isDeletable && (
                                                                                                 <div style={{
                                                                                                     display: "flex",
@@ -2735,6 +2840,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                         <a>
                                                                                                             {
                                                                                                                 <FontAwesomeIcon
+                                                                                                                    style={{width:iconSize,height:iconSize}}
                                                                                                                     size="lg"
                                                                                                                     icon="fa fa-trash"/>}
                                                                                                         </a>

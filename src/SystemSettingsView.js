@@ -15,6 +15,8 @@ import Empty from "antd/lib/empty";
 import Spin from "antd/lib/spin";
 import BrekekeOperatorConsole from "./index";
 import RingtoneAudioPlayers from "./RingtoneAudioPlayers";
+import RuntimeUccacUcClients from "./runtime/RuntimeUccacUcClients";
+import RuntimeHiddenUccacUcClient from "./runtime/RuntimeHiddenUccacUcClient";
 //import ShortDialSettings from "./ShortDialSettings";
 
 export const OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID = 'operatorConsole_systemSettings';
@@ -153,6 +155,16 @@ export default class SystemSettingsView extends React.Component {
     _onSetSystemSettingsDataSuccess( systemSettings ){
         this.operatorConsoleAsParent.onSavingSystemSettings(this, systemSettings);
         this._syncUp();
+
+        RuntimeHiddenUccacUcClient.getRuntimeHiddenUccacUcClientStaticInstance().onSetSystemSettingsDataSuccessBySystemSettingsView(this);
+
+        // const ucClients = RuntimeUccacUcClients.getRuntimeUccacUcClientsStaticInstance();
+        // const ucCt = ucClients.getLegacyUccacRuntimeWidgetCount();
+        // for( let i = 0; i < ucCt; i++ ){
+        //     const ucClient = ucClients.getLegacyUccacRuntimeWidgetAt(i);
+        //     ucClient.onSetSystemSettingsDataSuccessBySystemSettingsView( this );
+        // }
+
         this._onEndSetSystemSettings();
     }
 

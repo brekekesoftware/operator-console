@@ -8,12 +8,15 @@ import QuickBusy_ver2 from "./QuickBusy_ver2";
 import {Modal} from "antd";
 import i18n from "../i18n";
 import BrekekeOperatorConsole from "../index";
+import RuntimeUccacUcClients from "./RuntimeUccacUcClients";
+import RuntimeHiddenUccacUcClient from "./RuntimeHiddenUccacUcClient";
 
 export default class RuntimeScreenView_ver2 extends React.Component{
 
   constructor( props ) {
     super( props );
     this._OperatorConsoleAsParent = props["operatorConsoleAsParent"];
+	this._RuntimeUccacUcClients = new RuntimeUccacUcClients(this);
     this.state = {showSelectCallingMethodModal:false};
   }
 
@@ -111,6 +114,9 @@ export default class RuntimeScreenView_ver2 extends React.Component{
     }
   }
 
+	componentWillUnmount(){
+		this._RuntimeUccacUcClients.clearRuntimeUccacUcClients();
+	}
 
   render() {
     this._OperatorConsoleAsParent.setCurrentRuntimeScreenView_Ver2(this); //!bad. This is a render method.
@@ -151,6 +157,8 @@ export default class RuntimeScreenView_ver2 extends React.Component{
 	}
 	
     return (
+        <>
+        <RuntimeHiddenUccacUcClient runtimeScreenView_ver2AsParent={this}  />
         <div style={{height: "100%"}}>
 			<div className="header_RuntimeScreenView_ver2">
 				<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
@@ -206,6 +214,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
             </div>
           </div>
         </div>
+        </>
     )
   }
 

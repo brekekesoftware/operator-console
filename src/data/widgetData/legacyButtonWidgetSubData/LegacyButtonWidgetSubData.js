@@ -158,12 +158,12 @@ export default class LegacyButtonWidgetSubData{
         return -1;
     }
 
-    exportLegacyButtonWidgetSubDataToWidgetSettingsTemplate( wst ){
-        this._exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain(wst);
+    exportLegacyButtonWidgetSubDataToWidgetSettingsTemplate( wst, editorWidgetSettings ){
+        this._exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain(wst, editorWidgetSettings );
     }
 
     //!abstract
-    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst ){
+    _exportLegacyButtonWidgetSubDataToWidgetSettingsTemplateMain( wst, editorWidgetSettings  ){
         throw new Error("Not implemented.");
     }
 

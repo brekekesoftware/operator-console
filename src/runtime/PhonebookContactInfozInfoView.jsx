@@ -12,6 +12,8 @@ import PhonebookContactInfo_AutoDialView_ver2 from "./PhonebookContactInfo_AutoD
 import PhonebookContactInfozInfo_AutoDialView_ver2 from "./PhonebookContactInfozInfo_AutoDialView_ver2";
 import AutoDialView_ver2 from "./AutoDialView_ver2";
 import AutoComplete from "antd/lib/auto-complete";
+import RuntimeUcUserStatuses from "./RuntimeUcUserStatuses";
+import RuntimeUccacUcClients from "./RuntimeUccacUcClients";
 
 class PbContactInfozCustomItem{
     constructor( options ) {
@@ -647,6 +649,27 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             customItemOptions.push( option  );
         }
 
+        const systemSettingsData = oc.getSystemSettingsData();
+
+        const ucClients = RuntimeUccacUcClients.getRuntimeUccacUcClientsStaticInstance();
+        const ucClientCount = ucClients.getRuntimeUccacUcClientCount();
+        let isUsingUc = false;
+        for( let i = 0; i < ucClientCount; i++ ){
+            const ucClient = ucClients.getRuntimeUccacUcClientAt(i);
+            const uccacAc = ucClient.getUccacAc();
+            isUsingUc = !!uccacAc;
+            if( isUsingUc ){
+                break;
+            }
+        }
+
+        const lampSize = systemSettingsData.getAutoDialLampSize();
+        const iconSize = systemSettingsData.getAutoDialIconSize();
+        const buttonSize = systemSettingsData.getAutoDialButtonSize();
+        const inputFieldFontSize = systemSettingsData.getAutoDialInputFieldFontSize();
+        const otherFontSize = systemSettingsData.getAutoDialOtherFontSize();
+        const headerFontSize = systemSettingsData.getAutoDialTableHeaderFontSize();
+        const bodyFontSize = systemSettingsData.getAutoDialTableBodyFontSize();
         return (<>
             <div className="brOCReset phonebookContactInfozInfoView ">
                 <table className={"defaultBorderWithRadius outsidePaddingWithoutBorderRadius"}>
@@ -673,21 +696,21 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                     <thead>
                                     <tr>
                                         <th colSpan="2" className="displayNameTitleTh" style={{textTransform: "unset",height:"19px"}}>
-                                            {this.state.pbContactInfo.getDisplayName()}
+                                            <span style={{fontSize:otherFontSize}}>{this.state.pbContactInfo.getDisplayName()}</span>
                                         </th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <th>
-                                            <label htmlFor="phonebookName_PhonebookContactInfozInfoView">{i18n.t("Phonebook")}</label>
+                                            <label htmlFor="phonebookName_PhonebookContactInfozInfoView" style={{fontSize:headerFontSize}}>{i18n.t("Phonebook")}</label>
                                         </th>
                                         <td>
                                             { !this._isAddContact() && (
                                                 <Input
                                                     id="phonebookName_PhonebookContactInfozInfoView"
                                                     defaultValue={ this.state.pbContactInfo.getPhonebookName()}
-                                                    style={{width: "300px",cursor:"not-allowed"}} disabled={true}
+                                                    style={{width: "300px",cursor:"not-allowed",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} disabled={true}
                                                 />
                                             )}
                                             {
@@ -696,7 +719,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                                maxLength={100}
                                                                onFocus={(e) => this._onInputFocus()}
                                                                onBlur={(e) => this._onInputBlur()}
-                                                               style={{width:"300px"}}
+                                                               style={{width:"300px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}}
                                                         />
                                                         <datalist id="phonebookName_datalist_PhonebookContactInfozInfoView">
                                                             {
@@ -713,7 +736,9 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                     </tr>
                                     <tr>
                                         <th>
-                                            <label htmlFor="shared_PhonebookContactInfozInfoView_brOC" style={{cursor:"pointer"}}>
+                                            <label htmlFor="shared_PhonebookContactInfozInfoView_brOC" style={{cursor:"pointer"}}
+                                                   style={{fontSize:headerFontSize}}
+                                            >
                                                 {i18n.t("Shared")}
                                             </label>
                                         </th>
@@ -722,7 +747,9 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                 //defaultChecked={sharedDefaultChecked}
                                                       checked={sharedChecked}
                                                       onClick={(e)=>this._rerenderShared()}
-                                                      disabled={isAdmin !== true }/>
+                                                      disabled={isAdmin !== true }
+                                                    // size="large"    //No effect
+                                            />
                                         </td>
                                     </tr>
                                     {
@@ -753,12 +780,12 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
                                                 return (
                                                     <tr key={i}>
-                                                        <th>{title}</th>
+                                                        <th><span style={{fontSize:headerFontSize}}>{title}</span></th>
                                                         <td>
                                                             <Input data-br-isinfoparam="true"
                                                                    data-br-name={"PhonebookContactInfozInfoView_infoItem_" + item.id  }
                                                                    defaultValue={val}
-                                                                   style={{width: "300px"}} disabled={!isSaveable}
+                                                                   style={{width: "300px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} disabled={!isSaveable}
                                                                    maxLength="1000"
                                                                    onFocus={(e) => this._onInputFocus()}
                                                                    onBlur={(e) => this._onInputBlur()}
@@ -771,18 +798,28 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                     }
                                     <tr>
                                         <th style={{verticalAlign: "middle"}}>
-                                            {i18n.t("Tels")}
+                                            <span style={{fontSize:headerFontSize}}>{i18n.t("Tels")}</span>
                                         </th>
                                         <td>
                                             <table className="defaultContentTable PhonebookContactInfozInfoTelsTable">
                                                 <thead>
                                                 <tr>
-                                                    <th className="defaultItemPaddingTopImportant">{i18n.t("Type")}</th>
-                                                    <th className="defaultItemPaddingTopImportant">{i18n.t("Tel")}</th>
+                                                    <th
+                                                        className="defaultItemPaddingTopImportant"><span style={{fontSize:headerFontSize}}>{i18n.t("Type")}</span></th>
+                                                    <th
+                                                        className="defaultItemPaddingTopImportant"><span style={{fontSize:headerFontSize}}>{i18n.t("Tel")}</span></th>
                                                     <th className="defaultItemPaddingTopImportant"
-                                                        style={{textAlign: "center"}}>{i18n.t("Status")}</th>
+                                                        style={{
+                                                            textAlign: "center"
+                                                        }}><span style={{fontSize:headerFontSize}}>{i18n.t("Status")}</span></th>
+                                                    { isUsingUc && <th className="defaultItemPaddingTopImportant"
+                                                        style={{
+                                                            textAlign: "center"
+                                                        }}><span style={{fontSize:headerFontSize}}>{i18n.t("UcStatus")}</span></th> }
                                                     <th className="defaultItemPaddingTopImportant"
-                                                        style={{textAlign: "center"}}>{i18n.t("Call")}</th>
+                                                        style={{
+                                                            textAlign: "center"
+                                                        }}><span style={{fontSize: headerFontSize}}>{i18n.t("Call")}</span></th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
@@ -806,15 +843,33 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
                                                     const isExtension = OCUtil.indexOfArrayFromExtensions(extensions, tel) !== -1;
                                                     const statusClassName = isExtension ? OCUtil.getExtensionStatusClassName(tel, extensionsStatus) : "";
+
+                                                    let ucUserStatusJsx;
+                                                    if( isUsingUc ){
+                                                        if( isExtension ){
+                                                            const ucUserStatus = RuntimeUcUserStatuses.getRuntimeUcUserStatusesStaticInstance().getUcUserStatus( tel );
+                                                            if( ucUserStatus || ucUserStatus === 0 ){
+                                                                const ucUserStatusClassName = AutoDialView_ver2._getUcUserStatusClassName( tel, ucUserStatus );
+                                                                ucUserStatusJsx = <div style={{width:lampSize,height:lampSize}} className={ucUserStatusClassName}></div>;
+                                                            }
+                                                            else{
+                                                                ucUserStatusJsx = <></>;
+                                                            }
+                                                        }
+                                                        else{
+                                                            ucUserStatusJsx = <></>;
+                                                        }
+                                                    }
+
                                                     return (
                                                         <tr key={i}>
-                                                            <td>{telTitle}</td>
+                                                            <td><span style={{fontSize:bodyFontSize}}>{telTitle}</span></td>
                                                             <td>
                                                                 <Input
                                                                     data-br-isinfoparam="true"
                                                                     data-br-name={"PhonebookContactInfozInfoView_infoItem_" + telKeyName}
                                                                     defaultValue={tel}
-                                                                    style={{width: "160px"}} disabled={!isSaveable}
+                                                                    style={{width: "160px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} disabled={!isSaveable}
                                                                     maxLength="1000"
                                                                     onFocus={(e) => this._onInputFocus()}
                                                                     onBlur={(e) => this._onInputBlur()}
@@ -826,9 +881,14 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                                     alignItems: "center",
                                                                     justifyContent: "center"
                                                                 }}>
-                                                                    <div className={statusClassName}></div>
+                                                                    <div style={{width:lampSize,height:lampSize}} className={statusClassName}></div>
                                                                 </div>
                                                             </td>
+                                                            { isUsingUc && (
+                                                                <td style={{textAlign: "center",width:10}}>
+                                                                    {ucUserStatusJsx}
+                                                                </td>
+                                                            )}
                                                             <td>
                                                                 {tel.length !== 0 && (<div style={{
                                                                     display: "flex",
@@ -840,7 +900,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                                         className="kbc-button kbc-button-fill-parent legacyButtonPadding"
                                                                         onClick={(e) => this._makeCall(e, tel)}
                                                                     >
-                                                                        <FontAwesomeIcon size="lg" icon="fas fa-phone"/>
+                                                                        <FontAwesomeIcon style={{width:buttonSize,height:buttonSize}} size="lg" icon="fas fa-phone"/>
                                                                     </button>
                                                                 </div>)}
                                                             </td>
@@ -904,7 +964,12 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                         <AutoComplete defaultValue={customItemName} value={customItemName}
                                                                       options={customItemOptions}
                                                                       id={"brOC_PhonebookContactInfozInfoView_customItemName_" + i}
-                                                                      style={{width: "200px"}} maxLength={1000}
+                                                                      style={{
+                                                                          width: "200px",
+                                                                          height:systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                          fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                          verticalAlign:"middle"
+                                                                        }} maxLength={1000}
                                                                       disabled={!isSaveable}
                                                                       onChange={(val) => this._onChangeCustomItemInputName(customItem, val)}
                                                                       onFocus={() => this._onCustomItemNameInputFocus(customItem)}
@@ -912,26 +977,36 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                                         />
                                                     </th>
                                                     <td>
-                                                        <Input
-                                                            data-br-name={"PhonebookContactInfozInfoView_customItemValue_" + i}
-                                                            defaultValue={customItemValue}
-                                                            value={customItemValue}
-                                                            style={{width: "300px"}} disabled={!isSaveable}
-                                                            maxLength="1000"
-                                                            onChange={(e) => this._onChangeCustomItemInputValue(customItem, e)}
-                                                            onFocus={(e) => this._onCustomItemValueInputFocus(customItem, e)}
-                                                            onBlur={(e) => this._onCustomItemValueInputBlur(customItem, e)}
-                                                        />
-                                                        <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteCustomItemRow(i) }
-                                                                    okText={i18n.t("yes")}
-                                                                    cancelText={i18n.t("no")}
-                                                        >
-                                                        <a style={{marginLeft: "10px"}}>
-                                                            {<FontAwesomeIcon
-                                                                size="lg"
-                                                                icon="fa fa-trash"/>}
-                                                        </a>
-                                                        </Popconfirm>
+                                                        <table style={{verticalAlign:"middle"}}>
+                                                            <tbody>
+                                                            <tr>
+                                                            <td>
+                                                                <Input
+                                                                    data-br-name={"PhonebookContactInfozInfoView_customItemValue_" + i}
+                                                                    defaultValue={customItemValue}
+                                                                    value={customItemValue}
+                                                                    style={{verticalAlign:"middle",width: "300px",height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize()}} disabled={!isSaveable}
+                                                                    maxLength="1000"
+                                                                    onChange={(e) => this._onChangeCustomItemInputValue(customItem, e)}
+                                                                    onFocus={(e) => this._onCustomItemValueInputFocus(customItem, e)}
+                                                                    onBlur={(e) => this._onCustomItemValueInputBlur(customItem, e)}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteCustomItemRow(i) }
+                                                                            okText={i18n.t("yes")}
+                                                                            cancelText={i18n.t("no")}
+                                                                >
+                                                                <a style={{marginLeft: "10px"}}>
+                                                                    {<FontAwesomeIcon
+                                                                        style={{width:iconSize,height:iconSize,verticalAlign:"middle"}}
+                                                                        size="lg"
+                                                                        icon="fa fa-trash"/>}
+                                                                </a>
+                                                                </Popconfirm>
+                                                            </td>
+                                                            </tr></tbody>
+                                                        </table>
                                                     </td>
                                                 </tr>
                                             );
@@ -942,10 +1017,10 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                                             className="unsetBackgroundColor_important_PhonebookContactInfozInfoView"
                                             style={{paddingTop: "4px", paddingRight: "4px"}}>
                                         { isSaveable && <span onClick={(e) => this._addItem()}
-                                                                  style={{textDecoration: "underline", cursor: "pointer"}}>
+                                                                  style={{fontSize:otherFontSize,textDecoration: "underline", cursor: "pointer"}}>
                                                 &gt;&gt;{i18n.t("Add_item")}
                                             </span> }
-                                            { !isSaveable && <span className="defaultDisabledTextColor" style={{textDecoration:"underline", cursor:"not-allowed"}}>
+                                            { !isSaveable && <span className="defaultDisabledTextColor" style={{fontSize:otherFontSize,textDecoration:"underline", cursor:"not-allowed"}}>
                                                 &gt;&gt;{i18n.t("Add_item")}
                                             </span> }
                                         </td>

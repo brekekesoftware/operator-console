@@ -83,6 +83,66 @@ export default class CallPanelEditorWidgetSettings extends EditorWidgetSettings 
         widgetData.setOutsideShadow_color(color);
         this._EditScreenViewAsParent.setState({rerender:true});
     }
+	
+	_onChangeCallIconWidth( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallIconWidth(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+	
+	_onChangeCallIconHeight( n ){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallIconHeight(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCallerNameSize(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallerNameSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+	
+	_onChangeCallerNumberSizeWithCallerName(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallerNumberSizeWithCallerName(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+	}
+
+    _onChangeCallerNumberSizeWithoutCallerName(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallerNumberSizeWithoutCallerName(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeCallDurationSize(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setCallDurationSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeKeyboardIconWidth(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setKeyboardIconWidth(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeKeyboardIconHeight(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setKeyboardIconHeight(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeInputTextSize(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setInputTextSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
+
+    _onChangeMissedCallSize(n){
+        const widgetData = this._getWidgetData();
+        widgetData.setMissedCallSize(n);
+        this._EditScreenViewAsParent.setState({rerender:true});
+    }
 
     //!override
     _getRenderMainJsx(){
@@ -130,6 +190,36 @@ export default class CallPanelEditorWidgetSettings extends EditorWidgetSettings 
                 <p>{i18n.t("color")}</p>
                 <Colorpicker format="rgb" value={widgetData.getOutsideShadow_color()}
                              onChange={(color) => this._onChangeOutsideShadow_color(color)}/>
+                <p>{i18n.t("CallIconWidth")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallIconWidth()}
+                             onChange={(n) => this._onChangeCallIconWidth(n)}/>
+                <p>{i18n.t("CallIconHeight")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallIconHeight()}
+                             onChange={(n) => this._onChangeCallIconHeight(n)}/>
+                <p>{i18n.t("CallerNameSize")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallerNameSize()}
+                             onChange={(n) => this._onChangeCallerNameSize(n)}/>
+                <p>{i18n.t("CallerNumberSizeWithCallerName")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallerNumberSizeWithCallerName()}
+                             onChange={(n) => this._onChangeCallerNumberSizeWithCallerName(n)}/>
+                <p>{i18n.t("CallerNumberSizeWithoutCallerName")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallerNumberSizeWithoutCallerName()}
+                             onChange={(n) => this._onChangeCallerNumberSizeWithoutCallerName(n)}/>
+                <p>{i18n.t("CallDurationSize")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getCallDurationSize()}
+                             onChange={(n) => this._onChangeCallDurationSize(n)}/>
+                <p>{i18n.t("KeyboardIconWidth")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getKeyboardIconWidth()}
+                             onChange={(n) => this._onChangeKeyboardIconWidth(n)}/>
+                <p>{i18n.t("KeyboardIconHeight")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getKeyboardIconHeight()}
+                             onChange={(n) => this._onChangeKeyboardIconHeight(n)}/>
+                <p>{i18n.t("InputNumberOrTextSize")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getInputTextSize()}
+                             onChange={(n) => this._onChangeInputTextSize(n)}/>
+                <p>{i18n.t("MissedCallSize")}</p>
+                <InputNumber step={1} min={0} value={widgetData.getMissedCallSize()}
+                             onChange={(n) => this._onChangeMissedCallSize(n)}/>
             </>
         );
         return jsx;

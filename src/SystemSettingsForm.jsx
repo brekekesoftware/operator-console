@@ -82,7 +82,37 @@ const SystemSettingsForm = ( props ) => {
             <Form.Item label={i18n.t("extensionScript")} name="extensionScript">
                 <TextArea rows={30} maxLength={1000000} style={{minHeight: 600, minWidth: 800, marginRight: 30}}/>
             </Form.Item>
-        </section>
+            <Form.Item name="autoDialTableHeaderFontSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialTableBodyFontSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialSwitchSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialLampSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialIconSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialButtonSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialInputFieldHeight" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialInputFieldFontSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialTabFontSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            <Form.Item name="autoDialOtherFontSize" noStyle hidden >
+                <input type="hidden" />
+            </Form.Item>
+            </section>
     </Form>
 };
 

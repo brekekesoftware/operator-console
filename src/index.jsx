@@ -79,7 +79,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.42";
+const VERSION = "2.1.43";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -2922,8 +2922,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     onSelectOCNoteByShortnameFromNoScreensView( noScreensViewAsCaller ){
         //this.reloadSystemSettingsExtensionScript();
-        this.setState( { _downedLayoutAndSystemSettings:true, displayState : brOcDisplayStates.showScreen_ver2 } );
-
+        this.setState( { _downedLayoutAndSystemSettings:true, displayState : brOcDisplayStates.showScreen_ver2 }, () =>{
+        } );
     }
 
     onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData  ){
@@ -3720,13 +3720,14 @@ export default class BrekekeOperatorConsole extends React.Component {
             const srcScreenData_ver2 = this.state.screenData_ver2;
             const dstScreenData_ver2 = srcScreenData_ver2.cloneScreenData();
             this._editingScreenData_ver2 = dstScreenData_ver2;
+            const cloneSystemSettingsData = this._cloneSystemSettingsData();
 
             const configProviderLocale = this._getAntdConfigProviderLocale();
             return (
                     <ConfigProvider locale={ configProviderLocale}>
                         <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
                             <EditScreenView
-                                operatorConsoleAsParent={this} screenData={this._editingScreenData_ver2}
+                                operatorConsoleAsParent={this} screenData={this._editingScreenData_ver2} cloneSystemSettingsData={cloneSystemSettingsData}
                             />
                         </Suspense>
                     </ConfigProvider>);
@@ -3745,7 +3746,9 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const configProviderLocale = this._getAntdConfigProviderLocale();
         return (<>
-            {!!this.state.isInitialized ? (
+				{/*<HiddenUccacUcclient operatorConsoleAsParent={this} />*/}
+            {
+				!!this.state.isInitialized ? (
                 this.state._downedLayoutAndSystemSettings ? (
                             this.state.displayState === brOcDisplayStates.editingScreen ? ( //editMode
                                 <div style={{height: "100%"}}>
@@ -4079,7 +4082,7 @@ export default class BrekekeOperatorConsole extends React.Component {
        });
     }
 
-    saveEditingScreen_ver2 = ( ) => {
+    saveEditingScreen_ver2 = (cloneSystemSettingsData ) => {
         for (let i = 0; i < this._OnBeginSaveEditingScreenFunctions.length; i++) {
             const cantSaveMessage = this._OnBeginSaveEditingScreenFunctions[i](this);
             if (cantSaveMessage) {
@@ -4096,7 +4099,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                     this.setDisplayState(brOcDisplayStates.showScreen_ver2, {}, () => {
                         }
                     );
-                });
+                }, cloneSystemSettingsData);
             });
     }
 
@@ -4104,9 +4107,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.screenData_ver2;
     }
 
-    _syncUp = async ( onSuccessFunction ) => {
+    _syncUp = async ( onSuccessFunction, cloneSystemSettingsData = null ) => {
         //if (!pal) return;
-        const systemSettingsData = this.getSystemSettingsData();
+        let  systemSettingsData;
+        if( cloneSystemSettingsData ) {
+            systemSettingsData = cloneSystemSettingsData;
+        }
+        else {
+            systemSettingsData = this.getSystemSettingsData();
+        }
+
         const systemSettingsDataData = systemSettingsData.getData();
 
         const oScreen_ver2 = this.state.screenData_ver2.getDataAsObject();
@@ -4134,6 +4144,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             onSuccessFunction : ( res ) =>{
                 Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
                 //this.setLastSystemSettingsDataData( systemSettingsDataData );
+                if( cloneSystemSettingsData ) {
+                    const systemSettingsData = this.getSystemSettingsData();
+                    systemSettingsData.setCloneDatas( cloneSystemSettingsData );
+                }
                 if( onSuccessFunction ){
                     onSuccessFunction();
                 }
@@ -4181,6 +4195,11 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     abortSystemSettings = () => {
         this.setDisplayState(brOcDisplayStates.showScreen_ver2);
+    }
+
+    _cloneSystemSettingsData(){
+        const data = new SystemSettingsData( this, this.getSystemSettingsData() );
+        return data;
     }
 
     setCurrentScreenIndex = (index) => {
@@ -5817,7 +5836,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                     // else{
                     //     screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
                     // }
-                    this_.setOCNote( layoutShortname, oNote, function(){
+                    this_.setOCNote( layoutShortname, oNote, () =>{
                             this_.setState({
                                 _downedLayoutAndSystemSettings: true,
                                 displayState: brOcDisplayStates.showScreen_ver2

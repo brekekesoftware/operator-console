@@ -37,6 +37,11 @@ export default class LegacyButtonEditorSubWidgetSettings{
 
     }
 
+    //!virtual
+    onLoadFromWidgetSettingsTemplateByLegacyButtonEditorWidgetSettings(  legacyButtonEditorWidgetSettingsAsCaller, wst,  _load_button_function = null ){
+
+    }
+
     _onClickSelectIconModalButton( ev, iconValue, iconName, okFunction = null, cancelFunction = null ){
 
         let okFunc = okFunction;

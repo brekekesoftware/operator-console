@@ -53,6 +53,8 @@ export default class EditScreenView extends React.Component {
       selectingEditorWidgetData:null
     };
     this._ScreenData = props["screenData"];
+	this._CloneSystemSettingsData = props["cloneSystemSettingsData"];
+	
     const rootPaneData = this._ScreenData.getScreenPaneDatas().getOrAddRootPaneData();
     this._RootPaneData = rootPaneData;
     //const rootPaneData = this._OperatorConsoleAsParent.getOperatorConsoleData().getScreenData().addPaneData();
@@ -243,12 +245,17 @@ export default class EditScreenView extends React.Component {
     EditorWidget.onSelectingEditorWidgetKeyDownByEditScreenView_static( this, ev, widgetData );
   }
 
+  getCloneSystemSettingsData(){
+    return this._CloneSystemSettingsData;
+  }
+
   _abortEditingScreen(){
-    this._OperatorConsoleAsParent.setDisplayState(brOcDisplayStates.showScreen_ver2);
+    this._OperatorConsoleAsParent.setDisplayState(brOcDisplayStates.showScreen_ver2, undefined, () =>{
+	});
   }
 
   _saveEditingScreen(){
-    this._OperatorConsoleAsParent.saveEditingScreen_ver2();
+    this._OperatorConsoleAsParent.saveEditingScreen_ver2(this._CloneSystemSettingsData);
   }
 
   onMouseDownEditorPaneInSettingsMode( ev ){

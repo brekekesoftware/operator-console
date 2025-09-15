@@ -7,6 +7,7 @@ class UccacAc{
         this._UccacAcNo = uccacAcNo;
         this._onAcErrorOccurredFunctionForUser = null;
         this._confirmMessageWhenClosingWebchat = null;
+        this._isStartUCClient = false;
     }
 	
 	getAgentComponent(){
@@ -215,7 +216,8 @@ class UccacAc{
             url: url,
             tenant:options["ucclientTenant"],
             user:options["ucclientUser"],
-            pass:options["ucclientPass"]
+            pass:options["ucclientPass"],
+            status:options["ucclientStatus"]
         };
         const ucclientOptions = {
             offline: ucclientOffline,
@@ -223,10 +225,20 @@ class UccacAc{
             signInOption : ucclientSIgnInOption
         };
         this._AgentComponent.startUCClient( ucclientOptions );
+        this._isStartUCClient = true;
     }
 
     stopUCClient(){
+        if( this._isStartUCClient !== true ) {
+            return false;
+        }
         this._AgentComponent.stopUCClient();
+        this._isStartUCClient = false;
+        return true;
+    }
+
+    getIsStartUCClient() {
+        return this._isStartUCClient;
     }
 
     deinit(){

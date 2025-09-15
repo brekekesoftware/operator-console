@@ -1,149 +1,74 @@
-import React, {createRef} from 'react';
+import React from 'react';
 import RuntimeWidget from "./RuntimeWidget";
-import LegacyButtonRuntimeSubWidgetFactory from "./legacyButtonRuntimeSubWidget/LegacyButtonRuntimeSubWidgetFactory";
-import i18n from "../../../i18n";
 import BrekekeOperatorConsole from "../../../index";
+import RuntimeUccacUcClients from "../../RuntimeUccacUcClients";
+import RuntimeHiddenUccacUcclient from "../../RuntimeHiddenUccacUcClient";
+import i18n from "../../../i18n";
 import Util from "../../../Util";
-import AutoDialView_ver2 from "../../AutoDialView_ver2";
-
+const LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY = new Array();
 export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
 
     constructor( props ) {
         super( props );
         const oc = BrekekeOperatorConsole.getStaticInstance();
         this._UccacWrapper = oc.getUccacWrapper();
-
-        this.state = {isRestartButtonDisabled:false};
-        this._uccacAc = null;
-
-        this._uccacRootElementRef = createRef();
-        const this_ = this;
-        this._onUccacInitSuccessFunction = function (uccacWrapperAsCaller) {
-            this_._onInitUccacWrapperSuccessByUccacWrapper(uccacWrapperAsCaller);
-        };
-        this._UccacWrapper.addOnUccacInitSuccessFunction(this._onUccacInitSuccessFunction);
-
-        this._onUccacBeforeDeinitFunction = function (uccacWrapperAsCaller) {
-            this_._onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller);
-        };
-        this._UccacWrapper.addOnUccacBeforeDeinitFunction(this._onUccacBeforeDeinitFunction);
-
+        this._runtimeUccacUcClient = undefined;
+        LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY.push( this );
     }
-	
-	getUccacAc(){
-		return this._uccacAc;
-	}
 
-    _refreshUccacAc(){
-        if( this._UccacWrapper.isInitialized() === true ){
-            this._initUccacAc();
+    static getLegacyUccacRuntimeWidgetCount(){
+        return LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY.length;
+    }
+
+    static getLegacyUccacRuntimeWidgetAt( index ){
+        return LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY[index];
+    }
+
+    //On open layout(DropDownMenu)
+    onSetOCNoteByOpenLayoutModalForDropDownMenu( openLayoutModalForDropDownMenuAsCaller ){
+        const bEnable = BrekekeOperatorConsole.getStaticInstance().getSystemSettingsData().getUcChatAgentComponentEnabled();
+        if( bEnable ) {
+            this._runtimeUccacUcClient.initRuntimeUccacUcClientzUccacAc();
         }
-        else{
-            this._destroyUccacAc();
-        }
+
     }
 
     componentDidMount(){
         super.componentDidMount();
-        this._refreshUccacAc();
+        const bEnable = BrekekeOperatorConsole.getStaticInstance().getSystemSettingsData().getUcChatAgentComponentEnabled();
+        if( bEnable ) {
+            const ucclient = RuntimeUccacUcClients.getRuntimeUccacUcClientsStaticInstance().useRuntimeUccacUcClientWithoutInit(this);
+            this._runtimeUccacUcClient = ucclient;
+            this.setState({rerender: true}, () => {
+                ucclient.onComponentDidMountByLegacyUccacRuntimeWidget(this);
+            });
+        }
+        RuntimeHiddenUccacUcclient.getRuntimeHiddenUccacUcClientStaticInstance().onComponentDidMountByLegacyUccacRuntimeWidget(this);
+        //this._refreshUccacAc();
     }
 
     componentWillUnmount() {
-        this._destroyUccacAc();
-        this._UccacWrapper.removeOnUccacInitSuccessFunction( this._onUccacInitSuccessFunction );
-        this._UccacWrapper.removeOnUccacBeforeDeinitFunction( this._onUccacBeforeDeinitFunction );
+        if( this._runtimeUccacUcClient ) {
+            this._runtimeUccacUcClient.unuseRuntimeUccacUcClient();
+        }
+        //this._destroyUccacAc();
+        //this._UccacWrapper.removeOnUccacInitSuccessFunction( this._onUccacInitSuccessFunction );
+        //this._UccacWrapper.removeOnUccacBeforeDeinitFunction( this._onUccacBeforeDeinitFunction );
+        RuntimeHiddenUccacUcclient.getRuntimeHiddenUccacUcClientStaticInstance().onComponentWillUnmountByLegacyUccacRuntimeWidget(this);
+
+        const index = LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY.findIndex( (itm) => itm === this );
+        LEGACY_UCCAC_RUNTIME_WIDGET_ARRAY.splice(index,1);
+
+
         super.componentWillUnmount();
     }
-
-    _onInitUccacWrapperSuccessByUccacWrapper(  uccacWrapperAsCaller  ){
-        this._initUccacAc();
-    }
-
-    _onBeforeDeinitUccacWrapperByUccacWrapper(uccacWrapperAsCaller  ){
-        this._destroyUccacAc();
-    }
-
-    _destroyUccacAc(){
-        if( !this._uccacAc ) {
-            return false;
-        }
-        AutoDialView_ver2.getStaticInstance().onBeforeDestroyUccacAc(this);
-        this._uccacAc.destroy();
-        this._uccacAc = null;
-        return true;
-    }
-
-    _initUccacAc(){
-
-        if( this._uccacAc ){
-			AutoDialView_ver2.getStaticInstance().onBeforeDestroyUccacAc(this);
-            this._uccacAc.destroy();
-            this._uccacAc = null;
-        }
-
-        const eUccacRoot = this._uccacRootElementRef.current;
-        const eWebchatqueue = eUccacRoot.querySelector('span[name="webchatqueue"]');
-        const eWebchatpickup = eUccacRoot.querySelector('span[name="webchatpickup"]');
-        const eSearch  = eUccacRoot.querySelector('span[name="search"]');
-        const eUcclientPanelRoot  = eUccacRoot.querySelector('div[name="ucclientPanelRoot"]');
-
-        this._uccacAc = this._UccacWrapper.addUccacAc();
-        const initUccacAcOptions ={
-            acIconParentsWebchatqueue : eWebchatqueue,
-            acIconParentsWebchatpickup : eWebchatpickup,
-            acIconParentsSearch : eSearch
-        };
-        this._uccacAc.init( initUccacAcOptions  );
-
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        const startUCClientOptions = {
-            ucclientWidgetParent : eUcclientPanelRoot,
-            ucclientUcurl: this._UccacWrapper.getUcurl(),
-            ucclientTenant: oc.getLoginTenantname(),
-            ucclientUser:oc.getLoginUsername(),
-            ucclientPass:oc.getLoginPassword()
-        }
-        this.setState({isRestartButtonDisabled:true}, ()=> {
-            this._uccacAc.startUCClient(startUCClientOptions);
-            setTimeout( ()=>{ this.setState({isRestartButtonDisabled:false})},8000);
-			AutoDialView_ver2.getStaticInstance().onStartUCClient( this );
-        });
-    }
-
-    _onClickRestart(){
-
-        const bConfirm = confirm( i18n.t("confirmRestartUccac") );
-        if( !bConfirm ){
-            return;
-        }
-
-        this.setState({isRestartButtonDisabled:true}, ()=>
-        {
-			AutoDialView_ver2.getStaticInstance().onBeforeStopUCClient( this );
-            this._uccacAc.stopUCClient();
-            const eUccacRoot = this._uccacRootElementRef.current;
-            const eUcclientPanelRoot = eUccacRoot.querySelector('div[name="ucclientPanelRoot"]');
-            const oc = BrekekeOperatorConsole.getStaticInstance();
-            const startUCClientOptions = {
-                ucclientWidgetParent: eUcclientPanelRoot,
-                ucclientUcurl: this._UccacWrapper.getUcurl(),
-                ucclientTenant: oc.getLoginTenantname(),
-                ucclientUser: oc.getLoginUsername(),
-                ucclientPass: oc.getLoginPassword()
-            }
-            this._uccacAc.startUCClient(startUCClientOptions);
-            setTimeout( ()=>{ this.setState({isRestartButtonDisabled:false})},8000);
-			AutoDialView_ver2.getStaticInstance().onStartUCClient( this );
-        });
-    }
-
 
     //!overload
     _getRenderMainJsx() {
         const widgetData = this.getWidgetData();
 
-        const uccacwidgetFgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getUccacwidgetFgColor(), "");
-        const uccacwidgetBgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getUccacwidgetBgColor(), "rgba(255,255,255,255)");
+        const fgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getUccacwidgetFgColor(), "");
+        const bgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getUccacwidgetBgColor(), "rgba(255,255,255,255)");
 
         const borderRadius = ( widgetData.getBorderRadius() || widgetData.getBorderRadius() === 0 ) ? widgetData.getBorderRadius() : "";
 
@@ -159,72 +84,61 @@ export default class LegacyUccacRuntimeWidget extends RuntimeWidget{
         const insideShadow_spread = ( widgetData.getInsideShadow_spread() || widgetData.getInsideShadow_spread() === 0 ) ? widgetData.getInsideShadow_spread() : "";
         const insideShadowColorRgb = Util.getRgbaCSSStringFromAntdColor( widgetData.getInsideShadow_color(), "rgba(0,0,0,0)"); // "rgba(48,71,1,1)"  //!default
 
-
         const sBoxshadowOutside = outsideShadowColorRgb && outsideShadow_horizontalOffset && outsideShadow_verticalOffset && outsideShadow_blur && outsideShadow_spread ? outsideShadowColorRgb + " " + outsideShadow_horizontalOffset + "px " + outsideShadow_verticalOffset + "px " + outsideShadow_blur + "px " + outsideShadow_spread + "px" : "";
         const sBoxshadowInside = insideShadowColorRgb && insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset " + insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
         const sBoxShadow = sBoxshadowOutside + (sBoxshadowOutside && sBoxshadowInside ? "," : "") + sBoxshadowInside;
 
-        if( !this._UccacWrapper.isInitialized() ){
+        if( BrekekeOperatorConsole.getStaticInstance().getSystemSettingsData().getUcChatAgentComponentEnabled() !== true ){
             return (<div style={{
                 display:"flex",
                 flexWrap:"wrap",
                 height:"100%",
                 borderRadius: borderRadius,
-                backgroundColor: uccacwidgetBgColor,
+                backgroundColor: bgColor,
                 boxShadow: sBoxShadow,
-                color: uccacwidgetFgColor,
+                color: fgColor,
                 padding:6
             }}>{i18n.t("ucChatAgentComponentIsDisabled")}</div> );
         }
-        else {
-            return (
-                <div style={{
-                    height: "100%",
-                    borderRadius: borderRadius,
-                    backgroundColor: uccacwidgetBgColor,
-                    boxShadow: sBoxShadow,
-                    color: uccacwidgetFgColor
-                }}>
-                    <div ref={this._uccacRootElementRef} style={{ display: "flex",  flexWrap: "wrap",  height:"calc(100% - 30px)"}}>
-                        <div style={{position: "relative", width: "50%", height: "100%"}}>
-                            <span name={"webchatqueue"}></span>
-                            <span name={"webchatpickup"}></span>
-                            <span name={"search"}></span>
-                        </div>
-                        <div name={"ucclientPanelRoot"}
-                             style={{position: "relative", width: "50%", height: "100%"}}>
-                        </div>
-                    </div>
-                    <div style={{height:30,padding:4}}>
-                        <button disabled={this.state.isRestartButtonDisabled} onClick={this._onClickRestart.bind(this)}>{i18n.t("restart")}</button>
-                    </div>
-                </div>
-                // <div className="brOCCallPanel" style={{
-                //     borderRadius: borderRadius,
-                //     backgroundColor: uccacWidgetBgColor,
-                //     boxShadow: sBoxShadow,
-                //     color: uccacWidgetFgColor
-                // }}>
-                //     <div className="brOCCallPanelRow">
-                //         <div className="brOCCallPanelLeft">
-                //             {!!call && (call.incoming ? IconPhoneIncoming : IconPhoneOutgoing)}
-                //         </div>
-                //         <div className="brOCCallPanelMain">
-                //             <div className="brOCCallPanelPartyNumber">{call?.partyNumber}</div>
-                //             <div className="brOCCallPanelDuration">{this.state.duration}</div>
-                //         </div>
-                //     </div>
-                //     <div className="brOCCallPanelRow">
-                //         {!!this.props.dialing && (
-                //             <div className="brOCCallPanelLeft">{IconKeyboard}</div>
-                //         )}
-                //         <div className="brOCCallPanelMain">
-                //             <div className="brOCCallPanelDialing">{this.props.dialing}</div>
-                //         </div>
-                //     </div>
-                // </div>
-            )
+        else  if( this._runtimeUccacUcClient ) {
+            // const widgetData = this.getWidgetData();
+            // const renderArg = {
+            //     fgColor: widgetData.getUccacwidgetFgColor(),
+            //     bgColor: widgetData.getUccacwidgetBgColor(),
+            //     borderRadius: widgetData.getBorderRadius(),
+            //     outsideShadow_horizontalOffset: widgetData.getOutsideShadow_horizontalOffset(),
+            //     outsideShadow_verticalOffset: widgetData.getOutsideShadow_verticalOffset(),
+            //     outsideShadow_blur: widgetData.getOutsideShadow_blur(),
+            //     outsideShadow_spread: widgetData.getOutsideShadow_spread(),
+            //     outsideShadowColor: widgetData.getOutsideShadow_color(),
+            //     insideShadow_horizontalOffset: widgetData.getInsideShadow_horizontalOffset(),
+            //     insideShadow_verticalOffset: widgetData.getInsideShadow_verticalOffset(),
+            //     insideShadow_blur: widgetData.getInsideShadow_blur(),
+            //     insideShadow_spread: widgetData.getInsideShadow_spread(),
+            //     insideShadowColor: widgetData.getInsideShadow_color()
+            // };
+            const renderArg = {
+                borderRadius: borderRadius,
+                backgroundColor: bgColor,
+                boxShadow: sBoxShadow,
+                color: fgColor
+            }
+            const jsx = this._runtimeUccacUcClient.getRenderJsx(renderArg );
+            return jsx;
         }
+        else {
+            return (<div style={{
+                display:"flex",
+                flexWrap:"wrap",
+                height:"100%",
+                borderRadius: borderRadius,
+                backgroundColor: bgColor,
+                boxShadow: sBoxShadow,
+                color: fgColor,
+                padding:6
+            }}>{i18n.t("ucChatAgentComponentHasNotBeenInitialized")}</div> );        
+		}
+
     }
 
 

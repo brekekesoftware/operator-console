@@ -58,6 +58,11 @@ export default class RuntimeHiddenUccacUcClient extends React.Component{
     }
 
     _canEnableUcClient(){
+        const bEnable = BrekekeOperatorConsole.getStaticInstance().getSystemSettingsData().getUcChatAgentComponentEnabled();
+		if( !bEnable ){
+			return false;
+		}
+
         const ucclients = RuntimeUccacUcClients.getRuntimeUccacUcClientsStaticInstance();
         const ct = ucclients.getRuntimeUccacUcClientCount();
         let enableThis = true;

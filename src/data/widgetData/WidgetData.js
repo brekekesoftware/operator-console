@@ -10,6 +10,7 @@ const _WIDGET_TYPE_IDS = Object.freeze({
     note: 6,
     lineTable: 7,
     legacyUccac: 8,   //Legacy UC chat agent component
+	videoCallWindows : 9
 });
 const _WIDGET_TYPE_NAMES_FOR_I18N = Object.freeze({ //{widgetTypeId : widget type name forI i8n}
     0 : "LegacyButton",
@@ -20,7 +21,8 @@ const _WIDGET_TYPE_NAMES_FOR_I18N = Object.freeze({ //{widgetTypeId : widget typ
     5 : "ExtensionTable",
     6 : "Note",
     7 : "LineTable",
-    8 : "LegacyUccacWidget"
+    8 : "LegacyUccacWidget",
+	9 : "VideoCallWindows"
 });
 
 const _WIDGET_TYPE_DEFAULT_WIDTHS = Object.freeze({
@@ -29,7 +31,8 @@ const _WIDGET_TYPE_DEFAULT_WIDTHS = Object.freeze({
     5 : 640,   //extensionTable
     6 : 160, //note
     7 : 640, //lineTable
-    8 : 470 //legacyUccac
+    8 : 470, //legacyUccac
+	9 : 470	//VideoCallWindows
 });
 
 const _WIDGET_TYPE_DEFAULT_HEIGHTS = Object.freeze({
@@ -38,7 +41,8 @@ const _WIDGET_TYPE_DEFAULT_HEIGHTS = Object.freeze({
     5 : 128,   //extensionTable
     6 : 160, //note
     7 : 128, //lineTable
-    8 : 300 //legacyUccac
+    8 : 300, //legacyUccac
+	9 : 300	//VideoCallWindows
 });
 
 //Text widget's fields
@@ -250,7 +254,7 @@ const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_RADIUS = "toggle
 const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_OUTER_BORDER_THICKNESS = "toggleHold-button_hold-outerBorderThickness";
 const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__HOLD_LABEL = "toggleHold-button_hold-label";
 
-const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON  = "toggleHold-button_unhold-iIcon";
+const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON  = "toggleHold-button_unhold-iIcon";	//!bad iIcon is a typo, but it has not been corrected to maintain compatibility.
 const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_NAME = "toggleHold-button_unhold-iconName";
 const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_WIDTH = "toggleHold-button_unhold-iconWidth";
 const  _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_ICON_HEIGHT = "toggleHold-button_unhold-iconHeight";
@@ -297,6 +301,30 @@ const _WIDGET_FIELD_NAME_INPUT_FIELD_HEIGHT = "inputFieldHeight";
 const _WIDGET_FIELD_NAME_INPUT_FIELD_FONT_SIZE = "inputFieldFontSize";
 const _WIDGET_FIELD_NAME_TAB_FONT_SIZE = "tabFontSize";
 const _WIDGET_FIELD_NAME_OTHER_FONT_SIZE = "otherFontSize";
+
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON  = "toggleVideoCall-button_videoOn-icon";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_TITLE = "toggleVideoCall-button_videoOn-iconTitle";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_WIDTH = "toggleVideoCall-button_videoOn-iconWidth";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_HEIGHT = "toggleVideoCall-button_videoOn-iconHeight";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FONT_SIZE = "toggleVideoCall-button_videoOn-fontSize";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FG_COLOR = "toggleVideoCall-button_videoOn-fgColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_BG_COLOR = "toggleVideoCall-button_videoOn-bgColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_COLOR = "toggleVideoCall-button_videoOn-outerBorderColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_RADIUS = "toggleVideoCall-button_videoOn-outerBorderRadius";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_THICKNESS = "toggleVideoCall-button_videoOn-outerBorderThickness";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_LABEL = "toggleVideoCall-button_videoOn-label";
+
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON  = "toggleVideoCall-button_videoOff-icon";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_TITLE = "toggleVideoCall-button_videoOff-iconTitle";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_WIDTH = "toggleVideoCall-button_videoOff-iconWidth";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_HEIGHT = "toggleVideoCall-button_videoOff-iconHeight";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FONT_SIZE = "toggleVideoCall-button_videoOff-fontSize";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FG_COLOR = "toggleVideoCall-button_videoOff-fgColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_BG_COLOR = "toggleVideoCall-button_videoOff-bgColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_COLOR = "toggleVideoCall-button_videoOff-outerBorderColor";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_RADIUS = "toggleVideoCall-button_videoOff-outerBorderRadius";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_THICKNESS = "toggleVideoCall-button_videoOff-outerBorderThickness";
+const  _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_LABEL = "toggleVideoCall-button_videoOff-label";
 
 //!abstract
 export default class WidgetData{
@@ -909,7 +937,7 @@ export default class WidgetData{
         return _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS;
     }
 
-    static get WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS(){
+    static get WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_THICKNESS(){
         return _WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_THICKNESS;
     }
 
@@ -1085,4 +1113,91 @@ export default class WidgetData{
         return _WIDGET_FIELD_NAME_OTHER_FONT_SIZE;
     }
 
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_TITLE(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_TITLE;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_WIDTH(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_WIDTH;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_HEIGHT(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_ICON_HEIGHT;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FG_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_FG_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_BG_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_BG_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_RADIUS(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_RADIUS;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_THICKNESS(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_OUTER_BORDER_THICKNESS;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_LABEL(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_ON_LABEL;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_TITLE(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_TITLE;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_WIDTH(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_WIDTH;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_HEIGHT(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_ICON_HEIGHT;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FONT_SIZE(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FONT_SIZE;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FG_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_FG_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_BG_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_BG_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_COLOR(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_COLOR;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_RADIUS(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_RADIUS;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_THICKNESS(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_OUTER_BORDER_THICKNESS;
+    }
+
+    static get WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_LABEL(){
+        return _WIDGET_FIELD_NAME_TOGGLE_VIDEO_CALL_BUTTON__VIDEO_OFF_LABEL;
+    }
 }

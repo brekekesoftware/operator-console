@@ -28,6 +28,14 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
     /**
      *  overload method
+     * @returns {boolean}
+     */
+    getIsToggleVideoSupport(){
+        return true;
+    }
+
+    /**
+     *  overload method
      */
     getCallInfos(){
         return this._webphoneCallInfos;
@@ -100,6 +108,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
 
         const onInitSuccessFunction = options["onInitSuccessFunction"];
+        const ctx = this._webphone.getCurrentAccountCtx();
+        let language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
+        if( language !== "ja"){
+            language = "en";
+        }
+        ctx.intl.setLocale( language ); //!modify Only English(en) or Japanese(ja) is supported
 
         this._onWebphoneError = e => {
             console.log("Webphone event:error", e);
@@ -143,9 +157,14 @@ export default class WebphonePhoneClient  extends APhoneClient {
             console.log('call', c);
             this_._onCall( c );
         });
-        this._webphone.on('call_update', c => {
-            console.log('call_update', c);
-            this._webphoneCallInfos.onUpdateCallObjectByWebphoneClient( c );
+        this._webphone.on('call_update', callObject => {
+            console.log('call_update', callObject);
+            const remoteVideoEnabled =  callObject.getRemoteVideoEnabled();	//!temp
+            const localVideoEnabled =  callObject.getLocalVideoEnabled(); //!temp
+			const localStreamObject = callObject.localStreamObject; //!temp
+			const remoteStreamObject = callObject.remoteStreamObject; //!temp
+			
+            this._webphoneCallInfos.onUpdateCallObjectByWebphoneClient( callObject );
         })
         this._webphone.on('call_end', c => {
             console.log('call_end', c);
@@ -689,6 +708,17 @@ export default class WebphonePhoneClient  extends APhoneClient {
         // or if we manually show the prompt, we can accept the permission on user click
         this._webphone.acceptBrowserPermission();
 
+        // //const customizedPromptBrowserPermission1 = () => {
+        //     const div = document.createElement('div')
+        //     div.style =
+        //         'position: fixed; inset: 0; padding-top: 50px; background: rgba(0,0,0,0.8); color: white; text-align: center; font-weight: bold; cursor: pointer;'
+        //     div.innerHTML = 'Customized prompt for permission 1'
+        //     div.addEventListener('click', () => {
+        //         document.body.removeChild(div);
+        //         this._webphone.acceptBrowserPermission();
+        //     })
+        //     document.body.appendChild(div);
+        // //}
 
 
         this.pal.call_pal('getExtensions', {
@@ -730,7 +760,13 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 extraHeaders: [`X-PBX-RPI: ${usingLine}`]
             });
         } else {
-            this._webphone.call(sDialing);
+
+            const options = null;
+            const videoEnabled = false;
+            const videoOptions = null;
+            const exInfo = null;
+
+            this._webphone.call(sDialing, options, videoEnabled, videoOptions, exInfo  );
         }
         //return true;
     }

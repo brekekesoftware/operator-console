@@ -6,13 +6,12 @@ import BrekekeOperatorConsole from "./index";
 
 export default class PalCallInfo extends ACallInfo {
 
-    constructor( palCallInfosAsParent, callId, palNotifyStatusEventParam ) {
-        super( palCallInfosAsParent );
-        this._isVideoEnable = false;
+    constructor(palCallInfosAsParent, callId, palNotifyStatusEventParam) {
+        super(palCallInfosAsParent);
         this._PalCallInfosAsParent = palCallInfosAsParent;
         this._OnHoldFunctions = new Array();    //!const
         const e = palNotifyStatusEventParam;
-        const status = parseInt( e["status"] );
+        const status = parseInt(e["status"]);
 
         //determine partyName and partyNumber
         //const user = e["user"];
@@ -23,21 +22,19 @@ export default class PalCallInfo extends ACallInfo {
         let isIncoming;
 
         // if(  pbxUsername === user )  {
-            partyName = e["other_display_name"] === undefined ? null : e["other_display_name"];
-            partyNumber = e["other_number"] === undefined ? null : e["other_number"];
-            if( status === PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.incoming ){
-                isIncoming = false;
-            }
-            else {
-                isIncoming = e["role"] !== 'c';
-            }
+        partyName = e["other_display_name"] === undefined ? null : e["other_display_name"];
+        partyNumber = e["other_number"] === undefined ? null : e["other_number"];
+        if (status === PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.incoming) {
+            isIncoming = false;
+        } else {
+            isIncoming = e["role"] !== 'c';
+        }
         // }
         // else{
         //     partyName = e["user_display_name"] === undefined ? null : e["user_display_name"];
         //     partyNumber = e["user"] === undefined ? null : e["user"];
         //     isIncoming = status === PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.incoming;
         // }
-
 
 
         this._CallId = callId;
@@ -55,30 +52,26 @@ export default class PalCallInfo extends ACallInfo {
 
     }
 
-    isVideoEnable() {
-        return this._isVideoEnable;
-    }
-
     /**
      * update information by PAL notify_status event
      * @param palNotifyStatusEventParam
      */
-    onFlushPalNotifyStatusEventByPalCallInfos( palNotifyStatusEventParam ){
+    onFlushPalNotifyStatusEventByPalCallInfos(palNotifyStatusEventParam) {
         const e = palNotifyStatusEventParam;
-        const status = parseInt( e["status"] );
-        switch( status ){
+        const status = parseInt(e["status"]);
+        switch (status) {
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.disconnect:    //disconnect
-            // if( e["rescode"] === 404 && e["disconnected_by"] === "1" ){
-            //     break;
-            // }
-            this._PalCallInfosAsParent.getPhoneClientAsParent().onDisconnectByPalCallInfo( this );
-            return;
+                // if( e["rescode"] === 404 && e["disconnected_by"] === "1" ){
+                //     break;
+                // }
+                this._PalCallInfosAsParent.getPhoneClientAsParent().onDisconnectByPalCallInfo(this);
+                return;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.callSuccess:
-                const bMakeCall =  e["role"] === 'c';
-                if( !bMakeCall ) {
+                const bMakeCall = e["role"] === 'c';
+                if (!bMakeCall) {
                     this._answered = true;
                     this._answeredAt = e["time"];
-                    this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByCallInfo( this );
+                    this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerIncomingCallByCallInfo(this);
                 }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.answerSuccess:
@@ -93,16 +86,16 @@ export default class PalCallInfo extends ACallInfo {
                 this._holding = true;
                 this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onHoldByCallInfo(this);
                 const onHoldFunctions = [...this._OnHoldFunctions];
-                for( let i = 0; i < onHoldFunctions.length; i++ ) {
+                for (let i = 0; i < onHoldFunctions.length; i++) {
                     const func = onHoldFunctions[i];
-                    func( this );   //!forBug needs try catch?
+                    func(this);   //!forBug needs try catch?
                 }
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.answerCallee:
                 this._pbxRoomId = e["room_id"];
                 this._answered = true;
                 this._answeredAt = e["time"];
-                this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerCalleeByPalCallInfo( this );
+                this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onAnswerCalleeByPalCallInfo(this);
                 break;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferFail:
                 this.setIsTransferring(false);
@@ -118,8 +111,8 @@ export default class PalCallInfo extends ACallInfo {
      *  overload method
      * @param func
      */
-    addOnHoldFunction( func ) {
-        this._OnHoldFunctions.push( func );
+    addOnHoldFunction(func) {
+        this._OnHoldFunctions.push(func);
     }
 
     /**
@@ -127,9 +120,9 @@ export default class PalCallInfo extends ACallInfo {
      * @param func
      * @return is deleted.
      */
-    removeOnHoldFunction( func ) {
+    removeOnHoldFunction(func) {
         const index = this._OnHoldFunctions.indexOf(func);
-        if( index === -1 ){
+        if (index === -1) {
             return false;
         }
 
@@ -138,7 +131,7 @@ export default class PalCallInfo extends ACallInfo {
     }
 
 
-    onCallSuccessByPalCallInfos( eNotifyStatus ){
+    onCallSuccessByPalCallInfos(eNotifyStatus) {
         this._answered = true;
         this._answeredAt = eNotifyStatus["time"];
         this._PalCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onCallSuccessByPalCallInfo(this);
@@ -151,22 +144,20 @@ export default class PalCallInfo extends ACallInfo {
     hangupWithUnhold() {
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
         const this_ = this;
-        if( this.getIsHolding() ){
-            phoneClient.unhold( this, function( res, obj ){
-                if( res.startsWith("failed")) {
-                    console.error("Failed to unhold call. res=", res );
-                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
-                }
-                else {
-                    this_.hangup();
-                }
-            },
-            function( err ){
-                console.error("Failed to unhold call. err=", err );
-                Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration:0 });
-            });
-        }
-        else{
+        if (this.getIsHolding()) {
+            phoneClient.unhold(this, function (res, obj) {
+                    if (res.startsWith("failed")) {
+                        console.error("Failed to unhold call. res=", res);
+                        Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
+                    } else {
+                        this_.hangup();
+                    }
+                },
+                function (err) {
+                    console.error("Failed to unhold call. err=", err);
+                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration: 0});
+                });
+        } else {
             this.hangup();
         }
     }
@@ -174,15 +165,15 @@ export default class PalCallInfo extends ACallInfo {
     /**
      *  overload method
      */
-    hangup(){
+    hangup() {
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
-        phoneClient.hangup( this,
-            function( res, obj){
+        phoneClient.hangup(this,
+            function (res, obj) {
                 this._isHangupSelf = true;
             },
-            function( err ) {
-                console.error("Failed to hangup call. err=", err );
-                Notification.error({message: i18n.t('failedToHangupCall') + "\r\n" + err, duration:0 });
+            function (err) {
+                console.error("Failed to hangup call. err=", err);
+                Notification.error({message: i18n.t('failedToHangupCall') + "\r\n" + err, duration: 0});
             }
         );
     }
@@ -190,29 +181,28 @@ export default class PalCallInfo extends ACallInfo {
     /**
      *  overload method
      */
-    setHolding( b ){
-        if( b ){
-            this._CallInfosAsParent.getPhoneClientAsParent().hold( this,
-                function( res, obj){
+    setHolding(b) {
+        if (b) {
+            this._CallInfosAsParent.getPhoneClientAsParent().hold(this,
+                function (res, obj) {
                     //!forBug res includes failed?
                 },
-                function( err ) {
+                function (err) {
                     console.error("Failed to hold call. err=", err);
                     Notification.error({message: i18n.t('failedToHoldCall') + "\r\n" + err, duration: 0});
                 }
             );
-        }
-        else{
-            this._CallInfosAsParent.getPhoneClientAsParent().unhold( this,
-                function( res, obj){
-                    if( res.startsWith("failed")) {
+        } else {
+            this._CallInfosAsParent.getPhoneClientAsParent().unhold(this,
+                function (res, obj) {
+                    if (res.startsWith("failed")) {
                         console.error("Failed to unhold call. res=", res);
                         Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
                     }
                 },
-                function( err ) {
-                    console.error("Failed to unhold call. err=", err );
-                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration:0 });
+                function (err) {
+                    console.error("Failed to unhold call. err=", err);
+                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration: 0});
                 }
             );
         }
@@ -223,26 +213,25 @@ export default class PalCallInfo extends ACallInfo {
      *  overload method
      */
     toggleHoldWithCheck() {
-        if( this.getIsHolding() === true ){
-            this._CallInfosAsParent.getPhoneClientAsParent().unhold( this,
-                function( res, obj){
-                    if( res.startsWith("failed")) {
+        if (this.getIsHolding() === true) {
+            this._CallInfosAsParent.getPhoneClientAsParent().unhold(this,
+                function (res, obj) {
+                    if (res.startsWith("failed")) {
                         console.error("Failed to unhold call. res=", res);
                         Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + res, duration: 0});
                     }
                 },
-                function( err ) {
-                    console.error("Failed to unhold call. err=", err );
-                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration:0 });
+                function (err) {
+                    console.error("Failed to unhold call. err=", err);
+                    Notification.error({message: i18n.t('failedToUnholdCall') + "\r\n" + err, duration: 0});
                 }
             );
-        }
-        else{
-            this._CallInfosAsParent.getPhoneClientAsParent().hold( this,
-                function( res, obj){
+        } else {
+            this._CallInfosAsParent.getPhoneClientAsParent().hold(this,
+                function (res, obj) {
                     //!forBug res includes failed?
                 },
-                function( err ) {
+                function (err) {
                     console.error("Failed to hold call. err=", err);
                     Notification.error({message: i18n.t('failedToHoldCall') + "\r\n" + err, duration: 0});
                 }
@@ -295,7 +284,7 @@ export default class PalCallInfo extends ACallInfo {
         return this._partyName;
     }
 
-     /**
+    /**
      *  overload method
      * @returns {*}
      */
@@ -308,17 +297,17 @@ export default class PalCallInfo extends ACallInfo {
      */
     answerCall() {
         const this_ = this;
-        this._CallInfosAsParent.getPhoneClientAsParent().answerCall( this,
-            function( res, obj){
-                if( res && res.startsWith("failed")){
-                    console.error("Failed to answer call. res=", res );
-                    Notification.error({message: i18n.t('failedToAnswerCall') + "\r\n" + res, duration:0 });
+        this._CallInfosAsParent.getPhoneClientAsParent().answerCall(this,
+            function (res, obj) {
+                if (res && res.startsWith("failed")) {
+                    console.error("Failed to answer call. res=", res);
+                    Notification.error({message: i18n.t('failedToAnswerCall') + "\r\n" + res, duration: 0});
                 }
                 BrekekeOperatorConsole.getStaticInstance().onAnsweredCallByPalCallInfo(this_);
             },
-            function( err ) {
-                console.error("Failed to answer call. err=", err );
-                Notification.error({message: i18n.t('failedToAnswerCall') + "\r\n" + err, duration:0 });
+            function (err) {
+                console.error("Failed to answer call. err=", err);
+                Notification.error({message: i18n.t('failedToAnswerCall') + "\r\n" + err, duration: 0});
             }
         );
     }
@@ -360,8 +349,7 @@ export default class PalCallInfo extends ACallInfo {
      */
     toggleMutedAsync() {
         //Not supported
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
+        const promise = new Promise((resolve, reject) => {
                 const errMsg = i18n.t("thisFeatureIsNotSupported");
                 reject(errMsg);
             }
@@ -372,32 +360,30 @@ export default class PalCallInfo extends ACallInfo {
     /**
      *  overload method
      */
-    toggleRecordingAsync(){
+    toggleRecordingAsync() {
 
-        const promise =  new Promise(  ( resolve, reject ) =>
-            {
+        const promise = new Promise((resolve, reject) => {
                 const this_ = this;
-                if( this.getIsRecording() === true ){
-                    this._CallInfosAsParent.getPhoneClientAsParent().stopRecording( this,
-                        function( res, obj){
+                if (this.getIsRecording() === true) {
+                    this._CallInfosAsParent.getPhoneClientAsParent().stopRecording(this,
+                        function (res, obj) {
                             this_._recording = false;
                             resolve();
                         },
-                        function( err ) {
-                            console.error("Failed to stop recording. err=", err );
+                        function (err) {
+                            console.error("Failed to stop recording. err=", err);
                             const errMsg = i18n.t('failedToStopRecording') + "\r\n" + err;
                             reject(errMsg);
                         }
                     );
-                }
-                else{
-                    this._CallInfosAsParent.getPhoneClientAsParent().startRecording( this,
-                        function( res, obj){
+                } else {
+                    this._CallInfosAsParent.getPhoneClientAsParent().startRecording(this,
+                        function (res, obj) {
                             this_._recording = true;
                             resolve();
                         },
-                        function( err ) {
-                            console.error("Failed to start recording. err=", err );
+                        function (err) {
+                            console.error("Failed to start recording. err=", err);
                             const errMsg = i18n.t('failedToStartRecording') + "\r\n" + err;
                             reject(errMsg);
                         }
@@ -412,24 +398,48 @@ export default class PalCallInfo extends ACallInfo {
     /**
      *  overload method
      */
-    conference(){
+    conference() {
         const phoneClient = this._CallInfosAsParent.getPhoneClientAsParent();
         const this_ = this;
-        phoneClient.conference( this,
-            function( res, obj){
-                if( res && res.startsWith("failed")){
-                    console.error("Failed to conference call. res=", res );
-                    Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration:0 });
-                }
-                else{
+        phoneClient.conference(this,
+            function (res, obj) {
+                if (res && res.startsWith("failed")) {
+                    console.error("Failed to conference call. res=", res);
+                    Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + res, duration: 0});
+                } else {
                     this_.setIsTransferring(false);
                 }
             },
-            function( err ) {
-                console.error("Failed to conference call. err=", err );
-                Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + err, duration:0 });
+            function (err) {
+                console.error("Failed to conference call. err=", err);
+                Notification.error({message: i18n.t('failedToConferenceCall') + "\r\n" + err, duration: 0});
             }
         );
+    }
+
+    /**
+     *  overload method
+     * @returns {boolean}
+     */
+    getIsLocalVideoEnabled() {
+        throw new Error("Not supported.");
+        return false;
+    }
+
+    /**
+     * overload method
+     * @returns {boolean}
+     */
+    getIsRemoteVideoEnabled() {
+        throw new Error("Not supported.");
+        return false;
+    }
+
+    /**
+     *  overload method
+     */
+    toggleVideo(){
+        throw new Error("Not supported.");
     }
 
 }

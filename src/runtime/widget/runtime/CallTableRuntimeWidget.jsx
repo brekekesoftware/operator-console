@@ -47,13 +47,13 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         const activeButtonCellHeight = activeButtonHeight + CELL_MARGIN;;
         const activeButtonFontSize = widgetData.getCalltableActiveButtonFontSize() ? widgetData.getCalltableActiveButtonFontSize() :  9;
 
-        //!temp
-        const videoButtonWidth = 42;   //!default
-        const videoButtonHeight = 42;   //!default
-        //const videoButtonCellWidth = videoButtonWidth + CELL_MARGIN;
-        //const videoButtonCellWidth = 50;
-        const videoButtonCellHeight = activeButtonHeight + CELL_MARGIN;
-        const videoButtonFontSize = 9;
+        // //!temp
+        // const videoButtonWidth = 42;   //!default
+        // const videoButtonHeight = 42;   //!default
+        // //const videoButtonCellWidth = videoButtonWidth + CELL_MARGIN;
+        // //const videoButtonCellWidth = 50;
+        // const videoButtonCellHeight = activeButtonHeight + CELL_MARGIN;
+        // const videoButtonFontSize = 9;
 
         const outerBorderRadius = ( widgetData.getCalltableOuterBorderRadius() || widgetData.getCalltableOuterBorderRadius() === 0 ) ? widgetData.getCalltableOuterBorderRadius() : 0; //!default
         const outerBorderThickness = ( widgetData.getCalltableOuterBorderThickness() || widgetData.getCalltableOuterBorderThickness() === 0 ) ? widgetData.getCalltableOuterBorderThickness() : 0; //!default
@@ -147,9 +147,9 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                             tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
                         }
 
-                        const callStatus = callInfo.getCallStatus();
-                        const isStartVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === false;
-                        const isStopVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === true;
+                        //const callStatus = callInfo.getCallStatus();
+                        //const isStartVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === false;
+                        //const isStopVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === true;
 
                         return (<tr key={idKey++} style={{
                             color:  i === currentCallIndex ? bodyActiveRowFgColor : bodyFgColor,

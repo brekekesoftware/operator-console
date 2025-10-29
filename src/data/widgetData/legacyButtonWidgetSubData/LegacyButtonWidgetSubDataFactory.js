@@ -36,6 +36,7 @@ import LegacyButtonWidgetSubData_quickCallButton from "./LegacyButtonWidgetSubDa
 import LegacyButtonWidgetSubData_autoDialButton from "./LegacyButtonWidgetSubData_autoDialButton";
 import LegacyButtonWidgetSubData_oneTouchDialButton from "./LegacyButtonWidgetSubData_oneTouchDialButton";
 import LegacyButtonWidgetSubData_toggleHoldCallButton from "./LegacyButtonWidgetSubData_toggleHoldCallButton";
+import LegacyButtonWidgetSubData_toggleVideoCallButton from "./LegacyButtonWidgetSubData_toggleVideoCallButton";
 
 class LegacyButtonWidgetSubData_pickUpCallCallButton {
     constructor(options) {
@@ -167,6 +168,9 @@ export default class LegacyButtonWidgetSubDataFactory{
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleHoldCall:
                 subData = new LegacyButtonWidgetSubData_toggleHoldCallButton( dataOptions, subDataOptions, dataVersion  );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleVideoCall:
+                subData = new LegacyButtonWidgetSubData_toggleVideoCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
             default:
                 throw new Error("Cannot create an instance of the Button widget because the subtype is unknown.subTypeId=" + subDataTypeId );

@@ -4,7 +4,7 @@ import WidgetData from "../WidgetData";
 export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends LegacyButtonWidgetSubData {
 
     constructor( dataOptions = null, subDataOptions, dataVersion = null  ) {
-        super(  dataOptions, subDataOptions, dataVersion  );
+        super( dataOptions, subDataOptions, dataVersion  );
 
         let currentOptions;
         const oSubData = subDataOptions["legacyButtonWidgetSubDataObject"];
@@ -403,7 +403,7 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_BG_COLOR, this._unholdBgColor );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_COLOR, this._unholdOuterBorderColor );
         wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS, this._unholdOuterBorderRadius );
-        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS, this._unholdOuterBorderThickness );
+        wst.setWidgetSettingsTemplateField( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_THICKNESS, this._unholdOuterBorderThickness );
     }
 
     //!override
@@ -472,8 +472,8 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
         if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS ) === true ) {
             this._unholdOuterBorderRadius = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_RADIUS);
         }
-        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS ) === true ) {
-            this._unholdOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_UNHOLD_TOGGLE_HOLD_BUTTON__OUTER_BORDER_THICKNESS);
+        if( wst.isWidgetSettingsTemplateFieldExists( WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_THICKNESS ) === true ) {
+            this._unholdOuterBorderThickness = wst.getWidgetSettingsTemplateFieldValue(WidgetData.WIDGET_FIELD_NAME_TOGGLE_HOLD_BUTTON__UNHOLD_OUTER_BORDER_THICKNESS);
         }
     }
 }

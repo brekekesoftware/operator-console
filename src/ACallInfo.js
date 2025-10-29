@@ -10,16 +10,6 @@ export default class ACallInfo {
         this._isTransferring = false;
         this._isHangupSelf = false;
         this._isDisconnected = false;
-        this._isVideoActive = false;
-    }
-
-    isVideoActive(){
-        const b = this._isVideoActive;
-        return b;
-    }
-
-    isVideoEnable() {
-        throw new Error("Not implemented.");
     }
 
     getIsHangupSelf(){
@@ -144,6 +134,24 @@ export default class ACallInfo {
         throw new Error("Not implemented.");
         return false;
     }
+	
+    /**
+     * abstract method
+     * @returns {boolean}
+     */
+    getIsLocalVideoEnabled(){
+        throw new Error("Not implemented.");
+        return false;
+    }
+
+    /**
+     * abstract method
+     * @returns {boolean}
+     */
+    getIsRemoteVideoEnabled(){
+        throw new Error("Not implemented.");
+        return false;
+    }
 
     /**
      * @returns {boolean}
@@ -237,6 +245,14 @@ export default class ACallInfo {
     getCallInfoUuid(){
         return this._CallInfoUuid;
     }
+
+    /**
+     * abstract method
+     */
+    toggleVideo(){
+        throw new Error("Not implemented.");
+    }
+
 
 }
 //!modify OperatorConsole ref from 202404240424

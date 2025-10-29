@@ -1,5 +1,12 @@
 {
   "ja": {
+	"To_enable_this_widget_select_Webphone_~" : "このウィジェットを有効にするには、設定画面で\"Webphone\"を選択してください。",
+	"VideoCallWindowsWidgetIsInEditMode" : "ビデオ通話ウィンドウウィジェットは編集中です。",
+	"VideoCallWindows" : "ビデオ通話ウィンドウ",
+	"VideoOn" : "ビデオ オン",
+	"VideoOff" : "ビデオ オフ",
+	"VideoOn_button_settings" : "ビデオオンボタンの設定",
+	"VideoOff_button_settings" : "ビデオオフボタンの設定",	
 	"Tab_font_size" : "タブのテキストのサイズ",
 	"Other_font_sizes" : "その他のテキストのサイズ",
 	"Input_field_height" : "入力欄の高さ",
@@ -483,7 +490,8 @@
 	  "LegacyQuickCallButton": "クイックコール",
 	  "LegacyAutoDialButton": "オートダイヤル",
 	  "LegacyOneTouchDialButton": "ワンタッチダイヤル",
-	  "LegacyToggleHoldCallButton" : "保留切替"
+	  "LegacyToggleHoldCallButton" : "保留切替",
+	  "LegacyToggleVideoCallButton" : "ビデオ切替"
     },
     "legacy_button_description": {
       "LegacyDummyButton": "機能のないダミーボタンです。",
@@ -519,18 +527,20 @@
       "LegacyQuickCallButton": "短縮ダイヤルに発信します。",
       "LegacyAutoDialButton": "オートダイヤルビューを表示/非表示します。",
 	  "LegacyOneTouchDialButton": "指定された番号に発信します。",
-	  "LegacyToggleHoldCallButton": "現在の通話の保留/保留解除を切り替えます。"
+	  "LegacyToggleHoldCallButton": "現在の通話の保留/保留解除を切り替えます。",
+	  "LegacyToggleVideoCallButton" : "現在の通話のビデオのオン/オフを切り替えます。"
     },
     "widget_description": {
-      "LegacyButton": "このコンポーネントには、プリセット機能を割り当てることができるボタンが表示されます。",
-      "LegacyCallPanel": "このコンポーネントには、現在の通話情報とダイヤル番号が表示されます。",
-      "LegacyExtensionStatus": "このコンポーネントは、特定の内線番号のステータスを表示します。 内線が通話中の場合は赤色に点灯します。 内線が保留中/呼び出し中の場合は黄色に点灯します。",
-      "Text": "このコンポーネントは、指定されたテキストを表示します。",
-      "CallTable": "このコンポーネントは、アクティブな通話のテーブルが表示されます。",
-      "ExtensionTable": "このコンポーネントには、アクティブな通話のテーブルが表示されます。",
-      "Note": "このコンポーネントは付箋を表示します。",
-	  "LineTable": "このコンポーネントはラインの表を表示します。",
-		"LegacyUccacWidget": "このコンポーネントはUC Chat Agent Componentを表示します。"
+      "LegacyButton": "このウィジェットには、プリセット機能を割り当てることができるボタンが表示されます。",
+      "LegacyCallPanel": "このウィジェットには、現在の通話情報とダイヤル番号が表示されます。",
+      "LegacyExtensionStatus": "このウィジェットは、特定の内線番号のステータスを表示します。 内線が通話中の場合は赤色に点灯します。 内線が保留中/呼び出し中の場合は黄色に点灯します。",
+      "Text": "このウィジェットは、指定されたテキストを表示します。",
+      "CallTable": "このウィジェットは、アクティブな通話のテーブルが表示されます。",
+      "ExtensionTable": "このウィジェットには、アクティブな通話のテーブルが表示されます。",
+      "Note": "このウィジェットは付箋を表示します。",
+	  "LineTable": "このウィジェットはラインの表を表示します。",
+	  "LegacyUccacWidget": "このウィジェットはUC Chat Agent Componentを表示します。",
+	  "VideoCallWindows": "このウィジェットはビデオ通話の映像を表示します。"
     }
   }
 }

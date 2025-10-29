@@ -79,7 +79,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.44";
+const VERSION = "2.1.45";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -2841,6 +2841,16 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnUnloadFunc = (event) => { this._onUnload( event )};
         window.addEventListener("unload", this._OnUnloadFunc );
         this._defaultSystemSettingsData = new SystemSettingsData( this );
+        this. _MainVideoClientSessionMap = {};
+    }
+
+    setMainVideoClientSession( videoCallWindowsRuntimeWidgetId, videoClientSession ){
+        this._MainVideoClientSessionMap[ videoCallWindowsRuntimeWidgetId ] = videoClientSession;
+    }
+
+    getMainVideoClientSession( videoCallWindowsRuntimeWidgetId ){
+        const vcs = this._MainVideoClientSessionMap[ videoCallWindowsRuntimeWidgetId ];
+        return vcs;
     }
 
     static get BREKEKE_OPERATOR_CONSOLE_VERSION(){
@@ -2851,7 +2861,6 @@ export default class BrekekeOperatorConsole extends React.Component {
         const b = this.state.isAboutOCModalOpen;
         return b;
     }
-	
 
     onAnsweredCallByWebphoneCallInfo( webphoneCallInfoAsCaller ){
         this._onAnsweredCallByCallInfo( webphoneCallInfoAsCaller );

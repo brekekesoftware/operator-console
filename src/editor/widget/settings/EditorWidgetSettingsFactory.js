@@ -9,6 +9,7 @@ import ExtensionTableEditorWidgetSettings from "./ExtensionTableEditorWidgetSett
 import NoteEditorWidgetSettings from "./NoteEditorWidgetSettings";
 import LineTableEditorWidgetSettings from "./LineTableEditorWidgetSettings";
 import LegacyUccacEditorWidgetSettings from "./LegacyUccacEditorWidgetSettings";
+import VideoCallWindowsEditorWidgetSettings from "./VideoCallWindowsEditorWidgetSettings";
 
 export default class EditorWidgetSettingsFactory{
 
@@ -52,6 +53,9 @@ export default class EditorWidgetSettingsFactory{
             case WidgetData.WIDGET_TYPE_IDS.legacyUccac:
                 jsx = <LegacyUccacEditorWidgetSettings editScreenViewAsParent={ editScreenViewAsParent } widgetData={widgetData} ></LegacyUccacEditorWidgetSettings>
                 break;
+			case WidgetData.WIDGET_TYPE_IDS.videoCallWindows:
+                jsx = <VideoCallWindowsEditorWidgetSettings editScreenViewAsParent={ editScreenViewAsParent } widgetData={widgetData} ></VideoCallWindowsEditorWidgetSettings>
+                break;			
             default:
                 throw new Error("The editor widget settings was not present. widgetTypeId=" +widgetTypeId  );
         }

@@ -9,6 +9,7 @@ import ExtensionTableRuntimeWidget from "./ExtensionTableRuntimeWidget";
 import NoteRuntimeWidget from "./NoteRuntimeWidget";
 import LineTableRuntimeWidget from "./LineTableRuntimeWidget";
 import LegacyUccacRuntimeWidget from "./LegacyUccacRuntimeWidget";
+import VideoCallWindowsRuntimeWidget from "./VideoCallWindowsRuntimeWidget";
 
 export default class RuntimeWidgetFactory {
 
@@ -59,6 +60,9 @@ export default class RuntimeWidgetFactory {
                 break;
             case WidgetData.WIDGET_TYPE_IDS.legacyUccac:
                 jsx = <LegacyUccacRuntimeWidget runtimePane={runtimePane} key={jsxKey} widgetData={widgetData} widgetIndex={jsxKey}></LegacyUccacRuntimeWidget>
+                break;
+            case WidgetData.WIDGET_TYPE_IDS.videoCallWindows:
+                jsx = <VideoCallWindowsRuntimeWidget runtimePane={runtimePane} key={jsxKey} widgetData={widgetData} widgetIndex={jsxKey}></VideoCallWindowsRuntimeWidget>
                 break;
             default:
                 throw new Error("The widget jsx was not present. widgetTypeId=" + widgetType );

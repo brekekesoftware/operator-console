@@ -29,29 +29,17 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
         this._setHoldWithCallkeep = callObject.setHoldWithCallkeep;
-        this._isVideoEnable = true;
     }
 
-    isVideoEnable() {
-        return this._isVideoEnable;
-    }
-
-    isVideoActive(){
-        const b = this._isVideoActive;
-        return b;
-    }
-
-    startVideo(){
-        const callObject = this._callObject;
-        callObject.videoStreamActive = true;
-        this._isVideoActive = true;
-    }
-
-    stopVideo(){
-        const callObject = this._callObject;
-        callObject.videoStreamActive = false;
-        this._isVideoActive = false;
-    }
+    // startVideo(){
+    //     const callObject = this._callObject;
+    //     callObject.videoStreamActive = true;
+    // }
+    //
+    // stopVideo(){
+    //     const callObject = this._callObject;
+    //     callObject.videoStreamActive = false;
+    // }
 
     /**
      *  overload method
@@ -346,4 +334,41 @@ export default class WebphoneCallInfo extends ACallInfo {
                 break;
         }
     }
+
+    /**
+     *  overload method
+     * @returns {boolean}
+     */
+    getIsLocalVideoEnabled() {
+        const b = this._callObject.getLocalVideoEnabled();
+        return b;
+    }
+
+    /**
+     * overload method
+     * @returns {boolean}
+     */
+    getIsRemoteVideoEnabled() {
+        const b = this._callObject.getRemoteVideoEnabled();
+        return b;
+    }
+
+    getWebphoneCallObject(){
+        return this._callObject;
+    }
+
+    /**
+     *  overload method
+     */
+    toggleVideo(){
+        const beforeLocalVideoEnabled = this._callObject.getLocalVideoEnabled(); //!temp //!test
+        const beforeRemoteVideoEnabled = this._callObject.getRemoteVideoEnabled(); //!temp //!test
+        this._callObject.toggleVideo();
+        const afterLocalVideoEnabled = this._callObject.getLocalVideoEnabled(); //!temp //!test
+        const afterRemoteVideoEnabled = this._callObject.getRemoteVideoEnabled(); //!temp //!test
+
+        const temp = 0;
+    }
+
+
 }

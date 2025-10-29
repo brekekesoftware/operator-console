@@ -11,6 +11,15 @@ export default class APhoneClient {
     }
 
     /**
+     * abstract method
+     * @returns {boolean}
+     */
+    getIsToggleVideoSupport(){
+        throw new Error("Not implemented.");
+        return false;
+    }
+
+    /**
      *  abstract method
      */
     getCallInfos(){

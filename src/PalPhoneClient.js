@@ -21,6 +21,14 @@ export default class PalPhoneClient  extends APhoneClient {
      *  overload method
      * @returns {boolean}
      */
+    getIsToggleVideoSupport(){
+        return false;
+    }
+
+    /**
+     *  overload method
+     * @returns {boolean}
+     */
     isPalReady(){
         return !!this._pal;
     }

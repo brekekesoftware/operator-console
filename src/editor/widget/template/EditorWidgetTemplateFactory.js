@@ -8,6 +8,7 @@ import ExtensionTableEditorWidgetTemplate from "./ExtensionTableEditorWidgetTemp
 import NoteEditorWidgetTemplate from "./NoteEditorWidgetTemplate";
 import LineTableEditorWidgetTemplate from "./LineTableEditorWidgetTemplate";
 import LegacyUccacEditorWidgetTemplate from "./LegacyUccacEditorWidgetTemplate";
+import VideoCallWindowsEditorWidgetTemplate from "./VideoCallWindowsEditorWidgetTemplate";
 
 export default class EditorWidgetTemplateFactory{
 
@@ -28,6 +29,7 @@ export default class EditorWidgetTemplateFactory{
         this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.note ] =   new NoteEditorWidgetTemplate(this);
         this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.lineTable ] =   new LineTableEditorWidgetTemplate(this);
         this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.legacyUccac ] =   new LegacyUccacEditorWidgetTemplate(this);
+        this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.videoCallWindows ] =   new VideoCallWindowsEditorWidgetTemplate(this);
         Object.freeze( this._EditorWidgetTemplates );
     }
 

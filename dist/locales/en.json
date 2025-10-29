@@ -1,5 +1,12 @@
 {
   "en": {
+	"To_enable_this_widget_select_Webphone_~" : "To enable this widget, select Webphone on the \"phone terminal\" in the settings screen.",
+	"VideoCallWindowsWidgetIsInEditMode" : "Video call windows widget is in edit mode.",
+	"VideoCallWindows" : "Video call windows",
+	"VideoOn" : "Video on",
+	"VideoOff" : "Video off",
+	"VideoOn_button_settings" : "Video on button settings",
+	"VideoOff_button_settings" : "Video off button settings",
 	"Tab_font_size" : "Tab text size",
 	"Other_font_sizes" : "Other text sizes",
 	"Input_field_height" : "Input field height",
@@ -484,7 +491,8 @@
 	  "LegacyQuickCallButton": "Quick Call",
 	  "LegacyAutoDialButton": "Auto Dial",
 	  "LegacyOneTouchDialButton": "One touch dial",
-	  "LegacyToggleHoldCallButton": "Toggle hold"
+	  "LegacyToggleHoldCallButton": "Toggle hold",
+	  "LegacyToggleVideoCallButton": "Toggle video"
     },
     "legacy_button_description": {
       "LegacyDummyButton": "A dummy button that has no function.",
@@ -520,7 +528,8 @@
       "LegacyQuickCallButton": "To call a shortening dial number",  
       "LegacyAutoDialButton": "To show/hide a auto dial view",
 	  "LegacyOneTouchDialButton": "To Call the specified number.",
-	  "LegacyToggleHoldCallButton": "To toggle hold the current call."
+	  "LegacyToggleHoldCallButton": "To toggle hold the current call.",
+	  "LegacyToggleVideoCallButton": "To toggle video on or off for the current call."
     },
     "widget_description": {
       "LegacyButton": "This widget shows a button that you can assign a preset function to it.",
@@ -531,7 +540,8 @@
       "ExtensionTable": "This widget shows a table of extensions.",
       "Note": "This widget shows a sticky note.",
   	  "LineTable": "This widget shows a table of lines.",
-		"LegacyUccacWidget": "This widget shows a UC Chat Agent Component."
-    }
+	  "LegacyUccacWidget": "This widget shows a UC Chat Agent Component.",
+	  "VideoCallWindows": "This widget shows a Video call windows."
+	  }
   }
 }

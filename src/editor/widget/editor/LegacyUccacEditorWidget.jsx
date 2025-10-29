@@ -44,7 +44,8 @@ export default class LegacyUccacEditorWidget extends EditorWidget{
             backgroundColor: uccacwidgetBgColor,
             boxShadow: sBoxShadow,
             color: uccacwidgetFgColor,
-            padding:6
+            padding:6,
+            boxSizing:"border-box"
         }}>{i18n.t("ucChatAgentComponentIsInEditMode")}</div> );
     }
 

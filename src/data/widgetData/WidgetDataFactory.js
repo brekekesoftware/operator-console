@@ -9,6 +9,7 @@ import ExtensionTableWidgetData from "./ExtensionTableWidgetData";
 import NoteWidgetData from "./NoteWidgetData";
 import LineTableWidgetData from "./LineTableWidgetData";
 import LegacyUccacWidgetData from "./LegacyUccacWidgetData";
+import VideoCallWindowsWidgetData from "./VideoCallWindowsWidgetData";
 
 export default class WidgetDataFactory{
     //!private
@@ -55,6 +56,9 @@ export default class WidgetDataFactory{
                 break;
             case WidgetData.WIDGET_TYPE_IDS.legacyUccac:
                 widgetData = new LegacyUccacWidgetData( options );
+                break;
+            case WidgetData.WIDGET_TYPE_IDS.videoCallWindows:
+                widgetData = new VideoCallWindowsWidgetData( options );
                 break;
             default:
                 console.error("Widget data could not be created because the widgetTypeId is invalid. widgetTypeId=" + widgetTypeId);

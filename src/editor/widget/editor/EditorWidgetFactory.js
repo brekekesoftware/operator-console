@@ -9,6 +9,7 @@ import ExtensionTableEditorWidget from "./ExtensionTableEditorWidget";
 import NoteEditorWidget from "./NoteEditorWidget";
 import LineTableEditorWidget from "./LineTableEditorWidget";
 import LegacyUccacEditorWidget from "./LegacyUccacEditorWidget";
+import VideoCallWindowsEditorWidget from "./VideoCallWindowsEditorWidget";
 
 function LegacyUccacEditorWidgetEditorWidget(props) {
     return null;
@@ -63,6 +64,9 @@ export default class EditorWidgetFactory {
                 break;
             case WidgetData.WIDGET_TYPE_IDS.legacyUccac:
                 jsx = <LegacyUccacEditorWidget editorPane={editorPane} key={jsxKey} widgetData={widgetData} widgetIndex={jsxKey}></LegacyUccacEditorWidget>
+                break;
+            case WidgetData.WIDGET_TYPE_IDS.videoCallWindows:
+                jsx = <VideoCallWindowsEditorWidget editorPane={editorPane} key={jsxKey} widgetData={widgetData} widgetIndex={jsxKey}></VideoCallWindowsEditorWidget>
                 break;
             default:
                 throw new Error("The widget jsx was not present. widgetTypeId=" + widgetType );

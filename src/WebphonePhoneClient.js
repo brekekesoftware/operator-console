@@ -103,6 +103,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
             'webphone.pal.param.user': '*',
             'webphone.pal.param.line': '*',
             'webphone.pal.param.park': '*',
+            //dontShowNotificationIfFocusing : true
         };
 
         this._webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
@@ -368,6 +369,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
     _onCall( call  ){
         //this._OperatorConsoleAsParent._onPhoneCallByWebphonePhoneClient( this, call ); //!old
+        // const bDocumentHasFocus = document.hasFocus();
+        // const isWindowFocus = this._isWindowFocus;
+        // if( bDocumentHasFocus || isWindowFocus  ){  //!optimize No need for focus and blur
+        //     this._webphone.closeNotification({ type: 'call', id: call.id })
+        // }
+
         this._webphoneCallInfos.addCallInfoByWebphoneCallObject(call);
 
 
@@ -600,6 +607,15 @@ export default class WebphonePhoneClient  extends APhoneClient {
 			this._webphone = null;
 		}
 
+        // if( this._windowFocusEventListener ){
+        //     window.removeEventListener("focus", this._windowFocusEventListener );
+        //     this._windowFocusEventListener = null;
+        // }
+        // if( this._windowBlurEventListener ){
+        //     window.removeEventListener("blur", this._windowBlurEventListener);
+        //     this._windowBlurEventListener = null;
+        // }
+
         super.deinitPhoneClient();
     }
 
@@ -691,6 +707,10 @@ export default class WebphonePhoneClient  extends APhoneClient {
         return this.pal.call_pal('line', lineOptions );
     }
 
+    getWebphone(){
+        return this._webphone;
+    }
+
     // getAdminExtensionPropertiesPromise( tenant, extension ){
     //     const promise = this.pal.call_pal("getExtensionProperties", {
     //         tenant: tenant,
@@ -701,6 +721,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
     // }
 
     _initialize(  onInitSuccessFunction ){
+        window.focus();  //for document.hasFocus() should true.
 
         // prompt for permission if needed
         //this._webphone.promptBrowserPermission();
@@ -737,8 +758,27 @@ export default class WebphonePhoneClient  extends APhoneClient {
             }, 1000);
         })
 
+
+        // this._windowFocusEventListener = (ev) =>{
+        //     this._onWindowFocus(ev);
+        // };
+        // window.addEventListener("focus", this._windowFocusEventListener);
+        //
+        // this._windowBlurEventListener = ( ev ) =>{
+        //     this._onWindowBlur(ev);
+        // };
+        // window.addEventListener("blur", this._windowBlurEventListener );
+
+
     }
 
+    // _onWindowFocus(ev){
+    //     this._isWindowFocus  = true;
+    // }
+    //
+    // _onWindowBlur(ev){
+    //     this._isWindowFocus  = false;
+    // }
 
     _setIncomingRingtone( soundFileUrl ){
         this._webphone.setIncomingRingtone( soundFileUrl );

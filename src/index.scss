@@ -982,8 +982,10 @@ table.brOCLinetable tbody tr td
  width:100%;
  height:100%;
  box-sizing:border-box;
+ cursor:pointer;
 }
 
 .brOC .videoCallDiv_other:hover{
  border:1px solid #EEEE00;
+ cursor:pointer;
 }

@@ -214,6 +214,9 @@ export default class WebphoneCallInfo extends ACallInfo {
      */
     answerCall() {
         this._answer();
+        // const webphonePhoneClient = this._CallInfosAsParent.getPhoneClientAsParent();
+        // const webphone = webphonePhoneClient.getWebphone();
+        // webphone.closeNotification({ type: 'call', id: this._callObject.id })
         BrekekeOperatorConsole.getStaticInstance().onAnsweredCallByWebphoneCallInfo(this);
     }
 

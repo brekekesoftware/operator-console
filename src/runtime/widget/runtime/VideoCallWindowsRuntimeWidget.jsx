@@ -44,7 +44,7 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
             return;
         }
         //Find videoClientSession from videoStreamObject
-        let foundVcs = null;web
+        let foundVcs = null;
         for( let i = 0; i < vcst.length; i++ ){
             const vcs = vcst[i];
             const videoStreamObject = vcs.remoteStreamObject;
@@ -174,6 +174,9 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
             this._latestCallObject = callObject;
             this.setState({rerender:true});
         }
+        else{
+            this._VideoCallDivs.clearVideoCallDivArray();
+        }
 
     }
 
@@ -217,7 +220,7 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
             mainJsx = (
                 <>
                     <div style={{height: "67%"}}>
-                        <video ref={this._MainVideoRef} playsInline={true} autoPlay={true} style={{
+                        { currentCallInfo && <video ref={this._MainVideoRef} playsInline={true} autoPlay={true} style={{
                             width: "100%",
                             height: "67%",
                             // objectFit: "cover",
@@ -225,6 +228,7 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
                             overflow: "hidden",
                             position: "absolute"
                         }}></video>
+                        }
                     </div>
                     {videoCallDivsJsx}
                 </>

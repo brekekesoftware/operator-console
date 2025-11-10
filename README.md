@@ -1,5 +1,7 @@
 # Brekeke Operator Console
 
+To try out the latest features, check out the dai-2_0_0- branch.
+
 ## Get started
 
 ```bash

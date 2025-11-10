@@ -109,6 +109,7 @@ export default class SystemSettingsData {
         this._Data.autoDialInputFieldFontSize = appData.autoDialInputFieldFontSize;
         this._Data.autoDialTabFontSize = appData.autoDialTabFontSize;
         this._Data.autoDialOtherFontSize = appData.autoDialOtherFontSize;
+        this._Data.desktopNotificationInterval = appData.desktopNotificationInterval;
         initSuccessFunction();
     }
 
@@ -247,6 +248,7 @@ export default class SystemSettingsData {
        this._Data.autoDialInputFieldFontSize = undefined;
        this._Data.autoDialTabFontSize = undefined;
        this._Data.autoDialOtherFontSize = undefined;
+       this._Data.desktopNotificationInterval =  3000;  //Milliseconds
     }
 
     setCloneDatas( srcSystemSettingsData ) {
@@ -387,6 +389,14 @@ export default class SystemSettingsData {
         return this._Data.autoDialOtherFontSize;
     }
 
+    /**
+     *
+     * @returns {number|*}
+     */
+    getDesktopNotificationInterval(){
+        return this._Data.desktopNotificationInterval;  //Milliseconds
+    }
+
     _formatSystemSettingsAppData(appData){
         if( !appData ){
             appData = {};
@@ -405,6 +415,7 @@ export default class SystemSettingsData {
         appData.autoDialRecentDisplayOrder = CallHistory2.parseAutoDialRecentDisplayOrderForce( appData.autoDialRecentDisplayOrder );
 		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
         appData.autoDialOneTouchCall = OCUtil.isBoolean( appData.autoDialOneTouchCall )  ? appData.autoDialOneTouchCall : true;
+        appData.desktopNotificationInterval = appData.desktopNotificationInterval ? appData.desktopNotificationInterval : 3000; //Milliseconds
         return appData;
     }
 

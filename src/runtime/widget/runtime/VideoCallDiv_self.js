@@ -22,9 +22,9 @@ export default class VideoCallDiv_self extends VideoCallDiv{
     _onClickFrontBackSwitchSvg( ev ){
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const phoneClient = oc.getPhoneClient();
-        if( phoneClient.constructor.name !== WebphonePhoneClient.name ) {
-            return;
-        }
+        // if( phoneClient.constructor.name !== WebphonePhoneClient.name ) {
+        //     return;
+        // }
         const webphoneCallInfos = phoneClient.getCallInfos();
         const webphoneCallInfo = webphoneCallInfos.getCurrentCallInfo();
         if( !webphoneCallInfo ){
@@ -38,9 +38,22 @@ export default class VideoCallDiv_self extends VideoCallDiv{
 
     //!override
     _getRenderMainJsx(){
-        const videoStreamObject = this._VideoStreamObject;
         //const videoRef = this._Parent.getVideoCallWindowsRuntimeWidgetAsParent().getOrCreateRefByVideoCallDiv(this);
         //this._setVideoSrcObject(this._VideoRef);
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const phoneClient = oc.getPhoneClient();
+        // if( phoneClient.constructor.name !== WebphonePhoneClient.name ) {
+        //     return (null);
+        // }
+        const webphoneCallInfos = phoneClient.getCallInfos();
+        const webphoneCallInfo = webphoneCallInfos.getCurrentCallInfo();
+        if( !webphoneCallInfo ){
+            return (null);
+        }
+        if( webphoneCallInfo.getIsLocalVideoEnabled() !== true ){
+            return (null);
+        }
+        const videoStreamObject = this._VideoStreamObject;
         return (
             <div style={{border: "1px solid #AAAAAA", width: "100%", height: "100%", boxSizing: "border-box"}}>
                 <VideoCallDivPlayer stream={videoStreamObject} playsInline={true} autoPlay={true} style={{

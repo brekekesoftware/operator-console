@@ -18,6 +18,13 @@ export default class PalPhoneClient  extends APhoneClient {
     }
 
     /**
+     *  override method
+     */
+    onBeginSetSystemSettingsDataByOperatorConsoleAsParentForPhoneClient( operatorConsoleAsCaller , newCoreData ){
+        //Do nothing.
+    }
+
+    /**
      *  overload method
      * @returns {boolean}
      */
@@ -79,7 +86,7 @@ export default class PalPhoneClient  extends APhoneClient {
      *  override mothod
      * @param options
      */
-    initPhoneClient( options ){
+    initPhoneClient( options, newSystemSettingsCoreData ){
 
         this.statusEvents = new Array();
         this.parkEvents = new Array();

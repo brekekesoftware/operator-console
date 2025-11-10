@@ -1,5 +1,7 @@
 {
   "ja": {
+	"Webphone_settings" : "Webphoneの設定",
+	"Desktop_notification_interval" : "デスクトップ通知の表示間隔(ミリ秒)",
   	"Switch_between_front_and_back_camera" : "前後のカメラを切り替えます。",
 	"To_enable_this_widget_select_Webphone_~" : "このウィジェットを有効にするには、設定画面で\"Webphone\"を選択してください。",
 	"VideoCallWindowsWidgetIsInEditMode" : "ビデオ通話ウィンドウウィジェットは編集中です。",

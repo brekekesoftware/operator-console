@@ -22,8 +22,8 @@ export default class LegacyButtonEditorSubWidget_toggleVideoCallButton extends L
 		
 			//const bVideoOn =  currentCallInfo?.getIsRemoteVideoEnabled() || currentCallInfo?.getIsLocalVideoEnabled();
 			//const widgetData = this.getLegacyButtonSubWidgetData().getLegacyButtonWidgetDataAsParent();
-			const bLocalVideoEnabled =  currentCallInfo?.getIsLocalVideoEnabled();	//!temp
-			const bRemoteVideoEnabled =  currentCallInfo?.getIsRemoteVideoEnabled();	//!temp
+			const bLocalVideoEnabled =  currentCallInfo?.getIsLocalVideoEnabled();
+			//const bRemoteVideoEnabled =  currentCallInfo?.getIsRemoteVideoEnabled();	//!temp
 			const bVideoOn = bLocalVideoEnabled;
 			if( bVideoOn ){
 				const sVideoOffButtonFontSize = subWidgetData.getVideoOffFontSize() ? subWidgetData.getVideoOffFontSize() + "px" : "1rem";    //!default

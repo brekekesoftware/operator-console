@@ -60,7 +60,8 @@ const SystemSettingsForm = ( props ) => {
             {/*<h1>{i18n.t("ringtoneSettings")}</h1>*/}
             {/*<RingtoneSettings/>*/}
             <h1>{i18n.t("ringtoneSettings")}</h1>
-            <RingtoneSettings2 form={systemSettingsUseForm} initialValues={initialValues} ringtoneAudioPlayers={props.ringtoneAudioPlayers}/>
+            <RingtoneSettings2 form={systemSettingsUseForm} initialValues={initialValues}
+                               ringtoneAudioPlayers={props.ringtoneAudioPlayers}/>
             <h1>{i18n.t("ucSettings")}</h1>
             <Form.Item label={i18n.t("ucUrl")} name="ucUrl">
                 <Input style={{width: 500}} maxLength={300}/>
@@ -72,6 +73,10 @@ const SystemSettingsForm = ( props ) => {
                     <Radio value={true}>{i18n.t("on")}</Radio>
                 </Radio.Group>
             </Form.Item>
+            <h1>{i18n.t("Webphone_settings")}</h1>
+            <Form.Item label={i18n.t("Desktop_notification_interval")} name="desktopNotificationInterval">
+                <InputNumber style={{width: 100}} step={1000} />
+            </Form.Item>
             <h1>{i18n.t("otherSettings")}</h1>
             <Form.Item label={i18n.t("phoneTerminal")} name="phoneTerminal">
                 <Radio.Group disabled={props["hasCall"]}>
@@ -82,37 +87,37 @@ const SystemSettingsForm = ( props ) => {
             <Form.Item label={i18n.t("extensionScript")} name="extensionScript">
                 <TextArea rows={30} maxLength={1000000} style={{minHeight: 600, minWidth: 800, marginRight: 30}}/>
             </Form.Item>
-            <Form.Item name="autoDialTableHeaderFontSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialTableHeaderFontSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialTableBodyFontSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialTableBodyFontSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialSwitchSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialSwitchSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialLampSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialLampSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialIconSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialIconSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialButtonSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialButtonSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialInputFieldHeight" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialInputFieldHeight" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialInputFieldFontSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialInputFieldFontSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialTabFontSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialTabFontSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            <Form.Item name="autoDialOtherFontSize" noStyle hidden >
-                <input type="hidden" />
+            <Form.Item name="autoDialOtherFontSize" noStyle hidden>
+                <input type="hidden"/>
             </Form.Item>
-            </section>
+        </section>
     </Form>
 };
 

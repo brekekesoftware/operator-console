@@ -79,7 +79,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.46";
+const VERSION = "2.1.47";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -2966,9 +2966,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         );
     }
 
-    _initAphoneClient( aphone, initOptions ){
+    _initAphoneClient( aphone, initOptions, newSystemSettingsCoreData ){
         this._aphone = aphone;
-        this._aphone.initPhoneClient( initOptions );
+        this._aphone.initPhoneClient( initOptions, newSystemSettingsCoreData );
     }
 
     _deinitAphoneClient(){
@@ -3066,10 +3066,13 @@ export default class BrekekeOperatorConsole extends React.Component {
             initOptions.onInitFailFunction = function( error ){
                 onInitFailUccacFunction(error);
             };
-            this._initAphoneClient(  phoneClient,  initOptions );
+            this._initAphoneClient(  phoneClient,  initOptions, newData );
             return false;
         }
         else{
+            const phoneClient = this.getPhoneClient();
+            phoneClient.onBeginSetSystemSettingsDataByOperatorConsoleAsParentForPhoneClient(this, newData );
+
             const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
                 function() {
                     onInitSuccessUccacFunction();

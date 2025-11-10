@@ -364,13 +364,7 @@ export default class WebphoneCallInfo extends ACallInfo {
      *  overload method
      */
     toggleVideo(){
-        const beforeLocalVideoEnabled = this._callObject.getLocalVideoEnabled(); //!temp //!test
-        const beforeRemoteVideoEnabled = this._callObject.getRemoteVideoEnabled(); //!temp //!test
         this._callObject.toggleVideo();
-        const afterLocalVideoEnabled = this._callObject.getLocalVideoEnabled(); //!temp //!test
-        const afterRemoteVideoEnabled = this._callObject.getRemoteVideoEnabled(); //!temp //!test
-
-        const temp = 0;
     }
 
 

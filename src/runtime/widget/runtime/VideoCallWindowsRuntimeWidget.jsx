@@ -6,6 +6,7 @@ import Util from "../../../Util";
 import WebphonePhoneClient from "../../../WebphonePhoneClient";
 import VideoCallDivs from "./VideoCallDivs";
 import VideoCallDiv from "./VideoCallDiv";
+import {VideoCallDivPlayer} from "./VideoCallDivPlayer";
 export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
 
     constructor( props ) {
@@ -13,7 +14,7 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
         this._VideoCallDivs = new VideoCallDivs(this);
         this._LatestVideoStreamObjects = new Array();
         this._latestCallObject = undefined;
-        this._MainVideoRef = createRef();
+        //this._MainVideoRef = createRef();
     }
 
     // _clearObject( o ){
@@ -59,12 +60,12 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
         }
     }
 
-    _setMainVideoSrcObject(){
-        if( !this._MainVideoRef.current ){
-            return;
-        }
-        this._MainVideoRef.current.srcObject = this._mainVideoClientSession?.remoteStreamObject;
-    }
+    // _setMainVideoSrcObject(){
+    //     if( !this._MainVideoRef.current ){
+    //         return;
+    //     }
+    //     this._MainVideoRef.current.srcObject = this._mainVideoClientSession?.remoteStreamObject;
+    // }
 
     //!override
     componentDidMount() {
@@ -216,18 +217,24 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
             const currentCallInfo = callInfos.getCurrentCallInfo();
 
             const videoCallDivsJsx = this._VideoCallDivs.getRenderJsx();
-            this._setMainVideoSrcObject();
+            //this._setMainVideoSrcObject();
+
+
+            const remoteStreamObject = this._mainVideoClientSession?.remoteStreamObject;
+
+            const bRemoteVideoEnabled = currentCallInfo && currentCallInfo.getIsRemoteVideoEnabled();
             mainJsx = (
                 <>
                     <div style={{height: "67%"}}>
-                        { currentCallInfo && <video ref={this._MainVideoRef} playsInline={true} autoPlay={true} style={{
+                        {/*{ bRemoteVideoEnabled && <video ref={this._MainVideoRef} playsInline={true} autoPlay={true} style={{*/}
+                        { bRemoteVideoEnabled && <VideoCallDivPlayer stream={remoteStreamObject} playsInline={true} autoPlay={true} style={{
                             width: "100%",
                             height: "67%",
                             // objectFit: "cover",
                             objectFit: "contain",
                             overflow: "hidden",
                             position: "absolute"
-                        }}></video>
+                        }}></VideoCallDivPlayer>
                         }
                     </div>
                     {videoCallDivsJsx}

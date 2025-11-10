@@ -17,6 +17,11 @@ export default class VideoCallDivs {
     }
 
     initVideoCallDivs( args = null ){
+        const bRender = !!this._Ref.current;    //!bad
+        if( !bRender ){
+            return false;
+        }
+
         this._latestScaleRatio = 1.0;
 
         //let rootElement;
@@ -39,6 +44,7 @@ export default class VideoCallDivs {
         //const rootWidth = parseFloat( cmpStyle.width );
         const rootHeight = parseFloat( cmpStyle.height );
         this._rootHeight = rootHeight;
+        return true;
     }
 
     getDivItemAspectRatio(){
@@ -46,6 +52,11 @@ export default class VideoCallDivs {
     }
 
     clearVideoCallDivArray(){
+        const bRender = !!this._Ref.current;    //!bad
+        if( !bRender ){
+            return false;
+        }
+
         if( this._VideoCallDivArray.length === 0 ){
             return false;
         }

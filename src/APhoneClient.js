@@ -31,13 +31,20 @@ export default class APhoneClient {
      *  virtual method
      * @param options
      */
-    initPhoneClient(options) {
+    initPhoneClient(options, newSystemSettingsData ) {
     }
 
     /**
      *  virtual method
      */
     deinitPhoneClient() {
+    }
+
+    /**
+     *  abstract method
+     */
+    onBeginSetSystemSettingsDataByOperatorConsoleAsParentForPhoneClient( operatorConsoleAsCaller , newCoreData ){
+         throw new Error("Not implemented.");
     }
 
     // /**

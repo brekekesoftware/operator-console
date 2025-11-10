@@ -1,6 +1,8 @@
 import React, {createRef} from 'react';
 import VideoCallDiv from "./VideoCallDiv";
 import {VideoCallDivPlayer} from "./VideoCallDivPlayer";
+import BrekekeOperatorConsole from "../../../index";
+import WebphonePhoneClient from "../../../WebphonePhoneClient";
 
 export default class VideoCallDiv_other extends VideoCallDiv{
 
@@ -27,6 +29,19 @@ export default class VideoCallDiv_other extends VideoCallDiv{
 
     //!override
     _getRenderMainJsx(){
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const phoneClient = oc.getPhoneClient();
+        // if( phoneClient.constructor.name !== WebphonePhoneClient.name ) {
+        //     return (null);
+        // }
+        const webphoneCallInfos = phoneClient.getCallInfos();
+        const webphoneCallInfo = webphoneCallInfos.getCurrentCallInfo();
+        if( !webphoneCallInfo ){
+            return (null);
+        }
+        if( webphoneCallInfo.getIsRemoteVideoEnabled() !== true ){
+            return (null);
+        }
         const videoStreamObject = this._VideoStreamObject;
         //this._setVideoSrcObject(this._VideoRef);
         return (

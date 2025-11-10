@@ -27,6 +27,14 @@ export default class WebphonePhoneClient  extends APhoneClient {
     }
 
     /**
+     *  override method
+     */
+    onBeginSetSystemSettingsDataByOperatorConsoleAsParentForPhoneClient( operatorConsoleAsCaller , newCoreData ){
+        const desktopNotificationInterval = newCoreData.desktopNotificationInterval;
+        this._webphone._notificationOptions.notificationInterval = desktopNotificationInterval;
+    }
+
+    /**
      *  overload method
      * @returns {boolean}
      */
@@ -74,8 +82,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
     }
 	
 	_onWebrtcclientSessionStatusChanged( session ){
-	    const headers = session.rtcSession._request.headers;
-		const temp = 0;	//!temp
+	    //const headers = session.rtcSession._request.headers;
 	}
 
 
@@ -83,10 +90,11 @@ export default class WebphonePhoneClient  extends APhoneClient {
      *  override mothod
      * @param options
      */
-    initPhoneClient( options ){
+    initPhoneClient( options, newSystemSettingsCoreData ){
         super.initPhoneClient( options );
 
         const eBrOcPhone = document.getElementById('brOCPhone');
+        const desktopNotificationInterval = newSystemSettingsCoreData.desktopNotificationInterval;
         const args = {
             autoLogin: true,
             clearExistingAccounts: true,
@@ -103,6 +111,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
             'webphone.pal.param.user': '*',
             'webphone.pal.param.line': '*',
             'webphone.pal.param.park': '*',
+            notificationInterval : desktopNotificationInterval
             //dontShowNotificationIfFocusing : true
         };
 
@@ -156,6 +165,12 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
         this._webphone.on('call', c => {
             console.log('call', c);
+            const remoteVideoEnabled =  c.getRemoteVideoEnabled();	//!temp
+            const localVideoEnabled =  c.getLocalVideoEnabled(); //!temp
+            const localStreamObject = c.localStreamObject; //!temp
+            const remoteStreamObject = c.remoteStreamObject; //!temp
+            const vcst = c.videoClientSessionTable; //!temp
+
             this_._onCall( c );
         });
         this._webphone.on('call_update', callObject => {
@@ -164,7 +179,8 @@ export default class WebphonePhoneClient  extends APhoneClient {
             const localVideoEnabled =  callObject.getLocalVideoEnabled(); //!temp
 			const localStreamObject = callObject.localStreamObject; //!temp
 			const remoteStreamObject = callObject.remoteStreamObject; //!temp
-			
+            const vcst = callObject.videoClientSessionTable; //!temp
+
             this._webphoneCallInfos.onUpdateCallObjectByWebphoneClient( callObject );
         })
         this._webphone.on('call_end', c => {

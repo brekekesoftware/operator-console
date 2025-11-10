@@ -38,8 +38,8 @@ export default class LegacyButtonRuntimeSubWidget_toggleVideoOnCallButton extend
         const currentCallInfo = phoneClient.getCallInfos().getCurrentCallInfo();
         const bToggleVideoSupport = phoneClient.getIsToggleVideoSupport();
         if( bToggleVideoSupport && !!currentCallInfo && currentCallInfo.getIsAnswered() === true ) {
-            const bLocalVideoEnabled =  currentCallInfo?.getIsLocalVideoEnabled();	//!temp
-            const bRemoteVideoEnabled =  currentCallInfo?.getIsRemoteVideoEnabled();	//!temp
+            const bLocalVideoEnabled =  currentCallInfo?.getIsLocalVideoEnabled();
+            //const bRemoteVideoEnabled =  currentCallInfo?.getIsRemoteVideoEnabled();	//!temp
             const bVideoOn = bLocalVideoEnabled;
             if (bVideoOn) {
                 const sVideoOffButtonFontSize = subWidgetData.getVideoOffFontSize() ? subWidgetData.getVideoOffFontSize() + "px" : "1rem";    //!default

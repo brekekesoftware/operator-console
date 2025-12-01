@@ -165,21 +165,21 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
         this._webphone.on('call', c => {
             console.log('call', c);
-            const remoteVideoEnabled =  c.getRemoteVideoEnabled();	//!temp
-            const localVideoEnabled =  c.getLocalVideoEnabled(); //!temp
-            const localStreamObject = c.localStreamObject; //!temp
-            const remoteStreamObject = c.remoteStreamObject; //!temp
-            const vcst = c.videoClientSessionTable; //!temp
+            // const remoteVideoEnabled =  c.getRemoteVideoEnabled();	//!temp
+            // const localVideoEnabled =  c.getLocalVideoEnabled(); //!temp
+            // const localStreamObject = c.localStreamObject; //!temp
+            // const remoteStreamObject = c.remoteStreamObject; //!temp
+            // const vcst = c.videoClientSessionTable; //!temp
 
             this_._onCall( c );
         });
         this._webphone.on('call_update', callObject => {
             console.log('call_update', callObject);
-            const remoteVideoEnabled =  callObject.getRemoteVideoEnabled();	//!temp
-            const localVideoEnabled =  callObject.getLocalVideoEnabled(); //!temp
-			const localStreamObject = callObject.localStreamObject; //!temp
-			const remoteStreamObject = callObject.remoteStreamObject; //!temp
-            const vcst = callObject.videoClientSessionTable; //!temp
+            // const remoteVideoEnabled =  callObject.getRemoteVideoEnabled();	//!temp
+            // const localVideoEnabled =  callObject.getLocalVideoEnabled(); //!temp
+			// const localStreamObject = callObject.localStreamObject; //!temp
+			// const remoteStreamObject = callObject.remoteStreamObject; //!temp
+            // const vcst = callObject.videoClientSessionTable; //!temp
 
             this._webphoneCallInfos.onUpdateCallObjectByWebphoneClient( callObject );
         })

@@ -76,8 +76,8 @@ export default class PalCallInfos extends ACallInfos{
 
         if( status === PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.callSuccess && phoneIdx == PalPhoneClient.PHONE_INDEX) {
             const role = e.role;
-            const roomId = e.room_id;
             if (role === 's') {
+                const roomId = e.room_id;
                 const callInfoCount = this.getCallInfoCount();
                 for (let i = 0; i < callInfoCount; i++) {
                     const callInfo = this.getCallInfoAt(i);

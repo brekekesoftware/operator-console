@@ -33,7 +33,8 @@ export default class LegacyButtonEditorSubWidget_pickUpCallButton extends Legacy
         const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
         const iconJsx = this._getIconJsx();
 
-        const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+        //const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+        const isFlash = currentCallInfo && currentCallInfo.getWasIncoming() && currentCallInfo.getIsAnswered() === false;
 
         return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
                        style={{

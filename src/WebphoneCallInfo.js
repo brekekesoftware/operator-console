@@ -17,6 +17,7 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
         this._incoming = callObject.incoming;
+        this._wasIncoming = this._incoming;
         this._answered = callObject.answered;
         this._partyNumber = callObject.partyNumber;
         this._answer = callObject.answer;
@@ -40,6 +41,13 @@ export default class WebphoneCallInfo extends ACallInfo {
     //     const callObject = this._callObject;
     //     callObject.videoStreamActive = false;
     // }
+
+    /**
+     *  Override method
+     */
+    getWasIncoming(){
+        return this._wasIncoming;
+    }
 
     /**
      *  overload method
@@ -165,7 +173,10 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._hangup = callObject.hangup;
         this._pbxRoomId = callObject.pbxRoomId;
         this._pbxTalkerId = callObject.pbxTalkerId;
-        this._incoming = callObject.incoming;
+        if( !this._firstNotifyStatusRole ) {
+            this._incoming = callObject.incoming;
+            this._wasIncoming = this._incoming;
+        }
         this._answered = callObject.answered;
         this._partyNumber = callObject.partyNumber;
         this._answer = callObject.answer;
@@ -336,6 +347,16 @@ export default class WebphoneCallInfo extends ACallInfo {
                 const temp = 0;
                 break;
         }
+
+        if( status === 0 && !this._firstNotifyStatusRole ) {  //calling
+            this._firstNotifyStatusRole = e["role"];
+            const bIsOutgoing = this._firstNotifyStatusRole === "c";
+            if (bIsOutgoing && this.getIsIncoming()) {
+                this._incoming = false;
+                this._WebphoneCallInfosAsParent.getPhoneClientAsParent().getOperatorConsoleAsParent().onUpdateCallInfoByCallInfo(this);
+            }
+        }
+
     }
 
     /**

@@ -53,6 +53,13 @@ export default class PalCallInfo extends ACallInfo {
     }
 
     /**
+     *  override method
+     */
+    getWasIncoming(){
+        return this._incoming;  //!check
+    }
+
+    /**
      * update information by PAL notify_status event
      * @param palNotifyStatusEventParam
      */

@@ -41,6 +41,7 @@ export  default class CallHistory2CallInfo {
 
     onUpdateCallInfoForCallHistory2CallInfo( callHistory2AsCaller, callInfo ) {
         this._answeredAt = callInfo.getAnsweredAt();
+        this._IsIncoming = callInfo.getIsIncoming();    //for notify_status role = c
     }
 
     onRemoveCallInfoForCallHistory2CallInfo( callHistory2AsCaller, callInfo )  {

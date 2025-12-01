@@ -86,17 +86,19 @@ export default class CallPanelEditorWidget extends EditorWidget{
         const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
         const sBoxShadow = sBoxshadowOutside + ( sBoxshadowOutside && sBoxshadowInside ? "," : "" ) + sBoxshadowInside;
 
-        const oc = BrekekeOperatorConsole.getStaticInstance();
-        const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
-        const bIsDTMFInput = oc.getIsDTMFInput();
+        //const oc = BrekekeOperatorConsole.getStaticInstance();
+        //const currentCallInfo = oc.getPhoneClient().getCallInfos().getCurrentCallInfo();
+        //const bIsDTMFInput = oc.getIsDTMFInput();
 
-        let dialing = oc.getDialing();
-        if( !dialing ){
-            dialing = "";
-        }
-        const partyName = currentCallInfo?.getPartyName();
+        const dialing = "9876543210";
+        const partyNumber = "0123456789";
+        // if( !dialing ){
+        //     dialing = "";
+        // }
+        const partyName = i18n.t("Example_Name");
         const hasPartyName = partyName && partyName.length !== 0;
-        const bHasMissedCall = oc.getHasMissedCallFromState();
+        //const bHasMissedCall = oc.getHasMissedCallFromState();
+        const duration = "01:23:45";
 
         const callIconWidth = widgetData.getCallIconWidth();
         const callIconHeight = widgetData.getCallIconHeight();
@@ -126,31 +128,37 @@ export default class CallPanelEditorWidget extends EditorWidget{
                 boxShadow: sBoxShadow,
                 color: callpanelFgColor
             }}>
-                {bHasMissedCall && (<div className={"missedCallRow-callPanel-brekeke_operatorConsole"}>
+                <div className={"missedCallRow-callPanel-brekeke_operatorConsole"}>
                     <div className="brOCCallPanelLeft">
                         {IconPhoneIncoming}
                     </div>
                     <div className="brOCCallPanelMain">
                         <div className="brOCCallPanelMissedCall" style={{fontSize:missedCallSize}}>{i18n.t("There_is_a_missed_call")}</div>
                     </div>
-                </div>)}
+                </div>
                 <div className="brOCCallPanelRow">
                     <div className="brOCCallPanelLeft">
-                        {!!currentCallInfo && (currentCallInfo.getIsIncoming() ? IconPhoneIncoming : IconPhoneOutgoing)}
+                        {IconPhoneOutgoing}
                     </div>
                     <div className="brOCCallPanelMainForRows">
-                        {hasPartyName && <div className="brOCCallPanelPartyName" style={{fontSize:callerNameSize}}>{partyName}</div>}
-                        <div
-                            className={hasPartyName ? "brOCCallPanelPartyNumber_small" : "brOCCallPanelPartyNumber"}
-                            style={{fontSize:iCallerNumberSize}}
-                        >{currentCallInfo?.getPartyNumber()}</div>
-                        <div className="brOCCallPanelDuration" style={{fontSize:callDurationSize}}>{this.state.duration}</div>
+                        {hasPartyName && <div className="brOCCallPanelPartyName"
+                                              style={{fontSize: callerNameSize}}>{partyName}</div>}
+                        <div style={{display:"flex"}}>
+                            <div
+                                className={"brOCCallPanelPartyNumber_small"}
+                                style={{fontSize: callerNumberSizeWithCallerName}}
+                            >{partyNumber}</div>
+                            &nbsp;
+                            <div
+                                className={"brOCCallPanelPartyNumber"}
+                                style={{fontSize: callerNumberSizeWithoutCallerName}}
+                            >{partyNumber}</div>
+                        </div>
+                        <div className="brOCCallPanelDuration" style={{fontSize: callDurationSize}}>{duration}</div>
                     </div>
                 </div>
                 <div className="brOCCallPanelRow">
-                    {bIsDTMFInput !== true && dialing.length !== 0 && (
-                        <div className="brOCCallPanelLeft">{IconKeyboard}</div>
-                    )}
+                    <div className="brOCCallPanelLeft">{IconKeyboard}</div>
                     <div className="brOCCallPanelMain">
                         <div className="brOCCallPanelDialing" style={{fontSize:inputTextSIze}}>{dialing}</div>
                     </div>

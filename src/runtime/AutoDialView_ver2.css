@@ -148,10 +148,10 @@
 }
 
 
-.brOC .addContact_AutoDialView_ver2 {
+.brOC .unsetBackgroundColor_AutoDialView_ver2 {
     background-color:unset !important;
 }
 
-.brOC .addContact_AutoDialView_ver2:hover{
+.brOC .unsetBackgroundColor_AutoDialView_ver2:hover{
     background-color:unset !important;
 }

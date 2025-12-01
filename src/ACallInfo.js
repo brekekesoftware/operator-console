@@ -16,6 +16,13 @@ export default class ACallInfo {
         return this._isHangupSelf;
     }
 
+    /**
+     *  abstract method
+     */
+    getWasIncoming(){
+        throw new Error("Not implemented.");
+    }
+
     setIsDisconnectedToTrue(){
         if( this._isDisconnected === true ){
             console.error("IsDisconnected is already true! callInfoUuid=" + this._CallInfoUuid );

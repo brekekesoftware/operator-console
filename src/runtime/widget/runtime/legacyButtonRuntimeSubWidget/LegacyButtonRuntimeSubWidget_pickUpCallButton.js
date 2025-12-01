@@ -46,7 +46,8 @@ export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends Legac
         //     }
         // }
 
-        const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+        //const isFlash = currentCallInfo && currentCallInfo.getCallStatus() === ACallInfo.CALL_STATUSES.incoming && currentCallInfo.getIsAnswered() === false;
+        const isFlash = currentCallInfo && currentCallInfo.getWasIncoming() && currentCallInfo.getIsAnswered() === false;
 
         return <button title={tooltipOfButtonWidget} className={clsx("kbc-button kbc-button-fill-parent", isFlash === true && "kbc-button-danger-flash kbc-pickUpCall-button-danger-flash")}
                        style={{
@@ -61,8 +62,12 @@ export default class LegacyButtonRuntimeSubWidget_pickUpCallButton extends Legac
                                if( !currentCallInfo ) {
                                    return;
                                }
-                               const bIsIncoming = currentCallInfo.getIsIncoming();
-                               if( !bIsIncoming ) {
+                               const bWasIncoming = currentCallInfo.getWasIncoming();
+                               // const bIsIncoming = currentCallInfo.getIsIncoming() && !currentCallInfo.getFIrstNotifyStatusRole();
+                               // if( !bIsIncoming ) {
+                               //     return;
+                               // }
+                               if( !bWasIncoming ){
                                    return;
                                }
                                const bIsAnswered = currentCallInfo.getIsAnswered();

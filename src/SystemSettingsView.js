@@ -3,10 +3,7 @@ import Form from "antd/lib/form";
 import Button from 'antd/lib/button';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import {Button, Form, Input, Space} from 'antd';
-import PrintHello from './PrintHello';
 import i18n, { DEFAULT_LOCALE, isValidLocale, loadTranslations } from "./i18n";
-import FixedSpeedDialSettings from 'FixedSpeedDialSettings'
-import ShortDialSettings from "./ShortDialSettings";
 import Popconfirm from 'antd/lib/popconfirm';
 import SystemSettingsForm from "./SystemSettingsForm";
 import getSystemSettingsUseForm from "./SystemSettingsForm";

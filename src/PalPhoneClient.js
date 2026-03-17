@@ -214,6 +214,7 @@ export default class PalPhoneClient  extends APhoneClient {
     flushStatusEvents = debounce(() => {
         console.log('pal.notify_status', this.statusEvents);
         this._flushStatusEvents();
+        this._flushAfterStatusEvents();
         //this._flushLineStatusEvents();
         this.statusEvents = [];
     }, 250);
@@ -288,13 +289,21 @@ export default class PalPhoneClient  extends APhoneClient {
             // const options = {
             //     event : e
             // }
-            // this._OperatorConsoleAsParent.onPalNotifyStatus(options);   //!bad //!fixit
+            // this._OperatorConsoleAsParent.onPalNotifyStatus(options);
         }
 
         this._OperatorConsoleAsParent.setExtensionsStatusAndMonitoringExtension( extensionsStatus, monitoringExtension );
 
     }
 
+    _flushAfterStatusEvents(){
+        for (const e of this.statusEvents) {
+            const options = {
+                event : e
+            }
+            this._OperatorConsoleAsParent.onPalNotifyStatus(options);
+        }
+    }
 
 
 

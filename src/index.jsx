@@ -79,7 +79,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.48";
+const VERSION = "2.1.49";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -2828,7 +2828,7 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         //this._OnChangeCurrentCallIdEventListeners = new Array();
         this._OnUnloadExtensionScriptEventListeners = new Array();
-        //this._OnPalNotifyStatusEventListeners = new Array();
+        this._OnPalNotifyStatusEventListeners = new Array();
         //this._BusylightStatusChanger = new BusylightStatusChanger(this); //!dev
         this._aphone = null;
         this._loggedinPal = null;
@@ -5085,6 +5085,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._clearOnUpdateCallInfoEventListeners();
         this._clearOnUnholdCallInfoEventListeners();
         this._clearOnHoldCallInfoEventListeners();
+        this.clearOnPalNotifyStatusEventListeners();
     }
 
     reloadSystemSettingsExtensionScript(){
@@ -5755,30 +5756,47 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
 
-    // onPalNotifyStatus( options ){
-    //     for(let i = 0; i < this._OnPalNotifyStatusEventListeners.length; i++ ){
-    //         const event = this._OnPalNotifyStatusEventListeners[i];
-    //         event( options );   //!forBug need tryCatch?
-    //     }
-    // }
+    //!calll me
+    onPalNotifyStatus( options ){
+        for(let i = 0; i < this._OnPalNotifyStatusEventListeners.length; i++ ){
+            const el = this._OnPalNotifyStatusEventListeners[i];
+            if( el ) {
+                el(options);   //!forBug need tryCatch?
+            }
+            else{
+                console.warn("onPalNotifyStatusEventListener is empty. index=" + i );
+            }
+        }
+    }
 
-    // setOnPalNotifyStatusEventListener(function_ ){
-    //     const index = this._OnPalNotifyStatusEventListeners.indexOf( function_ );
-    //     if( index !== -1 ){
-    //         return false;
-    //     }
-    //     this._OnPalNotifyStatusEventListeners.push( function_ );
-    //     return true;
-    // }
+    setOnPalNotifyStatusEventListener(function_, index = -1 ){
+        // const index = this._OnPalNotifyStatusEventListeners.indexOf( function_ );
+        // if( index !== -1 ){
+        //     return false;
+        // }
+        if( !Number.isInteger( index ) || index < 0 ){
+            index = this._OnPalNotifyStatusEventListeners.length;
+        }
+        this._OnPalNotifyStatusEventListeners[index] = function_;
+        return index;
+    }
 
     // removeOnPalNotifyStatusEventListener( function_ ){
     //     const removedIndex = Util.removeItemFromArray( this._OnPalNotifyStatusEventListeners, function_ );
     //     return removedIndex;
     // }
+    removeOnPalNotifyStatusEventListener( index ){
+        this._OnPalNotifyStatusEventListeners.splice( index, 1 );
+    }
 
-    // clearOnPalNotifyStatusEventListeners(){
-    //     this._OnPalNotifyStatusEventListeners.splice(0);
-    // }
+    getOnPalNotifyStatusEventListenerCount(){
+        const count =  this._OnPalNotifyStatusEventListeners.length;
+        return count;
+    }
+
+    clearOnPalNotifyStatusEventListeners(){
+        this._OnPalNotifyStatusEventListeners.splice(0);
+    }
 
     _setOCNoteFailAtDownLayoutAndSystemSettings( e, downLayoutAndSystemSettingsFailFunction  ) {
         //!testit

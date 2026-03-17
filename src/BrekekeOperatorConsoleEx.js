@@ -88,18 +88,6 @@ export default  class BrekekeOperatorConsoleEx{
         return removedIndex;
     }
 
-    // setOnPalNotifyStatusEventListener( options ){
-    //     const el = options["eventListener"];
-    //     const bSet = this._OperatorConsoleAsParent.setOnPalNotifyStatusEventListener( el );
-    //     return bSet;
-    // }
-
-    // removeOnPalNotifyStatusEventListener( options ){
-    //     const el = options["eventListener"];
-    //     const removedIndex = this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( el );
-    //     return removedIndex;
-    // }
-
     setOnHoldCallInfoEventListener( options ){
         const el = options["eventListener"];
         const bSet = this._OperatorConsoleAsParent.setOnHoldCallInfoEventListener( el );
@@ -160,6 +148,27 @@ export default  class BrekekeOperatorConsoleEx{
     getCallInfoAt( index ){
         const callInfo = this._OperatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoAt(index);
         return callInfo;
+    }
+
+    setOnPalNotifyStatusEventListener( options ){
+        const el = options["eventListener"];
+        const index = options["index"];
+
+        const setIndex = this._OperatorConsoleAsParent.setOnPalNotifyStatusEventListener( el, index );
+        return setIndex;
+    }
+
+    removeOnPalNotifyStatusEventListener( index ){
+        this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( index );
+    }
+
+    getOnPalNotifyStatusEventListenerCount(){
+        const count = this._OperatorConsoleAsParent.getOnPalNotifyStatusEventListenerCount();
+        return count;
+    }
+
+    clearOnPalNotifyStatusEventListeners(){
+        this._OperatorConsoleAsParent.clearOnPalNotifyStatusEventListeners();
     }
     
 }

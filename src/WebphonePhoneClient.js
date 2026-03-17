@@ -297,6 +297,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._flushStatusEvents();
         this._flushExtensionStatusEvents();
         //this._flushLineStatusEvents();
+        this._flushAfterStatusEvents();
         this.statusEvents = [];
     }, 250)
     // statusEvents = [];
@@ -306,6 +307,15 @@ export default class WebphonePhoneClient  extends APhoneClient {
     //     //this._flushLineStatusEvents();
     //     this.statusEvents = [];
     // };
+
+    _flushAfterStatusEvents(){
+        for (const e of this.statusEvents) {
+            const options = {
+                event : e
+            }
+            this._OperatorConsoleAsParent.onPalNotifyStatus(options);
+        }
+    }
 
     _flushStatusEvents(){
         for (const e of this.statusEvents) {

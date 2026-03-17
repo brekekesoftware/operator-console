@@ -23,6 +23,7 @@ body{
   --broc_dividerHalfWidth: 3px;
   --broc_dividerHalfHeight: 3px;
   --broc_defaultElementToElementHorizontalSpace : 6px;
+  --broc_scrollbar-width: calc(100vw - 100%);
 }
 
 .brOC {
@@ -41,6 +42,9 @@ body{
   --defaultButtonHorizontalSpace: 4px;
   --defaultElementVerticalSpace: 4px;
   --defaultElementVerticalSpace_s: 2px;
+  --broc_headerHeight: 47px;
+  --broc_editorSettingsArea_width:260px;
+  --broc_editorSettingsArea_margin:4px;
 }
 
 .brOC .defaultElementMarginTop_s{
@@ -963,7 +967,7 @@ table.brOCLinetable tbody tr td
 
 .brOC .header_RuntimeScreenView_ver2{
 	position:relative;
-	height:47px;
+	height:var(--broc_headerHeight);
 }
 
 .brOC .loggedinUserInfo_header_RuntimeScreenView_ver2{
@@ -989,3 +993,3249 @@ table.brOCLinetable tbody tr td
  border:1px solid #EEEE00;
  cursor:pointer;
 }
+
+.brOC table .sideTable tr:first-child th{
+  padding-top:unset !important;
+}
+
+.brOC table .sideTable > tbody > tr > th,
+.brOC table .sideTable > tbody > tr > td
+{
+  border-top: 1px solid var(--defaultBorderColor);
+}
+
+.brOC div.editorSettingsArea{
+  width:var(--broc_editorSettingsArea_width);
+  margin:var(--broc_editorSettingsArea_margin);
+}
+
+.ant-select-selector{
+  background: unset !important;
+}
+
+
+/* From operator-console_custom.css.org~ */
+/*                                       */
+/* line 10, src/scss/components/_button.scss */
+.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-toggleRecording-button-danger,
+a.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleRecording-button-danger:hover, button.kbc-toggleRecording-button-danger:focus, button.kbc-toggleRecording-button-danger.hover, button.kbc-toggleRecording-button-danger.focus,
+a.kbc-toggleRecording-button-danger:hover,
+a.kbc-toggleRecording-button-danger:focus,
+a.kbc-toggleRecording-button-danger.hover,
+a.kbc-toggleRecording-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleRecording-button-danger:active, button.kbc-toggleRecording-button-danger.active,
+a.kbc-toggleRecording-button-danger:active,
+a.kbc-toggleRecording-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleRecording-button-danger::after,
+a.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-toggleRecording-button-danger,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleRecording-button-danger:hover, button.kbc-button-xxs.kbc-toggleRecording-button-danger:focus, button.kbc-button-xxs.kbc-toggleRecording-button-danger.hover, button.kbc-button-xxs.kbc-toggleRecording-button-danger.focus,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger:hover,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger:focus,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger.hover,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleRecording-button-danger:active, button.kbc-button-xxs.kbc-toggleRecording-button-danger.active,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger:active,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleRecording-button-danger::after,
+a.kbc-button-xxs.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-toggleRecording-button-danger,
+a.kbc-button-xs.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleRecording-button-danger:hover, button.kbc-button-xs.kbc-toggleRecording-button-danger:focus, button.kbc-button-xs.kbc-toggleRecording-button-danger.hover, button.kbc-button-xs.kbc-toggleRecording-button-danger.focus,
+a.kbc-button-xs.kbc-toggleRecording-button-danger:hover,
+a.kbc-button-xs.kbc-toggleRecording-button-danger:focus,
+a.kbc-button-xs.kbc-toggleRecording-button-danger.hover,
+a.kbc-button-xs.kbc-toggleRecording-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleRecording-button-danger:active, button.kbc-button-xs.kbc-toggleRecording-button-danger.active,
+a.kbc-button-xs.kbc-toggleRecording-button-danger:active,
+a.kbc-button-xs.kbc-toggleRecording-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleRecording-button-danger::after,
+a.kbc-button-xs.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-toggleRecording-button-danger,
+a.kbc-button-sm.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleRecording-button-danger:hover, button.kbc-button-sm.kbc-toggleRecording-button-danger:focus, button.kbc-button-sm.kbc-toggleRecording-button-danger.hover, button.kbc-button-sm.kbc-toggleRecording-button-danger.focus,
+a.kbc-button-sm.kbc-toggleRecording-button-danger:hover,
+a.kbc-button-sm.kbc-toggleRecording-button-danger:focus,
+a.kbc-button-sm.kbc-toggleRecording-button-danger.hover,
+a.kbc-button-sm.kbc-toggleRecording-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleRecording-button-danger:active, button.kbc-button-sm.kbc-toggleRecording-button-danger.active,
+a.kbc-button-sm.kbc-toggleRecording-button-danger:active,
+a.kbc-button-sm.kbc-toggleRecording-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleRecording-button-danger::after,
+a.kbc-button-sm.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-toggleRecording-button-danger,
+a.kbc-button-lg.kbc-toggleRecording-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleRecording-button-danger:hover, button.kbc-button-lg.kbc-toggleRecording-button-danger:focus, button.kbc-button-lg.kbc-toggleRecording-button-danger.hover, button.kbc-button-lg.kbc-toggleRecording-button-danger.focus,
+a.kbc-button-lg.kbc-toggleRecording-button-danger:hover,
+a.kbc-button-lg.kbc-toggleRecording-button-danger:focus,
+a.kbc-button-lg.kbc-toggleRecording-button-danger.hover,
+a.kbc-button-lg.kbc-toggleRecording-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleRecording-button-danger:active, button.kbc-button-lg.kbc-toggleRecording-button-danger.active,
+a.kbc-button-lg.kbc-toggleRecording-button-danger:active,
+a.kbc-button-lg.kbc-toggleRecording-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleRecording-button-danger::after,
+a.kbc-button-lg.kbc-toggleRecording-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-toggleMuted-button-danger,
+a.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleMuted-button-danger:hover, button.kbc-toggleMuted-button-danger:focus, button.kbc-toggleMuted-button-danger.hover, button.kbc-toggleMuted-button-danger.focus,
+a.kbc-toggleMuted-button-danger:hover,
+a.kbc-toggleMuted-button-danger:focus,
+a.kbc-toggleMuted-button-danger.hover,
+a.kbc-toggleMuted-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleMuted-button-danger:active, button.kbc-toggleMuted-button-danger.active,
+a.kbc-toggleMuted-button-danger:active,
+a.kbc-toggleMuted-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleMuted-button-danger::after,
+a.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-toggleMuted-button-danger,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleMuted-button-danger:hover, button.kbc-button-xxs.kbc-toggleMuted-button-danger:focus, button.kbc-button-xxs.kbc-toggleMuted-button-danger.hover, button.kbc-button-xxs.kbc-toggleMuted-button-danger.focus,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger:hover,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger:focus,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger.hover,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleMuted-button-danger:active, button.kbc-button-xxs.kbc-toggleMuted-button-danger.active,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger:active,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleMuted-button-danger::after,
+a.kbc-button-xxs.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-toggleMuted-button-danger,
+a.kbc-button-xs.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleMuted-button-danger:hover, button.kbc-button-xs.kbc-toggleMuted-button-danger:focus, button.kbc-button-xs.kbc-toggleMuted-button-danger.hover, button.kbc-button-xs.kbc-toggleMuted-button-danger.focus,
+a.kbc-button-xs.kbc-toggleMuted-button-danger:hover,
+a.kbc-button-xs.kbc-toggleMuted-button-danger:focus,
+a.kbc-button-xs.kbc-toggleMuted-button-danger.hover,
+a.kbc-button-xs.kbc-toggleMuted-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleMuted-button-danger:active, button.kbc-button-xs.kbc-toggleMuted-button-danger.active,
+a.kbc-button-xs.kbc-toggleMuted-button-danger:active,
+a.kbc-button-xs.kbc-toggleMuted-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleMuted-button-danger::after,
+a.kbc-button-xs.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-toggleMuted-button-danger,
+a.kbc-button-sm.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleMuted-button-danger:hover, button.kbc-button-sm.kbc-toggleMuted-button-danger:focus, button.kbc-button-sm.kbc-toggleMuted-button-danger.hover, button.kbc-button-sm.kbc-toggleMuted-button-danger.focus,
+a.kbc-button-sm.kbc-toggleMuted-button-danger:hover,
+a.kbc-button-sm.kbc-toggleMuted-button-danger:focus,
+a.kbc-button-sm.kbc-toggleMuted-button-danger.hover,
+a.kbc-button-sm.kbc-toggleMuted-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleMuted-button-danger:active, button.kbc-button-sm.kbc-toggleMuted-button-danger.active,
+a.kbc-button-sm.kbc-toggleMuted-button-danger:active,
+a.kbc-button-sm.kbc-toggleMuted-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleMuted-button-danger::after,
+a.kbc-button-sm.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-toggleMuted-button-danger,
+a.kbc-button-lg.kbc-toggleMuted-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleMuted-button-danger:hover, button.kbc-button-lg.kbc-toggleMuted-button-danger:focus, button.kbc-button-lg.kbc-toggleMuted-button-danger.hover, button.kbc-button-lg.kbc-toggleMuted-button-danger.focus,
+a.kbc-button-lg.kbc-toggleMuted-button-danger:hover,
+a.kbc-button-lg.kbc-toggleMuted-button-danger:focus,
+a.kbc-button-lg.kbc-toggleMuted-button-danger.hover,
+a.kbc-button-lg.kbc-toggleMuted-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleMuted-button-danger:active, button.kbc-button-lg.kbc-toggleMuted-button-danger.active,
+a.kbc-button-lg.kbc-toggleMuted-button-danger:active,
+a.kbc-button-lg.kbc-toggleMuted-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleMuted-button-danger::after,
+a.kbc-button-lg.kbc-toggleMuted-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-quickCall-button-danger,
+a.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-quickCall-button-danger:hover, button.kbc-quickCall-button-danger:focus, button.kbc-quickCall-button-danger.hover, button.kbc-quickCall-button-danger.focus,
+a.kbc-quickCall-button-danger:hover,
+a.kbc-quickCall-button-danger:focus,
+a.kbc-quickCall-button-danger.hover,
+a.kbc-quickCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-quickCall-button-danger:active, button.kbc-quickCall-button-danger.active,
+a.kbc-quickCall-button-danger:active,
+a.kbc-quickCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-quickCall-button-danger::after,
+a.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-quickCall-button-danger,
+a.kbc-button-xxs.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-quickCall-button-danger:hover, button.kbc-button-xxs.kbc-quickCall-button-danger:focus, button.kbc-button-xxs.kbc-quickCall-button-danger.hover, button.kbc-button-xxs.kbc-quickCall-button-danger.focus,
+a.kbc-button-xxs.kbc-quickCall-button-danger:hover,
+a.kbc-button-xxs.kbc-quickCall-button-danger:focus,
+a.kbc-button-xxs.kbc-quickCall-button-danger.hover,
+a.kbc-button-xxs.kbc-quickCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-quickCall-button-danger:active, button.kbc-button-xxs.kbc-quickCall-button-danger.active,
+a.kbc-button-xxs.kbc-quickCall-button-danger:active,
+a.kbc-button-xxs.kbc-quickCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-quickCall-button-danger::after,
+a.kbc-button-xxs.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-quickCall-button-danger,
+a.kbc-button-xs.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-quickCall-button-danger:hover, button.kbc-button-xs.kbc-quickCall-button-danger:focus, button.kbc-button-xs.kbc-quickCall-button-danger.hover, button.kbc-button-xs.kbc-quickCall-button-danger.focus,
+a.kbc-button-xs.kbc-quickCall-button-danger:hover,
+a.kbc-button-xs.kbc-quickCall-button-danger:focus,
+a.kbc-button-xs.kbc-quickCall-button-danger.hover,
+a.kbc-button-xs.kbc-quickCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-quickCall-button-danger:active, button.kbc-button-xs.kbc-quickCall-button-danger.active,
+a.kbc-button-xs.kbc-quickCall-button-danger:active,
+a.kbc-button-xs.kbc-quickCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-quickCall-button-danger::after,
+a.kbc-button-xs.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-quickCall-button-danger,
+a.kbc-button-sm.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-quickCall-button-danger:hover, button.kbc-button-sm.kbc-quickCall-button-danger:focus, button.kbc-button-sm.kbc-quickCall-button-danger.hover, button.kbc-button-sm.kbc-quickCall-button-danger.focus,
+a.kbc-button-sm.kbc-quickCall-button-danger:hover,
+a.kbc-button-sm.kbc-quickCall-button-danger:focus,
+a.kbc-button-sm.kbc-quickCall-button-danger.hover,
+a.kbc-button-sm.kbc-quickCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-quickCall-button-danger:active, button.kbc-button-sm.kbc-quickCall-button-danger.active,
+a.kbc-button-sm.kbc-quickCall-button-danger:active,
+a.kbc-button-sm.kbc-quickCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-quickCall-button-danger::after,
+a.kbc-button-sm.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-quickCall-button-danger,
+a.kbc-button-lg.kbc-quickCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-quickCall-button-danger:hover, button.kbc-button-lg.kbc-quickCall-button-danger:focus, button.kbc-button-lg.kbc-quickCall-button-danger.hover, button.kbc-button-lg.kbc-quickCall-button-danger.focus,
+a.kbc-button-lg.kbc-quickCall-button-danger:hover,
+a.kbc-button-lg.kbc-quickCall-button-danger:focus,
+a.kbc-button-lg.kbc-quickCall-button-danger.hover,
+a.kbc-button-lg.kbc-quickCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-quickCall-button-danger:active, button.kbc-button-lg.kbc-quickCall-button-danger.active,
+a.kbc-button-lg.kbc-quickCall-button-danger:active,
+a.kbc-button-lg.kbc-quickCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-quickCall-button-danger::after,
+a.kbc-button-lg.kbc-quickCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-noAnswer-button-danger,
+a.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-noAnswer-button-danger:hover, button.kbc-noAnswer-button-danger:focus, button.kbc-noAnswer-button-danger.hover, button.kbc-noAnswer-button-danger.focus,
+a.kbc-noAnswer-button-danger:hover,
+a.kbc-noAnswer-button-danger:focus,
+a.kbc-noAnswer-button-danger.hover,
+a.kbc-noAnswer-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-noAnswer-button-danger:active, button.kbc-noAnswer-button-danger.active,
+a.kbc-noAnswer-button-danger:active,
+a.kbc-noAnswer-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-noAnswer-button-danger::after,
+a.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-noAnswer-button-danger,
+a.kbc-button-xxs.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-noAnswer-button-danger:hover, button.kbc-button-xxs.kbc-noAnswer-button-danger:focus, button.kbc-button-xxs.kbc-noAnswer-button-danger.hover, button.kbc-button-xxs.kbc-noAnswer-button-danger.focus,
+a.kbc-button-xxs.kbc-noAnswer-button-danger:hover,
+a.kbc-button-xxs.kbc-noAnswer-button-danger:focus,
+a.kbc-button-xxs.kbc-noAnswer-button-danger.hover,
+a.kbc-button-xxs.kbc-noAnswer-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-noAnswer-button-danger:active, button.kbc-button-xxs.kbc-noAnswer-button-danger.active,
+a.kbc-button-xxs.kbc-noAnswer-button-danger:active,
+a.kbc-button-xxs.kbc-noAnswer-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-noAnswer-button-danger::after,
+a.kbc-button-xxs.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-noAnswer-button-danger,
+a.kbc-button-xs.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-noAnswer-button-danger:hover, button.kbc-button-xs.kbc-noAnswer-button-danger:focus, button.kbc-button-xs.kbc-noAnswer-button-danger.hover, button.kbc-button-xs.kbc-noAnswer-button-danger.focus,
+a.kbc-button-xs.kbc-noAnswer-button-danger:hover,
+a.kbc-button-xs.kbc-noAnswer-button-danger:focus,
+a.kbc-button-xs.kbc-noAnswer-button-danger.hover,
+a.kbc-button-xs.kbc-noAnswer-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-noAnswer-button-danger:active, button.kbc-button-xs.kbc-noAnswer-button-danger.active,
+a.kbc-button-xs.kbc-noAnswer-button-danger:active,
+a.kbc-button-xs.kbc-noAnswer-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-noAnswer-button-danger::after,
+a.kbc-button-xs.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-noAnswer-button-danger,
+a.kbc-button-sm.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-noAnswer-button-danger:hover, button.kbc-button-sm.kbc-noAnswer-button-danger:focus, button.kbc-button-sm.kbc-noAnswer-button-danger.hover, button.kbc-button-sm.kbc-noAnswer-button-danger.focus,
+a.kbc-button-sm.kbc-noAnswer-button-danger:hover,
+a.kbc-button-sm.kbc-noAnswer-button-danger:focus,
+a.kbc-button-sm.kbc-noAnswer-button-danger.hover,
+a.kbc-button-sm.kbc-noAnswer-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-noAnswer-button-danger:active, button.kbc-button-sm.kbc-noAnswer-button-danger.active,
+a.kbc-button-sm.kbc-noAnswer-button-danger:active,
+a.kbc-button-sm.kbc-noAnswer-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-noAnswer-button-danger::after,
+a.kbc-button-sm.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-noAnswer-button-danger,
+a.kbc-button-lg.kbc-noAnswer-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-noAnswer-button-danger:hover, button.kbc-button-lg.kbc-noAnswer-button-danger:focus, button.kbc-button-lg.kbc-noAnswer-button-danger.hover, button.kbc-button-lg.kbc-noAnswer-button-danger.focus,
+a.kbc-button-lg.kbc-noAnswer-button-danger:hover,
+a.kbc-button-lg.kbc-noAnswer-button-danger:focus,
+a.kbc-button-lg.kbc-noAnswer-button-danger.hover,
+a.kbc-button-lg.kbc-noAnswer-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-noAnswer-button-danger:active, button.kbc-button-lg.kbc-noAnswer-button-danger.active,
+a.kbc-button-lg.kbc-noAnswer-button-danger:active,
+a.kbc-button-lg.kbc-noAnswer-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-noAnswer-button-danger::after,
+a.kbc-button-lg.kbc-noAnswer-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-monitoringCall-button-danger,
+a.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-monitoringCall-button-danger:hover, button.kbc-monitoringCall-button-danger:focus, button.kbc-monitoringCall-button-danger.hover, button.kbc-monitoringCall-button-danger.focus,
+a.kbc-monitoringCall-button-danger:hover,
+a.kbc-monitoringCall-button-danger:focus,
+a.kbc-monitoringCall-button-danger.hover,
+a.kbc-monitoringCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-monitoringCall-button-danger:active, button.kbc-monitoringCall-button-danger.active,
+a.kbc-monitoringCall-button-danger:active,
+a.kbc-monitoringCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-monitoringCall-button-danger::after,
+a.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-monitoringCall-button-danger,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-monitoringCall-button-danger:hover, button.kbc-button-xxs.kbc-monitoringCall-button-danger:focus, button.kbc-button-xxs.kbc-monitoringCall-button-danger.hover, button.kbc-button-xxs.kbc-monitoringCall-button-danger.focus,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger:hover,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger:focus,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger.hover,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-monitoringCall-button-danger:active, button.kbc-button-xxs.kbc-monitoringCall-button-danger.active,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger:active,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-monitoringCall-button-danger::after,
+a.kbc-button-xxs.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-monitoringCall-button-danger,
+a.kbc-button-xs.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-monitoringCall-button-danger:hover, button.kbc-button-xs.kbc-monitoringCall-button-danger:focus, button.kbc-button-xs.kbc-monitoringCall-button-danger.hover, button.kbc-button-xs.kbc-monitoringCall-button-danger.focus,
+a.kbc-button-xs.kbc-monitoringCall-button-danger:hover,
+a.kbc-button-xs.kbc-monitoringCall-button-danger:focus,
+a.kbc-button-xs.kbc-monitoringCall-button-danger.hover,
+a.kbc-button-xs.kbc-monitoringCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-monitoringCall-button-danger:active, button.kbc-button-xs.kbc-monitoringCall-button-danger.active,
+a.kbc-button-xs.kbc-monitoringCall-button-danger:active,
+a.kbc-button-xs.kbc-monitoringCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-monitoringCall-button-danger::after,
+a.kbc-button-xs.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-monitoringCall-button-danger,
+a.kbc-button-sm.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-monitoringCall-button-danger:hover, button.kbc-button-sm.kbc-monitoringCall-button-danger:focus, button.kbc-button-sm.kbc-monitoringCall-button-danger.hover, button.kbc-button-sm.kbc-monitoringCall-button-danger.focus,
+a.kbc-button-sm.kbc-monitoringCall-button-danger:hover,
+a.kbc-button-sm.kbc-monitoringCall-button-danger:focus,
+a.kbc-button-sm.kbc-monitoringCall-button-danger.hover,
+a.kbc-button-sm.kbc-monitoringCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-monitoringCall-button-danger:active, button.kbc-button-sm.kbc-monitoringCall-button-danger.active,
+a.kbc-button-sm.kbc-monitoringCall-button-danger:active,
+a.kbc-button-sm.kbc-monitoringCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-monitoringCall-button-danger::after,
+a.kbc-button-sm.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-monitoringCall-button-danger,
+a.kbc-button-lg.kbc-monitoringCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-monitoringCall-button-danger:hover, button.kbc-button-lg.kbc-monitoringCall-button-danger:focus, button.kbc-button-lg.kbc-monitoringCall-button-danger.hover, button.kbc-button-lg.kbc-monitoringCall-button-danger.focus,
+a.kbc-button-lg.kbc-monitoringCall-button-danger:hover,
+a.kbc-button-lg.kbc-monitoringCall-button-danger:focus,
+a.kbc-button-lg.kbc-monitoringCall-button-danger.hover,
+a.kbc-button-lg.kbc-monitoringCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-monitoringCall-button-danger:active, button.kbc-button-lg.kbc-monitoringCall-button-danger.active,
+a.kbc-button-lg.kbc-monitoringCall-button-danger:active,
+a.kbc-button-lg.kbc-monitoringCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-monitoringCall-button-danger::after,
+a.kbc-button-lg.kbc-monitoringCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-line-button-danger,
+a.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-danger:hover, button.kbc-line-button-danger:focus, button.kbc-line-button-danger.hover, button.kbc-line-button-danger.focus,
+a.kbc-line-button-danger:hover,
+a.kbc-line-button-danger:focus,
+a.kbc-line-button-danger.hover,
+a.kbc-line-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-danger:active, button.kbc-line-button-danger.active,
+a.kbc-line-button-danger:active,
+a.kbc-line-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-danger::after,
+a.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-line-button-danger,
+a.kbc-button-xxs.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-danger:hover, button.kbc-button-xxs.kbc-line-button-danger:focus, button.kbc-button-xxs.kbc-line-button-danger.hover, button.kbc-button-xxs.kbc-line-button-danger.focus,
+a.kbc-button-xxs.kbc-line-button-danger:hover,
+a.kbc-button-xxs.kbc-line-button-danger:focus,
+a.kbc-button-xxs.kbc-line-button-danger.hover,
+a.kbc-button-xxs.kbc-line-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-danger:active, button.kbc-button-xxs.kbc-line-button-danger.active,
+a.kbc-button-xxs.kbc-line-button-danger:active,
+a.kbc-button-xxs.kbc-line-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-danger::after,
+a.kbc-button-xxs.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-line-button-danger,
+a.kbc-button-xs.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-danger:hover, button.kbc-button-xs.kbc-line-button-danger:focus, button.kbc-button-xs.kbc-line-button-danger.hover, button.kbc-button-xs.kbc-line-button-danger.focus,
+a.kbc-button-xs.kbc-line-button-danger:hover,
+a.kbc-button-xs.kbc-line-button-danger:focus,
+a.kbc-button-xs.kbc-line-button-danger.hover,
+a.kbc-button-xs.kbc-line-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-danger:active, button.kbc-button-xs.kbc-line-button-danger.active,
+a.kbc-button-xs.kbc-line-button-danger:active,
+a.kbc-button-xs.kbc-line-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-danger::after,
+a.kbc-button-xs.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-line-button-danger,
+a.kbc-button-sm.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-danger:hover, button.kbc-button-sm.kbc-line-button-danger:focus, button.kbc-button-sm.kbc-line-button-danger.hover, button.kbc-button-sm.kbc-line-button-danger.focus,
+a.kbc-button-sm.kbc-line-button-danger:hover,
+a.kbc-button-sm.kbc-line-button-danger:focus,
+a.kbc-button-sm.kbc-line-button-danger.hover,
+a.kbc-button-sm.kbc-line-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-danger:active, button.kbc-button-sm.kbc-line-button-danger.active,
+a.kbc-button-sm.kbc-line-button-danger:active,
+a.kbc-button-sm.kbc-line-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-danger::after,
+a.kbc-button-sm.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-line-button-danger,
+a.kbc-button-lg.kbc-line-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-danger:hover, button.kbc-button-lg.kbc-line-button-danger:focus, button.kbc-button-lg.kbc-line-button-danger.hover, button.kbc-button-lg.kbc-line-button-danger.focus,
+a.kbc-button-lg.kbc-line-button-danger:hover,
+a.kbc-button-lg.kbc-line-button-danger:focus,
+a.kbc-button-lg.kbc-line-button-danger.hover,
+a.kbc-button-lg.kbc-line-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-danger:active, button.kbc-button-lg.kbc-line-button-danger.active,
+a.kbc-button-lg.kbc-line-button-danger:active,
+a.kbc-button-lg.kbc-line-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-danger::after,
+a.kbc-button-lg.kbc-line-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-line-button-callInfo-success {
+  /* box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd; */
+  box-shadow:unset;
+  background-color: #28a745;
+  border-color: #34ce57;
+  /* color: #f8f9fa; */
+  color:unset;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 0 8px #48d368, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-lineTablebutton-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-line-button-callInfo-success,
+a.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-callInfo-success:hover, button.kbc-line-button-callInfo-success:focus, button.kbc-line-button-callInfo-success.hover, button.kbc-line-button-callInfo-success.focus,
+a.kbc-line-button-callInfo-success:hover,
+a.kbc-line-button-callInfo-success:focus,
+a.kbc-line-button-callInfo-success.hover,
+a.kbc-line-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-callInfo-success:active, button.kbc-line-button-callInfo-success.active,
+a.kbc-line-button-callInfo-success:active,
+a.kbc-line-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-line-button-callInfo-success::after,
+a.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-line-button-callInfo-success,
+a.kbc-button-xxs.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-callInfo-success:hover, button.kbc-button-xxs.kbc-line-button-callInfo-success:focus, button.kbc-button-xxs.kbc-line-button-callInfo-success.hover, button.kbc-button-xxs.kbc-line-button-callInfo-success.focus,
+a.kbc-button-xxs.kbc-line-button-callInfo-success:hover,
+a.kbc-button-xxs.kbc-line-button-callInfo-success:focus,
+a.kbc-button-xxs.kbc-line-button-callInfo-success.hover,
+a.kbc-button-xxs.kbc-line-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-callInfo-success:active, button.kbc-button-xxs.kbc-line-button-callInfo-success.active,
+a.kbc-button-xxs.kbc-line-button-callInfo-success:active,
+a.kbc-button-xxs.kbc-line-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-line-button-callInfo-success::after,
+a.kbc-button-xxs.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-line-button-callInfo-success,
+a.kbc-button-xs.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-callInfo-success:hover, button.kbc-button-xs.kbc-line-button-callInfo-success:focus, button.kbc-button-xs.kbc-line-button-callInfo-success.hover, button.kbc-button-xs.kbc-line-button-callInfo-success.focus,
+a.kbc-button-xs.kbc-line-button-callInfo-success:hover,
+a.kbc-button-xs.kbc-line-button-callInfo-success:focus,
+a.kbc-button-xs.kbc-line-button-callInfo-success.hover,
+a.kbc-button-xs.kbc-line-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-callInfo-success:active, button.kbc-button-xs.kbc-line-button-callInfo-success.active,
+a.kbc-button-xs.kbc-line-button-callInfo-success:active,
+a.kbc-button-xs.kbc-line-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-line-button-callInfo-success::after,
+a.kbc-button-xs.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-line-button-callInfo-success,
+a.kbc-button-sm.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-callInfo-success:hover, button.kbc-button-sm.kbc-line-button-callInfo-success:focus, button.kbc-button-sm.kbc-line-button-callInfo-success.hover, button.kbc-button-sm.kbc-line-button-callInfo-success.focus,
+a.kbc-button-sm.kbc-line-button-callInfo-success:hover,
+a.kbc-button-sm.kbc-line-button-callInfo-success:focus,
+a.kbc-button-sm.kbc-line-button-callInfo-success.hover,
+a.kbc-button-sm.kbc-line-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-callInfo-success:active, button.kbc-button-sm.kbc-line-button-callInfo-success.active,
+a.kbc-button-sm.kbc-line-button-callInfo-success:active,
+a.kbc-button-sm.kbc-line-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-line-button-callInfo-success::after,
+a.kbc-button-sm.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-line-button-callInfo-success,
+a.kbc-button-lg.kbc-line-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 0 8px #48d368, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-callInfo-success:hover, button.kbc-button-lg.kbc-line-button-callInfo-success:focus, button.kbc-button-lg.kbc-line-button-callInfo-success.hover, button.kbc-button-lg.kbc-line-button-callInfo-success.focus,
+a.kbc-button-lg.kbc-line-button-callInfo-success:hover,
+a.kbc-button-lg.kbc-line-button-callInfo-success:focus,
+a.kbc-button-lg.kbc-line-button-callInfo-success.hover,
+a.kbc-button-lg.kbc-line-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-callInfo-success:active, button.kbc-button-lg.kbc-line-button-callInfo-success.active,
+a.kbc-button-lg.kbc-line-button-callInfo-success:active,
+a.kbc-button-lg.kbc-line-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-line-button-callInfo-success::after,
+a.kbc-button-lg.kbc-line-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-incomingCall-button-danger,
+a.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-incomingCall-button-danger:hover, button.kbc-incomingCall-button-danger:focus, button.kbc-incomingCall-button-danger.hover, button.kbc-incomingCall-button-danger.focus,
+a.kbc-incomingCall-button-danger:hover,
+a.kbc-incomingCall-button-danger:focus,
+a.kbc-incomingCall-button-danger.hover,
+a.kbc-incomingCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-incomingCall-button-danger:active, button.kbc-incomingCall-button-danger.active,
+a.kbc-incomingCall-button-danger:active,
+a.kbc-incomingCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-incomingCall-button-danger::after,
+a.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-incomingCall-button-danger,
+a.kbc-button-xxs.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-incomingCall-button-danger:hover, button.kbc-button-xxs.kbc-incomingCall-button-danger:focus, button.kbc-button-xxs.kbc-incomingCall-button-danger.hover, button.kbc-button-xxs.kbc-incomingCall-button-danger.focus,
+a.kbc-button-xxs.kbc-incomingCall-button-danger:hover,
+a.kbc-button-xxs.kbc-incomingCall-button-danger:focus,
+a.kbc-button-xxs.kbc-incomingCall-button-danger.hover,
+a.kbc-button-xxs.kbc-incomingCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-incomingCall-button-danger:active, button.kbc-button-xxs.kbc-incomingCall-button-danger.active,
+a.kbc-button-xxs.kbc-incomingCall-button-danger:active,
+a.kbc-button-xxs.kbc-incomingCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-incomingCall-button-danger::after,
+a.kbc-button-xxs.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-incomingCall-button-danger,
+a.kbc-button-xs.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-incomingCall-button-danger:hover, button.kbc-button-xs.kbc-incomingCall-button-danger:focus, button.kbc-button-xs.kbc-incomingCall-button-danger.hover, button.kbc-button-xs.kbc-incomingCall-button-danger.focus,
+a.kbc-button-xs.kbc-incomingCall-button-danger:hover,
+a.kbc-button-xs.kbc-incomingCall-button-danger:focus,
+a.kbc-button-xs.kbc-incomingCall-button-danger.hover,
+a.kbc-button-xs.kbc-incomingCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-incomingCall-button-danger:active, button.kbc-button-xs.kbc-incomingCall-button-danger.active,
+a.kbc-button-xs.kbc-incomingCall-button-danger:active,
+a.kbc-button-xs.kbc-incomingCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-incomingCall-button-danger::after,
+a.kbc-button-xs.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-incomingCall-button-danger,
+a.kbc-button-sm.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-incomingCall-button-danger:hover, button.kbc-button-sm.kbc-incomingCall-button-danger:focus, button.kbc-button-sm.kbc-incomingCall-button-danger.hover, button.kbc-button-sm.kbc-incomingCall-button-danger.focus,
+a.kbc-button-sm.kbc-incomingCall-button-danger:hover,
+a.kbc-button-sm.kbc-incomingCall-button-danger:focus,
+a.kbc-button-sm.kbc-incomingCall-button-danger.hover,
+a.kbc-button-sm.kbc-incomingCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-incomingCall-button-danger:active, button.kbc-button-sm.kbc-incomingCall-button-danger.active,
+a.kbc-button-sm.kbc-incomingCall-button-danger:active,
+a.kbc-button-sm.kbc-incomingCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-incomingCall-button-danger::after,
+a.kbc-button-sm.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-incomingCall-button-danger,
+a.kbc-button-lg.kbc-incomingCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-incomingCall-button-danger:hover, button.kbc-button-lg.kbc-incomingCall-button-danger:focus, button.kbc-button-lg.kbc-incomingCall-button-danger.hover, button.kbc-button-lg.kbc-incomingCall-button-danger.focus,
+a.kbc-button-lg.kbc-incomingCall-button-danger:hover,
+a.kbc-button-lg.kbc-incomingCall-button-danger:focus,
+a.kbc-button-lg.kbc-incomingCall-button-danger.hover,
+a.kbc-button-lg.kbc-incomingCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-incomingCall-button-danger:active, button.kbc-button-lg.kbc-incomingCall-button-danger.active,
+a.kbc-button-lg.kbc-incomingCall-button-danger:active,
+a.kbc-button-lg.kbc-incomingCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-incomingCall-button-danger::after,
+a.kbc-button-lg.kbc-incomingCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-callTalking-button-danger,
+a.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-callTalking-button-danger:hover, button.kbc-callTalking-button-danger:focus, button.kbc-callTalking-button-danger.hover, button.kbc-callTalking-button-danger.focus,
+a.kbc-callTalking-button-danger:hover,
+a.kbc-callTalking-button-danger:focus,
+a.kbc-callTalking-button-danger.hover,
+a.kbc-callTalking-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-callTalking-button-danger:active, button.kbc-callTalking-button-danger.active,
+a.kbc-callTalking-button-danger:active,
+a.kbc-callTalking-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-callTalking-button-danger::after,
+a.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-callTalking-button-danger,
+a.kbc-button-xxs.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-callTalking-button-danger:hover, button.kbc-button-xxs.kbc-callTalking-button-danger:focus, button.kbc-button-xxs.kbc-callTalking-button-danger.hover, button.kbc-button-xxs.kbc-callTalking-button-danger.focus,
+a.kbc-button-xxs.kbc-callTalking-button-danger:hover,
+a.kbc-button-xxs.kbc-callTalking-button-danger:focus,
+a.kbc-button-xxs.kbc-callTalking-button-danger.hover,
+a.kbc-button-xxs.kbc-callTalking-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-callTalking-button-danger:active, button.kbc-button-xxs.kbc-callTalking-button-danger.active,
+a.kbc-button-xxs.kbc-callTalking-button-danger:active,
+a.kbc-button-xxs.kbc-callTalking-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-callTalking-button-danger::after,
+a.kbc-button-xxs.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-callTalking-button-danger,
+a.kbc-button-xs.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-callTalking-button-danger:hover, button.kbc-button-xs.kbc-callTalking-button-danger:focus, button.kbc-button-xs.kbc-callTalking-button-danger.hover, button.kbc-button-xs.kbc-callTalking-button-danger.focus,
+a.kbc-button-xs.kbc-callTalking-button-danger:hover,
+a.kbc-button-xs.kbc-callTalking-button-danger:focus,
+a.kbc-button-xs.kbc-callTalking-button-danger.hover,
+a.kbc-button-xs.kbc-callTalking-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-callTalking-button-danger:active, button.kbc-button-xs.kbc-callTalking-button-danger.active,
+a.kbc-button-xs.kbc-callTalking-button-danger:active,
+a.kbc-button-xs.kbc-callTalking-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-callTalking-button-danger::after,
+a.kbc-button-xs.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-callTalking-button-danger,
+a.kbc-button-sm.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-callTalking-button-danger:hover, button.kbc-button-sm.kbc-callTalking-button-danger:focus, button.kbc-button-sm.kbc-callTalking-button-danger.hover, button.kbc-button-sm.kbc-callTalking-button-danger.focus,
+a.kbc-button-sm.kbc-callTalking-button-danger:hover,
+a.kbc-button-sm.kbc-callTalking-button-danger:focus,
+a.kbc-button-sm.kbc-callTalking-button-danger.hover,
+a.kbc-button-sm.kbc-callTalking-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-callTalking-button-danger:active, button.kbc-button-sm.kbc-callTalking-button-danger.active,
+a.kbc-button-sm.kbc-callTalking-button-danger:active,
+a.kbc-button-sm.kbc-callTalking-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-callTalking-button-danger::after,
+a.kbc-button-sm.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-callTalking-button-danger,
+a.kbc-button-lg.kbc-callTalking-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-callTalking-button-danger:hover, button.kbc-button-lg.kbc-callTalking-button-danger:focus, button.kbc-button-lg.kbc-callTalking-button-danger.hover, button.kbc-button-lg.kbc-callTalking-button-danger.focus,
+a.kbc-button-lg.kbc-callTalking-button-danger:hover,
+a.kbc-button-lg.kbc-callTalking-button-danger:focus,
+a.kbc-button-lg.kbc-callTalking-button-danger.hover,
+a.kbc-button-lg.kbc-callTalking-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-callTalking-button-danger:active, button.kbc-button-lg.kbc-callTalking-button-danger.active,
+a.kbc-button-lg.kbc-callTalking-button-danger:active,
+a.kbc-button-lg.kbc-callTalking-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-callTalking-button-danger::after,
+a.kbc-button-lg.kbc-callTalking-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-autoDial-button-danger,
+a.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-autoDial-button-danger:hover, button.kbc-autoDial-button-danger:focus, button.kbc-autoDial-button-danger.hover, button.kbc-autoDial-button-danger.focus,
+a.kbc-autoDial-button-danger:hover,
+a.kbc-autoDial-button-danger:focus,
+a.kbc-autoDial-button-danger.hover,
+a.kbc-autoDial-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-autoDial-button-danger:active, button.kbc-autoDial-button-danger.active,
+a.kbc-autoDial-button-danger:active,
+a.kbc-autoDial-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-autoDial-button-danger::after,
+a.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-autoDial-button-danger,
+a.kbc-button-xxs.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-autoDial-button-danger:hover, button.kbc-button-xxs.kbc-autoDial-button-danger:focus, button.kbc-button-xxs.kbc-autoDial-button-danger.hover, button.kbc-button-xxs.kbc-autoDial-button-danger.focus,
+a.kbc-button-xxs.kbc-autoDial-button-danger:hover,
+a.kbc-button-xxs.kbc-autoDial-button-danger:focus,
+a.kbc-button-xxs.kbc-autoDial-button-danger.hover,
+a.kbc-button-xxs.kbc-autoDial-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-autoDial-button-danger:active, button.kbc-button-xxs.kbc-autoDial-button-danger.active,
+a.kbc-button-xxs.kbc-autoDial-button-danger:active,
+a.kbc-button-xxs.kbc-autoDial-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-autoDial-button-danger::after,
+a.kbc-button-xxs.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-autoDial-button-danger,
+a.kbc-button-xs.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-autoDial-button-danger:hover, button.kbc-button-xs.kbc-autoDial-button-danger:focus, button.kbc-button-xs.kbc-autoDial-button-danger.hover, button.kbc-button-xs.kbc-autoDial-button-danger.focus,
+a.kbc-button-xs.kbc-autoDial-button-danger:hover,
+a.kbc-button-xs.kbc-autoDial-button-danger:focus,
+a.kbc-button-xs.kbc-autoDial-button-danger.hover,
+a.kbc-button-xs.kbc-autoDial-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-autoDial-button-danger:active, button.kbc-button-xs.kbc-autoDial-button-danger.active,
+a.kbc-button-xs.kbc-autoDial-button-danger:active,
+a.kbc-button-xs.kbc-autoDial-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-autoDial-button-danger::after,
+a.kbc-button-xs.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-autoDial-button-danger,
+a.kbc-button-sm.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-autoDial-button-danger:hover, button.kbc-button-sm.kbc-autoDial-button-danger:focus, button.kbc-button-sm.kbc-autoDial-button-danger.hover, button.kbc-button-sm.kbc-autoDial-button-danger.focus,
+a.kbc-button-sm.kbc-autoDial-button-danger:hover,
+a.kbc-button-sm.kbc-autoDial-button-danger:focus,
+a.kbc-button-sm.kbc-autoDial-button-danger.hover,
+a.kbc-button-sm.kbc-autoDial-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-autoDial-button-danger:active, button.kbc-button-sm.kbc-autoDial-button-danger.active,
+a.kbc-button-sm.kbc-autoDial-button-danger:active,
+a.kbc-button-sm.kbc-autoDial-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-autoDial-button-danger::after,
+a.kbc-button-sm.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-autoDial-button-danger,
+a.kbc-button-lg.kbc-autoDial-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-autoDial-button-danger:hover, button.kbc-button-lg.kbc-autoDial-button-danger:focus, button.kbc-button-lg.kbc-autoDial-button-danger.hover, button.kbc-button-lg.kbc-autoDial-button-danger.focus,
+a.kbc-button-lg.kbc-autoDial-button-danger:hover,
+a.kbc-button-lg.kbc-autoDial-button-danger:focus,
+a.kbc-button-lg.kbc-autoDial-button-danger.hover,
+a.kbc-button-lg.kbc-autoDial-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-autoDial-button-danger:active, button.kbc-button-lg.kbc-autoDial-button-danger.active,
+a.kbc-button-lg.kbc-autoDial-button-danger:active,
+a.kbc-button-lg.kbc-autoDial-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-autoDial-button-danger::after,
+a.kbc-button-lg.kbc-autoDial-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-lineTable-button-danger,
+a.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-danger:hover, button.kbc-lineTable-button-danger:focus, button.kbc-lineTable-button-danger.hover, button.kbc-lineTable-button-danger.focus,
+a.kbc-lineTable-button-danger:hover,
+a.kbc-lineTable-button-danger:focus,
+a.kbc-lineTable-button-danger.hover,
+a.kbc-lineTable-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-danger:active, button.kbc-lineTable-button-danger.active,
+a.kbc-lineTable-button-danger:active,
+a.kbc-lineTable-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-danger::after,
+a.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-lineTable-button-danger,
+a.kbc-button-xxs.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-danger:hover, button.kbc-button-xxs.kbc-lineTable-button-danger:focus, button.kbc-button-xxs.kbc-lineTable-button-danger.hover, button.kbc-button-xxs.kbc-lineTable-button-danger.focus,
+a.kbc-button-xxs.kbc-lineTable-button-danger:hover,
+a.kbc-button-xxs.kbc-lineTable-button-danger:focus,
+a.kbc-button-xxs.kbc-lineTable-button-danger.hover,
+a.kbc-button-xxs.kbc-lineTable-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-danger:active, button.kbc-button-xxs.kbc-lineTable-button-danger.active,
+a.kbc-button-xxs.kbc-lineTable-button-danger:active,
+a.kbc-button-xxs.kbc-lineTable-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-danger::after,
+a.kbc-button-xxs.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-lineTable-button-danger,
+a.kbc-button-xs.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-danger:hover, button.kbc-button-xs.kbc-lineTable-button-danger:focus, button.kbc-button-xs.kbc-lineTable-button-danger.hover, button.kbc-button-xs.kbc-lineTable-button-danger.focus,
+a.kbc-button-xs.kbc-lineTable-button-danger:hover,
+a.kbc-button-xs.kbc-lineTable-button-danger:focus,
+a.kbc-button-xs.kbc-lineTable-button-danger.hover,
+a.kbc-button-xs.kbc-lineTable-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-danger:active, button.kbc-button-xs.kbc-lineTable-button-danger.active,
+a.kbc-button-xs.kbc-lineTable-button-danger:active,
+a.kbc-button-xs.kbc-lineTable-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-danger::after,
+a.kbc-button-xs.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-lineTable-button-danger,
+a.kbc-button-sm.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-danger:hover, button.kbc-button-sm.kbc-lineTable-button-danger:focus, button.kbc-button-sm.kbc-lineTable-button-danger.hover, button.kbc-button-sm.kbc-lineTable-button-danger.focus,
+a.kbc-button-sm.kbc-lineTable-button-danger:hover,
+a.kbc-button-sm.kbc-lineTable-button-danger:focus,
+a.kbc-button-sm.kbc-lineTable-button-danger.hover,
+a.kbc-button-sm.kbc-lineTable-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-danger:active, button.kbc-button-sm.kbc-lineTable-button-danger.active,
+a.kbc-button-sm.kbc-lineTable-button-danger:active,
+a.kbc-button-sm.kbc-lineTable-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-danger::after,
+a.kbc-button-sm.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-lineTable-button-danger,
+a.kbc-button-lg.kbc-lineTable-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-danger:hover, button.kbc-button-lg.kbc-lineTable-button-danger:focus, button.kbc-button-lg.kbc-lineTable-button-danger.hover, button.kbc-button-lg.kbc-lineTable-button-danger.focus,
+a.kbc-button-lg.kbc-lineTable-button-danger:hover,
+a.kbc-button-lg.kbc-lineTable-button-danger:focus,
+a.kbc-button-lg.kbc-lineTable-button-danger.hover,
+a.kbc-button-lg.kbc-lineTable-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-danger:active, button.kbc-button-lg.kbc-lineTable-button-danger.active,
+a.kbc-button-lg.kbc-lineTable-button-danger:active,
+a.kbc-button-lg.kbc-lineTable-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-danger::after,
+a.kbc-button-lg.kbc-lineTable-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-lineTable-button-callInfo-success {
+  /* box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd; */
+  box-shadow:unset;
+  background-color: #28a745;
+  border-color: #34ce57;
+  /* color: #f8f9fa; */
+  color:unset;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 0 8px #48d368, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-lineTablebutton-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-lineTable-button-callInfo-success,
+a.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-callInfo-success:hover, button.kbc-lineTable-button-callInfo-success:focus, button.kbc-lineTable-button-callInfo-success.hover, button.kbc-lineTable-button-callInfo-success.focus,
+a.kbc-lineTable-button-callInfo-success:hover,
+a.kbc-lineTable-button-callInfo-success:focus,
+a.kbc-lineTable-button-callInfo-success.hover,
+a.kbc-lineTable-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-callInfo-success:active, button.kbc-lineTable-button-callInfo-success.active,
+a.kbc-lineTable-button-callInfo-success:active,
+a.kbc-lineTable-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-lineTable-button-callInfo-success::after,
+a.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-lineTable-button-callInfo-success,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-callInfo-success:hover, button.kbc-button-xxs.kbc-lineTable-button-callInfo-success:focus, button.kbc-button-xxs.kbc-lineTable-button-callInfo-success.hover, button.kbc-button-xxs.kbc-lineTable-button-callInfo-success.focus,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success:hover,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success:focus,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success.hover,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-callInfo-success:active, button.kbc-button-xxs.kbc-lineTable-button-callInfo-success.active,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success:active,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-lineTable-button-callInfo-success::after,
+a.kbc-button-xxs.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-lineTable-button-callInfo-success,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-callInfo-success:hover, button.kbc-button-xs.kbc-lineTable-button-callInfo-success:focus, button.kbc-button-xs.kbc-lineTable-button-callInfo-success.hover, button.kbc-button-xs.kbc-lineTable-button-callInfo-success.focus,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success:hover,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success:focus,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success.hover,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-callInfo-success:active, button.kbc-button-xs.kbc-lineTable-button-callInfo-success.active,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success:active,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-lineTable-button-callInfo-success::after,
+a.kbc-button-xs.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-lineTable-button-callInfo-success,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-callInfo-success:hover, button.kbc-button-sm.kbc-lineTable-button-callInfo-success:focus, button.kbc-button-sm.kbc-lineTable-button-callInfo-success.hover, button.kbc-button-sm.kbc-lineTable-button-callInfo-success.focus,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success:hover,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success:focus,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success.hover,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-callInfo-success:active, button.kbc-button-sm.kbc-lineTable-button-callInfo-success.active,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success:active,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-lineTable-button-callInfo-success::after,
+a.kbc-button-sm.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-lineTable-button-callInfo-success,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 0 8px #48d368, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #28a745;
+  border-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-callInfo-success:hover, button.kbc-button-lg.kbc-lineTable-button-callInfo-success:focus, button.kbc-button-lg.kbc-lineTable-button-callInfo-success.hover, button.kbc-button-lg.kbc-lineTable-button-callInfo-success.focus,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success:hover,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success:focus,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success.hover,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success.focus {
+  box-shadow: 0 0 #48d368, 0 0px #48d368, 0 1px #48d368, 0 2px #48d368, 0 3px #48d368, 0 4px #48d368, 0 5px #48d368, 0 6px #48d368, 0 7px #48d368, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #34ce57;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-callInfo-success:active, button.kbc-button-lg.kbc-lineTable-button-callInfo-success.active,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success:active,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success.active {
+  background-color: #34ce57;
+  box-shadow: 0 0 1px 1px #86e29b;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-lineTable-button-callInfo-success::after,
+a.kbc-button-lg.kbc-lineTable-button-callInfo-success::after {
+  border-color: #5dd879;
+}
+
+@keyframes kbc-general-button-success-flash-keyframes {
+  50% {
+    background-color: #28a745;
+    border-color: #34ce57;
+    color: #f8f9fa;
+  }
+}
+
+@keyframes kbc-general-button-danger-flash-keyframes {
+  50% {
+    background-color: #dc3545;
+    border-color: #e4606d;
+    color: #f8f9fa;
+  }
+}
+
+.kbc-pickUpCall-button-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-transfer-button-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-prevCall-button-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-parkCall-button-danger-flash-slow {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+}
+
+.kbc-parkCall-button-success-flash-slow {
+  -webkit-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  animation: kbc-general-button-success-flash-keyframes 3s infinite;
+}
+
+.kbc-nextCall-button-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-line-button-loginUser-success-flash {
+  -webkit-animation: kbc-general-button-success-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-success-flash-keyframes .5s infinite;
+  animation: kbc-general-button-success-flash-keyframes .5s infinite;
+}
+
+.kbc-line-button-park-danger-flash-slow {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+}
+
+.kbc-line-button-park-success-flash-slow {
+  -webkit-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  animation: kbc-general-button-success-flash-keyframes 3s infinite;
+}
+
+.kbc-line-button-callInfo-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-lineTable-button-callInfo-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+  animation: kbc-general-button-danger-flash-keyframes .5s infinite;
+}
+
+.kbc-lineTable-button-park-danger-flash-slow {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+}
+
+.kbc-lineTable-button-loginUser-success-flash {
+  -webkit-animation: kbc-general-button-success-flash-keyframes .5s infinite;
+  -moz-animation: kbc-general-button-success-flash-keyframes .5s infinite;
+  animation: kbc-general-button-success-flash-keyframes .5s infinite;
+}
+
+.kbc-lineTable-button-park-success-flash-slow {
+  -webkit-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-success-flash-keyframes 3s infinite;
+  animation: kbc-general-button-success-flash-keyframes 3s infinite;
+}
+
+.kbc-toggleHoldCall-button-danger-flash {
+  -webkit-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  -moz-animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+  animation: kbc-general-button-danger-flash-keyframes 3s infinite;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-toggleVideoCall-button-danger,
+a.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleVideoCall-button-danger:hover, button.kbc-toggleVideoCall-button-danger:focus, button.kbc-toggleVideoCall-button-danger.hover, button.kbc-toggleVideoCall-button-danger.focus,
+a.kbc-toggleVideoCall-button-danger:hover,
+a.kbc-toggleVideoCall-button-danger:focus,
+a.kbc-toggleVideoCall-button-danger.hover,
+a.kbc-toggleVideoCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleVideoCall-button-danger:active, button.kbc-toggleVideoCall-button-danger.active,
+a.kbc-toggleVideoCall-button-danger:active,
+a.kbc-toggleVideoCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-toggleVideoCall-button-danger::after,
+a.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-toggleVideoCall-button-danger,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleVideoCall-button-danger:hover, button.kbc-button-xxs.kbc-toggleVideoCall-button-danger:focus, button.kbc-button-xxs.kbc-toggleVideoCall-button-danger.hover, button.kbc-button-xxs.kbc-toggleVideoCall-button-danger.focus,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger:hover,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger:focus,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger.hover,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleVideoCall-button-danger:active, button.kbc-button-xxs.kbc-toggleVideoCall-button-danger.active,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger:active,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-toggleVideoCall-button-danger::after,
+a.kbc-button-xxs.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-toggleVideoCall-button-danger,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleVideoCall-button-danger:hover, button.kbc-button-xs.kbc-toggleVideoCall-button-danger:focus, button.kbc-button-xs.kbc-toggleVideoCall-button-danger.hover, button.kbc-button-xs.kbc-toggleVideoCall-button-danger.focus,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger:hover,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger:focus,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger.hover,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleVideoCall-button-danger:active, button.kbc-button-xs.kbc-toggleVideoCall-button-danger.active,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger:active,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-toggleVideoCall-button-danger::after,
+a.kbc-button-xs.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-toggleVideoCall-button-danger,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleVideoCall-button-danger:hover, button.kbc-button-sm.kbc-toggleVideoCall-button-danger:focus, button.kbc-button-sm.kbc-toggleVideoCall-button-danger.hover, button.kbc-button-sm.kbc-toggleVideoCall-button-danger.focus,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger:hover,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger:focus,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger.hover,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleVideoCall-button-danger:active, button.kbc-button-sm.kbc-toggleVideoCall-button-danger.active,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger:active,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-toggleVideoCall-button-danger::after,
+a.kbc-button-sm.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-toggleVideoCall-button-danger,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleVideoCall-button-danger:hover, button.kbc-button-lg.kbc-toggleVideoCall-button-danger:focus, button.kbc-button-lg.kbc-toggleVideoCall-button-danger.hover, button.kbc-button-lg.kbc-toggleVideoCall-button-danger.focus,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger:hover,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger:focus,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger.hover,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleVideoCall-button-danger:active, button.kbc-button-lg.kbc-toggleVideoCall-button-danger.active,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger:active,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-toggleVideoCall-button-danger::after,
+a.kbc-button-lg.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+/*                                       */
+/* ~From operator-console_custom.css.org */

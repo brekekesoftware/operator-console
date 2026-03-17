@@ -20,6 +20,17 @@ const svgToMiniDataURI = require('mini-svg-data-uri');
  */
 const baseModuleRules = [
   {
+    test: /\.tsx?|\.jsx?$/,
+    exclude: /node_modules\/(?!react-draggable)/, 
+    use: [{
+      loader: "esbuild-loader",
+      options: {
+        loader: 'tsx',
+        target: 'es2015', 
+      },
+    }],
+  },
+  {
     test: /\.s[ac]ss$/i,
     loader: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
     // options: {

@@ -16,7 +16,7 @@
 	
 
     [removeOnPalNotifyStatusEventListenerメソッド]
-	PALのnotify_statusイベントが実行された時に、実行される任意の関数を除去できます。
+	PALのnotify_statusイベントが実行された時に実行される、任意の関数を除去できます。
 
 	メソッドの引数は除去する(登録した任意の関数の)配列位置(型はnumber)です。
 	

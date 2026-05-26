@@ -31,7 +31,13 @@ export default class WidgetDataFactory{
         let widgetData;
         switch( widgetTypeId ){
             case WidgetData.WIDGET_TYPE_IDS.legacyButton:
-                widgetData = new LegacyButtonWidgetData( options );
+				try{
+					widgetData = new LegacyButtonWidgetData( options );
+				}
+				catch(e){
+					//Subwidget type unknown //Error output already	//!bad Should be a custom error
+					widgetData = null;
+				}
                 break;
             case WidgetData.WIDGET_TYPE_IDS.callPanel:
                 widgetData = new CallPanelWidgetData( options );

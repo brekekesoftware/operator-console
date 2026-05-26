@@ -79,7 +79,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.49";
+const VERSION = "2.1.50";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -5520,8 +5520,8 @@ export default class BrekekeOperatorConsole extends React.Component {
             //const tenant = currentCall.pbxTenant;
             const tenant = undefined;   //!testit
             const signal = key;
-            const talker_id = currentCallInfo.getPbxTalkerId();
-            this._aphone.sendDTMF(  tenant, talker_id, signal );
+            //const talker_id = currentCallInfo.getPbxTalkerId();
+            this._aphone.sendDTMF(  tenant, signal, currentCallInfo );
         }
         return bNeedSendDTMF;
     }

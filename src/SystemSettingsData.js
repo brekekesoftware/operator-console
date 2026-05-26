@@ -110,6 +110,7 @@ export default class SystemSettingsData {
         this._Data.autoDialTabFontSize = appData.autoDialTabFontSize;
         this._Data.autoDialOtherFontSize = appData.autoDialOtherFontSize;
         this._Data.desktopNotificationInterval = appData.desktopNotificationInterval;
+		this._Data.dtmfSendMode = appData.dtmfSendMode;
         initSuccessFunction();
     }
 
@@ -204,8 +205,8 @@ export default class SystemSettingsData {
         // return successCount;
     }
 
-    setSystemSettingsDataData( appData, initSuccessFunction, initFailFunction  ){
-        appData = this._formatSystemSettingsAppData(appData);
+    setSystemSettingsDataData( appDataBase, initSuccessFunction, initFailFunction  ){
+        const appData = this._formatSystemSettingsAppData(appDataBase);
 
         const startInit = this._onBeginSetSystemSettingsData( appData, initSuccessFunction, initFailFunction  );
         return startInit;
@@ -248,7 +249,8 @@ export default class SystemSettingsData {
        this._Data.autoDialInputFieldFontSize = undefined;
        this._Data.autoDialTabFontSize = undefined;
        this._Data.autoDialOtherFontSize = undefined;
-       this._Data.desktopNotificationInterval =  3000;  //Milliseconds
+       this._Data.desktopNotificationInterval = 3000;  //Milliseconds
+	   this._Data.dtmfSendMode = 0;	//0 = SIP INFO
     }
 
     setCloneDatas( srcSystemSettingsData ) {
@@ -396,11 +398,19 @@ export default class SystemSettingsData {
     getDesktopNotificationInterval(){
         return this._Data.desktopNotificationInterval;  //Milliseconds
     }
+	
+	getDtmfSendMode(){
+		return this._Data.dtmfSendMode;
+	}
 
-    _formatSystemSettingsAppData(appData){
-        if( !appData ){
+    _formatSystemSettingsAppData(appDataBase){
+		let appData;
+        if( !appDataBase ){
             appData = {};
         }
+		else{
+			appData = window.structuredClone( appDataBase );
+		}
         appData.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount ? appData.autoDialMaxDisplayCount : CallHistory.getDefaultMaxDisplayCount();
         appData.autoDialMaxSaveCount = appData.autoDialMaxSaveCount ? appData.autoDialMaxSaveCount : CallHistory.getDefaultMaxSaveCount();
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
@@ -416,6 +426,9 @@ export default class SystemSettingsData {
 		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
         appData.autoDialOneTouchCall = OCUtil.isBoolean( appData.autoDialOneTouchCall )  ? appData.autoDialOneTouchCall : true;
         appData.desktopNotificationInterval = appData.desktopNotificationInterval ? appData.desktopNotificationInterval : 3000; //Milliseconds
+		if( !Number.isInteger( appData.dtmfSendMode ) ){
+			appData.dtmfSendMode = appData.dtmfSendMode ? parseInt( appData.dtmfSendMode ) : 0;	//0 = SIP INFO
+		}
         return appData;
     }
 

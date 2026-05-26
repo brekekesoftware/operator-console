@@ -1,5 +1,9 @@
 {
   "en": {
+	"The_DTMF_send_mode_is_set_to_2_but~" : "The DTMF send mode is set to 2(RFC2833), but since the server does not support send, it will be sent as 0(SIP INFO).",
+	"DTMF_send_mode" : "DTMF send mode",
+	"Inband" : "Inband",
+	"Could_not_create_an_instance_of_the_button_widget~" : "Could not create an instance of the Button widget because the subtype is unknown.　Subtype ID is ",
 	"DisplayOrder-Order" : "Order",
 	"DisplayOrder-Desc" : "Desc",
 	"DisplayOrder-Asc" : "Asc",

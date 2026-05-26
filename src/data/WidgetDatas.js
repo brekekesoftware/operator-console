@@ -39,7 +39,9 @@ export default class WidgetDatas{
         options["widgetDatasAsParent"] = this;
         options["dataVersion"] = dataVersion;
         const widgetData = WidgetDataFactory.getStaticWidgetDataFactoryInstance().newWidgetDataInstance( options );
-        this._WidgetDataArray.push( widgetData );
+		if( widgetData ){
+			this._WidgetDataArray.push( widgetData );
+		}
       }
     }
   }

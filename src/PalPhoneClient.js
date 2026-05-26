@@ -611,7 +611,9 @@ export default class PalPhoneClient  extends APhoneClient {
      * @param talker_id
      * @param signal
      */
-    sendDTMF( tenant, talker_id, signal ){
+    sendDTMF( tenant, signal, callInfo ){
+		const talker_id = callInfo.getPbxTalkerId();
+		
         const sendDTMFOptions =  {
             signal: signal,
             tenant: tenant,

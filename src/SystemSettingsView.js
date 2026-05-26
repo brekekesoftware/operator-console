@@ -80,6 +80,14 @@ export default class SystemSettingsView extends React.Component {
                    }
 
                }
+			   
+			   //
+			   //const sDtmfSendMode = values["dtmfSendMode"];
+			   //let dtmfSendMode = parseInt( sDtmfSendMode );
+			   //if( !dtmfSendMode ){
+				//   dtmfSendMode = 0;	//0 = SIP INFO
+			   //}
+			   //this._systemSettingsUseForm.setFieldsValue({ dtmfSendMode: dtmfSendMode });	//Not working as intended
 
                const systemSettings = this.operatorConsoleAsParent.getSystemSettingsData();
                const hasCall = this.operatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;

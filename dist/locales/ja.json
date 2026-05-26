@@ -1,5 +1,9 @@
 {
   "ja": {
+	"The_DTMF_send_mode_is_set_to_2_but~" : "DTMF送出方式が2(RFC2833)に設定されていますが、サーバー側で送信をサポートしていないため0(SIP INFO)で送信します。",
+	"DTMF_send_mode" : "DTMF送出方式",
+	"Inband" : "インバンド",
+	"Could_not_create_an_instance_of_the_button_widget~" : "サブタイプが不明なため、Buttonウィジェットのインスタンスを作成できませんでした。サブタイプIDは",
 	"DisplayOrder-Order" : "表示順",
 	"DisplayOrder-Desc" : "降順",
 	"DisplayOrder-Asc" : "昇順",

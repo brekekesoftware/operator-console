@@ -152,10 +152,10 @@ export default class APhoneClient {
     /**
      *  abstract method
      * @param tenant
-     * @param talker_id
      * @param signal
+	 * @param callInfo
      */
-    sendDTMF(tenant, talker_id, signal) {
+    sendDTMF(tenant, signal, callInfo ) {
         throw new Error("Not implemented.");
     }
 

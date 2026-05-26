@@ -30,7 +30,13 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
         this._setHoldWithCallkeep = callObject.setHoldWithCallkeep;
+		this._sessionId = callObject.rawSession.sessionId;
     }
+	
+	canInsertDTMF(){
+		const b = this._callObject.rawSession?.rtcSession.connection.getSenders().some(s => s.dtmf?.canInsertDTMF);
+		return b;
+	}
 
     // startVideo(){
     //     const callObject = this._callObject;
@@ -165,6 +171,10 @@ export default class WebphoneCallInfo extends ACallInfo {
             }
         }
     }
+	
+	getSessionId(){
+		return this._sessionId;
+	}
 
     onUpdateWebphoneCallObject(callObject) {
         const wasAnsweredAt = this._answeredAt;

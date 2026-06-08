@@ -20,6 +20,11 @@ const svgToMiniDataURI = require('mini-svg-data-uri');
  */
 const baseModuleRules = [
   {
+	test: /\.mjs$/,
+	include: /node_modules/,
+	type: 'javascript/auto',
+  },
+  {
     test: /\.tsx?|\.jsx?$/,
     exclude: /node_modules\/(?!react-draggable)/, 
     use: [{

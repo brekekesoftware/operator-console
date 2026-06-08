@@ -689,39 +689,38 @@ export default class WebphonePhoneClient  extends APhoneClient {
      * @param signal
      */
     sendDTMF( tenant, signal, callInfo ){
-		const oc = BrekekeOperatorConsole.getStaticInstance();
-		const systemSettingsData = oc.getSystemSettingsData();
-		let dtmfSendMode = systemSettingsData.getDtmfSendMode();
-		if( !dtmfSendMode && dtmfSendMode !== 0 ){
-			dtmfSendMode = 0;	//0 = SIP INFO
-		}
-		
-		if( dtmfSendMode === 2 ){
-			const bCanInsertDTMF = callInfo.canInsertDTMF();
-			if( !bCanInsertDTMF ){
-                Notification.warning({ key: 'canNotInsetDTMF', message: i18n.t('The_DTMF_send_mode_is_set_to_2_but~'), duration: 10 });
-				dtmfSendMode = 0;
-			}
-		}
-		
-		const sessionId = callInfo.getSessionId();
-
-		this._webrtcclient.dtmfSendMode = dtmfSendMode;
-		this._webrtcclient.sendDTMF( signal, sessionId );
-
-		//const talker_id = callInfo.getPbxTalkerId();
-        //const sendDTMFOptions =  {
-        //    signal: signal,
-        //    tenant: tenant,
-        //    talker_id: talker_id
-        //};
-        //const promise = this.pal.call_pal('sendDTMF', sendDTMFOptions );
-        //promise.then( res =>{
+		//const oc = BrekekeOperatorConsole.getStaticInstance();
+		//const systemSettingsData = oc.getSystemSettingsData();
+		//let dtmfSendMode = systemSettingsData.getDtmfSendMode();
+		//if( !dtmfSendMode && dtmfSendMode !== 0 ){
+		//	dtmfSendMode = 0;	//0 = SIP INFO
+		//}
 		//
-        //}).catch( err =>{
-        //    console.error("Failed to send DTMF err=" , err );
-        //    Notification.error({message: i18n.t("failedToSendDTMF") + "\r\n" +  err, duration:0 });
-        //});
+		//if( dtmfSendMode === 2 ){
+		//	const bCanInsertDTMF = callInfo.canInsertDTMF();
+		//	if( !bCanInsertDTMF ){
+        //        Notification.warning({ key: 'canNotInsetDTMF', message: i18n.t('The_DTMF_send_mode_is_set_to_2_but~'), duration: 10 });
+		//		dtmfSendMode = 0;
+		//	}
+		//}
+		//
+		//const sessionId = callInfo.getSessionId();
+		//
+		//this._webrtcclient.dtmfSendMode = dtmfSendMode;
+		//this._webrtcclient.sendDTMF( signal, sessionId );
+
+		const talker_id = callInfo.getPbxTalkerId();
+        const sendDTMFOptions =  {
+            signal: signal,
+            tenant: tenant,
+            talker_id: talker_id
+        };
+        const promise = this.pal.call_pal('sendDTMF', sendDTMFOptions );
+        promise.then( res =>{
+        }).catch( err =>{
+            console.error("Failed to send DTMF err=" , err );
+            Notification.error({message: i18n.t("failedToSendDTMF") + "\r\n" +  err, duration:0 });
+        });
     }
 
     /**

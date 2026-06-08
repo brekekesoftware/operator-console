@@ -110,7 +110,7 @@ export default class SystemSettingsData {
         this._Data.autoDialTabFontSize = appData.autoDialTabFontSize;
         this._Data.autoDialOtherFontSize = appData.autoDialOtherFontSize;
         this._Data.desktopNotificationInterval = appData.desktopNotificationInterval;
-		this._Data.dtmfSendMode = appData.dtmfSendMode;
+		//this._Data.dtmfSendMode = appData.dtmfSendMode;
         initSuccessFunction();
     }
 
@@ -250,7 +250,7 @@ export default class SystemSettingsData {
        this._Data.autoDialTabFontSize = undefined;
        this._Data.autoDialOtherFontSize = undefined;
        this._Data.desktopNotificationInterval = 3000;  //Milliseconds
-	   this._Data.dtmfSendMode = 0;	//0 = SIP INFO
+	   //this._Data.dtmfSendMode = 0;	//0 = SIP INFO
     }
 
     setCloneDatas( srcSystemSettingsData ) {
@@ -399,9 +399,9 @@ export default class SystemSettingsData {
         return this._Data.desktopNotificationInterval;  //Milliseconds
     }
 	
-	getDtmfSendMode(){
-		return this._Data.dtmfSendMode;
-	}
+	//getDtmfSendMode(){
+	//	return this._Data.dtmfSendMode;
+	//}
 
     _formatSystemSettingsAppData(appDataBase){
 		let appData;
@@ -426,9 +426,9 @@ export default class SystemSettingsData {
 		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
         appData.autoDialOneTouchCall = OCUtil.isBoolean( appData.autoDialOneTouchCall )  ? appData.autoDialOneTouchCall : true;
         appData.desktopNotificationInterval = appData.desktopNotificationInterval ? appData.desktopNotificationInterval : 3000; //Milliseconds
-		if( !Number.isInteger( appData.dtmfSendMode ) ){
-			appData.dtmfSendMode = appData.dtmfSendMode ? parseInt( appData.dtmfSendMode ) : 0;	//0 = SIP INFO
-		}
+		//if( !Number.isInteger( appData.dtmfSendMode ) ){
+		//	appData.dtmfSendMode = appData.dtmfSendMode ? parseInt( appData.dtmfSendMode ) : 0;	//0 = SIP INFO
+		//}
         return appData;
     }
 

@@ -5157,17 +5157,20 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
 
-    _resetCallInput( bClearDialing = true, forceReset = false ){
+    _resetCallInput( bClearDialing = true, forceReset = false, ignoreDisconnected = false ){
         const callInfos = this._aphone.getCallInfos();
         const currentCallIndex = callInfos.getCurrentCallIndex();
         const bDisconnected =  currentCallIndex < 0;
-        if( bDisconnected ){
-            if( bClearDialing === true ) {
-                this._clearDialing();
-            }
-            this._setIsDTMFInput( false );
-            return;
-        }
+		if( ignoreDisconnected !== true ){	//!bad The caller should make the decision.
+			const bDisconnected =  currentCallIndex < 0;
+			if( bDisconnected ){
+				if( bClearDialing === true ) {
+					this._clearDialing();
+				}
+				this._setIsDTMFInput( false );
+				return;
+			}
+		}
         const currentCallInfo = callInfos.getCallInfoAt( currentCallIndex );
 
         const callStatus = currentCallInfo.getCallStatus();
@@ -5572,7 +5575,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         // }
         this._aphone.callByPhoneClient(  sDialing, sUsingLine );
         //this.setHasMissedCallToFalseToState();
-        this._resetCallInput( false, true );
+        this._resetCallInput( false, true, true );
         if( !dialing ) {
             this._clearDialing();
         }

@@ -5157,19 +5157,19 @@ export default class BrekekeOperatorConsole extends React.Component {
     // }
 
 
-    _resetCallInput( bClearDialing = true, forceReset = false, ignoreDisconnected = false ){
+    _resetCallInput( bClearDialing = true, forceReset = false, ignoreSetDtmfFalseWhenDisconnected = false ){
         const callInfos = this._aphone.getCallInfos();
         const currentCallIndex = callInfos.getCurrentCallIndex();
-        const bDisconnected =  currentCallIndex < 0;
-		if( ignoreDisconnected !== true ){	//!bad The caller should make the decision.
-			const bDisconnected =  currentCallIndex < 0;
-			if( bDisconnected ){
-				if( bClearDialing === true ) {
-					this._clearDialing();
-				}
-				this._setIsDTMFInput( false );
-				return;
+
+		const bDisconnected = currentCallIndex < 0;
+		if( bDisconnected ){
+			if( bClearDialing === true ) {
+				this._clearDialing();
 			}
+			if( ignoreSetDtmfFalseWhenDisconnected !== true ){	//!bad The caller should make the decision.
+				this._setIsDTMFInput( false );
+			}
+			return;
 		}
         const currentCallInfo = callInfos.getCallInfoAt( currentCallIndex );
 

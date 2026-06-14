@@ -84,13 +84,13 @@ const SystemSettingsForm = ( props ) => {
             <Form.Item label={i18n.t("Desktop_notification_interval")} name="desktopNotificationInterval">
                 <InputNumber style={{width: 100}} step={1000} />
             </Form.Item>
-            //<Form.Item label={i18n.t("DTMF_send_mode")} name="dtmfSendMode">
-            //    <Radio.Group>
-            //        <Radio value={"0"}>SIP INFO</Radio>
-            //        <Radio value={"1"}>{i18n.t("Inband")}</Radio>
-            //        <Radio value={"2"}>RFC2833</Radio>
-            //    </Radio.Group>
-            //</Form.Item>
+            {/*<Form.Item label={i18n.t("DTMF_send_mode")} name="dtmfSendMode">*/}
+            {/*    <Radio.Group>*/}
+            {/*        <Radio value={"0"}>SIP INFO</Radio>*/}
+            {/*        <Radio value={"1"}>{i18n.t("Inband")}</Radio>*/}
+            {/*        <Radio value={"2"}>RFC2833</Radio>*/}
+            {/*    </Radio.Group>*/}
+            {/*</Form.Item>*/}
             <h1>{i18n.t("otherSettings")}</h1>
             <Form.Item label={i18n.t("phoneTerminal")} name="phoneTerminal">
                 <Radio.Group disabled={props["hasCall"]}>

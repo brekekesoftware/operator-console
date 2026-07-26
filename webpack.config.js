@@ -152,9 +152,13 @@ const modules = (env, argv) => ({
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     modules: ["src", "node_modules"],
-    // alias: {
-    //   'styled-components/macro': 'styled-components/dist/styled-components.browser.esm.js',
-    // },
+    alias: {
+      // react-draggable's ESM build ("module" field) does `import { Children } from 'react'`,
+      // which webpack can't statically resolve as a named export because react's CJS entry
+      // conditionally requires the dev/prod build. Force resolution to the CJS build, which
+      // uses require() and isn't subject to that strict ESM interop check.
+      'react-draggable$': path.join(path.dirname(require.resolve('react-draggable/package.json')), 'build/cjs/cjs.js'),
+    },
   },
   watchOptions: {
     aggregateTimeout: 2000,

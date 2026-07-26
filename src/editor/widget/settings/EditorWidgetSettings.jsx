@@ -415,7 +415,7 @@ export default class EditorWidgetSettings extends React.Component {
                     this._onLoadFromWidgetSettingsTemplate( wst );
                 }
                 Notification.success({ message: i18n.t("Loaded_from_the_template") });
-                EditScreenView.getEditScreenViewInstance().setState({rerender:true});
+                EditScreenView.getEditScreenViewInstance().commitEdit();
             },
             ( errorOrResponse ) =>{
                 this.setState({rerender:true});
@@ -529,8 +529,13 @@ export default class EditorWidgetSettings extends React.Component {
                     		>
                     			<Button disabled={bDisabled}>{i18n.t("Save")}</Button>
                     		</Popconfirm>
-                            <Button className={"defaultButtonMarginLeft"} disabled={bDisabled}
-                                    onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>
+							<Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
+										onConfirm={() => this._onClickLoadWidgetSettingsTemplateButton()}
+										okText={i18n.t("yes")}
+										cancelText={i18n.t("no")}
+							>
+								<Button className={"defaultButtonMarginLeft"} disabled={bDisabled} >{i18n.t("Load")}</Button>
+							</Popconfirm>
                     </div>
                     {/*<div className={"defaultButtonMarginTop"}>*/}
 					{/*	{ bOverwriteTemplate ? (*/}

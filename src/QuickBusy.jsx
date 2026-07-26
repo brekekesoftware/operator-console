@@ -146,7 +146,7 @@ export default class QuickBusy extends React.Component {
             this._operatorConsoleAsParent.setDialing( callNo );
         }
         else{
-            this._operatorConsoleAsParent.setDialingAndMakeCall2( callNo );
+            this._operatorConsoleAsParent.setDialingAndMakeCall2WithShowCallSelectionModal( callNo );
         }
     }
 

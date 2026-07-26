@@ -5,8 +5,8 @@
     border-radius: var(--defaultBorderRadius);
     margin-top:0;
     background-color:initial;
-    z-index: 113;
-	max-width:100vw;
+    z-index: 121;
+    max-width:100%;
 	max-height:calc(100vh - 60px);
 	overflow:auto;
 }
@@ -34,6 +34,6 @@
 
 .brOC th.displayNameTitleTh {
     background-color: #5C9842;
-    color:#FFFFFF;
+    color:#FFFFFF !important;
     padding-top:var(--defaultItemVSpace) !important;
 }

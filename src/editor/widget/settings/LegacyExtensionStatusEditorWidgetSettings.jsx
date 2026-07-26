@@ -22,31 +22,31 @@ export default class LegacyExtensionStatusEditorWidgetSettings extends EditorWid
     _onChangeExtension( e ){
         const extension = e.currentTarget.value;
         this._getWidgetData().setExtension( extension  );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeExtensionStatusFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensionStatusFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensionStatusLampSize( size ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensionStatusLampSize( size );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensionStatusExtensionFontSize( size ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensionStatusExtensionFontSize( size );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensionStatusExtensionTextTopMargin( size ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensionStatusExtensionTextTopMargin( size );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     getEditScreenViewAsParent(){

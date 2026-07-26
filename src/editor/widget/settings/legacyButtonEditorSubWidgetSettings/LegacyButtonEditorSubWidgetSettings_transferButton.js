@@ -27,7 +27,7 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
     _onCancelTransferIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setCancelTransferIconName( iconName );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onCancelTransferIconSelectCanceled( selectIconModalAsCaller ){
@@ -37,69 +37,69 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setCancelTransferIcon(null);
         subWidgetData.setCancelTransferIconName(null);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeLabel(label){
         //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferLabel(e){
         const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setCancelTransferLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     // _onFormCancelTransferIconSelected( icon ){
     //     this._LegacyButtonEditorSubWidgetData.setCancelTransferIcon( icon );
-    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     // }
 
     _onChangeCancelTransferFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeCancelTransferIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setCancelTransferIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeTransferMode( s ){
         this._LegacyButtonEditorSubWidgetData.setTransferMode(s);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

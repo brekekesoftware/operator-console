@@ -52,7 +52,7 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
                                if( onetouchdialMode === "selectTransferOrCall"){
                                    //show transfer method modal.
                                    const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
-                                   runtimeScreenView.setIsShowSelectCallingMethodModal(true, number);
+                                   runtimeScreenView.setIsShowSelectCallingMethodModal(true, number, undefined );
                                    return;
                                }
                                else {
@@ -72,7 +72,7 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
                            }
                            else{
                                if( onetouchdialMode === "selectTransferOrCall"){
-                                   oc.setDialingAndMakeCall(number, null);
+                                   oc.setDialingAndMakeCallWithShowCallSelectionModal(number);
                                    return;
                                }
                            }
@@ -89,14 +89,14 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
                                                Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial') + "\r\n" +  e, duration:0 });
                                                return;
                                            }
-                                           oc.setDialingAndMakeCall(number, null);
+                                           oc.setDialingAndMakeCallWithShowCallSelectionModal(number);
                                        };
                                        currentCallInfo.addOnHoldFunction(func);
                                        currentCallInfo.toggleHoldWithCheck();
                                        return;
                                    }
                                }
-                               oc.setDialingAndMakeCall(number, null);
+                               oc.setDialingAndMakeCallWithShowCallSelectionModal(number);
                            }
 
                        }}

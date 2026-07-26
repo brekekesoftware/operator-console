@@ -6,8 +6,6 @@ import {Button, Select} from "antd";
 import i18n from "../../../i18n";
 import LegacyButtonWidgetSubData from "../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
 import Input from "antd/lib/input";
-import LegacyButtonWidgetSubData_unholdCallButton
-    from "../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData_unholdCallButton";
 import BrekekeOperatorConsole from "../../../index";
 import TextArea from "antd/es/input/TextArea";
 import Popconfirm from "antd/lib/popconfirm";
@@ -30,7 +28,7 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
         const selectedSubtypeId = parseInt( ev1 );
         const widgetData = this._getWidgetData();
         widgetData.setSubDataBySubtypeId( selectedSubtypeId );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
      getEditScreenViewAsParent(){
@@ -42,7 +40,7 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
 
         const language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
         widgetData.setTooltipOfButtonWidget( s, language );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _setTooltipOfButtonWidgetToInitial(){
@@ -69,9 +67,33 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
     }
 
     //!override
-    componentWillUnmount() {
-        super.componentWillUnmount();
-        //this._latestLegacyButtonEditorSubWidgetSettings = null;
+    componentDidMount(){
+        super.componentDidMount();
+
+        const latestLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestLegacyButtonEditorSubWidgetSettings ? this._latestLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+        const _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestDidUpdateLegacyButtonEditorSubWidgetSettings ? this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+
+        if( latestLegacyButtonEditorSubWidgetSettingszSubWidgetData !== _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData ) {
+            if( this._latestDidUpdateLegacyButtonEditorSubWidgetSettings) {
+                this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.onLegacyButtonEditorSubWidgetSettingsChangedOther();
+            }
+            this._latestDidUpdateLegacyButtonEditorSubWidgetSettings = this._latestLegacyButtonEditorSubWidgetSettings;
+        }
+    }
+
+    //!override
+    componentDidUpdate() {
+        super.componentDidUpdate();
+
+        const latestLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestLegacyButtonEditorSubWidgetSettings ? this._latestLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+        const _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestDidUpdateLegacyButtonEditorSubWidgetSettings ? this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+
+        if( latestLegacyButtonEditorSubWidgetSettingszSubWidgetData !== _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData ) {
+            if( this._latestDidUpdateLegacyButtonEditorSubWidgetSettings) {
+                this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.onLegacyButtonEditorSubWidgetSettingsChangedOther();
+            }
+            this._latestDidUpdateLegacyButtonEditorSubWidgetSettings = this._latestLegacyButtonEditorSubWidgetSettings;
+        }
     }
 
 

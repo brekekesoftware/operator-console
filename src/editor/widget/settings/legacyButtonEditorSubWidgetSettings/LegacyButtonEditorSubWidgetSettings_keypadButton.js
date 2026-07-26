@@ -15,7 +15,7 @@ export default class LegacyButtonEditorSubWidgetSettings_keypadButton extends Le
     _onChangeSymbol(e){
         const symbol = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setSymbol( symbol  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

@@ -67,6 +67,17 @@ export default class ScreenData{
         return screenData;
     }
 
+    //Overwrites this instance's fields from cloneSrcScreenData while keeping this instance's identity
+    //(needed so holders of a reference to this ScreenData, e.g. for save, see the restored content).
+    copyFrom( cloneSrcScreenData ){
+        const cloneSrcScreenPaneDatas = cloneSrcScreenData.getScreenPaneDatas();
+        this._ScreenPaneDatas = new ScreenPaneDatas( this,  cloneSrcScreenPaneDatas );
+        this._editingScreenGrid = cloneSrcScreenData.getEditingScreenGrid();
+        this._screenBackgroundColor = cloneSrcScreenData.getScreenBackgroundColor();
+        this._screenForegroundColor = cloneSrcScreenData.getScreenForegroundColor();
+        this._screenBackgroundImageBase64DataUrl = cloneSrcScreenData.getScreenBackgroundImageBase64DataUrl();
+    }
+
     getDataAsObject(){
         const o = new Object();
         const oPaneDatas = new Object();

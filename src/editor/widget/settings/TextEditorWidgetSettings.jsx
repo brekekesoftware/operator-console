@@ -22,31 +22,31 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeTextFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTextFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTextFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTextFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTextBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTextBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTextBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTextBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTextArea( e ){
         const text = e.currentTarget.value;
         this._getWidgetData().setText( text  );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
     }
 
     getEditScreenViewAsParent(){

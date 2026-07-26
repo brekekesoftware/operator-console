@@ -28,7 +28,7 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         const lineData = lineDataArray[ lineDataIndex ];
         const resourceName  = e.currentTarget.value;
         lineData.setResourceName( resourceName  );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeLineLabel( e, lineDataIndex ){
@@ -37,242 +37,242 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         const lineData = lineDataArray[ lineDataIndex ];
         const lineLabel = e.currentTarget.value;
         lineData.setLineLabel( lineLabel  );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeLineCount( lineCount ){
         const widgetData = this._getWidgetData();
         //const lineCount = e.currentTarget.value;
         widgetData.setLineDataArrayCount( lineCount );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeLinetableBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableHeaderFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableHeaderBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableHeaderRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableHeaderRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableBodyFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableBodyFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableBodyRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableBodyRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableBodyRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableBodyRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonWidth( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonHeight( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonWidth( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonHeight( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonWidth( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonHeight( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableHeaderFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableHeaderFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableBodyFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableBodyFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLineButtonFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setLineButtonFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferButtonFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferButtonFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeTransferCancelButtonFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setTransferCancelButtonFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeLinetableTransferMethod( s ){
         const widgetData = this._getWidgetData();
         widgetData.setLinetableTransferMethod(s);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

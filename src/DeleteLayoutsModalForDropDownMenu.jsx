@@ -49,7 +49,7 @@ export default function DeleteLayoutsModalForDropDownMenu( props ){
             options["name"] = noteName;
             const deleteNoteOptions = {
                 methodName : "deleteNote",
-                methodParams : JSON.stringify( options ),
+                methodParams : options,
             }
             const promise = operatorConsole.getPalRestApi().callPalRestApiMethodAsync(deleteNoteOptions);
             promises.push( promise );
@@ -197,7 +197,7 @@ export function refreshNoteNamesForDeleteLayoutsModalForDropDownMenu(
     //setNoteNamesContentFunc(<Spin />);
    const getNoteNamesOptions ={
         methodName : "getNoteNames",
-        methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
+        methodParams : {tenant:operatorConsole.getLoggedinTenant()},
         onSuccessFunction : ( noteNames ) => {
             setNoteNamesFunc( noteNames );
             setIsLoadingNoteNamesFunc( false );

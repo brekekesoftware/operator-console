@@ -2,8 +2,8 @@ import RingtoneAudioPlayer from "./RingtoneAudioPlayer";
 import RingtoneSettings2 from "./RingtoneSettings2";
 
 export default class RingtoneAudioPlayers{
-    constructor( systemSettingsViewAsParent ) {
-        this._SystemSettingsViewAsParent = systemSettingsViewAsParent;
+    constructor( systemSettingsViewOrUserSettingsViewAsParent ) {
+        this._SystemSettingsViewOrUserSettingsViewAsParent = systemSettingsViewOrUserSettingsViewAsParent;
         this._RingtoneAudioPlayerArray = new Array();
     }
 
@@ -29,7 +29,7 @@ export default class RingtoneAudioPlayers{
     }
 
     clearRingtoneAudioPlayers(){
-        for( let i = 0;i < this._RingtoneAudioPlayerArray.length; i++ ){
+        while( this._RingtoneAudioPlayerArray.length !== 0 ){
             this.removeRingtoneAudioPlayerAt(0);
         }
     }

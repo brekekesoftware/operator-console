@@ -19,22 +19,28 @@ const svgToMiniDataURI = require('mini-svg-data-uri');
  * @type {RuleSetRule[]}
  */
 const baseModuleRules = [
-  {
-	test: /\.mjs$/,
-	include: /node_modules/,
-	type: 'javascript/auto',
-  },
-  {
-    test: /\.tsx?|\.jsx?$/,
-    exclude: /node_modules\/(?!react-draggable)/, 
-    use: [{
-      loader: "esbuild-loader",
-      options: {
-        loader: 'tsx',
-        target: 'es2015', 
-      },
-    }],
-  },
+  //{
+  //  test: /\.tsx?|\.jsx?$/,
+  //  exclude: /node_modules\/(?!react-draggable)/, 
+  //  use: [{
+  //    loader: "esbuild-loader",
+  //    options: {
+  //      loader: 'tsx',
+  //      target: 'es2015', 
+  //   },
+  //  }],
+  //},
+	{
+	  test: /\.(js|jsx|ts|tsx)$/,
+	  exclude: /node_modules\/(?!react-draggable)/,
+	  use: {
+		loader: "esbuild-loader",
+		options: {
+		  loader: "tsx",
+		  target: "es2015",
+		},
+	  },
+	},  
   {
     test: /\.s[ac]ss$/i,
     loader: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
@@ -90,17 +96,17 @@ const baseModuleRules = [
     test: /\.css$/,
     use: [MiniCssExtractPlugin.loader, "css-loader"],
   },
-  {
-    test: /\.tsx?|\.jsx?$/,
-    exclude: /(node_modules|bower_components)/,
-    use: [{
-      loader: "esbuild-loader",
-      options: {
-        loader: 'tsx',
-        target: 'es2015',
-      },
-    }],
-  },
+  //{
+  //	test: /\.tsx?|\.jsx?$/,
+  //	exclude: /(node_modules|bower_components)/,
+  //	use: [{
+  //			loader: "esbuild-loader",
+  //			options: {
+  //			loader: 'tsx',
+  //			target: 'es2015',
+  //		},
+  //	}],
+  //},
   {
     test: /\.svg$/,
     use: [
@@ -132,6 +138,7 @@ const baseModuleRules = [
 const modules = (env, argv) => ({
   entry: {
     "operator-console": path.resolve(__dirname, "src", "index.jsx"),
+	"DropDownMenu": path.resolve(__dirname, "src", "DropDownMenu.jsx"),	//!bad
   },
   output: {
     chunkFilename:'[name].js',

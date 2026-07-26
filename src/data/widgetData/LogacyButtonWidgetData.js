@@ -30,10 +30,10 @@ export default class LegacyButtonWidgetData extends WidgetData{
         //
         // this._icon = currentOptions["icon"];
         const dataVersion = options["dataVersion"];
-        this.setSubDataByOptions( options, legacyButtonWidgetSubDataOptions, dataVersion );
+        this._setSubDataByOptions( options, legacyButtonWidgetSubDataOptions, dataVersion );
     }
 
-    setSubDataByOptions( options, subDataOptions, dataVersion = null ){
+    _setSubDataByOptions( options, subDataOptions, dataVersion = null ){
         subDataOptions["legacyButtonWidgetDataAsParent"] = this;
         this._subData = LegacyButtonWidgetSubDataFactory.getLegacyButtonWidgetSubDataFactoryStaticInstance().newLegacyButtonWidgetSubDataInstance( options, subDataOptions, dataVersion );
     }

@@ -1,0 +1,37 @@
+.UploadedRingtoneFilesArea_uploaded_ringtone_files_wrapper{
+  max-height: 300px;
+  width:min-content;
+  overflow: auto;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files {
+  display: table;
+  width: auto;
+  table-layout: auto;
+  border-collapse:collapse;
+  white-space:nowrap;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files thead {
+  display: table-header-group;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files tbody {
+  display: table-row-group;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files tr {
+  display: table-row;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files th,
+.UploadedRingtoneFilesArea_uploaded_ringtone_files td {
+  display: table-cell;
+  white-space:nowrap;
+}
+
+.UploadedRingtoneFilesArea_uploaded_ringtone_files th {
+  position: sticky;
+  top: 0;
+  background: white;
+}

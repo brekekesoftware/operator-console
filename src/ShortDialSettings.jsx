@@ -9,7 +9,6 @@ export default class ShortDialSettings extends React.Component {
     }
 
     render(){
-        //return <div>Hello {this.text}</div>
         return <Form.List name="shortDials">
             {(fields, { add, remove }) => (
                 <>

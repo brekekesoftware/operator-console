@@ -17,13 +17,13 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
 
     // _onFormVideoOnIconSelected( icon ){
     //     this._LegacyButtonEditorSubWidgetData.setVideoOnIcon( icon );
-    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     // }
 
     _onVideoOnIconSelected( selectIconModalAsCaller, icon, iconTitle ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setVideoOnIconTitle( iconTitle );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onVideoOnIconSelectCanceled( selectIconModalAsCaller ){
@@ -33,64 +33,64 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setVideoOnIcon(null);
         subWidgetData.setVideoOnIconTitle(null);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOnIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOnLabel(videoOnLabel){
         //const videoOnLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setVideoOnLabel( videoOnLabel  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     // _onFormVideoOffIconSelected( icon ){
     //     this._LegacyButtonEditorSubWidgetData.setVideoOffIcon( icon );
-    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     // }
 
     _onVideoOffIconSelected( selectIconModalAsCaller, icon, iconTitle ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setVideoOffIconTitle( iconTitle );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onVideoOffIconSelectCanceled( selectIconModalAsCaller ){
@@ -100,53 +100,53 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setVideoOffIcon(null);
         subWidgetData.setVideoOffIconTitle(null);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setVideoOffIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeVideoOffLabel(unvideoOnLabel){
         //const unvideoOnLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setVideoOffLabel( unvideoOnLabel  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

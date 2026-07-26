@@ -121,7 +121,7 @@ export default class EditorWidget extends React.Component {
                 console.error("Invalid call.");
                 return;
         }
-        this._EditorPaneAsParent.setState({rerender:true});
+        this._EditorPaneAsParent.getEditScreenView().commitEdit();
     }
 
     _onKeyDownFromEditScreenView( ev, widgetData, eWidget ){
@@ -156,6 +156,7 @@ export default class EditorWidget extends React.Component {
         ev.preventDefault();
         this._onWidgetMoved(  data.lastX, data.lastY, widgetData );
 //        this.makeWidgetOnTop(i);
+        this._EditorPaneAsParent.getEditScreenView().commitEdit();
         this._EditorPaneAsParent.getEditScreenView().setSelectingEditorWidgetDataToState( widgetData );
         //this._EditorPaneAsParent.setState({rerender:true});
     }
@@ -203,7 +204,7 @@ export default class EditorWidget extends React.Component {
 
         widgetDatas.setIndexToLastByWidgetData( widgetData ); //render last
 
-        this._EditorPaneAsParent.setState({rerender:true});
+        this._EditorPaneAsParent.getEditScreenView().commitEdit();
 
     }
 

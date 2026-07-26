@@ -16,7 +16,7 @@ export default class LegacyButtonEditorSubWidgetSettings_outgoingCallButton exte
     _onChangeLabel(label){
         //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

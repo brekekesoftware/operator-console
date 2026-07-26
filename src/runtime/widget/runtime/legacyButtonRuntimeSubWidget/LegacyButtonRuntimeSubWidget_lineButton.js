@@ -16,7 +16,7 @@ export default class LegacyButtonRuntimeSubWidget_lineButton extends LegacyButto
         let onSetValidLineFunc;
         if( oc.getDialing() && oc.getDialing().length !== 0 ){
                 onSetValidLineFunc = () =>{
-                    oc.makeCall2();
+                    oc.makeCall2WithShowCallSelectionModal();
                 };
         }
         oc.handleLine(line, onSetValidLineFunc );

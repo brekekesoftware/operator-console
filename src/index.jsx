@@ -10,7 +10,6 @@ import CallPanel from './callPanel'
 import clsx from 'clsx'
 import 'antd/lib/dropdown/style';
 import 'antd/lib/menu/style';
-import Button from 'antd/lib/button';
 import 'antd/lib/button/style';
 import 'antd/lib/carousel/style';
 import Button from 'antd/lib/button';
@@ -79,7 +78,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.51";
+const VERSION = "2.1.52";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -88,6 +87,7 @@ import Notification from "antd/lib/notification";
 import ExtensionsStatus from "./ExtensionsStatus";
 import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
+import UserSettingsData, { USER_SETTINGS_DATA_CALL_SELECTION } from "./UserSettingsData";
 import NoScreensView from "./NoScreensView";
 import {Select, Modal, Tabs, Divider, ConfigProvider} from "antd";
 import jaJP from 'antd/locale/ja_JP';
@@ -106,7 +106,9 @@ import UccacWidget from "./UccacWidget";
 //import Login from "./Login";
 //import SystemSettingsView from "./SystemSettingsView";
 const SystemSettingsView = lazy( () => import(/* webpackChunkName: "SystemSettingsView" */ "./SystemSettingsView"));
+const UserSettingsView = lazy( () => import(/* webpackChunkName: "UserSettingsView" */ "./UserSettingsView"));
 const Login = lazy( () => import(/* webpackChunkName: "Login" */ "./Login"));
+const Mfa = lazy( () => import(/* webpackChunkName: "Mfa" */ "./Mfa"));
 //import ACallInfos from "./ACallInfos";
 import ACallInfo from "./ACallInfo";
 import FileInfosLoader from "./FileInfosLoader";
@@ -123,6 +125,8 @@ import AutoDialView_ver2 from "./runtime/AutoDialView_ver2";
 import DateFormatStringFactory from "./util/DateFormatStringFactory";
 import LegacyButtonWidgetSubData from "./data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
 import WidgetSettingsTemplates from "./editor/widget/settings/template/WidgetSettingsTemplates";
+import UserSettingsRingtoneFiles from "./UserSettingsRingtoneFiles";
+import NotifyVoicemailsInfo from "./NotifyVoicemailsInfo";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -132,6 +136,8 @@ export const brOcDisplayStates = Object.freeze({
     noScreens:5,
     editingScreen_ver2:6,
     showScreen_ver2:7,
+    userSettingsView:8,
+	mfa:9
     //waitQuickCallKey_ver2:8
 });
 
@@ -647,7 +653,7 @@ function LegacyKeypadButton({ operatorConsoleAsParent, subtype, icon,  symbol, b
                     () => {
                         let sDialing = _getQuickCallDialingBySymbol( symbol, context.currentScreenQuickCallWidget );
                         if( sDialing ) {
-                            context.setDialingAndMakeCall( sDialing, context );
+                            context.setDialingAndMakeCallWithShowCallSelectionModal( sDialing );
                         }
                         else{
                             context.appendKeypadValue(symbol);
@@ -693,7 +699,7 @@ function LegacyMakeCallButton({ operatorConsoleAsParent, subtype, icon, label, b
                 }}
                 onClick={ () => {
                     if( operatorConsoleAsParent.getIsDTMFInput() !== true ) {
-                        context.makeCallWithShortDial( context );
+                        context.makeCallWithShortDialWithShowCallSelectionModal( context );
                     }
                 }
                 }>
@@ -1040,7 +1046,7 @@ function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, labe
         );
     }
     else {
-        const {widget, setDialingAndMakeCall} = context;
+        const {widget, setDialingAndMakeCallWithShowCallSelectionModal} = context;
         const number = widget.number;
         return (
             <button title={i18n.t(`legacy_button_description.${subtype}`)} className="kbc-button kbc-button-fill-parent" //!todo implement onClick
@@ -1084,14 +1090,14 @@ function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, labe
                                             Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial') + "\r\n" +  e, duration:0 });
                                             return;
                                         }
-                                        setDialingAndMakeCall(number, context);
+                                        setDialingAndMakeCallWithShowCallSelectionModal(number);
                                     };
                                     currentCallInfo.addOnHoldFunction(func);
                                     currentCallInfo.toggleHoldWithCheck();
                                     return;
                                 }
                             }
-                            setDialingAndMakeCall(number, context);
+                            setDialingAndMakeCallWithShowCallSelectionModal(number);
                         }
                     }}>
                 {iconJsx}
@@ -2796,10 +2802,10 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._OnAppendKeypadValueCallbacks = [];
         this._OnAppendKeyValueCallbacks = [];
         this._OnDeleteKeyValueCallbacks = [];
-        this._OnSetDialingCallbacks = [];
         this._OnClearDialingCallbacks = [];
         //this._OnSetCurrentScreenIndexCallbacks = [];
         this._systemSettingsView = null;
+        this._userSettingsView = null;
         const baseState = window.structuredClone(INIT_STATE);
         this._MissedCallInfoCandidates = new Array();
 
@@ -2842,6 +2848,8 @@ export default class BrekekeOperatorConsole extends React.Component {
         window.addEventListener("unload", this._OnUnloadFunc );
         this._defaultSystemSettingsData = new SystemSettingsData( this );
         this. _MainVideoClientSessionMap = {};
+		this._UserSettingsRingtoneFiles = new UserSettingsRingtoneFiles(this);
+        this._NotifyVoicemailsInfo = new NotifyVoicemailsInfo(this);
     }
 
     setMainVideoClientSession( videoCallWindowsRuntimeWidgetId, videoClientSession ){
@@ -2961,14 +2969,14 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
                 catch(err){
                 }
-                Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
+                Notification.error({message: onBeginSetSystemSettingsData.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
             }
         );
     }
 
-    _initAphoneClient( aphone, initOptions, newSystemSettingsCoreData ){
+    async _initAphoneClient( aphone, initOptions, newSystemSettingsCoreData, newUserSettingsCoreData = null ){
         this._aphone = aphone;
-        this._aphone.initPhoneClient( initOptions, newSystemSettingsCoreData );
+        await this._aphone.initPhoneClient( initOptions, newSystemSettingsCoreData, newUserSettingsCoreData );
     }
 
     _deinitAphoneClient(){
@@ -3022,22 +3030,134 @@ export default class BrekekeOperatorConsole extends React.Component {
     getCallHistory2(){
         return this._CallHistory2;
     }
+	
+	setMfaRequired( b ){
+		this._mfaRequired = b;
+	}
+	
+	getMfaRequired(){
+		return this._mfaRequired;
+	}
 
     onSavingSystemSettings(systemSettingsAsCaller) {
         this.getCallHistory().onSavingSystemSettings(this);
         this._CallHistory2.onSavingSystemSettingsForCallHistory2(this);
     }
+	
+	async onBeginSaveUserSettingsDataForOperatorConsole( userSettingsDataAsCaller, newDataObject, initSuccessFunction, initFailFunction ){
+		let ptNew = newDataObject["phoneTerminal"];
+		if( !ptNew || ptNew === "phoneTerminal_layout" ){
+			ptNew = this.getSystemSettingsData().getPhoneTerminal();
+		}
+		let ptOld = userSettingsDataAsCaller.getPhoneTerminal();
+		if( !ptOld || ptOld === "phoneTerminal_layout" ){
+			ptOld = this.getSystemSettingsData().getPhoneTerminal();
+		}
+		
+        const bPhoneTerminalChanged = ptNew !== ptOld;
+
+		const phoneIndex = newDataObject["phoneIndex"];
+		const prevPhoneIndex = userSettingsDataAsCaller.getPhoneIndex();
+
+
+		const bWebphone = ptNew === "phoneTerminal_webphone";
+		const bPhoneIndexChanged = prevPhoneIndex !== phoneIndex;
+		if( bPhoneTerminalChanged || this._aphone === null || ( bWebphone && bPhoneIndexChanged ) ){
+            const options = {
+                operatorConsoleAsParent : this
+            };
+
+            const initOptions = {...this._getLastLoginAccount()};
+            initOptions.onInitSuccessFunction = ( oExtensions ) =>{
+                //console.log('extensions', oExtensions);
+                this.setState({ extensions: oExtensions },
+                    () =>{
+						try{
+							window.localStorage.setItem("lastPhoneIndex", phoneIndex );
+						}
+					   catch( ex ){
+						   //!testit
+							if (ex.name === "QuotaExceededError" || ex.name === "NS_ERROR_DOM_QUOTA_REACHED") {
+								console.error( "The storage is full and cannot save. Please delete some settings. error=" ,  ex );
+								Notification.error( { message: i18n.t("The_storage_is_full_and_cannot_save_Please_delete_some_settings")} );　//!todo show error message.
+								initFailFunction();
+							}
+							else{
+								initFailFunction( ex );
+							}
+						}
+						initSuccessFunction();
+                    }
+                );
+            };
+            initOptions.onInitFailFunction = function( error ){
+                initFailFunction(error);
+            };
+			//const bWebphone = ptNew === "phoneTerminal_webphone";
+
+            this._deinitAphoneClient();
+            let phoneClient;
+            if( ptNew === "phoneTerminal_pal"){
+                phoneClient = new PalPhoneClient( options );
+            }
+            else{
+                phoneClient = new WebphonePhoneClient( options );
+            }
+
+
+            //if( bPhoneIndexChanged ){
+            //    options["phoneIndex"] = newData.phoneIndex;
+            //}
+			
+												
+			
+            this._initAphoneClient( phoneClient,  initOptions, this.getSystemSettingsData().getData(), newDataObject );
+		}
+		else{
+			const phoneClient = this.getPhoneClient();
+			//const bWebphone = phoneClient.constructor.name === WebphonePhoneClient.name;
+			if( bWebphone ){
+				//const prevCamera  = userSettingsDataAsCaller.getWebphoneCamera();
+				//const prevMic = userSettingsDataAsCaller.getWebphoneMicrophone();
+				//const prevSpeaker = userSettingsDataAsCaller.getWebphoneSpeaker();
+				const webphone = phoneClient.getWebphone();
+				const prevCamera = webphone.getVideoInputDevice();
+				const prevMic = webphone.getAudioInputDevice();
+				const prevSpeakerDevice = webphone.getAudioOutputDevice();
+				let prevSpeaker;
+				if( prevSpeakerDevice ){
+					prevSpeaker = prevSpeakerDevice.deviceId;
+				}
+				
+				const currentCamera = newDataObject["webphone_camera"];
+				const currentMic = newDataObject["webphone_microphone"];
+				const currentSpeaker = newDataObject["webphone_speaker"];
+		
+				const newCamera = currentCamera !== prevCamera ? currentCamera : null;
+				const newMic = currentMic !== prevMic ? currentMic : null;
+				const newSpeaker = currentSpeaker !== prevSpeaker ? currentSpeaker : null;
+				
+				await this._reinitWebphoneDevices( phoneClient, newCamera, newMic, newSpeaker );
+			}
+			initSuccessFunction();		
+		}
+	}
 
     onBeginSetSystemSettingsData( newData, systemSettingsDataAsCaller, onInitSuccessUccacFunction, onInitFailUccacFunction  ){
         const isUCMinScript = false;    //!dev
         const this_ = this;
-        const bPhoneTerminalChanged = newData.phoneTerminal  !== systemSettingsDataAsCaller.getPhoneTerminal();
-        if( bPhoneTerminalChanged || this._aphone == null  ){
+        let bPhoneTerminalChanged = newData.phoneTerminal  !== systemSettingsDataAsCaller.getPhoneTerminal();
+        let pt = newData.phoneTerminal;
+		const ptUserSettings = this.getUserSettingsData().getPhoneTerminal();
+		if( ptUserSettings && ptUserSettings !== "phoneTerminal_layout" ){
+			bPhoneTerminalChanged = false;
+			pt = ptUserSettings;
+		}
+		if( bPhoneTerminalChanged || this._aphone === null ){		
             this._deinitAphoneClient();
             const options = {
                 operatorConsoleAsParent : this
             };
-            const pt = newData.phoneTerminal;
             let phoneClient;
             if( pt === "phoneTerminal_pal"){
                 phoneClient = new PalPhoneClient( options );
@@ -3046,7 +3166,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 phoneClient = new WebphonePhoneClient( options );
             }
 
-            const initOptions = {...this._getLastLoginAccount()}
+            const initOptions = {...this._getLastLoginAccount()};
 
             initOptions.onInitSuccessFunction = function( oExtensions ){
                 //console.log('extensions', oExtensions);
@@ -3055,7 +3175,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                         const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
                             function() {
                                 onInitSuccessUccacFunction();
-                                this_._deinitPalWrapper();
+                                //this_._deinitPalWrapper();
                             },
                             onInitFailUccacFunction, isUCMinScript
                         );
@@ -3066,6 +3186,10 @@ export default class BrekekeOperatorConsole extends React.Component {
             initOptions.onInitFailFunction = function( error ){
                 onInitFailUccacFunction(error);
             };
+
+            //if( bPhoneIndexChanged ){
+            //    options["phoneIndex"] = newData.phoneIndex;
+            //}
             this._initAphoneClient(  phoneClient,  initOptions, newData );
             return false;
         }
@@ -3076,7 +3200,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             const initAsync = this_._UccacWrapper.onBeginSetSystemSettingsDataByOperatorConsoleAsParent( newData, systemSettingsDataAsCaller,
                 function() {
                     onInitSuccessUccacFunction();
-                    this_._deinitPalWrapper();
+                    //this_._deinitPalWrapper();
                 },
                 onInitFailUccacFunction, isUCMinScript
             );
@@ -3088,6 +3212,32 @@ export default class BrekekeOperatorConsole extends React.Component {
     getCallHistory() {
         return this._CallHistory;
     }
+	
+	// async reinitPhoneClient(pt, onInitSuccessFunction = null ){
+	// 	this._deinitAphoneClient();
+	// 	const options = {
+	// 		operatorConsoleAsParent : this
+	// 	};
+	// 	let phoneClient;
+	// 	if( pt === "phoneTerminal_pal"){
+	// 		phoneClient = new PalPhoneClient( options );
+	// 	}
+	// 	else{
+	// 		phoneClient = new WebphonePhoneClient( options );
+	// 	}
+    //
+	// 	const initOptions = {...this._getLastLoginAccount()}
+	//
+	// 	if( onInitSuccessFunction ){
+	// 		initOptions["onInitSuccessFunction"] = onInitSuccessFunction;
+	// 	}
+    //
+	// 	//if( bPhoneIndexChanged ){
+	// 		//options["phoneIndex"] = newData.phoneIndex;
+	// 	//}
+	// 	const systemSettingsDataData = this.getSystemSettingsData().getData();
+	// 	await this._initAphoneClient(  phoneClient,  initOptions, systemSettingsDataData );
+	// }
 
     componentDidMount() {
         this.startShowScreen();
@@ -3322,7 +3472,7 @@ export default class BrekekeOperatorConsole extends React.Component {
              if( symbol ) {
                  const sDialing = BrekekeOperatorConsole.getQuickCallDialingBySymbol( symbol, qcSubData );
                  if( sDialing ) {
-                     this.setDialingAndMakeCall(sDialing);
+                     this.setDialingAndMakeCallWithShowCallSelectionModal(sDialing, null);
                      return;
                  }
              }
@@ -3340,9 +3490,9 @@ export default class BrekekeOperatorConsole extends React.Component {
                 if ( dialing && dialing.length !== 0  && bHasActiaveCall) {
                     //show transfer method modal.
                     const runtimeScreenView = this.getCurrentRuntimeScreenView_ver2();
-                    runtimeScreenView.setIsShowSelectCallingMethodModal(true);
+                    runtimeScreenView.setIsShowSelectCallingMethodModal(true, dialing );
                 } else {
-                    this.makeCallWithShortDial(null);
+                    this.makeCallWithShortDialWithShowCallSelectionModal(null);
                 }
 
                 //this.makeCall();
@@ -3644,6 +3794,14 @@ export default class BrekekeOperatorConsole extends React.Component {
     getDialing(){
         return this.state.dialing;
     }
+	
+	getOriginalDialing(){
+		return this.state.originalDialing;
+	}
+	
+	setDialingAndOriginalDialingToState( sDialing, sOriginalDialing,onSetFunction ){
+		this.setState({dialing:sDialing,originalDialing:sOriginalDialing}, onSetFunction );
+	}
 
 
     _getLastLayoutShortname(){
@@ -3786,6 +3944,15 @@ export default class BrekekeOperatorConsole extends React.Component {
                                                 </Suspense>
                                             </ConfigProvider>
                                     </div>
+                                    ) : this.state.displayState === brOcDisplayStates.userSettingsView ? (
+                                    <div style={{height: "100%"}}>
+                                        <img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+                                        <ConfigProvider locale={ configProviderLocale}>
+                                            <Suspense fallback={<Empty image={null} description={<div style={{height: "100%"}}><Spin/></div>}/>}>
+                                                <UserSettingsView operatorConsole={this}/>
+                                            </Suspense>
+                                        </ConfigProvider>
+                                    </div>
                                     ) : this.state.displayState === brOcDisplayStates.showScreen_ver2 ? (
                                         <div style={{
                                             height: "100%",
@@ -3822,7 +3989,18 @@ export default class BrekekeOperatorConsole extends React.Component {
                                 <Empty image={null} description={<Spin/>}/>
                             </div>
                             )
-            ) :  (
+            ) : this.state.displayState === brOcDisplayStates.mfa ?  (
+					<div className='brOCLoginPage'>
+						<Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
+							<Mfa operatorConsoleAsParent={this} initialValues={this._getLastLoginAccount()} startMfaFirstResult={this._startMfaFirstResult} tenant={this._startMfaTenant} user={this._startMfaUser} password={this._startMfaPassword}
+								hostname={this._startMfaHostname}
+								port={this._startMfaPbxPort}
+								pbxDirectoryName={this._startMfaPbxDirectoryName}
+							/>
+						</Suspense>
+					</div>
+				)
+			: (
                 <div className='brOCLoginPage'>
                     <Suspense fallback={<Empty image={null} description={<Spin/>}/>}>
                         <Login operatorConsoleAsParent={this} initialValues={this._getLastLoginAccount()} />
@@ -3834,12 +4012,23 @@ export default class BrekekeOperatorConsole extends React.Component {
         </>);
     }
 
+	onStartMfaOK( result, tenant, user, userPassword, pbxHostname, pbxPort, pbxDirectoryName ){
+		this._startMfaFirstResult = result;
+		this._startMfaTenant = tenant;
+		this._startMfaUser = user;
+		this._startMfaPassword = userPassword;
+		this._startMfaHostname = pbxHostname;
+		this._startMfaPbxPort = pbxPort;
+		this._startMfaPbxDirectoryName = pbxDirectoryName;
+        this.setDisplayState(brOcDisplayStates.mfa );
+	}
+	
     setLastLoginAccount( lastLoginAccount ){
         this.setState({lastLoginAccount: lastLoginAccount});
     }
 
     _getLastLoginAccount() {
-        const sLastLoginAccount = localStorage.getItem('lastLoginAccount');
+        const sLastLoginAccount = window.localStorage.getItem('lastLoginAccount');
         if( sLastLoginAccount ){
             try {
                 const lastLoginAccount = JSON.parse(sLastLoginAccount);
@@ -3913,6 +4102,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     startSettingsScreen = () => {
         this.setDisplayState(brOcDisplayStates.systemSettingsView);
+    }
+
+    openUserSettingsScreen = () => {
+        this.setDisplayState(brOcDisplayStates.userSettingsView);
     }
 
     getShowAutoDialWidgetSubDatas_ver2(){
@@ -4119,7 +4312,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.screenData_ver2;
     }
 
-    _syncUp = async ( onSuccessFunction, cloneSystemSettingsData = null ) => {
+    _syncUp = async ( onSuccessFunction = undefined, cloneSystemSettingsData = undefined, cloneSystemSettingsDataData = undefined, screenData_ver2 = undefined, bShowNotificationSuccess = true ) => {
         //if (!pal) return;
         let  systemSettingsData;
         if( cloneSystemSettingsData ) {
@@ -4129,9 +4322,18 @@ export default class BrekekeOperatorConsole extends React.Component {
             systemSettingsData = this.getSystemSettingsData();
         }
 
-        const systemSettingsDataData = systemSettingsData.getData();
+        let systemSettingsDataData;
+        if( cloneSystemSettingsDataData ){
+            systemSettingsDataData = cloneSystemSettingsDataData;
+        }
+        else {
+            systemSettingsDataData = systemSettingsData.getData();
+        }
 
-        const oScreen_ver2 = this.state.screenData_ver2.getDataAsObject();
+		if( !screenData_ver2 ){
+			screenData_ver2 = this.state.screenData_ver2;
+		}
+		const oScreen_ver2 = screenData_ver2.getDataAsObject();
 
         const  layoutsAndSettingsData =  {
             version:  BrekekeOperatorConsole.getAppDataVersion(),
@@ -4146,19 +4348,24 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const setNoteOptions = {
             methodName : "setNote",
-            methodParams : JSON.stringify({
+            methodParams : {
                     tenant : this.getLoggedinTenant(),
                     name:noteName,
                     description : "",
                     useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : noteContent
-            }),
+            },
             onSuccessFunction : ( res ) =>{
-                Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+				if( bShowNotificationSuccess !== false ){
+					Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
+				}
                 //this.setLastSystemSettingsDataData( systemSettingsDataData );
                 if( cloneSystemSettingsData ) {
                     const systemSettingsData = this.getSystemSettingsData();
-                    systemSettingsData.setCloneDatas( cloneSystemSettingsData );
+                    systemSettingsData.setCloneDatasFromDataData( cloneSystemSettingsData.getData() );
+                }
+                else if( cloneSystemSettingsDataData ){
+                    systemSettingsData.setCloneDatasFromDataData( cloneSystemSettingsDataData );
                 }
                 if( onSuccessFunction ){
                     onSuccessFunction();
@@ -4206,6 +4413,10 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     abortSystemSettings = () => {
+        this.setDisplayState(brOcDisplayStates.showScreen_ver2);
+    }
+
+    abortUserSettings = () => {
         this.setDisplayState(brOcDisplayStates.showScreen_ver2);
     }
 
@@ -4797,31 +5008,50 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    _onSetDialing(dialing) {
-        for (let i = 0; i < this._OnSetDialingCallbacks.length; i++) {
-            const func = this._OnSetDialingCallbacks[i];
-            func(this, dialing);
-        }
+    getNotifyVoicemailsInfo(){
+        return this._NotifyVoicemailsInfo;
     }
-
-    addOnSetDialingCallback( func ){
-        this._OnSetDialingCallbacks.push( func );
-    }
-
 
     addOnAppendKeypadValueCallback(func) {
         this._OnAppendKeypadValueCallbacks.push(func);
     }
 
-    setDialingAndMakeCall = (sDialing, context) => {
-        this.setState({dialing: sDialing}, () => {
-            this._onSetDialing( sDialing );
-            if( context ) {
-                context.makeCall();
-            }
-            else{
-                this.makeCall();
-            }
+    setDialingAndMakeCallWithShowCallSelectionModal = (sDialing, sOriginalDialing ) => {
+        this.setState({dialing: sDialing, originalDialing: sOriginalDialing }, () => {
+			
+			const phoneClient = this.getPhoneClient();
+			const bWebphone = phoneClient.constructor.name === WebphonePhoneClient.name;
+			if( !bWebphone ){
+				this.makeCall2();				
+			}
+			else{
+				const userSettings = this.getUserSettingsData();
+				const nCallSelection = userSettings.getCallSelection();
+				
+				let videoEnabled;
+				switch( nCallSelection ){
+					case USER_SETTINGS_DATA_CALL_SELECTION.Voice:
+						videoEnabled = false;
+					break;
+					case USER_SETTINGS_DATA_CALL_SELECTION.Video:
+						videoEnabled = true;
+					break;
+					case USER_SETTINGS_DATA_CALL_SELECTION.Choice:
+						videoEnabled = undefined;
+					break;
+					default:
+						videoEnabled = false;	//for Old version
+					break;
+				}
+				
+				if( videoEnabled !== undefined ){
+					this.makeCall2( null, videoEnabled );
+				}
+				else{
+					const r = this.getCurrentRuntimeScreenView_ver2();
+					r.setIsShowCallSelectionModal(true);
+				}
+			}
         });
     }
 
@@ -4831,11 +5061,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     setDialingToState = (sDialing, isDTMFInput = null, onDoneFunc = null ) => {
          if( OCUtil.isBoolean( isDTMFInput ) ) {
-        //     this._wasDTMFInput = this._isDTMFInput;
+        //     this._wasDTMFInput = this._isDTMFInput;		
              this._setIsDTMFInput( isDTMFInput );
         }
         this.setState({dialing: sDialing}, onDoneFunc );
-        this._onSetDialing(sDialing);
     }
 
     _setIsDTMFInput(b){
@@ -4852,22 +5081,100 @@ export default class BrekekeOperatorConsole extends React.Component {
         }
     }
 
-    setDialingAndCall( sDialing, bTransfer = false, transferMode = null ){
-        this.setState( {dialing: sDialing }, () =>{
-            if( bTransfer === true ){
-                this.transferDialingCall( null, transferMode );
-            }
-            else{
-                this.makeCall2();
-            }
+    setDialingAndCallWithShowCallSelectionModal( sDialing, bTransfer = false, transferMode = null, videoEnabled = false, sOriginalDialing = null ){
+        this.setState( {dialing: sDialing, originalDialing: sOriginalDialing }, () =>{
+
+			const phoneClient = this.getPhoneClient();
+			const bWebphone = phoneClient.constructor.name === WebphonePhoneClient.name;
+			if( !bWebphone ){
+				if( bTransfer === true ){
+					this.transferDialingCall( null, transferMode );
+				}
+				else{
+					this.makeCall2();
+				}
+			}
+			else{
+				if( bTransfer === true ){
+					this.transferDialingCall( null, transferMode );
+				}
+				else{
+					const userSettings = this.getUserSettingsData();
+					const nCallSelection = userSettings.getCallSelection();
+					
+					let videoEnabled;
+					switch( nCallSelection ){
+						case USER_SETTINGS_DATA_CALL_SELECTION.Voice:
+							videoEnabled = false;
+						break;
+						case USER_SETTINGS_DATA_CALL_SELECTION.Video:
+							videoEnabled = true;
+						break;
+						case USER_SETTINGS_DATA_CALL_SELECTION.Choice:
+							videoEnabled = undefined;
+						break;
+						default:
+							videoEnabled = false;	//for Old version
+						break;
+					}
+					
+					if( videoEnabled !== undefined ){
+						this.makeCall2( null, videoEnabled );
+					}
+					else{
+						const r = this.getCurrentRuntimeScreenView_ver2();
+						r.setIsShowCallSelectionModal(true);
+					}					
+				}
+			}
         });
 
     }
-
-    setDialingAndMakeCall2 = (sDialing) => {
+	
+	setDialingAndMakeCall2( sDialing ){
         this.setState({dialing: sDialing}, () =>{
-            this._onSetDialing(sDialing);
-            this.makeCall2();
+			this.makeCall2();
+		});
+	}
+
+    setDialingAndMakeCall2WithShowCallSelectionModal = (sDialing, onOkCallSelectionFunction ) => {
+        this.setState({dialing: sDialing}, () =>{
+			const phoneClient = this.getPhoneClient();
+			const bWebphone = phoneClient.constructor.name === WebphonePhoneClient.name;
+			if( !bWebphone ){
+				this.makeCall2();
+			}
+			else{
+
+				//this.makeCall2();
+				const userSettings = this.getUserSettingsData();
+				const nCallSelection = userSettings.getCallSelection();
+				
+				let videoEnabled;
+				switch( nCallSelection ){
+					case USER_SETTINGS_DATA_CALL_SELECTION.Voice:
+						videoEnabled = false;
+					break;
+					case USER_SETTINGS_DATA_CALL_SELECTION.Video:
+						videoEnabled = true;
+					break;
+					case USER_SETTINGS_DATA_CALL_SELECTION.Choice:
+						videoEnabled = undefined;
+					break;
+					default:
+						videoEnabled = false;	//for Old version
+					break;
+				}
+				
+				if( videoEnabled !== undefined ){
+					this.makeCall2( null, videoEnabled );
+				}
+				else{
+					const r = this.getCurrentRuntimeScreenView_ver2();
+					r.setIsShowCallSelectionModal(true, onOkCallSelectionFunction );
+				}			
+			}
+		
         }
         );
     }
@@ -4905,7 +5212,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     //On end(disconnect) call
-    onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo ){
+    onRemoveCallInfoByCallInfos( callInfosAsCaller, callInfo, notifyStatusEvent ){
         if( this.state.hasMissedCall !== true ) {
             const bIsIncoming = callInfo.getIsIncoming();
             const bAnswered = callInfo.getIsAnswered();
@@ -4931,7 +5238,7 @@ export default class BrekekeOperatorConsole extends React.Component {
             this.setState({hasMissedCall:hasMissedCall}); //With rerender
         }
 
-        this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo, this._PalRestApi );
+        this._CallHistory2.onRemoveCallInfoForCallHistory2( this, callInfo, this._PalRestApi, notifyStatusEvent );
 
         const options = {
             callInfo : callInfo
@@ -5160,7 +5467,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     _resetCallInput( bClearDialing = true, forceReset = false, ignoreSetDtmfFalseWhenDisconnected = false ){
         const callInfos = this._aphone.getCallInfos();
         const currentCallIndex = callInfos.getCurrentCallIndex();
-
+		
 		const bDisconnected = currentCallIndex < 0;
 		if( bDisconnected ){
 			if( bClearDialing === true ) {
@@ -5529,24 +5836,77 @@ export default class BrekekeOperatorConsole extends React.Component {
         return bNeedSendDTMF;
     }
 
-    makeCallWithShortDial = async (context) => {
+    makeCallWithShortDialWithShowCallSelectionModal = async (context) => {
         const dialing = this.state.dialing;
 
         //Search short dial
-        const shortDials = this.getSystemSettingsData().getShortDials();
-        if (dialing && shortDials) {
-            for (let i = 0; i < shortDials.length; i++) {
-                const shortDialObject = shortDials[i];
-                const shortDial = shortDialObject.shortDial;
-                if (shortDial === dialing) {
-                    const dial = shortDialObject.dial;
-                    this.setDialingAndMakeCall(dial, context);
-                    return;
-                }
-            }
-        }
-        await this.makeCall();
+		if( dialing ){
+			const userShortDials = this.getUserSettingsData().getShortDials();
+			if ( Array.isArray(userShortDials) ) {
+				for (let i = 0; i < userShortDials.length; i++) {
+					const shortDialObject = userShortDials[i];
+					const shortDial = shortDialObject.shortDial;
+					if (shortDial === dialing) {
+						const dial = shortDialObject.dial;
+						this.setDialingAndMakeCallWithShowCallSelectionModal(dial);
+						return;
+					}
+				}
+			}
+			
+			const shortDials = this.getSystemSettingsData().getShortDials();
+			if ( Array.isArray(shortDials) ) {
+				for (let i = 0; i < shortDials.length; i++) {
+					const shortDialObject = shortDials[i];
+					const shortDial = shortDialObject.shortDial;
+					if (shortDial === dialing) {
+						const dial = shortDialObject.dial;
+						this.setDialingAndMakeCallWithShowCallSelectionModal(dial);
+						return;
+					}
+				}
+			}
+		}
+        await this.makeCall2WithShowCallSelectionModal();
     }
+	
+	makeCall2WithShowCallSelectionModal = async() => {
+
+		const phoneClient = this.getPhoneClient();
+		const bWebphone = phoneClient.constructor.name === WebphonePhoneClient.name;
+		if( !bWebphone ){
+			this.makeCall2();
+		}
+		else{
+
+			const userSettings = this.getUserSettingsData();
+			const nCallSelection = userSettings.getCallSelection();
+			
+			let videoEnabled;
+			switch( nCallSelection ){
+				case USER_SETTINGS_DATA_CALL_SELECTION.Voice:
+					videoEnabled = false;
+				break;
+				case USER_SETTINGS_DATA_CALL_SELECTION.Video:
+					videoEnabled = true;
+				break;
+				case USER_SETTINGS_DATA_CALL_SELECTION.Choice:
+					videoEnabled = undefined;
+				break;
+				default:
+					videoEnabled = false;	//for Old version
+				break;
+			}
+			
+			if( videoEnabled !== undefined ){
+				this.makeCall2( null, videoEnabled );
+			}
+			else{
+				const r = this.getCurrentRuntimeScreenView_ver2();
+				r.setIsShowCallSelectionModal(true);
+			}
+		}
+	}
 
     // findCallByTalkerId= ( talkerId  ) =>{
     //     const calls = Object.values( this.callById );
@@ -5559,7 +5919,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     //     return itm;
     // }
 
-    makeCall2 = async ( dialing ) => {
+    makeCall2 = async ( dialing = null, videoEnabled = false ) => {
         const sDialing = dialing ? dialing : this.state.dialing;
         if (!sDialing) {
             return false;
@@ -5573,9 +5933,9 @@ export default class BrekekeOperatorConsole extends React.Component {
         // if( !bCall ){
         //     return false;
         // }
-        this._aphone.callByPhoneClient(  sDialing, sUsingLine );
+        this._aphone.callByPhoneClient(  sDialing, sUsingLine, videoEnabled );
         //this.setHasMissedCallToFalseToState();
-		this._setIsDTMFInput( true );
+		this._setIsDTMFInput(true);
         this._resetCallInput( false, true, true );
         if( !dialing ) {
             this._clearDialing();
@@ -5785,12 +6145,35 @@ export default class BrekekeOperatorConsole extends React.Component {
         return index;
     }
 
+    getOnPalNotifyStatusEventListenerIndex( function_ ){
+        const index = this._OnPalNotifyStatusEventListeners.indexOf( function_ );
+        return index;
+    }
+
     // removeOnPalNotifyStatusEventListener( function_ ){
     //     const removedIndex = Util.removeItemFromArray( this._OnPalNotifyStatusEventListeners, function_ );
     //     return removedIndex;
     // }
-    removeOnPalNotifyStatusEventListener( index ){
-        this._OnPalNotifyStatusEventListeners.splice( index, 1 );
+    removeOnPalNotifyStatusEventListener( indexOrFunction ){
+        let removedIndex;
+        if(  Number.isInteger(indexOrFunction)) {
+            const index = indexOrFunction;
+            const bCantDelete = index >= this._OnPalNotifyStatusEventListeners.length ||  index < 0;
+            if( bCantDelete ){
+               removedIndex = -1;
+            }
+            else {
+                this._OnPalNotifyStatusEventListeners.splice(index, 1);
+                removedIndex = index;
+            }
+        }
+        else{
+            removedIndex = this.getOnPalNotifyStatusEventListenerIndex( indexOrFunction );
+            if( removedIndex !== -1 ) {
+                this._OnPalNotifyStatusEventListeners.splice(removedIndex, 1);
+            }
+        }
+        return removedIndex;
     }
 
     getOnPalNotifyStatusEventListenerCount(){
@@ -5844,7 +6227,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return this.state.isInitialized;
     }
 
-    _downLayoutAndSystemSettingsForLoggedin( downLayoutAndSystemSettingsSuccessFunction, downLayoutAndSystemSettingsFailFunction ){
+    _downLayoutAndSystemSettingsForLoggedin( downLayoutAndSystemSettingsSuccessFunction, downLayoutAndSystemSettingsFailFunction, newPhoneIndexFromLogin = undefined ){
         if( !this._loggedinPal || this.state._downedLayoutAndSystemSettings ){
             downLayoutAndSystemSettingsFailFunction({message:i18n.t("CouldNotDownloadLayoutAndSystemSettings")});
             return false;
@@ -5875,6 +6258,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                                 _downedLayoutAndSystemSettings: true,
                                 displayState: brOcDisplayStates.showScreen_ver2
                             }, () => {
+								//const autoDialView2 = AutoDialView_ver2.getStaticInstance();
+								//autoDialView2.onDownLayoutAndSystemSettingsForLoggedInSuccessByOperatorConsole(this);	//!commentOut autoDialView2 is undefined.
                                 downLayoutAndSystemSettingsSuccessFunction();
                             });
 
@@ -5891,7 +6276,10 @@ export default class BrekekeOperatorConsole extends React.Component {
                         },
                         function(e) {
                             this_._setOCNoteFailAtDownLayoutAndSystemSettings(e, downLayoutAndSystemSettingsFailFunction);
-                        }
+                        },
+                        true,
+                        false,
+                        newPhoneIndexFromLogin
                     );
                 },
                 function( err ){
@@ -5999,13 +6387,41 @@ export default class BrekekeOperatorConsole extends React.Component {
     getDateFormatStringInstance(){
         return this._dateFormatString;
     }
+	
+    _flushNotifyVoicemailEvents = debounce(() => {
+        console.log("pal.notify_voicemail (debounce)", this._notifyVoicemailEvents);
+        const bHasVoicemailUpdated = this._NotifyVoicemailsInfo.onPalNotifyVoiceMailDebounceByOperatorConsole( this, this._notifyVoicemailEvents );
+        if( bHasVoicemailUpdated ){
+            this.setState({rerender:true});
+        }
 
-    onLoggedinByLogin(  loggedinPal, pbxHost, pbxPort, tenant, user, password, isAdmin, language  ){
+		const autoDialView2 = AutoDialView_ver2.getStaticInstance();
+		if( autoDialView2 ){
+			autoDialView2.onPalNotifyVoiceMailDebounceByOperatorConsole( this, this._notifyVoicemailEvents );
+		}
+        //for (let i =0; i < this._notifyVoicemailEvents.length; i++ ) {
+		//	const nve = this._notifyVoicemailEvents[i];
+		//	autoDialView2.onPalNotifyVoiceMailDebounceByOperatorConsole( this, nve );
+        //}
+        this._notifyVoicemailEvents = [];
+    }, 500);
+
+    onLoggedinByLogin(  loggedinPal, pbxHost, pbxPort, tenant, user, password, isAdmin, language, phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction ){
         window.addEventListener("beforeunload",  this._OnBeforeUnloadFunc );
         this._loggedinPal = loggedinPal;
+		this._loggedinPal.notify_voicemail = (e) => {
+			//console.log('pal.notify_voicemail', e);
+			this._notifyVoicemailEvents.push(e);
+			this._flushNotifyVoicemailEvents();
+		}
+		this._notifyVoicemailEvents = [];
+
+		this._NotifyVoicemailsInfo.onLoggedinForNotifyVoicemailsInfo(this); //No await
+		
         i18n.locale = isValidLocale(language) ? language : DEFAULT_LOCALE;
         this._dateFormatString = DateFormatStringFactory.newDateFormatStringInstance( language );
         const this_ = this;
+		
         const loginUser = {
             pbxHost : pbxHost,
             pbxPort : pbxPort,
@@ -6023,8 +6439,27 @@ export default class BrekekeOperatorConsole extends React.Component {
 //            this.syncDownScreens();
 //            this._syncDownLayout();
 
+			
             let loadingButtonFileInfos = true;
             let loadingPresetRingtoneSoundFileInfos = true;
+
+			//Order important.
+			this._userSettingsData = new UserSettingsData(this);
+			this._userSettingsData.load();
+			
+			const usrfPromise = this._UserSettingsRingtoneFiles.reinitAsync();
+			let userSettingsRingtoneFilesInitializing = true;
+			usrfPromise.then( () =>{
+			}).catch( (e) =>{
+				OCUtil.logErrorWithNotification( i18n.t("An_error_occurred_while_loading_ringtone_files"), e );
+			}).finally( async () =>{
+				const userSettings = this.getUserSettingsData();
+				const bSaved = await userSettings.removeAndSaveNotExistRingtoneFilesReferences( this._UserSettingsRingtoneFiles );
+				userSettingsRingtoneFilesInitializing = false;
+				if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+					this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
+				}				
+			});
 
             const filesFileUrl = "components/button/icons/default/filenames.txt";
             const loadDefaultButtonImageFileInfosOptions = {
@@ -6032,8 +6467,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                 timeoutMillisecond:60000,
                 loadSuccessFunction : (options) =>{
                     loadingButtonFileInfos = false;
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 },
                 loadFailFunction : (options) =>{
@@ -6046,23 +6481,23 @@ export default class BrekekeOperatorConsole extends React.Component {
                         console.error("Failed to load file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
                         Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  filesFileUrl, duration:0 });
                     }
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 },
                 loadErrorFunction : ( options ) =>{
                     loadingButtonFileInfos = false;
                     console.error("An error occurred while loading the file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
                     Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  filesFileUrl, duration:0 });
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }                },
                 loadTimeoutFunction: (options) =>{
                     loadingButtonFileInfos = false;
                     console.error("Loading the file list timed out. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
                     Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  filesFileUrl, duration:0 });
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 }
             };
@@ -6073,8 +6508,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                 timeoutMillisecond:60000,
                 loadSuccessFunction : (options) =>{
                     loadingPresetRingtoneSoundFileInfos = false;
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 },
                 loadFailFunction : (options) =>{
@@ -6087,23 +6522,23 @@ export default class BrekekeOperatorConsole extends React.Component {
                         console.error("Failed to load file list. requestOptions=" , loadPresetRingtoneSoundFilesInfosOptions, ",responseOptions=", options  );
                         Notification.error({message: i18n.t("FailedToLoadFileList") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
                     }
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 },
                 loadErrorFunction : ( options ) =>{
                     loadingPresetRingtoneSoundFileInfos = false;
                     console.error("An error occurred while loading the file list. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
                     Notification.error({message: i18n.t("AnErrorOccurredWhileLoadingTheFileList") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }                },
                 loadTimeoutFunction: (options) =>{
                     loadingPresetRingtoneSoundFileInfos = false;
                     console.error("Loading the file list timed out. requestOptions=" , loadDefaultButtonImageFileInfosOptions, ",responseOptions=", options  );
                     Notification.error({message: i18n.t("LoadingTheFileListTimedOut") + "\r\n" +  presetRingtoneSoundFilenamessFileUrl, duration:0 });
-                    if( loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
-                        this._startDownLayoutAndSystemSettingsForLoggedin();
+                    if( userSettingsRingtoneFilesInitializing === false && loadingButtonFileInfos === false && loadingPresetRingtoneSoundFileInfos === false ){
+                        this._startDownLayoutAndSystemSettingsForLoggedin( phoneIndexFromLogin, onSuccessStartDownLayoutAndSystemSettingsForLoggedinFunction );
                     }
                 }
             };
@@ -6115,57 +6550,44 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     }
 
-    _startDownLayoutAndSystemSettingsForLoggedin(){
+    _reinitWebphoneDevices = async ( webphonePhoneClient, camera, mic, speaker  ) => {
+        const webphone = webphonePhoneClient.getWebphone();
+
+        let pCamera;
+        if( camera ){
+            pCamera = webphone.setVideoInputDevice( camera );
+        }
+        let pMic;
+        if( mic ){
+            pMic = webphone.setAudioInputDevice( mic );
+        }
+        let pSpeaker;
+        if( speaker ){
+            pSpeaker = webphone.setAudioOutputDevice( speaker );
+        }
+
+        await Promise.all([pCamera,pMic,pSpeaker]);
+
+    }
+
+    _startDownLayoutAndSystemSettingsForLoggedin( newPhoneIndex = undefined, onSuccessFunction = undefined  ){
         const this_ = this;
         this._downLayoutAndSystemSettingsForLoggedin(
             function(){
+                if( onSuccessFunction ){
+                    onSuccessFunction();
+                }
             },
             function(){
 
-            }
+            },
+            newPhoneIndex
         );
     }
-
-
-//     onEndInitByWebphonePhoneClient( account ){
-//         const this_ = this;
-//         this.setState({
-//             loginUser: account,
-//             isInitialized: true,
-//             systemSettingsData: new SystemSettingsData(this)
-//         }, () => {
-// //            this.syncDownScreens();
-// //            this._syncDownLayout();
-//             this._downLayoutAndSystemSettingsForLoggedin(
-//                 function(){
-//
-//                 },
-//                 function(){
-//
-//                 }
-//             );
-//         });
-//
-//     }
-
-    // /**
-    //  *
-    //  * @param oExtensions ex.[{id:111,name:"111name"},{id:222,name:"222name"}]
-    //  */
-    // onInitByAphone( oExtensions ){
-    //     console.log('extensions', oExtensions);
-    //     this.setState({ extensions: oExtensions });
-    //
-    // }
-
-    // getAdminExtensionPropertiesFromPal(){
-    //     const loginUser  = this.state.loginUser;
-    //     const tenant = loginUser?.pbxTenant;
-    //     const extension = loginUser?.pbxUsername;
-    //
-    //     const promise = this._aphone.getAdminExtensionPropertiesPromise( tenant, extension );
-    //     return promise;
-    // }
+	
+	getUserSettingsRingtoneFiles(){
+		return this._UserSettingsRingtoneFiles;
+	}
 
     getIsAdmin(){
         return this.getLoggedinUserIsAdmin();
@@ -6209,8 +6631,19 @@ export default class BrekekeOperatorConsole extends React.Component {
     getPalRestApi(){
         return this._PalRestApi;
     }
+	
+	getUserSettingsData(){
+		return this._userSettingsData;
+	}
 
     logout = () => {
+		
+		const autoDialView2 = AutoDialView_ver2.getStaticInstance();
+		if( autoDialView2 ){
+			autoDialView2.onBeginLogoutForAutoDialView2ByOperatorConsole( this );
+		}
+        this._NotifyVoicemailsInfo.onLogoutForNotifyVoicemailsInfo( this );
+		
         const pForLogout = this._PalRestApi.clonePalRestApi();
         this._CallHistory2.onBeginLogoutForCallHistory2(this, pForLogout );
         this._Campon.onBeginLogout(this);
@@ -6229,7 +6662,14 @@ export default class BrekekeOperatorConsole extends React.Component {
         this._deinitPalWrapper();
         this._PalRestApi.deinitPalRestApi();
         //this._CallHistory2.onDeinitPalRestApiByOperatorConsole(this);
-
+		
+		//Order important.
+		this._UserSettingsRingtoneFiles.clear(false);
+		if( this._userSettingsData ){
+			this._userSettingsData.clear();
+			this._userSettingsData = null;
+		}
+		
         this.setState({
             ...window.structuredClone(INIT_STATE),
             i18nReady: true,
@@ -6275,10 +6715,10 @@ export default class BrekekeOperatorConsole extends React.Component {
 
         const setAppDataOptions = {
             methodName : "setAppData",
-            methodParams : JSON.stringify({
+            methodParams : {
                 data_id : dataId,
                 data : data
-            }),
+            },
             onSuccessFunction : ( res ) =>{
                 Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
             },
@@ -6305,197 +6745,9 @@ export default class BrekekeOperatorConsole extends React.Component {
 
     }
 
-    //!old
-    // _syncDownLayout = () => {
-    //     if( !this.pal || this.state.syncDownedLayout ){
-    //         return;
-    //     }
-    //
-    //     const layoutFullname = this._getLastLayoutFullname();
-    //   if( layoutFullname ) {
-    //       this.getNote( layoutFullname )
-    //           .then((result) => {
-    //               const temp = 0;
-    //           })
-    //           .catch((err) => {
-    //              console.error("Failed to getNote.", err );
-    //               this.setState({ error: true })
-    //               throw err;
-    //           });
-    //   }
-    // }
-
-    //!old
-    // syncDownScreens = async () => {
-    //   if (!this.pal || this.state.syncDownedScreens ) return;
-    //
-    //   const [err, data] = await this.pal.call_pal('getAppData', { data_id: PBX_APP_DATA_NAME })
-    //       .then((data) => {
-    //         if (!data) {
-    //           return [null, null];
-    //         }
-    //         let json = { error: 'failed to parse app data' };
-    //         try {
-    //           json = JSON.parse(data);
-    //         } catch(err) {
-    //           console.warn('failed to parse app data', err);
-    //         }
-    //         return [null, json];
-    //       })
-    //       .catch((err) => {
-    //         return [err, null];
-    //       });
-    //
-    //   // if data not found
-    //   if (err?.code === -2000 || !data) {
-    //     this.setState({ screens: DEFAULT_SCREENS, syncDownedScreens: true }, () => {
-    //       this.syncUp();
-    //       this._syncDownSystemSettings();
-    //     });
-    //   }
-    //   else if (err || data?.error) {
-    //     Notification.error({
-    //       key: 'sync',
-    //       message: i18n.t("failed_to_load_data_from_pbx"),
-    //       btn: (<>
-    //         <Button type="secondary" size="small" onClick={() => {
-    //           //Notification.close('sync');
-    //           this.setState({ screens: DEFAULT_SCREENS, syncDownedScreens: true });
-    //           this._syncDownSystemSettings();
-    //         }}>
-    //           {i18n.t('use_the_default')}
-    //         </Button>
-    //         <Button style={{marginLeft: 12}} type="primary" size="small" onClick={() => {
-    //           //Notification.close('sync');
-    //           this.syncDownScreens().then( () => {
-    //             this.setState({screens: data.screens, syncDownedScreens: true});
-    //             this._syncDownSystemSettings();
-    //           });
-    //         }}>
-    //           {i18n.t('retry')}
-    //         </Button>
-    //       </>),
-    //       duration: 0,
-    //     });
-    //   }
-    //   else if (data.version !== PBX_APP_DATA_VERSION) {
-    //     // TODO: handle sync data versioning
-    //     this.setState({ screens: DEFAULT_SCREENS, syncDownedScreens: true }, () => {
-    //       this.syncUp();
-    //       this._syncDownSystemSettings();
-    //     });
-    //   }
-    //   else{
-    //     this.setState({screens: data.screens, syncDownedScreens: true});
-    //     this._syncDownSystemSettings();
-    //   }
-    //
-    //
-    // }
-
     setSystemSettingsView( view ){
         this._systemSettingsView = view;
     }
-
-    // //!old
-    // _syncDownSystemSettings = async () => {
-    //   const pal = this.pal;
-    //   if (!pal || this.state.syncDownedSystemSettings ) return;
-    //
-    //   const [err, data] = await pal.call_pal('getAppData', { data_id: OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID })
-    //       .then((data) => {
-    //         if (!data) {
-    //           return [null, null];
-    //         }
-    //         let json = { error: 'failed to parse app data' };
-    //         try {
-    //           json = JSON.parse(data);
-    //         } catch(err) {
-    //           console.warn('failed to parse app data', err);
-    //         }
-    //         return [null, json];
-    //       })
-    //       .catch((err) => {
-    //         return [err, null];
-    //       });
-    //
-    //   // if data not found
-    //   if (err?.code === -2000 || !data) {
-    //     this.setState({ syncDownedSystemSettings: true } );
-    //   }
-    //   else if (err || data?.error) {
-    //     Notification.error({
-    //       key: 'sync',
-    //       message: i18n.t("failed_to_load_data_from_pbx"),
-    //       btn: (<>
-    //         <Button type="secondary" size="small" onClick={() => {
-    //           //Notification.close('sync');
-    //           this.setState({ syncDownedSystemSettings: true });
-    //         }}>
-    //           {i18n.t('use_the_default')}
-    //         </Button>
-    //         <Button style={{marginLeft: 12}} type="primary" size="small" onClick={() => {
-    //           //Notification.close('sync');
-    //           this._syncDown();
-    //         }}>
-    //           {i18n.t('retry')}
-    //         </Button>
-    //       </>),
-    //       duration: 0,
-    //     });
-    //     return;
-    //   }
-    //   else {
-    //
-    //     if (data.version !== OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION) {
-    //       // TODO: handle sync data versioning
-    //       this.setState({syncDownedSystemSettings: true});
-    //       return;
-    //     }
-    //     this.getSystemSettingsData().setData( data.appData );
-    //
-    //     this.setState({ syncDownedSystemSettings: true});
-    //   }
-    //
-    //   this._CallHistory.load();
-    //   this.setState( { syncLoadedCallHistory : true });
-    //
-    //
-    // }
-
-    // getNoteNames = () => {
-    //     const tenant = this.state.loginUser?.pbxTenant;
-    //     return this._aphone.getNoteNamesPromise( tenant );
-    // }
-
-    // getNote = (name) => {
-    //     const tenant = this.state.loginUser?.pbxTenant;
-    //     return this._aphone.getNote( tenant, name );
-    // }
-
-    // getNoteByLoggedinPal( name, onSuccessFunction, onErrorFunction ){
-    //     const tenant = this.state.loginUser.pbxTenant;
-    //     this._loggedinPal.getNote({tenant:tenant,name:name}, onSuccessFunction, onErrorFunction );
-    // }
-
-
-
-    // setNote = async(name, content) => {
-    //     const tenant = this.state.loginUser?.pbxTenant;
-    //     return this._aphone.setNoteByPhoneClient( tenant, name, content );
-    // }
-
-    // getOCNote = ( shortName ) => {
-    //     const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
-    //     const note = this.getNote( noteName );
-    //     return note;
-    // }
-
-    // setOCNoteByPal = async (shortName, content ) =>{
-    //     const noteName = BrekekeOperatorConsole.getOCNoteName( shortName );
-    //     const noteResultPromise = this.setNote(noteName, content);
-    //     return noteResultPromise;
-    // }
 
     setNoteByLoggedinPal( noteName, content, successFunction, errorFunction  ){
         const tenant = this.state.loginUser.pbxTenant;
@@ -6612,15 +6864,7 @@ export default class BrekekeOperatorConsole extends React.Component {
         return oContent;
     }
 
-    _onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction){
-        let screenData_ver2;
-        if( !oScreen_ver2 ){
-            screenData_ver2 = new ScreenData();
-        }
-        else{
-            screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
-        }
-
+    _onSetSystemSettingsDataDataSuccessAtSetOCNote( screenData_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction ){
         const widgetSettingsTemplatesOnCommonFunction = ( ) =>{
             this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
                 //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
@@ -6669,7 +6913,7 @@ export default class BrekekeOperatorConsole extends React.Component {
      * @param skipSetSystemSettingsDataData
      * @returns {*|boolean} is async or sync
      */
-    setOCNote( shortName,  oContent, setOCNoteSuccessFunction, setOCNoteFailFunction, setLastLayoutShortName=true, skipSetSystemSettingsDataData = false  ){
+    setOCNote( shortName,  oContent, setOCNoteSuccessFunction, setOCNoteFailFunction, setLastLayoutShortName=true, skipSetSystemSettingsDataData = false, newPhoneIndexFromLogin = undefined  ){
         const version = oContent.version;
         if( version !== PBX_APP_DATA_VERSION ){
             if( version === "0.1" ){
@@ -6699,16 +6943,49 @@ export default class BrekekeOperatorConsole extends React.Component {
             }
         }
 
+        const oScreen_ver2 = oContent.screen_ver2;
+        let screenData_ver2;
+        if( !oScreen_ver2 ){
+			screenData_ver2 = new ScreenData();
+        }
+        else{
+            screenData_ver2 = ScreenData.createScreenDataFromObject( oScreen_ver2 );
+        }
 
+        if( newPhoneIndexFromLogin !== undefined && newPhoneIndexFromLogin !== null ){
+			const userSettings = this.getUserSettingsData();
+			userSettings.setPhoneIndex( newPhoneIndexFromLogin );
+			userSettings.updateSave();
+			
+            ////save layout
+            //systemSettingsDataData.phoneIndex = newPhoneIndexFromLogin;
+            //this._syncUp(
+            //    () =>{
+            //        this._continueSetOCNote( shortName, setLastLayoutShortName, setOCNoteSuccessFunction, setOCNoteFailFunction, screenData_ver2, screens, systemSettingsData, skipSetSystemSettingsDataData,systemSettingsDataData  );
+            //    },
+            //    null,
+            //    systemSettingsDataData,
+			//	screenData_ver2,
+			//	false
+            //);
+        }
+        else{
+            //this._continueSetOCNote( shortName, setLastLayoutShortName, setOCNoteSuccessFunction, setOCNoteFailFunction, screenData_ver2, screens, systemSettingsData, skipSetSystemSettingsDataData, systemSettingsDataData );
+        }
         const systemSettingsDataData = oContent.systemSettings;
         const systemSettingsData = this.state.systemSettingsData;
-        const oScreen_ver2 = oContent.screen_ver2;
+		this._continueSetOCNote( shortName, setLastLayoutShortName, setOCNoteSuccessFunction, setOCNoteFailFunction, screenData_ver2, screens, systemSettingsData, skipSetSystemSettingsDataData, systemSettingsDataData );
+
+    }
+
+    _continueSetOCNote( shortName, setLastLayoutShortName, setOCNoteSuccessFunction, setOCNoteFailFunction, screenData_ver2, screens, systemSettingsData, skipSetSystemSettingsDataData, systemSettingsDataData  ){
+
 
         if( skipSetSystemSettingsDataData === false ) {
             const this_ = this;
             const bStartInit = systemSettingsData.setSystemSettingsDataData(systemSettingsDataData,
                 function(){
-                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction  );
+                    this_._onSetSystemSettingsDataDataSuccessAtSetOCNote( screenData_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction  );
                 },
                 function(e){
                     setOCNoteFailFunction(e);
@@ -6716,10 +6993,9 @@ export default class BrekekeOperatorConsole extends React.Component {
             return bStartInit;
         }
         else{
-            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( oScreen_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction );
+            this._onSetSystemSettingsDataDataSuccessAtSetOCNote( screenData_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction );
             return false;
         }
-
     }
 
     getLoginHostname(){

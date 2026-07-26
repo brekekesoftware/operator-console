@@ -10,10 +10,19 @@ export default class ACallInfo {
         this._isTransferring = false;
         this._isHangupSelf = false;
         this._isDisconnected = false;
+        this._responder = undefined;
     }
 
     getIsHangupSelf(){
         return this._isHangupSelf;
+    }
+
+    setResponder( sResponder ) {
+        this._responder = sResponder;
+    }
+
+    getResponder(){
+        return this._responder;
     }
 
     /**
@@ -63,7 +72,7 @@ export default class ACallInfo {
         throw new Error("Not implemented.");
         return null;
     }
-	
+
     /**
      *  abstract method
      */

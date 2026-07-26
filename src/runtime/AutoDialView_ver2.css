@@ -1,53 +1,49 @@
-/* old */
-/*
-.brOC .autoDialView {
-    position:absolute;
-    top: var(--headerHeight);
-    right:0;
-    margin-top:0;
-    border-radius: var(--defaultBorderRadius);
-    background-color:initial;
-    z-index: 111;
-	scrollbar-width:thin;
-	overflow:auto;
-	max-width:100vw;
-	max-height:calc(100vh - 50px);
-}
-*/
-
 .brOC .autoDialViewWrapper{
 	position:absolute;
-	width:100%;
+    width: 100%;
 }
 
 .brOC .autoDialView {
-    position:relative;
-    top:0;
+    position:fixed;
+    top:var(--broc_headerHeight);
     border-radius: var(--defaultBorderRadius);
-    background-color:initial;
+    background-color:initial !important;
 	scrollbar-width:thin;
-	overflow:auto;
-	max-width:100vw;
-	max-height:calc(100vh - 50px);
-    animation-duration: 1s;
-    animation-name: AutoDialViewSlideIn_position;
+    max-width:100%;
+	max-height:calc(100vh - var(--broc_headerHeight) - 3px );
+    overflow:auto;
+    /* animation-duration: 1s; */
+    /* animation-name: AutoDialViewSlideIn_position; */
+    animation: AutoDialViewSlideInRight 0.5s ease-out forwards;
+    /* z-index: 1; */
+	z-index: 2;
+    right:0;
+}
+
+@keyframes AutoDialViewSlideInRight {
+    from {
+        transform: translate(100%);
+    }
+    to {
+        transform: translate(0);
+    }
 }
 
 .brOC .autoDialView > table {
 	position: relative;
     z-index: 111;
-	margin-left:auto;
-    background-color: var(--defaultOutsideBgColor);
+	margin-left:auto !important;
+    background-color: var(--defaultOutsideBgColor) !important;
     animation-duration: 0.5s;
     animation-name: AutoDialViewTableSlideIn_color;
 }
 
 @keyframes AutoDialViewSlideIn_position {
     0% {
-        margin-left:100%;
+        margin-left:0;
     }
     100% {
-        margin-left:0%;
+        margin-left:auto;
     }
 }
 
@@ -86,7 +82,6 @@
     background-color:var(--defaultInsideBgColor);
 }
 
-
 .brOC .tab-panel{
     height:100%;
 }
@@ -124,7 +119,8 @@
 }
 
 .brOC div.autoDialView_ver2_tableParent {
-    max-height:400px;
+    /* max-height:400px; */
+    max-height:calc(100vh - var(--broc_headerHeight) - 3px );
     overflow-y:auto;
     overflow-x: hidden;
     scrollbar-width: thin;
@@ -147,6 +143,9 @@
     padding-top:0 !important;;
 }
 
+.brOC .defaultContentTable > thead > tr > th {
+    text-align:center;
+}
 
 .brOC .unsetBackgroundColor_AutoDialView_ver2 {
     background-color:unset !important;

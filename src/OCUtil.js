@@ -120,7 +120,9 @@ export default class OCUtil{
 
     static logErrorWithNotification( consoleErrorMessage, notificationErrorMessage = null,  oErr = null, duration=0){
         if( oErr ){
-            if( consoleErrorMessage ) {
+			if( consoleErrorMessage === "" ){
+			}
+            else if( consoleErrorMessage ) {
                 console.error(consoleErrorMessage, oErr);
             }
             else{

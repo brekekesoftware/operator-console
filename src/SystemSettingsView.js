@@ -14,7 +14,7 @@ import BrekekeOperatorConsole from "./index";
 import RingtoneAudioPlayers from "./RingtoneAudioPlayers";
 import RuntimeUccacUcClients from "./runtime/RuntimeUccacUcClients";
 import RuntimeHiddenUccacUcClient from "./runtime/RuntimeHiddenUccacUcClient";
-//import ShortDialSettings from "./ShortDialSettings";
+import OCUtil from "./OCUtil";
 
 export const OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_ID = 'operatorConsole_systemSettings';
 export const OPERATOR_CONSOLE_SYSTEM_SETTINGS_DATA_VERSION = '0.1';
@@ -88,7 +88,7 @@ export default class SystemSettingsView extends React.Component {
 				//   dtmfSendMode = 0;	//0 = SIP INFO
 			   //}
 			   //this._systemSettingsUseForm.setFieldsValue({ dtmfSendMode: dtmfSendMode });	//Not working as intended
-
+			   
                const systemSettings = this.operatorConsoleAsParent.getSystemSettingsData();
                const hasCall = this.operatorConsoleAsParent.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
                if( hasCall ) {
@@ -148,12 +148,15 @@ export default class SystemSettingsView extends React.Component {
         else{
             console.error("setSystemSettingsDataData failed. error=" , e );
         }
-        try {
-            e = JSON.stringify(e);
-        }
-        catch( err ){
-        }
-        Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
+		
+        //try {
+        //    e = JSON.stringify(e);
+        //}
+        //catch( err ){
+        //}
+        //Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
+		
+		OCUtil.logErrorWithNotification("Failed to setup system settings data.",i18n.t('failedToSetupSystemSettingsDataData'), e );
         this._onEndSetSystemSettings();
     }
 
@@ -169,6 +172,12 @@ export default class SystemSettingsView extends React.Component {
         //     const ucClient = ucClients.getLegacyUccacRuntimeWidgetAt(i);
         //     ucClient.onSetSystemSettingsDataSuccessBySystemSettingsView( this );
         // }
+
+        //const phoneIndex = systemSettings.getPhoneIndex();
+        //// if( phoneIndex === undefined ){
+        ////     phoneIndex = null;
+        //// }
+        //window.localStorage.setItem("lastPhoneIndex", phoneIndex );
 
         this._onEndSetSystemSettings();
     }
@@ -275,13 +284,13 @@ export default class SystemSettingsView extends React.Component {
 
         const setNoteOptions ={
             methodName : "setNote",
-            methodParams : JSON.stringify({
+            methodParams : {
                     tenant : this.operatorConsoleAsParent.getLoggedinTenant(),
                     name:noteName,
                     description : "",
                     useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : noteContent
-            }),
+            },
             onSuccessFunction : ( res )=>{
                 //this.operatorConsoleAsParent.setLastSystemSettingsDataData( systemSettingsDataData );
                 this.operatorConsoleAsParent.setOCNote(shortname, layoutsAndSettingsData, function(){

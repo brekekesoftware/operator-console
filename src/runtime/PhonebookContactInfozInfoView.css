@@ -7,8 +7,8 @@
     background-color:initial;
     z-index: 112;
 	overflow:auto;
-	max-width:100vw;
-	max-height:calc(100vh - 60px);
+    max-width:100%;
+    max-height:calc(100vh - 60px);
 }
 
 .brOC .phonebookContactInfozInfoView > table {

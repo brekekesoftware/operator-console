@@ -175,7 +175,7 @@ export default class ACallInfos{
 
 
     //!callme
-    onEndCallByPhoneClient(callId){
+    onEndCallByPhoneClient(callId, notifyStatusEvent ){
         const callInfo = this._getCallInfoByCallId( callId );
         if( !callInfo ){
             return;
@@ -216,7 +216,7 @@ export default class ACallInfos{
 
         const oc = this._PhoneClientAsParent.getOperatorConsoleAsParent();
         oc.setCurrentCallIndex( currentCallIndex );
-        oc.onRemoveCallInfoByCallInfos( this, callInfo );
+        oc.onRemoveCallInfoByCallInfos( this, callInfo, notifyStatusEvent );
 
     }
 

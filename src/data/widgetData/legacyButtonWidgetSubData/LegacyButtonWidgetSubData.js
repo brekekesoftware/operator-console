@@ -35,7 +35,8 @@ const _LEGACY_BUTTON_WIDGET_SUBTYPE_IDS = Object.freeze({   //[ subtypeKey : sub
     autoDial:31,
     oneTouchDial:32,
     toggleHoldCall:33,
-	toggleVideoCall:34
+	toggleVideoCall:34,
+    voicemail:35
 });
 const _LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES = Object.freeze({ //[ subtypeId : subtypeName ]
     0 : "LegacyDummyButton",
@@ -72,7 +73,8 @@ const _LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES = Object.freeze({ //[ subtypeId : subt
     31 : "LegacyAutoDialButton",
     32 : "LegacyOneTouchDialButton",
     33 : "LegacyToggleHoldCallButton",
-	34 : "LegacyToggleVideoCallButton"
+	34 : "LegacyToggleVideoCallButton",
+	35 : "LegacyVoicemailButton",
 });
 export default class LegacyButtonWidgetSubData{
 

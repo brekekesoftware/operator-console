@@ -9,139 +9,139 @@ export default class CallPanelEditorWidgetSettings extends EditorWidgetSettings 
     _onChangeCallpanelFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCallpanelFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCallpanelBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCallpanelBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCallpanelBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCallpanelBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_horizontalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_horizontalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_verticalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_verticalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_blur( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_blur(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_spread( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_spread(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_color( color ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_color(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_horizontalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_horizontalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_verticalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_verticalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_blur( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_blur(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_spread( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_spread(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_color( color ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_color(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 	
 	_onChangeCallIconWidth( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCallIconWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 	
 	_onChangeCallIconHeight( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCallIconHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCallerNameSize(n){
         const widgetData = this._getWidgetData();
         widgetData.setCallerNameSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 	
 	_onChangeCallerNumberSizeWithCallerName(n){
         const widgetData = this._getWidgetData();
         widgetData.setCallerNumberSizeWithCallerName(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
 	}
 
     _onChangeCallerNumberSizeWithoutCallerName(n){
         const widgetData = this._getWidgetData();
         widgetData.setCallerNumberSizeWithoutCallerName(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCallDurationSize(n){
         const widgetData = this._getWidgetData();
         widgetData.setCallDurationSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeKeyboardIconWidth(n){
         const widgetData = this._getWidgetData();
         widgetData.setKeyboardIconWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeKeyboardIconHeight(n){
         const widgetData = this._getWidgetData();
         widgetData.setKeyboardIconHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInputTextSize(n){
         const widgetData = this._getWidgetData();
         widgetData.setInputTextSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeMissedCallSize(n){
         const widgetData = this._getWidgetData();
         widgetData.setMissedCallSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

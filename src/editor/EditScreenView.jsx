@@ -11,7 +11,6 @@ import EditorPane from "./EditorPane";
 import EditorDivider from "./EditorDivider";
 import BaseDividerData from "../data/BaseDividerData";
 import {Divider, Input, Select} from "antd";
-import PaneData from "../data/PaneData";
 import Notification from "antd/lib/notification";
 import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
 import EditorWidgetSettingsFactory from "./widget/settings/EditorWidgetSettingsFactory";
@@ -22,8 +21,7 @@ import SelectIconModal from "./SelectIconModal";
 import EditorWidget from "./widget/editor/EditorWidget";
 import OCUtil from "../OCUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import CallHistory2CallInfo from "../CallHistory2CallInfo";
-import WidgetSettingsTemplates from "./widget/settings/template/WidgetSettingsTemplates";
+import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
   disable : false,
@@ -40,6 +38,8 @@ const _PROPERTIES_MODE = Object.freeze({
 
 const BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES = 10;  //10MB
 const BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES = 1024 * 1024 * BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES;
+
+const _UNDO_STACK_MAX = 50;
 
 let _EDIT_SCREEN_VIEW_INSTANCE = null;
 export default class EditScreenView extends React.Component {
@@ -59,6 +59,60 @@ export default class EditScreenView extends React.Component {
     this._RootPaneData = rootPaneData;
     //const rootPaneData = this._OperatorConsoleAsParent.getOperatorConsoleData().getScreenData().addPaneData();
     //this._RootPaneData = rootPaneData;
+
+    //Undo/Redo
+    this._UndoStack = [ this._ScreenData.cloneScreenData() ];
+    this._UndoIndex = 0;
+    this._RestoreGeneration = 0;
+  }
+
+  //Push the current (already-mutated) ScreenData onto the undo stack and re-render.
+  //extraState is merged into the same setState call (e.g. to close a properties panel that no longer applies).
+  commitEdit( extraState ){
+    this._UndoStack = this._UndoStack.slice( 0, this._UndoIndex + 1 );
+    this._UndoStack.push( this._ScreenData.cloneScreenData() );
+    if( this._UndoStack.length > _UNDO_STACK_MAX ){
+      this._UndoStack.shift();
+    }
+    this._UndoIndex = this._UndoStack.length - 1;
+    this.setState({ ...extraState, rerender:true });
+  }
+
+  canUndo(){
+    return this._UndoIndex > 0;
+  }
+
+  canRedo(){
+    return this._UndoIndex < this._UndoStack.length - 1;
+  }
+
+  _restoreUndoStackIndex( index ){
+    //Mutate the existing ScreenData in place (keep its identity) rather than reassigning,
+    //since the parent OperatorConsole holds its own reference to this same ScreenData for saving.
+    this._ScreenData.copyFrom( this._UndoStack[ index ] );
+    this._RootPaneData = this._ScreenData.getScreenPaneDatas().getOrAddRootPaneData();
+    this._UndoIndex = index;
+    this._RestoreGeneration++;
+    this.setState({
+      rerender:true,
+      selectingEditorWidgetData:null,
+      settingsContainerOrDivider:null,
+      propertiesMode: _PROPERTIES_MODE.none
+    });
+  }
+
+  undo(){
+    if( !this.canUndo() ){
+      return;
+    }
+    this._restoreUndoStackIndex( this._UndoIndex - 1 );
+  }
+
+  redo(){
+    if( !this.canRedo() ){
+      return;
+    }
+    this._restoreUndoStackIndex( this._UndoIndex + 1 );
   }
 
   // _setOutlineNoneToTabPanes(){
@@ -135,31 +189,31 @@ export default class EditScreenView extends React.Component {
 
   setEditingScreenGrid( editingScreenGrid ){
     this._ScreenData.setEditingScreenGrid( editingScreenGrid );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   setScreenBackgroundColor = (color) => {
     this._ScreenData.setScreenBackgroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   setScreenForegroundColor = (color) => {
     this._ScreenData.setScreenForegroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setPaneBackgroundColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const paneData = currentEditingPane.getEditingPaneData();
     paneData.setPaneBackgroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setPaneForegroundColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const paneData = currentEditingPane.getEditingPaneData();
     paneData.setPaneForegroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setTabForegroundColor = (color) => {
@@ -167,7 +221,7 @@ export default class EditScreenView extends React.Component {
 	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
 	const selectedTabData = tabsData.getSelectedTabData();
     selectedTabData.setTabForegroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
   
   _setTabBackgroundColor = (color) => {
@@ -175,42 +229,42 @@ export default class EditScreenView extends React.Component {
 	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
 	const selectedTabData = tabsData.getSelectedTabData();
     selectedTabData.setTabBackgroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setTabsBackgroundColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     tabsData.setTabsBackgroundColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setTabsItemColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     tabsData.setTabsItemColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
   
   _setTabsItemHoverColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     tabsData.setTabsItemHoverColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setTabsItemSelectedColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     tabsData.setTabsItemSelectedColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _setTabsInkBarColor = (color) => {
     const currentEditingPane = this.state.settingsContainerOrDivider;
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     tabsData.setTabsInkBarColor( color.hex );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   getScreenData(){
@@ -235,6 +289,22 @@ export default class EditScreenView extends React.Component {
     const oc = BrekekeOperatorConsole.getStaticInstance();
     if( oc.state.displayState !== brOcDisplayStates.editingScreen_ver2 ){
         return;
+    }
+
+    if( (ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'z' || ev.key === 'Z') ){
+      ev.preventDefault();
+      if( ev.shiftKey ){
+        this.redo();
+      }
+      else{
+        this.undo();
+      }
+      return;
+    }
+    if( (ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'y' || ev.key === 'Y') ){
+      ev.preventDefault();
+      this.redo();
+      return;
     }
 
     const widgetData = this.getSelectingEditorWidgetDataFromState();
@@ -311,7 +381,7 @@ export default class EditScreenView extends React.Component {
   onTabClickByEditorPanel( editorPanelAsCaller, tabKey, mouseEvent ){
     editorPanelAsCaller.setEditorPanezSelectedTabKeyAsString( tabKey );
     //this.setState({menuMode:_MENU_MODES.tab});
-    this.setState({ settingsContainerOrDivider:editorPanelAsCaller, propertiesMode: _PROPERTIES_MODE.tab  } );
+    this.commitEdit({ settingsContainerOrDivider:editorPanelAsCaller, propertiesMode: _PROPERTIES_MODE.tab  } );
   }
 
   _onChangeTabsEnable( value ){
@@ -324,7 +394,7 @@ export default class EditScreenView extends React.Component {
     //const b = ev.target.value === "true";
     const b = value === "true";
     currentEditingPane.setEditorPanezEnableTabs(b);
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   // componentDidMount() {
@@ -351,7 +421,7 @@ export default class EditScreenView extends React.Component {
     const tabKeyAsInt = insertedTabData.getTabKeyAsInt();
     tabsData.setSelectedTabKeyAsInt( tabKeyAsInt );
 
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   onDragEditorWidgetTemplateStart(ev){
@@ -383,7 +453,7 @@ export default class EditScreenView extends React.Component {
     const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
     const tabData = tabsData.getSelectedTabData();
     tabData.setTabLabel( tabLabel );
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   onConfirmOkRemoveEditorWidget(  editorWidgetData ){
@@ -394,7 +464,7 @@ export default class EditScreenView extends React.Component {
     }
     EditorWidget.onRemoveWidgetByEditScreenView_static( this, editorWidgetData );
 
-    this.setState({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
+    this.commitEdit({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
   }
 
   _onClickRemoveTab(){
@@ -406,14 +476,14 @@ export default class EditScreenView extends React.Component {
     }
 
     tabsData.removeSelectedTabData();
-    this.setState({rerender:true});
+    this.commitEdit();
   }
   
 	_onChangeTabsTitleFontSize( n ){
 		const currentEditingPane = this.state.settingsContainerOrDivider;
 		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
 		tabsData.setTabsTitleFontSize(n);
-		this.setState({rerender:true});
+		this.commitEdit();
 	}
 
   _getWidgetTemplatesAreaJsx(){
@@ -456,7 +526,7 @@ export default class EditScreenView extends React.Component {
     fr.onload = () => {
       const dataUrl = fr.result; // base64 data url
       this._ScreenData.setBackgroundImageBase64DataUrl( dataUrl );
-      this.setState({rerender:true});
+      this.commitEdit();
     };
     fr.onerror = (pe) => {
       OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
@@ -495,7 +565,7 @@ export default class EditScreenView extends React.Component {
       const currentEditingPane = this.state.settingsContainerOrDivider;
       const paneData = currentEditingPane.getEditingPaneData();
       paneData.setPaneBackgroundImageBase64DataUrl( dataUrl );
-      this.setState({rerender:true});
+      this.commitEdit();
     };
     fr.onerror = (pe) => {
       OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
@@ -535,7 +605,7 @@ export default class EditScreenView extends React.Component {
 		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
 		const selectedTabData = tabsData.getSelectedTabData();
       selectedTabData.setTabBackgroundImageBase64DataUrl( dataUrl );
-      this.setState({rerender:true});
+      this.commitEdit();
     };
     fr.onerror = (pe) => {
       OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
@@ -576,7 +646,7 @@ export default class EditScreenView extends React.Component {
 		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
 
       tabsData.setTabsBackgroundImageBase64DataUrl( dataUrl );
-      this.setState({rerender:true});
+      this.commitEdit();
     };
     fr.onerror = (pe) => {
       OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
@@ -593,7 +663,7 @@ export default class EditScreenView extends React.Component {
     selectedTabData.deleteTabBackgroundImageBase64DataUrl();
     const eInputFile = document.getElementById("tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
     eInputFile.value = null;
-    this.setState({rerender:true});
+    this.commitEdit();
   }
   
   _deletePaneBackgroundImage(){
@@ -602,7 +672,7 @@ export default class EditScreenView extends React.Component {
     paneData.deletePaneBackgroundImageBase64DataUrl();
     const eInputFile = document.getElementById("paneBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
     eInputFile.value = null;
-    this.setState({rerender:true});
+    this.commitEdit();
   }
   
   _deleteTabsBackgroundImage(){
@@ -611,14 +681,14 @@ export default class EditScreenView extends React.Component {
 	tabsData.deleteTabsBackgroundImageBase64DataUrl();
     const eInputFile = document.getElementById("tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
     eInputFile.value = null;
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _deleteBackgroundImage(){
     this._ScreenData.deleteBackgroundImageBase64DataUrl();
     const eInputFile = document.getElementById("backgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
     eInputFile.value = null;
-    this.setState({rerender:true});
+    this.commitEdit();
   }
 
   _getSettingsAreaJsx() {
@@ -994,9 +1064,10 @@ export default class EditScreenView extends React.Component {
     }
     return (
         <>
+         <EditorAutoDialView_ver2/>
           <SelectIconModal editScreenViewAsParent={this}/>
           <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
-            <div style={{display: "flex", alignItems: "center", height: "47ox"}}>
+            <div style={{display: "flex", alignItems: "center", height: "47px", overflowX:"auto"}}>
               <div style={{width: "240px"}}>
                 <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
               </div>
@@ -1055,6 +1126,9 @@ export default class EditScreenView extends React.Component {
             </Space>
             <div style={{marginLeft: "auto", marginRight: "4px"}}>
               <Space>
+                <Button disabled={!this.canUndo()} onClick={() => this.undo()}>{i18n.t("undo")}</Button>
+                <Button disabled={!this.canRedo()} onClick={() => this.redo()}>{i18n.t("redo")}</Button>
+                <Space/>
                 <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._abortEditingScreen()}
                             okText={i18n.t("yes")}
                             cancelText={i18n.t("no")}
@@ -1069,7 +1143,7 @@ export default class EditScreenView extends React.Component {
             </div>
           </div>
           <div style={{display: "flex", height: "calc(100% - 47px)"}}>
-            <div style={{width: "240px", overflowY: "auto"}}>
+            <div style={{width: "240px", overflowY: "auto", zIndex:0}}>
               {/* left -  widget templates area*/}
               {this._getWidgetTemplatesAreaJsx()}
             </div>
@@ -1081,19 +1155,18 @@ export default class EditScreenView extends React.Component {
                  className="ScreenView_general"
             >
               <EditorRootPane
+                  key={this._RestoreGeneration}
                   paneData={this._RootPaneData}
                   editScreenViewAsParent={this}
                   className="width100percentAndHeight100percent"/>
             </div>
             <div style={{
-              width: "260px",
               borderLeft: "rgb(224,224,224)",
               display: "flex",
               flexDirection: "column",
               gap: "12px",
               overflow: "hidden",
-              margin:"4px"
-            }}>
+            }} className="editorSettingsArea" >
               {settingsAreaJsx}
             </div>
           </div>

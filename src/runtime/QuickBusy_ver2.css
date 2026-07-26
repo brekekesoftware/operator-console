@@ -5,7 +5,8 @@
     border-radius: var(--defaultBorderRadius);
     margin-top:0;
     background-color:initial;
-    z-index: 114;
+    /* z-index: 114; */
+	z-index: 1;
 }
 
 .brOC .quickBusy > table {

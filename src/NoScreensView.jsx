@@ -50,7 +50,7 @@ export default function NoScreensView( props ){
             //exists already?
             const getNoteNamesOptions ={
               methodName : "getNoteNames",
-              methodParams : JSON.stringify({tenant:operatorConsoleAsParent.getLoggedinTenant()}),
+              methodParams : {tenant:operatorConsoleAsParent.getLoggedinTenant()},
                 onSuccessFunction: ( res ) =>{
                     const layoutNoteName = BrekekeOperatorConsole.getOCNoteName(layoutName);
                     const noteNames = res;
@@ -85,13 +85,13 @@ export default function NoScreensView( props ){
 
                         const setNoteOptions = {
                             methodName : "setNote",
-                            methodParams : JSON.stringify({
+                            methodParams : {
                                 tenant: operatorConsoleAsParent.getLoggedinTenant(),
                                 name: layoutNoteName,
                                 description: "",
                                 useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                                 note: noteContent
-                            }),
+                            },
                             onSuccessFunction : ( res ) =>{
                                 operatorConsoleAsParent.setOCNote(layoutName, layoutsAndSettingsData, function () {
                                         operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView( layoutName, layoutsAndSettingsData);
@@ -161,13 +161,13 @@ export default function NoScreensView( props ){
 
         const setNoteOptions ={
             methodName : "setNote",
-            methodParams : JSON.stringify({
+            methodParams : {
                 tenant: operatorConsoleAsParent.getLoggedinTenant(),
                 name: noteName,
                 description: "",
                 useraccess: BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                 note: noteContent
-            }),
+            },
             onSuccessFunction : ( res ) =>{
                 operatorConsoleAsParent.setOCNote( layoutName, layoutsAndSettingsData, function(){
                         operatorConsoleAsParent.onSavedNewLayoutFromNoScreensView(  layoutName, layoutsAndSettingsData );
@@ -219,10 +219,10 @@ export default function NoScreensView( props ){
 
         const getNoteByPalRestApiOptions = {
             methodName : "getNote",
-            methodParams : JSON.stringify({
+            methodParams : {
                 tenant : operatorConsoleAsParent.getLoggedinTenant(),
                 name : noteName
-             }),
+             },
             onSuccessFunction : ( res ) =>{
                 if( res ) {
                     const noteInfo = res;
@@ -291,12 +291,13 @@ export default function NoScreensView( props ){
 
         const getNoteNamesByPalRestApiOptions = {
           methodName : "getNoteNames",
-          methodParams: JSON.stringify({
+          methodParams: {
               tenant : operatorConsoleAsParent.getLoggedinTenant()
-          }),
+          },
             onSuccessFunction : ( res ) =>{
                 const allNoteNames = res;
-                if( !allNoteNames ){
+                console.log("*************allNoteNames=" + allNoteNames); //!temp
+                if( !allNoteNames || Array.isArray(allNoteNames) !== true ){
                     setNoteNamesContent(i18n.t("Layout_does_not_exist"));
                     return;
                 }

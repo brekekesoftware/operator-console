@@ -30,6 +30,15 @@ export default class WebphoneCallInfos extends ACallInfos{
     getCallInfoArray() {
         return this._WebphoneCallInfoArray;
     }
+	
+	getCallInfoFromCallObject( callObject ){
+		const wci = this._WebphoneCallInfoArray.find( (webphoneCallInfo) => {
+			const wpco = webphoneCallInfo.getCallObject();
+			const b = wpco === callObject;
+			return b;
+		});
+		return wci;
+	}
 
     addCallInfoByWebphoneCallObject( callObject ){
             const callInfo = new WebphoneCallInfo( this, callObject );

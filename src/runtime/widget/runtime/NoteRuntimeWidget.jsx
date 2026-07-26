@@ -23,10 +23,10 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
         if( noteName ) {
             const getNoteOptions = {
                 methodName : "getNote",
-                methodParams : JSON.stringify({
+                methodParams : {
                     tenant : oc.getLoggedinTenant(),
                     name : noteName
-                }),
+                },
                 onSuccessFunction : ( res ) =>{
                     if( res ) {
                         const useraccess = res["useraccess"];
@@ -63,10 +63,10 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
 
             const getNoteOptions = {
                 methodName : "getNote",
-                methodParams : JSON.stringify({
+                methodParams : {
                     tenant : oc.getLoggedinTenant(),
                     name : noteName
-                }),
+                },
                 onSuccessFunction : ( res ) => {
                     if( res ) {
                         const useraccess = res["useraccess"];
@@ -102,13 +102,13 @@ export default class NoteRuntimeWidget extends RuntimeWidget{
         if( noteName ){
             const setNoteOptions = {
                 methodName : "setNote",
-                methodParams : JSON.stringify({
+                methodParams : {
                     tenant : oc.getLoggedinTenant(),
                     name:noteName,
                     description : "",
                     useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : this.state.content
-                }),
+                },
                 onSuccessFunction : ( res ) =>{
                     this.setState({saving:false});
                 },

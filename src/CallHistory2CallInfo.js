@@ -11,6 +11,7 @@ export  default class CallHistory2CallInfo {
             this._PartyNumber = aCallInfo.getPartyNumber();
             //this._IsIncoming = aCallInfo.getIsIncoming();
             //this._IsTransfer = aCallInfo.getIsTransferring();
+			this._responder = aCallInfo.getResponder();
         }
         else {  //create from log line
             this._CallInfoUuid = options["uuid"];
@@ -18,6 +19,8 @@ export  default class CallHistory2CallInfo {
             this._AddCallMillisTime = options["addCallMillisTime"];
             this._answeredAt = options["answeredAt"];
             this._endCallMillisTime =  options["endCallMillisTime"];
+            this._recId = options["recId"];
+			this._responder = options["responder"];
         }
         this._IsIncoming = options["isIncoming"];
         this._IsTransfer = options["isTransfer"];
@@ -42,10 +45,15 @@ export  default class CallHistory2CallInfo {
     onUpdateCallInfoForCallHistory2CallInfo( callHistory2AsCaller, callInfo ) {
         this._answeredAt = callInfo.getAnsweredAt();
         this._IsIncoming = callInfo.getIsIncoming();    //for notify_status role = c
+        this._responder = callInfo.getResponder();
     }
 
-    onRemoveCallInfoForCallHistory2CallInfo( callHistory2AsCaller, callInfo )  {
+    onRemoveCallInfoForCallHistory2CallInfo( callHistory2AsCaller, callInfo, notifyStatusEvent = undefined )  {
         this._endCallMillisTime = Date.now();
+        if( notifyStatusEvent ) {
+            this._recId = notifyStatusEvent["rec"];
+        }
+        this._responder = callInfo.getResponder();
     }
 
     getAnsweredAt() {
@@ -60,6 +68,14 @@ export  default class CallHistory2CallInfo {
         return this._IsTransfer;
     }
 
+    getRecId(){
+        return this._recId;
+    }
+	
+	getResponder(){
+		return this._responder;
+	}
+
     static getTsvHeaderString() {
         const s =
             CallHistory2CallInfo._toTsvValue("uuid") + "\t" +
@@ -68,7 +84,9 @@ export  default class CallHistory2CallInfo {
             CallHistory2CallInfo._toTsvValue("endCallMillisTime") + "\t" +
             CallHistory2CallInfo._toTsvValue("isIncoming") + "\t" +
             CallHistory2CallInfo._toTsvValue("answeredAt") + "\t" +
-            CallHistory2CallInfo._toTsvValue("isTransfer")
+            CallHistory2CallInfo._toTsvValue("isTransfer") + "\t" +
+            CallHistory2CallInfo._toTsvValue("recId") + "\t" + 
+            CallHistory2CallInfo._toTsvValue("responder") + "\t" 			
         ;
         return s;
     }
@@ -84,8 +102,10 @@ export  default class CallHistory2CallInfo {
             CallHistory2CallInfo._toTsvValue(this._endCallMillisTime) + "\t" +
             CallHistory2CallInfo._toTsvValue(this._IsIncoming) + "\t" +
             CallHistory2CallInfo._toTsvValue(this._answeredAt) + "\t" +
-            CallHistory2CallInfo._toTsvValue(this._IsTransfer === true )
-        ;
+            CallHistory2CallInfo._toTsvValue(this._IsTransfer === true ) + "\t" +
+            CallHistory2CallInfo._toTsvValue(this._recId ) + "\t" + 
+			CallHistory2CallInfo._toTsvValue(this._responder )
+		;
         return s;
     }
 
@@ -125,6 +145,8 @@ export  default class CallHistory2CallInfo {
         const answeredAtColumnIndex = options["answeredAtColumnIndex"];
         let line = options["line"];
         const isTransferColumnIndex = options["isTransferColumnIndex"];
+        const recIdColumnIndex = options["recIdColumnIndex"];
+        const responderColumnIndex = options["responderColumnIndex"];
 
         const lineLength = line.length;
         if( lineLength === 0 ){
@@ -229,6 +251,20 @@ export  default class CallHistory2CallInfo {
             }
         }
 
+        let recIdColumnValue = null;
+        if(  Number.isInteger( recIdColumnIndex ) !== true || recIdColumnIndex < 0 ) {
+        }
+        else {
+            recIdColumnValue = CallHistory2CallInfo.fromTsvValue( valueColumns[ recIdColumnIndex ] );
+        }
+
+        let responderColumnValue = null;
+        if(  Number.isInteger( responderColumnIndex ) !== true || responderColumnIndex < 0 ) {
+        }
+        else {
+            responderColumnValue = CallHistory2CallInfo.fromTsvValue( valueColumns[ responderColumnIndex ] );
+        }
+
         const constructorOptions = {
             callHistory2AsParent,
             "uuid" : uuidValue,
@@ -238,6 +274,8 @@ export  default class CallHistory2CallInfo {
             "isIncoming" : isIncomingColumnValue,
             "answeredAt" : answeredAtColumnValue,
             "isTransfer" : isTransferColumnValue,
+            "recId" : recIdColumnValue,
+            "responder" : responderColumnValue,
         }
 
         const callHistory2CallInfo = new CallHistory2CallInfo( constructorOptions );

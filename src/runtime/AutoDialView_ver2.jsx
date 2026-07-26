@@ -25,6 +25,7 @@ import RuntimeUcUserStatuses from "./RuntimeUcUserStatuses";
 import RuntimeUccacUcClients from "./RuntimeUccacUcClients";
 let AUTO_DIAL_VIEW_VER2;
 const _GET_CONTACT_LIST_LIMIT = 50;   //!limit max 1000
+//const _GET_VOICEMAIL_LIST_LIMIT = 3;   //!limit max 1000	//!dev //!temp
 const _GET_VOICEMAIL_LIST_LIMIT = 50;   //!limit max 1000
 const _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE = "extensionNumber";
 const MAX_DATE_MILLISECONDS = 999;
@@ -41,6 +42,15 @@ const VOICEMAIL_TYPE_MESSAGE_KEYS = {   //freeze
     "ivr" : "Voicemail-type_ivr"
 }
 const VOICEMAIL_TYPE_OTHER_MESSAGE_KEY = "Voicemail-type_other";
+const VOICEMAIL_FILTER_STATUS_VALUE_READ = 3;
+const VOICEMAIL_FILTER_STATUS_VALUES = {
+    new : 1,
+    saved : 2,
+    read : VOICEMAIL_FILTER_STATUS_VALUE_READ
+}
+const FILTER_NONE_MESSAGE_KEY = "Filter-None";
+const FILTER_NONE_VALUE = -1;
+const READ_STATUS_ENABLED = false;
 
 export default class AutoDialView_ver2 extends React.Component {
     constructor( props ){
@@ -60,6 +70,7 @@ export default class AutoDialView_ver2 extends React.Component {
         this._currentExtensionFilterColumnName = _EXTENSION_FILTER_COLUMN_NAME_DEFAULT_VALUE;
         //this._autoDialViewRightStyle = "0";
         this.clearLatestSearchInfo();
+
         //this._PhonebookScrollableDivElement = null;
         //this._AutoDialViewRef = React.createRef();
         this._callInfoArrayForDisplay = null;
@@ -72,6 +83,13 @@ export default class AutoDialView_ver2 extends React.Component {
         this._readVoicemailCount = 0;
         this._checkedVoicemailMap = {};	//Voicemail ID:checked
         this._voicemailsDisplayOrder = "desc";
+        this._voicemailsFilterStatus = FILTER_NONE_VALUE;
+        this._latestVoicemailsFilterStatus = FILTER_NONE_VALUE;
+        this._voicemailsFilterOtherParty = "";
+        this._latestVoicemailsFilterOtherParty = "";
+		this._voicemailsTimeOrder = "desc";
+		this._latestVoicemailsTimeOrder = this._voicemailsTimeOrder;
+		this._isVoicemailUpdated = false;
     }
 
     clearLatestSearchInfo(){
@@ -83,6 +101,21 @@ export default class AutoDialView_ver2 extends React.Component {
 
     _onSelectVoicemailsDisplayOrder(s){
         this._voicemailsDisplayOrder = s;
+        this.setState({rerender:true});
+    }
+
+    _onSelectVoicemailsFilterStatus(i){
+        this._voicemailsFilterStatus = i;
+        this.setState({rerender:true});
+    }
+
+    _onChangeVoicemailsFilterOtherParty(s){
+        this._voicemailsFilterOtherParty = s;
+        this.setState({rerender:true});
+    }
+	
+	_onSelectVoicemailsTimeOrder(s){
+        this._voicemailsTimeOrder = s;
         this.setState({rerender:true});
     }
 
@@ -130,7 +163,18 @@ export default class AutoDialView_ver2 extends React.Component {
         eScript.src = src;
         parentElement.appendChild(eScript);
     }
-
+	
+	//onDownLayoutAndSystemSettingsForLoggedInSuccessByOperatorConsole( operatorConsoleAsCaller ){
+	//	
+	//}
+	
+	onPalNotifyVoiceMailDebounceByOperatorConsole( operatorConsoleAsCaller, events ){
+		this._isVoicemailUpdated = true;
+	}
+	
+	onBeginLogoutForAutoDialView2ByOperatorConsole( operatorConsoleAsCaller ){
+		this._isVoicemailUpdated = false;		
+	}
 
     onStartUCClient( legacyUccacRuntimeWidgetAsCaller ){
         this.setState({rerender:true});
@@ -262,9 +306,9 @@ export default class AutoDialView_ver2 extends React.Component {
 
         const deleteVoicemailsOptions ={
             methodName : "deleteVoicemails",
-            methodParams : JSON.stringify({
+            methodParams : {
                 id:deleteVoicemailIdArray
-            }),
+            },
         }
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const oResult = await oc.getPalRestApi().callPalRestApiMethodAsync( deleteVoicemailsOptions ).catch( (resOrError) =>{
@@ -320,9 +364,12 @@ export default class AutoDialView_ver2 extends React.Component {
         if( this._voicemails ){
             this._voicemails.length = 0;
         }
-        this._appendVoicemailsRecursive(true);
-        //this._getVoicemailsAsync();
-    }
+		this._isVoicemailUpdated = false;
+        //this._appendVoicemailsRecursive(true);
+        await this._getAndSetAllVoicemailAsync();
+		this._resetVoicemailStatusCount();
+		this.setState({rerender:true});
+	}
 
     async _resetPhonebookContactInfoArrayAsync( pbKeywords, pbShared, pbName ){
         const getPhonebooksOptions ={
@@ -578,7 +625,8 @@ export default class AutoDialView_ver2 extends React.Component {
     }
 
     _tabSwitchMain(tgt){
-        document.getElementsByClassName('is-active')[0].classList.remove('is-active');
+        const eActive = document.getElementsByClassName('is-active')[0];
+		eActive.classList.remove('is-active');
         tgt.classList.add('is-active');
 
         document.getElementsByClassName('is-show')[0].classList.remove('is-show');
@@ -675,7 +723,11 @@ export default class AutoDialView_ver2 extends React.Component {
         //this.setState({rerender:true});
     }
 
-    async _onClickGetVoicemails(){
+    async _onClickSearchVoicemails(){
+        this._latestVoicemailsFilterStatus = this._voicemailsFilterStatus;
+        this._latestVoicemailsFilterOtherParty = this._voicemailsFilterOtherParty;
+		this._latestVoicemailsTimeOrder = this._voicemailsTimeOrder;
+
         this._resetVoicemailsAsync();
 
         // this._voicemails = await this._getVoicemailsAsync();
@@ -775,12 +827,15 @@ export default class AutoDialView_ver2 extends React.Component {
         this._resetPhonebookContactInfoArrayAsync( keywords, bOnlySharedContacts );
     }
 
-    async _downloadVoicemailFromUrl( url, sVoicemailId ){
-
-        const bSuccess = await this._modifyVoicemailReadAsync(sVoicemailId);
-        if( !bSuccess ){
-            this._resetVoicemailsAsync();
-            return;
+    async _downloadVoicemailFromUrl( url, voicemail ){
+        const sVoicemailStatus = voicemail["status"];
+        if( sVoicemailStatus !== "read" ) {
+            const sVoicemailId = voicemail["id"];
+            const bSuccess = await this._modifyVoicemailReadAsync(sVoicemailId);
+            if (!bSuccess) {
+                this._resetVoicemailsAsync();
+                return;
+            }
         }
 
         const eA = document.createElement("A");
@@ -793,13 +848,23 @@ export default class AutoDialView_ver2 extends React.Component {
         this._resetVoicemailsAsync();
     }
 
+    _downloadRecordWavFromUrl( urlPrefix, recId ){
+        const eA = document.createElement("A");
+        document.body.appendChild(eA);
+        eA.href = urlPrefix + recId;
+        eA.download = "";
+        eA.type = "application/wav";
+        eA.click();
+        eA.remove();
+    }
+
     async _modifyVoicemailReadAsync( sVoicemailId ){
         const modifyVoicemailOptions ={
             methodName : "modifyVoicemails",
-            methodParams : JSON.stringify({
+            methodParams : {
                 id: sVoicemailId,
                 status : "read"
-            }),
+            },
         }
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const oResult = await oc.getPalRestApi().callPalRestApiMethodAsync( modifyVoicemailOptions ).catch( (resOrError) =>{
@@ -927,7 +992,10 @@ export default class AutoDialView_ver2 extends React.Component {
         }
     }
 
-    _onScrollVoicemailScrollableDiv(e){
+    async _onScrollVoicemailScrollableDiv(e){
+		if( this._isVoicemailUpdated !== true ){
+			return;
+		}
 
         if( this._isVoicemailScrollableDivzVerticalScrollbarVisible() !== true ){
             return;
@@ -937,30 +1005,84 @@ export default class AutoDialView_ver2 extends React.Component {
 
         //if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {  //!comment not perfect
         if ( scrollHeight - offsetHeight - scrollTop < 1  ) {
-            this._appendVoicemailsAsync().then( () =>{
-                this._resetVoicemailStatusCount();
-                this.setState({rerender:true});
-            } ).catch( (err) =>{
-                console.error("An error occurred while processing the voice mails.",err);
-                try {
-                    const sErr = JSON.stringify(err);
-                    Notification.error({
-                        message: i18n.t('An_error_occurred_while_processing_the_voice_mails') + "\r\n" + sErr,
-                        duration: 0
-                    });
-                    this._resetVoicemailStatusCount();
-                    this.setState({rerender:true});
-                } catch (err) {
-                    Notification.error({
-                        message: i18n.t('An_error_occurred_while_processing_the_voice_mails') + "\r\n" + err,
-                        duration: 0
-                    });
-                    this._resetVoicemailStatusCount();
-                    this.setState({rerender:true});
-                }
-            });
+			await this._resetVoicemailsAsync();
+			this._isVoicemailUpdated = false;
+            // this._appendVoicemailsAsync().then( () =>{
+            //     this._resetVoicemailStatusCount();
+            //     this.setState({rerender:true});
+            // } ).catch( (err) =>{
+            //     console.error("An error occurred while processing the voice mails.",err);
+            //     try {
+            //         const sErr = JSON.stringify(err);
+            //         Notification.error({
+            //             message: i18n.t('An_error_occurred_while_processing_the_voice_mails') + "\r\n" + sErr,
+            //             duration: 0
+            //         });
+            //         this._resetVoicemailStatusCount();
+            //         this.setState({rerender:true});
+            //     } catch (err) {
+            //         Notification.error({
+            //             message: i18n.t('An_error_occurred_while_processing_the_voice_mails') + "\r\n" + err,
+            //             duration: 0
+            //         });
+            //         this._resetVoicemailStatusCount();
+            //         this.setState({rerender:true});
+            //     }
+            // });
 
         }
+    }
+	
+	async _getAndSetAllVoicemailAsync(){
+        const options = {};
+
+        options["offset"] = 0;
+        options["limit"] = 1000000000;
+		options["order"] = this._latestVoicemailsTimeOrder;
+
+        const getVoicemailsOptions ={
+            methodName : "getVoicemails",
+            methodParams : options,
+        }
+
+        let voicemailCount;
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        const voicemails = await oc.getPalRestApi().callPalRestApiMethodAsync( getVoicemailsOptions ).catch( (resOrError) =>{
+            OCUtil.logErrorWithNotification("Failed to get voice mails.", i18n.t("Failed_to_get_voice_mails"), resOrError );
+            voicemailCount = -2;
+            return voicemailCount;
+        });
+
+        if (voicemails) {
+            this._voicemails = new Array();
+            voicemailCount = 0;
+            for (let i = 0; i < voicemails.length; i++) {
+                const voicemail = voicemails[i];
+                const iStatus = VOICEMAIL_FILTER_STATUS_VALUES[ voicemail.status ];
+                let bAdd = this._latestVoicemailsFilterStatus === FILTER_NONE_VALUE ||  iStatus === this._latestVoicemailsFilterStatus;
+                if( bAdd ) {
+                    const latestVoicemailsFilterOtherPartyTrimmedLower = this._latestVoicemailsFilterOtherParty.trim().toLowerCase();
+                    bAdd = latestVoicemailsFilterOtherPartyTrimmedLower.length === 0;
+                    if (!bAdd) {
+                        const sFrom = voicemail["from"];
+                        let sOtherPartyTrimmedLower = AutoDialView_ver2._sipurlToUser(sFrom);
+                        if (sOtherPartyTrimmedLower) {
+                            sOtherPartyTrimmedLower = sOtherPartyTrimmedLower.trim().toLowerCase();
+                        }
+                        bAdd = latestVoicemailsFilterOtherPartyTrimmedLower === sOtherPartyTrimmedLower;
+                    }
+                }
+
+                if( bAdd ){
+                    this._voicemails.push(voicemail);
+                    voicemailCount++;
+                }
+            }
+        }
+        else{
+            voicemailCount = -1;
+        }
+        return voicemailCount;
     }
 
     async _appendVoicemailsAsync(){
@@ -979,10 +1101,12 @@ export default class AutoDialView_ver2 extends React.Component {
 //            options["limit"] = _GET_VOICEMAIL_LIST_LIMIT + initVoicemailCount;
             options["limit"] = _GET_VOICEMAIL_LIST_LIMIT;
         }
+		
+		options["order"] = this._latestVoicemailsTimeOrder;
 
         const getVoicemailsOptions ={
             methodName : "getVoicemails",
-            methodParams : JSON.stringify( options ),
+            methodParams : options,
         }
 
         let voicemailCount;
@@ -998,7 +1122,6 @@ export default class AutoDialView_ver2 extends React.Component {
                 this._voicemails = new Array();
             }
             else{
-
                 // const compareDisplayOrder = (voicemail1, voicemail2 )  => {
                 //     const sTime1 = voicemail1["time"];
                 //     const time1 = parseInt(sTime1);
@@ -1026,11 +1149,29 @@ export default class AutoDialView_ver2 extends React.Component {
                 // }
                 // voicemails.sort( compareDisplayOrder );
             }
+            voicemailCount = 0;
             for (let i = 0; i < voicemails.length; i++) {
                 const voicemail = voicemails[i];
-                this._voicemails.push(voicemail);
+                const iStatus = VOICEMAIL_FILTER_STATUS_VALUES[ voicemail.status ];
+                let bAdd = this._latestVoicemailsFilterStatus === FILTER_NONE_VALUE ||  iStatus === this._latestVoicemailsFilterStatus;
+                if( bAdd ) {
+                    const latestVoicemailsFilterOtherPartyTrimmedLower = this._latestVoicemailsFilterOtherParty.trim().toLowerCase();
+                    bAdd = latestVoicemailsFilterOtherPartyTrimmedLower.length === 0;
+                    if (!bAdd) {
+                        const sFrom = voicemail["from"];
+                        let sOtherPartyTrimmedLower = AutoDialView_ver2._sipurlToUser(sFrom);
+                        if (sOtherPartyTrimmedLower) {
+                            sOtherPartyTrimmedLower = sOtherPartyTrimmedLower.trim().toLowerCase();
+                        }
+                        bAdd = latestVoicemailsFilterOtherPartyTrimmedLower === sOtherPartyTrimmedLower;
+                    }
+                }
+
+                if( bAdd ){
+                    this._voicemails.push(voicemail);
+                    voicemailCount++;
+                }
             }
-            voicemailCount = voicemails.length;
         }
         else{
             voicemailCount = -1;
@@ -1075,7 +1216,7 @@ export default class AutoDialView_ver2 extends React.Component {
 
         const getContactListOptions = {
             methodName : "getContactList",
-            methodParams : JSON.stringify( options ),
+            methodParams : options,
         }
 
 
@@ -1121,9 +1262,9 @@ export default class AutoDialView_ver2 extends React.Component {
     async  _callOrOpenPhonebookCallInfozTelsView( evMouseClick, autodialviewPhonebookContact ){
         const getContactOptions = {
             methodName : "getContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : autodialviewPhonebookContact.getAid()
-            })
+            }
         };
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
@@ -1190,9 +1331,9 @@ export default class AutoDialView_ver2 extends React.Component {
     async _openPhonebookCallInfozInfoView2( autodialviewPhonebookContact ){
         const getContactOptions = {
             methodName : "getContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : autodialviewPhonebookContact.getAid()
-            })
+            }
         };
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
@@ -1211,9 +1352,9 @@ export default class AutoDialView_ver2 extends React.Component {
     async _deleteContact2(  autodialviewPhonebookContact ){
         const getContactOptions = {
             methodName : "getContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : autodialviewPhonebookContact.getAid()
-            })
+            }
         };
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const contact = await oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions).catch((rej) => {
@@ -1253,9 +1394,9 @@ export default class AutoDialView_ver2 extends React.Component {
 
         const deleteContactOptions = {
             methodName : "deleteContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : aid
-            }),
+            },
             onSuccessFunction : (ret) =>{
                 let bSuccess = false;
                 const arSucceeded = ret["succeeded"];
@@ -1439,8 +1580,7 @@ export default class AutoDialView_ver2 extends React.Component {
         const sysData = oc.getSystemSettingsData();
         const b = sysData.getAutoDialOneTouchCall();
         if( b === true ) {
-            oc.abortAutoDialView_ver2();
-            //this.props.operatorConsoleAsParent.setDialingAndMakeCall2( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
+            //this.props.operatorConsoleAsParent.setDialingAndMakeCall2WithShowCallSelectionModal( callNo, this.props.currentCallIndex, this.props.callIds, this.props.callById );
 
             const bHasActiaveCall = !!oc.getCurrentCallInfo();
             //const dialing = oc.getDialing();
@@ -1448,10 +1588,12 @@ export default class AutoDialView_ver2 extends React.Component {
             if (  bHasActiaveCall) {
                 //show transfer method modal.
                 const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
-                runtimeScreenView.setIsShowSelectCallingMethodModal(true, partyNumber );
+				const onShowSelectCallingMethodOkFunction = () => oc.abortAutoDialView_ver2();
+                runtimeScreenView.setIsShowSelectCallingMethodModal(true, partyNumber, onShowSelectCallingMethodOkFunction );
             }
             else {
-                oc.setDialingAndMakeCall2(partyNumber);
+				const onCallSelectionOkFunction = () => oc.abortAutoDialView_ver2();
+                oc.setDialingAndMakeCall2WithShowCallSelectionModal(partyNumber, onCallSelectionOkFunction );
             }
 
         }
@@ -2107,7 +2249,10 @@ export default class AutoDialView_ver2 extends React.Component {
         if( pbxDirectoryName && pbxDirectoryName.length !== 0 ){
             sPbxDirName = "/" + pbxDirectoryName;
         }
+
+        const voicemailsFilterStatuses = Object.entries( VOICEMAIL_FILTER_STATUS_VALUES );
         const voicemailWavUrlPrefix = location.protocol + "//" + oc.getLoginHostname() + sPort + sPbxDirName + "/rec/";
+        const recordWavUrlPrefix = location.protocol + "//" + oc.getLoginHostname() + sPort + sPbxDirName + "/rec/";
 
         return (<>
             <PhonebookContactInfozInfoView/>
@@ -2135,7 +2280,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                         </td>
                                         <td style={{textAlign: "right", verticalAlign: "top"}}>
                                             <FontAwesomeIcon icon="far fa-window-close"
-                                                             onClick={this._onClickClose.bind(this)}
+                                                             onClick={ () => this._onClickClose() }
                                                              className="closeFontAwesomeIcon"/>
                                         </td>
                                     </tr>
@@ -2270,7 +2415,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                             <table style={{border: "0",width:"100%"}}
                                                                    className={"defaultContentTable"}>
                                                                 <tbody>
-                                                                <tr>
+                                                                <tr className={"noHoverContentColorForTr"}>
                                                                     {language === "ja" && (
                                                                         <>
                                                                             <td>
@@ -2874,7 +3019,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                         </>
                                                                     )}
                                                                 </tr>
-                                                                <tr>
+                                                                <tr className={"noHoverContentColorForTr"}>
                                                                     <td colSpan={3}>
                                                                         <div style={{
                                                                             display: "flex",
@@ -2900,11 +3045,14 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     <th style={{fontSize:tableHeaderFontSize,width:10}}></th>
                                                                                     <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Incoming")}</th>
                                                                                     <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Transfer")}</th>
+                                                                                    {this.state.recentShowDetailChecked &&
+                                                                                        <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("responder")}</th>}
                                                                                     <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("StartedAt")}</th>
                                                                                     {this.state.recentShowDetailChecked &&
                                                                                         <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("AnsweredAt")}</th>}
                                                                                     {this.state.recentShowDetailChecked &&
                                                                                         <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("EndedAt")}</th>}
+                                                                                    <th style={{fontSize:tableHeaderFontSize}}>{i18n.t("Recording-file")}</th>
                                                                                 </tr>
                                                                                 </thead>
                                                                                 <tbody>
@@ -2928,6 +3076,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                     const sAnsweredAt = callHistory2CallInfo.getAnsweredAt() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getAnsweredAt())) : "";
                                                                                     const sEndedAt = callHistory2CallInfo.getEndCallMillisTime() ? dateFormatString.getYYYYMMDDhhmmssStringFromDate( new Date(callHistory2CallInfo.getEndCallMillisTime())) : "";
                                                                                     const sIsTransfer = callHistory2CallInfo.getIsTransfer() ? "✓" : "";
+                                                                                    const sRecId = callHistory2CallInfo.getRecId();
+                                                                                    const sResponder = callHistory2CallInfo.getResponder();
 
                                                                                     let ucUserStatusJsx;
                                                                                     if( isUsingUc ){
@@ -2948,18 +3098,35 @@ export default class AutoDialView_ver2 extends React.Component {
 
                                                                                     return (
                                                                                         <tr key={i}>
-                                                                                            <td style={{fontSize:tableBodyFontSize,width: 10}}>{partyNumber}</td>
-                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign:"center",width:10}}>
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                width: 10
+                                                                                            }}>{partyNumber}</td>
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                textAlign: "center",
+                                                                                                width: 10
+                                                                                            }}>
                                                                                                 <div
-                                                                                                    style={{width:lampSize,height:lampSize}}
+                                                                                                    style={{
+                                                                                                        width: lampSize,
+                                                                                                        height: lampSize
+                                                                                                    }}
                                                                                                     className={statusClassName}></div>
                                                                                             </td>
-                                                                                            { isUsingUc && (
-                                                                                                <td style={{fontSize:tableBodyFontSize,textAlign: "center",width:10}}>
+                                                                                            {isUsingUc && (
+                                                                                                <td style={{
+                                                                                                    fontSize: tableBodyFontSize,
+                                                                                                    textAlign: "center",
+                                                                                                    width: 10
+                                                                                                }}>
                                                                                                     {ucUserStatusJsx}
                                                                                                 </td>
                                                                                             )}
-                                                                                            <td style={{fontSize:tableBodyFontSize,width:10}}>
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                width: 10
+                                                                                            }}>
                                                                                                 {partyNumber && (
                                                                                                     <div style={{
                                                                                                         display: "flex",
@@ -2974,19 +3141,57 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                             }>
                                                                                                             {
                                                                                                                 <FontAwesomeIcon
-                                                                                                                    style={{width:buttonSize,height:buttonSize}}
+                                                                                                                    style={{
+                                                                                                                        width: buttonSize,
+                                                                                                                        height: buttonSize
+                                                                                                                    }}
                                                                                                                     size="lg"
                                                                                                                     icon="fas fa-phone"/>}
                                                                                                         </button>
                                                                                                     </div>)}
                                                                                             </td>
-                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sIsIncoming}</td>
-                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sIsTransfer}</td>
-                                                                                            <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sStartedAt}</td>
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                textAlign: "center"
+                                                                                            }}>{sIsIncoming}</td>
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                textAlign: "center"
+                                                                                            }}>{sIsTransfer}</td>
                                                                                             {this.state.recentShowDetailChecked &&
-                                                                                                <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sAnsweredAt}</td>}
+                                                                                                <td style={{
+                                                                                                    fontSize: tableBodyFontSize,
+                                                                                                    textAlign: "left"
+                                                                                                }}>{sResponder ? sResponder : "" }</td>}
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                textAlign: "center"
+                                                                                            }}>{sStartedAt}</td>
                                                                                             {this.state.recentShowDetailChecked &&
-                                                                                                <td style={{fontSize:tableBodyFontSize,textAlign: "center"}}>{sEndedAt}</td>}
+                                                                                                <td style={{
+                                                                                                    fontSize: tableBodyFontSize,
+                                                                                                    textAlign: "center"
+                                                                                                }}>{sAnsweredAt}</td>}
+                                                                                            {this.state.recentShowDetailChecked &&
+                                                                                                <td style={{
+                                                                                                    fontSize: tableBodyFontSize,
+                                                                                                    textAlign: "center"
+                                                                                                }}>{sEndedAt}</td>}
+                                                                                            <td style={{
+                                                                                                fontSize: tableBodyFontSize,
+                                                                                                textAlign: "center"
+                                                                                            }}>
+                                                                                                { sRecId && <FontAwesomeIcon
+                                                                                                    style={{
+                                                                                                        width: buttonSize,
+                                                                                                        height: buttonSize,
+                                                                                                        cursor: "pointer"
+                                                                                                    }}
+                                                                                                    size="lg"
+                                                                                                    icon="fa-solid fa-download"
+                                                                                                    onClick={(e) => this._downloadRecordWavFromUrl(recordWavUrlPrefix, sRecId)}
+                                                                                                /> }
+                                                                                            </td>
                                                                                         </tr>
                                                                                     )
                                                                                 })}
@@ -3000,15 +3205,17 @@ export default class AutoDialView_ver2 extends React.Component {
                                                         )}
                                                     </div>
                                                     <div className="panel tab-B">
-                                                        <table className="defaultContentTable" style={{border: "0",width:"100%"}}><tbody>
-                                                        <tr className="defaultItemPaddingForTr">
-                                                            <td>
-                                                                <Input
-                                                                    id="brOC_autoDialView_ver2_extension_filterWord"
-                                                                    maxLength={1000}
-                                                                    placeholder={i18n.t('Filter')}
-                                                                    //allowClear
-                                                                    defaultValue={''}
+                                                        <table className="defaultContentTable"
+                                                               style={{border: "0", width: "100%"}}>
+                                                            <tbody>
+                                                            <tr className="defaultItemPaddingForTr noHoverContentColorForTr">
+                                                                <td>
+                                                                    <Input
+                                                                        id="brOC_autoDialView_ver2_extension_filterWord"
+                                                                        maxLength={1000}
+                                                                        placeholder={i18n.t('Filter')}
+                                                                        //allowClear
+                                                                        defaultValue={''}
                                                                     onFocus={(e) => this._onExtensionsKeywordsFocus(e)}
                                                                     onBlur={(e) => this._onExtensionsKeywordsBlur(e)}
                                                                     style={{width: "300px", height:systemSettingsData.getAutoDialInputFieldHeight(),fontSize:systemSettingsData.getAutoDialInputFieldFontSize(),
@@ -3140,7 +3347,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                     <div className="panel tab-C">
                                                         <table className="defaultContentTable" style={{border: "0",width:"100%"}}>
                                                             <tbody>
-                                                            <tr className="defaultItemPaddingForTr">
+                                                            <tr className="defaultItemPaddingForTr noHoverContentColorForTr">
                                                                 <td>
                                                                     <Input
                                                                         id="brOC_autoDialView_ver2_phonebook_keywords"
@@ -3175,7 +3382,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                 </td>
                                                                 <td style={{width: "99%"}}></td>
                                                             </tr>
-                                                            <tr className="defaultItemPaddingForTr">
+                                                            <tr className="defaultItemPaddingForTr noHoverContentColorForTr">
                                                                 <td>
                                                                     <span style={{fontSize:otherFontSize}}>{i18n.t("OnlySharedContacts")}</span>
                                                                 </td>
@@ -3362,6 +3569,97 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             alignItems: "center",
                                                                             justifyContent: "start"
                                                                         }}>
+
+                                                                            <span
+                                                                                style={{
+                                                                                    fontSize: otherFontSize,
+                                                                                    marginLeft: 12
+                                                                                }}>{i18n.t("Other_party")}:</span>
+                                                                            <Input
+                                                                                onChange={(e) => this._onChangeVoicemailsFilterOtherParty(e.target.value)}
+                                                                                //style={{width: "100px"}}
+                                                                                style={{
+                                                                                    marginLeft: 4,
+                                                                                    width: "120px",
+                                                                                    height: systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                    fontSize: systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                    //size: "middle"
+                                                                                }}
+                                                                                //placeholder="Please select a option"
+                                                                                value={this._voicemailsFilterOtherParty}
+                                                                                defaultValue={this._voicemailsFilterOtherParty}
+                                                                                //onSelect={(i) => this._onSelectVoicemailsFilterStatus(i)}
+                                                                            />
+                                                                            <span
+                                                                                style={{
+                                                                                    fontSize: otherFontSize,
+                                                                                    marginLeft: 12
+                                                                                }}>{i18n.t("Status")}:</span>
+                                                                            <Select
+                                                                                // onChange={(value) => {
+                                                                                // }}
+                                                                                //style={{width: "100px"}}
+                                                                                style={{
+                                                                                    marginLeft: 4,
+                                                                                    width: "100px",
+                                                                                    height: systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                    fontSize: systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                    //size: "middle"
+                                                                                }}
+                                                                                //placeholder="Please select a option"
+                                                                                value={this._voicemailsFilterStatus}
+                                                                                defaultValue={this._voicemailsFilterStatus}
+                                                                                onSelect={(i) => this._onSelectVoicemailsFilterStatus(i)}
+                                                                            >
+                                                                                <Select.Option
+                                                                                    value={FILTER_NONE_VALUE}>
+                                                                                    <span
+                                                                                        style={{fontSize: inputFieldFontSize}}></span>
+                                                                                </Select.Option>
+                                                                                {voicemailsFilterStatuses.map(([oStatus, iStatus]) => {
+                                                                                    if (READ_STATUS_ENABLED !== true && iStatus === VOICEMAIL_FILTER_STATUS_VALUE_READ) {
+                                                                                        return (null);
+                                                                                    }
+                                                                                    const sMessageKey = VOICEMAIL_STATUS_MESSAGE_KEYS[oStatus];
+                                                                                    return <Select.Option
+                                                                                        value={iStatus}>
+                                                                                        <span
+                                                                                            style={{fontSize: inputFieldFontSize}}>{i18n.t(sMessageKey)}</span>
+                                                                                    </Select.Option>
+                                                                                })}
+                                                                            </Select>
+																			<span
+                                                                                style={{
+                                                                                    fontSize: otherFontSize,
+                                                                                    marginLeft: 12
+                                                                                }}>{i18n.t("Time_order")}:</span>
+                                                                            <Select
+                                                                                // onChange={(value) => {
+                                                                                // }}
+                                                                                //style={{width: "100px"}}
+                                                                                style={{
+                                                                                    marginLeft: 4,
+                                                                                    width: "100px",
+                                                                                    height: systemSettingsData.getAutoDialInputFieldHeight(),
+                                                                                    fontSize: systemSettingsData.getAutoDialInputFieldFontSize(),
+                                                                                    //size: "middle"
+                                                                                }}
+                                                                                //placeholder="Please select a option"
+                                                                                value={this._voicemailsTimeOrder}
+                                                                                defaultValue={this._voicemailsTimeOrder}
+                                                                                onSelect={(s) => this._onSelectVoicemailsTimeOrder(s)}
+                                                                            >
+                                                                                <Select.Option
+                                                                                    value="asc">
+                                                                                    <span
+                                                                                        style={{fontSize: inputFieldFontSize}}>{i18n.t("Asc")}</span>
+                                                                                </Select.Option>
+                                                                                <Select.Option
+                                                                                    value="desc">
+                                                                                    <span
+                                                                                        style={{fontSize: inputFieldFontSize}}>{i18n.t("Desc")}</span>
+                                                                                </Select.Option>
+                                                                            </Select>
                                                                             {/*<span style={{fontSize:otherFontSize}}>{i18n.t("DisplayOrder-Order")}:</span>*/}
                                                                             {/*<Select*/}
                                                                             {/*    // onChange={(value) => {*/}
@@ -3386,11 +3684,12 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                             <button
                                                                                 title={i18n.t(`Search`)}
                                                                                 className="kbc-button kbc-button-fill-parent legacyButtonPadding brOCDefaultKbcButtonMargin"
-                                                                                onClick={(e) => this._onClickGetVoicemails()}
+                                                                                onClick={(e) => this._onClickSearchVoicemails()}
                                                                                 //size={"middle"}
-                                                                                //style={{marginLeft:"10px"}}
+                                                                                style={{marginLeft: "10px"}}
                                                                             >
-                                                                                <svg height={svgButtonSize} width={svgButtonSize}
+                                                                                <svg height={svgButtonSize}
+                                                                                     width={svgButtonSize}
                                                                                      viewBox="3 3 17.5 17.5">
                                                                                     <path
                                                                                         d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"
@@ -3411,8 +3710,8 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                 style={{fontSize: otherFontSize}}>,&nbsp;{i18n.t("Voicemail-status_New")}&nbsp;{this._newVoicemailCount}</span>
                                                                             <span
                                                                                 style={{fontSize: otherFontSize}}>,&nbsp;{i18n.t("Voicemail-status_Saved")}&nbsp;{this._savedVoicemailCount}</span>
-                                                                            <span
-                                                                                style={{fontSize: otherFontSize}}>,&nbsp;{i18n.t("Voicemail-status_Read")}&nbsp;{this._readVoicemailCount}</span>
+                                                                            { READ_STATUS_ENABLED && <span
+                                                                                style={{fontSize: otherFontSize}}>,&nbsp;{i18n.t("Voicemail-status_Read")}&nbsp;{this._readVoicemailCount}</span>}
                                                                             <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteVoicemails() }
                                                                                         okText={i18n.t("yes")}
                                                                                         cancelText={i18n.t("no")}
@@ -3608,7 +3907,7 @@ export default class AutoDialView_ver2 extends React.Component {
                                                                                                 }}
                                                                                                 size="lg"
                                                                                                 icon="fa-solid fa-download"
-                                                                                                onClick={(e) => this._downloadVoicemailFromUrl(voicemailWavUrl, sId)}
+                                                                                                onClick={(e) => this._downloadVoicemailFromUrl(voicemailWavUrl, voicemail)}
                                                                                             />
                                                                                         </td>
                                                                                         <td style={{

@@ -46,7 +46,7 @@ export default class LegacyButtonRuntimeSubWidget_makeCallButton extends LegacyB
                                runtimeScreenView.setIsShowSelectCallingMethodModal(true);
                            } else {
                                if (oc.getIsDTMFInput() !== true) {
-                                   oc.makeCallWithShortDial(null);
+                                   oc.makeCallWithShortDialWithShowCallSelectionModal(null);
                                }
                            }
 

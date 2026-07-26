@@ -10,109 +10,109 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
     _onChangeCalltableBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableHeaderFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableHeaderBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableHeaderRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableHeaderRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyActiveRowBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyActiveRowBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyActiveRowFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyActiveRowFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableHeaderFontSize( size ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableHeaderFontSize(size);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableBodyFontSize( size ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableBodyFontSize(size);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableActiveButtonWidth( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableActiveButtonWidth(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableActiveButtonHeight( n ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableActiveButtonHeight(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeCalltableActiveButtonFontSize( size ){
         const widgetData = this._getWidgetData();
         widgetData.setCalltableActiveButtonFontSize(size);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

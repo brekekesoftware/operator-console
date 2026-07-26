@@ -18,7 +18,7 @@ function LineButton({ label, line, width, height, color,  backgroundColor,  bord
         let onSetValidLineFunc;
         if( oc.getDialing() && oc.getDialing().length !== 0 ){
             onSetValidLineFunc = () =>{
-                oc.makeCall2();
+                oc.makeCall2WithShowCallSelectionModal();
             };
         }
         oc.handleLine(line, onSetValidLineFunc );
@@ -338,7 +338,7 @@ function TransferButton({ callInfo, title,
         _handleCampon( isBlindTransfer );
     }
 
-    const _handleshowSelectTransferMethodModalOk = () => {
+    const _handleShowSelectTransferMethodModalOk = () => {
         closeModal();
 
         const eAttendedTransferCallWithSwitchCall = document.getElementById("attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC");
@@ -396,7 +396,7 @@ function TransferButton({ callInfo, title,
                 key={"modal"}
                 open={modalOpen != null}
                 title={i18n.t("Select_a_transfer_method")}
-                onOk={_handleshowSelectTransferMethodModalOk}
+                onOk={_handleShowSelectTransferMethodModalOk}
                 onCancel={handleModalCancel}
                 maskClosable = {false}
             >

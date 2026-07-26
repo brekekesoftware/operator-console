@@ -1,13 +1,10 @@
-import Menu from "antd/lib/menu";
 import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
 import MoreOutlined from "@ant-design/icons/MoreOutlined";
 import React, {useRef, useState} from "react";
 import Notification from "antd/lib/notification";
-import {AppstoreOutlined, DownOutlined, MailOutlined, SettingOutlined, SmileOutlined} from "@ant-design/icons";
-import {icons} from "antd/es/image/PreviewGroup";
-import antd, {Form, Input, message, Modal, Switch} from "antd";
-import { Dropdown, Button, Space, Menu } from 'antd';
+import {Form, Input, Modal } from "antd";
+import { Dropdown, Button } from 'antd';
 import BrekekeOperatorConsole from "./index";
 import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLayoutModalForDropDownMenu";
 import Spin from "antd/lib/spin";
@@ -219,12 +216,20 @@ export default function DropDownMenu( { operatorConsole } ){
                 key: '5',
                 label: (
                     <a onClick={operatorConsole.startSettingsScreen} className="dropdownMenuItem_OcBr">
-                        {i18n.t("settings_screen")}
+                        {i18n.t("Layout_settings")}
                     </a>
                 ),
             },
             {
                 key: '6',
+                label: (
+                    <a onClick={operatorConsole.openUserSettingsScreen} className="dropdownMenuItem_OcBr">
+                        {i18n.t("User_settings")}
+                    </a>
+                ),
+            },
+            {
+                key: '7',
                 label: (
                     <a onClick={ () => operatorConsole.openAboutOCModalByState() } className="dropdownMenuItem_OcBr">
                         {i18n.t("About_OperatorConsole")}
@@ -277,12 +282,20 @@ export default function DropDownMenu( { operatorConsole } ){
             //     key: '2',
             //     label: (
             //         <a onClick={operatorConsole.startSettingsScreen}>
-            //             {i18n.t("settings_screen")}
+            //             {i18n.t("Layout_settings")}
             //         </a>
             //     ),
             // },
             {
                 key: '2',
+                label: (
+                    <a onClick={operatorConsole.openUserSettingsScreen} className="dropdownMenuItem_OcBr">
+                        {i18n.t("User_settings")}
+                    </a>
+                ),
+            },
+            {
+                key: '3',
                 label: (
                     <a onClick={() => operatorConsole.openAboutOCModalByState()} className="dropdownMenuItem_OcBr">
                         {i18n.t("About_OperatorConsole")}
@@ -328,6 +341,10 @@ export default function DropDownMenu( { operatorConsole } ){
                 menu={{
                     items,
                 }}
+				placement="topRight"
+			  align={{
+				offset: [0, 0], // [x, y]
+			  }}
                 trigger="click"
             >
                 <Button className="menuIcon menuIcon_custom" shape="circle"
@@ -430,7 +447,7 @@ export default function DropDownMenu( { operatorConsole } ){
     //                     {i18n.t("remove_screen")}
     //                 </Popconfirm>
     //             </Menu.Item>
-    //             <Menu.Item  key="7"  onClick={operatorConsole.startSettingsScreen}>{i18n.t("settings_screen")}</Menu.Item>
+    //             <Menu.Item  key="7"  onClick={operatorConsole.startSettingsScreen}>{i18n.t("Layout_settings")}</Menu.Item>
     //         </Menu>
     //     )}>
     //         <Button style={{position: 'absolute', top:4,right:4, zIndex: 1}} shape="circle" icon={<MoreOutlined/>}></Button>
@@ -463,7 +480,7 @@ export default function DropDownMenu( { operatorConsole } ){
                 const layoutNoteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
                 const getNoteNamesOptions ={
                     methodName : "getNoteNames",
-                    methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
+                    methodParams : {tenant:operatorConsole.getLoggedinTenant()},
                     onSuccessFunction : ( noteNames ) =>{
                         let bNoteExists = true;
                         if( !noteNames || noteNames.length === 0 ){
@@ -498,13 +515,13 @@ export default function DropDownMenu( { operatorConsole } ){
 
                             const setNoteOptions = {
                                 methodName : "setNote",
-                                methodParams : JSON.stringify({
+                                methodParams : {
                                     tenant : operatorConsole.getLoggedinTenant(),
                                     name:noteName,
                                     description : "",
                                     useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                                     note : noteContent
-                                }),
+                                },
                                 onSuccessFunction : (res) =>{
 
                                     operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
@@ -595,13 +612,13 @@ export default function DropDownMenu( { operatorConsole } ){
 
             const setNoteOptions = {
                 methodName : "setNote",
-                methodParams : JSON.stringify({
+                methodParams : {
                     tenant : operatorConsole.getLoggedinTenant(),
                     name: noteName,
                     description : "",
                     useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
                     note : noteContent
-                }),
+                },
                 onSuccessFunction : ( res ) =>{
                     operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, () => {
                             Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );

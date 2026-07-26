@@ -38,10 +38,10 @@ export default class WidgetSettingsTemplates{
         };
         const setAppDataOptions = {
             methodName: "setAppData",
-            methodParams: JSON.stringify({
+            methodParams: {
                 data_id: _WIDGET_SETTINGS_TEMPLATES_DATA_ID,
                 data: oData
-            }),
+            },
             onSuccessFunction: () =>{
                 //Notification.success({ key: 'sync', message: i18n.t("saved_data_to_pbx_successfully") });
                 onSuccessFunction();
@@ -66,9 +66,9 @@ export default class WidgetSettingsTemplates{
     reloadWidgetSettingsTemplatesAsync( palRestApi, onSuccessFunction, onFailFunction  ){
         const getAppDataOptions = {
             methodName : "getAppData",
-            methodParams : JSON.stringify({
+            methodParams : {
                 data_id: _WIDGET_SETTINGS_TEMPLATES_DATA_ID
-            }),
+            },
             onSuccessFunction : ( sJsonData ) => {
                 let oData;
                 if( sJsonData && sJsonData.length !== 0 ){

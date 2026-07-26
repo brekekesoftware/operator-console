@@ -17,13 +17,13 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
 
     // _onFormHoldIconSelected( icon ){
     //     this._LegacyButtonEditorSubWidgetData.setHoldIcon( icon );
-    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     // }
 
     _onHoldIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setHoldIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setHoldIconName( iconName );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onHoldIconSelectCanceled( selectIconModalAsCaller ){
@@ -33,64 +33,64 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setHoldIcon(null);
         subWidgetData.setHoldIconName(null);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setHoldFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setHoldBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setHoldOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setHoldOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setHoldOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setHoldFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setHoldIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setHoldIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeHoldLabel(holdLabel){
         //const holdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setHoldLabel( holdLabel  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     // _onFormUnholdIconSelected( icon ){
     //     this._LegacyButtonEditorSubWidgetData.setUnholdIcon( icon );
-    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+    //     this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     // }
 
     _onUnholdIconSelected( selectIconModalAsCaller, icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setUnholdIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setUnholdIconName( iconName );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onUnholdIconSelectCanceled( selectIconModalAsCaller ){
@@ -100,53 +100,53 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         subWidgetData.setUnholdIcon(null);
         subWidgetData.setUnholdIconName(null);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setUnholdFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setUnholdBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setUnholdOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setUnholdOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setUnholdOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setUnholdFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setUnholdIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setUnholdIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeUnholdLabel(unholdLabel){
         //const unholdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setUnholdLabel( unholdLabel  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

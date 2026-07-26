@@ -7,7 +7,8 @@ import InputNumber from "antd/lib/input-number";
 import {Colorpicker} from "antd-colorpicker";
 import TextArea from "antd/es/input/TextArea";
 import EditScreenView from "../../../EditScreenView";
-import {Divider, Select} from "antd";
+import {Button, Divider, Select} from "antd";
+import EditorAutoDialView_ver2 from "../../../EditorAutoDialView_ver2";
 
 export default class LegacyButtonEditorSubWidgetSettings_autoDialButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -15,70 +16,150 @@ export default class LegacyButtonEditorSubWidgetSettings_autoDialButton extends 
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
+
+    //!override
+    onLegacyButtonEditorSubWidgetSettingsChangedOther(){
+        super.onLegacyButtonEditorSubWidgetSettingsChangedOther();
+        const editScreenView = EditorAutoDialView_ver2.getStaticInstance();
+        const b = editScreenView.trySetInvisible(this);
+        console.log("LegacyButtonEditorSubWidgetSettings_autoDialButton:componentWillUnmount. trySetInvisible="+ b );
+    }
+
     _onChangeLabel(label){
         //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 	
 	_onChangeAutoDialTableHeaderFontSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
 		cloneSystemSettingsData.setAutoDialTableHeaderFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
 	}
 
 	_onChangeAutoDialTableBodyFontSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
 		cloneSystemSettingsData.setAutoDialTableBodyFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
 	}
 	
 	_onChangeSwitchSize( s ){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
 		cloneSystemSettingsData.setAutoDialSwitchSize(s);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeLampSize( n ){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialLampSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialIconSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialIconSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialButtonSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialButtonSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialInputFieldHeight(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialInputFieldHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialInputFieldFontSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialInputFieldFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialTabFontSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialTabFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeAutoDialOtherFontSize(n){
         const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
         cloneSystemSettingsData.setAutoDialOtherFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
+    }
+	
+	getAutoDialInputFieldFontSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialInputFieldFontSize();
+		return n;
+	}
+	
+	getAutoDialTableHeaderFontSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialTableHeaderFontSize();
+		return n;
+	}
+	
+	getAutoDialTableBodyFontSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialTableBodyFontSize();
+		return n;
+	}
+	
+	getAutoDialSwitchSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialSwitchSize();
+		return n;
+	}
+
+	getAutoDialLampSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialLampSize();
+		return n;
+	}
+	
+	getAutoDialIconSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialIconSize();
+		return n;
+	}
+	
+	getAutoDialIconSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialIconSize();
+		return n;
+	}
+	
+	getAutoDialButtonSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialButtonSize();
+		return n;
+	}
+
+	getAutoDialOtherFontSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialOtherFontSize();
+		return n;
+	}
+	
+	getAutoDialTabFontSize(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialTabFontSize();
+		return n;
+	}
+
+	getAutoDialInputFieldHeight(){
+        const cloneSystemSettingsData = EditScreenView.getEditScreenViewInstance().getCloneSystemSettingsData();
+		const n = cloneSystemSettingsData.getAutoDialInputFieldHeight();
+		return n;
+	}
+
+    _onClickShowPreviewButton(){
+        const editorAutoDialView = EditorAutoDialView_ver2.getStaticInstance();
+        const b = editorAutoDialView.trySetVisible(this);
     }
 
     //!override
@@ -179,6 +260,8 @@ export default class LegacyButtonEditorSubWidgetSettings_autoDialButton extends 
                 <p>{i18n.t("Other_font_sizes")}</p>
                 <InputNumber min={0} value={cloneSystemSettingsData.getAutoDialOtherFontSize()}
                              onChange={(n) => this._onChangeAutoDialOtherFontSize(n)}/>
+                <p>{i18n.t("Preview")}</p>
+                <Button onClick={() => this._onClickShowPreviewButton() }>{i18n.t("Show_Preview")}</Button>
             </>
         );
     }

@@ -71,7 +71,7 @@ export default class PalCallInfo extends ACallInfo {
                 // if( e["rescode"] === 404 && e["disconnected_by"] === "1" ){
                 //     break;
                 // }
-                this._PalCallInfosAsParent.getPhoneClientAsParent().onDisconnectByPalCallInfo(this);
+                this._PalCallInfosAsParent.getPhoneClientAsParent().onDisconnectByPalCallInfo(this, e );
                 return;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.callSuccess:
                 const bMakeCall = e["role"] === 'c';

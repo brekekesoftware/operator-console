@@ -17,19 +17,19 @@ export default class LegacyButtonEditorSubWidgetSettings_oneTouchDialButton exte
     _onChangeLabel(label){
         //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeNumber(e){
         const sNumber = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setNumber( sNumber  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeOnetouchdialMode(sOnetouchdialMode){
         //const sOnetouchdialMode = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setOnetouchdialMode( sOnetouchdialMode  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
     //!override
     getRenderJsx() {

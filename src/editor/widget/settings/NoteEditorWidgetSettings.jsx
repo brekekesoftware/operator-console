@@ -21,7 +21,7 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const getNoteNamesOptions = {
           methodName : "getNoteNames",
-          methodParams : JSON.stringify({tenant:oc.getLoggedinTenant()}),
+          methodParams : {tenant:oc.getLoggedinTenant()},
             onSuccessFunction : ( names ) => {
                 this.setState({ nameOptions: names.map((value) => ({ value })) });
             },
@@ -54,11 +54,11 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeNoteName( noteName ){
         //const noteName = e.currentTarget.value;
         this._getWidgetData().setNoteName( noteName  );
-        this.getEditScreenViewAsParent().setState({rerender:true});
+        this.getEditScreenViewAsParent().commitEdit();
         const oc = BrekekeOperatorConsole.getStaticInstance()
         const getNoteNamesOptions = {
             methodName : "getNoteNames",
-            methodParams : JSON.stringify({tenant:oc.getLoggedinTenant()}),
+            methodParams : {tenant:oc.getLoggedinTenant()},
             onSuccessFunction : ( names ) => {
                 this.setState({ nameOptions: names.map((value) => ({ value })) });
             },
@@ -73,13 +73,13 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeNoteTitleFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteTitleFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteBodyFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteBodyFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     getEditScreenViewAsParent(){
@@ -89,44 +89,44 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeNoteNameFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteNameFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteNameBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteNameBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteTextFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteTextFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteBgStartColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteBgStartColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteBgEndColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteBgEndColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setNoteBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeNoteLabel(e){
         const noteLabel = e.currentTarget.value;
         const widgetData = this._getWidgetData();
         widgetData.setNoteLabel( noteLabel  );
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

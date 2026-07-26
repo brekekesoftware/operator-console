@@ -6,16 +6,75 @@ import Button from "antd/lib/button";
 import "./login.scss"
 import WebphonePhoneClient from "./WebphonePhoneClient";
 import BrekekeOperatorConsole from "./index";
+import Select from "antd/lib/select";
+import MfaUtil from "./MfaUtil";
 
 export default class Login extends React.Component {
     constructor( props ) {
         super( props );
         this._OperatorConsoleAsParent = props.operatorConsoleAsParent;
-        this.state = { isSigningin : false };
+        this.state = { isSigningin : false, isBlockResendMfa : false, isBlockVerifyMfa : false };
         //this._pal = null;
         this._LoginMessageElementRef = createRef();
 
+        const sLastPhoneIndex = localStorage.getItem("lastPhoneIndex");
+        let lastPhoneIndex;
+        if( sLastPhoneIndex !== undefined && sLastPhoneIndex !== null ) {
+            const iLastPhoneIndex = Number(sLastPhoneIndex);
+            if( isNaN( iLastPhoneIndex ) ) {
+                lastPhoneIndex = null;
+            }
+            else{
+                lastPhoneIndex = iLastPhoneIndex;
+            }
+        }
+        else{
+            lastPhoneIndex = null;
+        }
+        this._phoneIndex = lastPhoneIndex;
+
     }
+	
+	componentDidMount() {
+		const mfaUtil = MfaUtil.getStaticInstance();
+		//const mfaBlockResendTimelimit = mfaUtil.getBlockResendTimelimit();
+		//const bBlockResendMfa = mfaBlockResendTimelimit && !isNaN( mfaBlockResendTimelimit );		
+		//if( bBlockResendMfa ){
+		if( mfaUtil.canResendMfaCode() !== true ){
+			this._setMessage(i18n.t("Functions are restricted for a certain period~"));
+			mfaUtil.stopWatchBlockResend();
+			this.setState({isBlockResendMfa:true}, () =>{
+				mfaUtil.startWatchBlockResend( () => this._onFinishBlockResend() );
+			});
+		}
+		//const mfaBlockVerifyTimelimit = mfaUtil.getBlockVerifyTimelimit();
+		//if( mfaBlockVerifyTimelimit && !isNaN( mfaBlockVerifyTimelimit ) ){
+		if( mfaUtil.canVerifyMfaCode() !== true ){
+			this._setMessage(i18n.t("Functions are restricted for a certain period~"));
+			mfaUtil.stopWatchBlockVerify();
+			this.setState({isBlockVerifyMfa:true}, () =>{
+				mfaUtil.startWatchBlockVerify( () => this._onFinishBlockVerify() );
+			});
+		}
+	}
+
+	_onFinishBlockResend(){
+		this.setState({isBlockResendMfa:false}, () => {
+			if( this.state.isBlockResendMfa === false && this.state.isBlockVerifyMfa === false ){ //!modify flags
+				//this._setMessage("");
+				this._hideMessage();
+			}
+		});
+	}
+	
+	_onFinishBlockVerify(){
+		this.setState({isBlockVerifyMfa:false}, () => {
+			if( this.state.isBlockResendMfa === false && this.state.isBlockVerifyMfa === false ){ //!modify flags
+				//this._setMessage("");
+				this._hideMessage();
+			}
+		});
+	}
 
     _setMessage( message ){
         const eLoginMessage = this._LoginMessageElementRef.current;
@@ -54,8 +113,20 @@ export default class Login extends React.Component {
             secure_login_password : false,
             ctype : 2
         };
+		
+		const tenant = loginParams.tenant;
+		const user = loginParams.username;
+		
+		const sDeviceTokenKey = "br+dtoken+" + tenant + "+" + user;
+		const sDeviceToken = window.localStorage.getItem(sDeviceTokenKey);
+		if( sDeviceToken ){
+			getPalOptions["device_token"] = sDeviceToken;
+		}
+
+		
+		
         const pal = palWrapper.getPal( getPalOptions );
-        pal.debugLevel = 2;
+        pal.debugLevel = 2; //!debug    //!dev
 
         const this_ = this;
         pal.onClose = function(){
@@ -71,22 +142,32 @@ export default class Login extends React.Component {
         //!fixit pal bug
         pal.login(
             function( res, obj ){
-                const tenant = loginParams.tenant;
-                const user = loginParams.username;
                 const getExtensionsPropertiesOptions = {
                     tenant: tenant,
                     extension: user,
                     property_names : ["admin","language"]
                 };
+				
+				////No effect
+				//const sDeviceTokenKey = "br+dtoken+" + tenant + "+" + user;
+				//const sDeviceToken = window.localStorage.getItem(sDeviceTokenKey);
+				//if( sDeviceToken ){
+				//	getExtensionsPropertiesOptions["device_token"] = sDeviceToken;
+				//}
+
                 pal.getExtensionProperties( getExtensionsPropertiesOptions,
                     function( res, obj ) {
                         const isAdmin = res[0].toLowerCase() === "true";
                         const language = res[1];
                         this_.setState({isSigningin: false});
                         window.localStorage.setItem('lastLoginLanguage', language);
+                        const phoneIndex = loginParams.phoneIndex;
                         this_._OperatorConsoleAsParent.onLoggedinByLogin(
-                            pal, palWrapper.getPbxHost(), palWrapper.getPbxPort(), tenant, user, loginParams.password, isAdmin, language
-                        );
+                            pal, palWrapper.getPbxHost(), palWrapper.getPbxPort(), tenant, user, loginParams.password, isAdmin, language, phoneIndex, () =>{
+                                if( Number.isInteger( phoneIndex ) || phoneIndex === null ){
+                                    window.localStorage.setItem("lastPhoneIndex", phoneIndex );
+                                }
+                            } );
                     },
                     function( error ) {
                         console.warn("Faild to getExtensionProperties. error=",error);
@@ -103,7 +184,41 @@ export default class Login extends React.Component {
         );
     }
 
+    _onSelectPhoneIndex( o ){
+        this._phoneIndex = o;
+    }
+
     _login = (params) => {
+		
+		const mfaUtil = MfaUtil.getStaticInstance();
+		//const mfaBlockResendTimelimit = mfaUtil.getBlockResendTimelimit();
+		//const bBlockResendMfa = mfaBlockResendTimelimit && !isNaN( mfaBlockResendTimelimit );
+		//if( bBlockResendMfa ){
+		const bCanResendMfaCode = mfaUtil.canResendMfaCode();
+		if( bCanResendMfaCode !== true ){
+			this._setMessage(i18n.t("Functions are restricted for a certain period~"));
+			mfaUtil.stopWatchBlockResend();
+			this.setState({isBlockResendMfa:true}, () =>{
+				mfaUtil.startWatchBlockResend( () => this._onFinishBlockResend() );
+			});
+		}
+
+		//const mfaBlockVerifyTimelimit = mfaUtil.getBlockVerifyTimelimit();
+		//const bBlockVerifyMfa = mfaBlockVerifyTimelimit && !isNaN( mfaBlockVerifyTimelimit );
+		//if( bBlockVerifyMfa ){
+		const bCanVerifyMfaCode = mfaUtil.canVerifyMfaCode();
+		if( bCanVerifyMfaCode !== true ){
+			this._setMessage(i18n.t("Functions are restricted for a certain period~"));
+			mfaUtil.stopWatchBlockVerify();
+			this.setState({isBlockVerifyMfa:true}, () =>{
+				mfaUtil.startWatchBlockVerify( () => this._onFinishBlockVerify() );
+			});
+		}
+		
+		if( !bCanResendMfaCode || !bCanVerifyMfaCode ){
+			return false;
+		}
+		
         console.log('login:', params);
         // this._deinitAphone();
         this.setState({ isSigningin : true }, () =>{
@@ -119,7 +234,11 @@ export default class Login extends React.Component {
             this._OperatorConsoleAsParent.setLastLoginAccount( lastLoginAccount );
             window.localStorage.setItem('lastLoginAccount', JSON.stringify( lastLoginAccount));
 
-            const onInitPalRestApiSuccessFunction = () =>{
+            const onInitPalRestApiSuccessFunction = ( result ) =>{
+				if( result && result["startMfa"] === true ){
+					return;
+				}
+				
                 const palWrapper = this._OperatorConsoleAsParent.getLoginPalWrapper();
                 palWrapper.deinitPalWrapper();
                 const this_ = this;
@@ -141,6 +260,7 @@ export default class Login extends React.Component {
                 //this_._OperatorConsoleAsParent.onInitPalRestApiSuccessByLogin(this_);
             }
             const onInitPalRestApiFailFunction = ( err ) =>{
+                console.error("Failed to init pal rest api. err=",err);
                 this.setState({isSigningin:false});
                 this._setMessage( i18n.t("Failed_to_init_pal_rest_api"));
             }
@@ -170,10 +290,10 @@ export default class Login extends React.Component {
 
         });
 
-
+		return true;
 
     } //~login
-
+	
     render(){
         return (
             <div>
@@ -188,7 +308,10 @@ export default class Login extends React.Component {
                     <Form
                         name="login"
                         initialValues={this.props.initialValues}
-                        onFinish={this._login}
+                        onFinish={ (params) => {
+                            params["phoneIndex"] = this._phoneIndex;
+                            this._login( params );
+                        }}
                     >
                         <Form.Item
                             name="hostname"
@@ -257,9 +380,44 @@ export default class Login extends React.Component {
                         >
                             <Input className="ant-input-forBrOCLogin" placeholder={i18n.t("username")} type="hidden"/>
                         </Form.Item>
+                        <Form.Item
+                            name="phoneIndex"
+                            rules={[
+                                {
+                                    required: false,
+                                },
+                            ]}
+                            >
+                            <Select
+                                // onChange={(value) => {
+                                // }}
+                                placeholder={i18n.t("phoneIndex")}
+                                value={this._phoneIndex}
+                                defaultValue={this._phoneIndex}
+                                onSelect={(i) => this._onSelectPhoneIndex(i)}
+                                className="ant-input-forBrOCLogin"
+                                //dropdownStyle={{ backgroundColor: 'green' }}  //Does not work
+                            >
+                                <Select.Option
+                                    value={null}>
+                                    <span>{i18n.t("phoneIndex")}:({i18n.t("User_settings")})</span>
+                                </Select.Option>
+                                <Select.Option
+                                    value={-1}>
+                                    <span>{i18n.t("phoneIndex")}:({i18n.t("Not_specified")})</span>
+                                </Select.Option>
+                                {[...Array(4)].map((_, index) => {
+                                    const phoneIndex = index + 1;
+                                    return <Select.Option
+                                        value={phoneIndex}>
+                                        <span>{i18n.t("phoneIndex")}:{phoneIndex}</span>
+                                    </Select.Option>
+                                })}
+                            </Select>
+                        </Form.Item>
                         <Form.Item>
                             <Button type="success" htmlType="submit" className="brOCLoginButton"
-                                    disabled={this.state.isSigningin}>
+                                    disabled={this.state.isSigningin || this.state.isBlockResendMfa || this.state.isBlockVerifyMfa }>
                                 {i18n.t("signin")}
                             </Button>
                         </Form.Item>

@@ -30,12 +30,16 @@ export default class WebphoneCallInfo extends ACallInfo {
         this._toggleMuted = callObject.toggleMuted;
         this._toggleRecording = callObject.toggleRecording;
         this._setHoldWithCallkeep = callObject.setHoldWithCallkeep;
-		this._sessionId = callObject.rawSession.sessionId;
+		this._SessionId = callObject.rawSession.sessionId;
     }
 	
 	canInsertDTMF(){
 		const b = this._callObject.rawSession?.rtcSession.connection.getSenders().some(s => s.dtmf?.canInsertDTMF);
 		return b;
+	}
+	
+	getSessionId(){
+		return this._SessionId;
 	}
 
     // startVideo(){
@@ -54,6 +58,10 @@ export default class WebphoneCallInfo extends ACallInfo {
     getWasIncoming(){
         return this._wasIncoming;
     }
+	
+	getCallObject(){
+		return this._callObject;
+	}
 
     /**
      *  overload method
@@ -171,10 +179,6 @@ export default class WebphoneCallInfo extends ACallInfo {
             }
         }
     }
-	
-	getSessionId(){
-		return this._sessionId;
-	}
 
     onUpdateWebphoneCallObject(callObject) {
         const wasAnsweredAt = this._answeredAt;
@@ -341,6 +345,12 @@ export default class WebphoneCallInfo extends ACallInfo {
     onFlushPalNotifyStatusEventByWebphoneCallInfos(e){
         const status = parseInt( e["status"] );
         switch( status ){
+            case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.disconnect:    //disconnect
+                // if( e["rescode"] === 404 && e["disconnected_by"] === "1" ){
+                //     break;
+                // }
+                this._WebphoneCallInfosAsParent.getPhoneClientAsParent().onDisconnectByWebphoneCallInfo(this, e );
+                return;
             case PalCallInfos.PAL_NOTIFY_STATUS_STATUSES.transferFail:
                 this.setIsTransferring(false);
                 break;

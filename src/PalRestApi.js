@@ -1,5 +1,7 @@
 import i18n from "./i18n";
 import {fail} from "mobx/lib/utils/utils";
+import BrekekeOperatorConsole from "./index";
+import MfaUtil from "./MfaUtil";
 
 //!ref https://docs.brekeke.com/pbx/pbx-rest-api
 //!ref https://docs.brekeke.com/pbx/pal-rest-api-sample-1
@@ -12,13 +14,13 @@ export default class PalRestApi{
     clonePalRestApi(){
         const p = new PalRestApi();
         //!modify //!sync(require)
-        p._palRestApiToken = this._palRestApiBaseUrlPrefix;
+        p._palRestApiToken = this._palRestApiToken;
         p._palRestApiBaseUrlPrefix = this._palRestApiBaseUrlPrefix;
         p._initPalRestApiFetchOptions = this._initPalRestApiFetchOptions;
         return p;
     }
 
-    initPalRestApi( options ){
+    async initPalRestApi( options ){
         this._palRestApiToken = null;
         const hostname = options.hostname;
         let sPort;
@@ -39,6 +41,16 @@ export default class PalRestApi{
             login_user: options.username,
             login_password: options.password
         }
+
+        let sDeviceToken;
+        if( options["useDeviceToken"] !== false ){
+            const sDeviceTokenKey = "br+dtoken+" + options.tenant + "+" + options.username;
+            sDeviceToken = window.localStorage.getItem( sDeviceTokenKey );
+            if( sDeviceToken ){
+                initPalRestApiOptions["device_token"] = sDeviceToken;
+            }
+        }
+
         const failFunc = options.onInitFailFunction;
         const successFunc = options.onInitSuccessFunction;
 
@@ -52,11 +64,38 @@ export default class PalRestApi{
             },
             body: JSON.stringify( initPalRestApiOptions )
         };
+
+        this._palRestApiBaseUrlPrefix = initPalRestApiBaseUrlPrefix;
+        this._initPalRestApiFetchOptions = initPalRestApiFetchOptions;
+
         const fetchPromise = fetch( initPalRestApiBaseUrlPrefix + "login", initPalRestApiFetchOptions );
-        fetchPromise.then( (response) =>{
-            const json = response.json();
-            return json;
-        }).then( (json) =>{
+        fetchPromise.then(  async (response) =>  {
+			if (!response.ok) {
+                const message = await response.text();
+                if( sDeviceToken && response.status === 401 ){  //MFA(Device token) failed
+                    const sDeviceTokenKey = "br+dtoken+" + options.tenant + "+" + options.username;
+                    window.localStorage.removeItem( sDeviceTokenKey );
+                    
+                    const options2 = window.structuredClone(options);
+                    options2["useDeviceToken"] = false;
+                    await this.initPalRestApi( options2 );
+                    return null;
+                }
+                else{
+                    //const message = await response.text();
+                    const error = new Error( message );
+                    error.status = response.status;
+                    throw error;
+                }
+			}
+			else{
+				const json = response.json();
+				return json;
+			}
+        }).then( async (json) =>{
+            if( json === null ){    //start mfa
+                return;
+            }
             const token = json.token;
             if( !token || token.length === 0  ){
                 const err = new Error("Failed to get PAL REST API token. token=" + token );
@@ -66,11 +105,42 @@ export default class PalRestApi{
             }
             else{
                 this._palRestApiToken = token;
-                this._palRestApiBaseUrlPrefix = initPalRestApiBaseUrlPrefix;
-                this._initPalRestApiFetchOptions = initPalRestApiFetchOptions;
-                if( successFunc ){
-                    successFunc();
-                }
+				
+				//MFA
+				const mfaRequired = json["mfa_required"];
+				BrekekeOperatorConsole.getStaticInstance().setMfaRequired(mfaRequired);
+				if( mfaRequired === true ){
+                    try{
+                        const doMfaResult = await this._doMfa( options.tenant, options.username, options.password, hostname, options.port, pbxDirectoryName, sDeviceToken );
+                        switch( doMfaResult ){
+                            case 1:
+                                if( successFunc ){
+                                    successFunc();
+                                }
+                            break;
+                            case 2:
+                                if( successFunc ){
+                                    successFunc( {startMfa:true} );
+                                }
+                            break;
+                            default:
+                                if( failFunc ){
+                                    failFunc();
+                                }
+                            break;
+                        }
+                    }
+                    catch( err ){
+                        if( failFunc ){
+                            failFunc(err);
+                        }
+                    }
+				}
+				else{
+					if( successFunc ){
+						successFunc();
+					}
+				}
             }
         })
             .catch( (err) =>{
@@ -82,6 +152,126 @@ export default class PalRestApi{
             });
 
     }
+	
+    async _doMfa( tenant, username, password, hostname, port, pbxDirectoryName, sDeviceToken ){
+        // const sDeviceTokenKey = "br+dtoken+" + options.tenant + "+" + options.username;
+        // const sDeviceToken = window.localStorage.getItem( sDeviceTokenKey );
+        if( sDeviceToken ){
+            //check deviceToken
+            //
+            const methodName = "device_token/check";
+            const userAgent = navigator.userAgent;
+            const checkDeviceTokenMethodParams = {
+                token : sDeviceToken,
+                tenant : tenant,
+                user : username,
+                //sa : false,
+                //ip_address : window.location.hostname,
+                user_agent : userAgent	//!testit //!forBug
+            };
+            const checkDeviceTokenOptions = {
+                methodName : methodName,
+                methodParams : checkDeviceTokenMethodParams,	//!testit	//!check //!forBug
+                enableRelogin : false,
+            };
+            try{
+                const result = await this.callPalRestApiMethodAsync( checkDeviceTokenOptions );
+                const sStatus = result["status"];
+                //if( false && sStatus === "OK"){	//!temp //!test //!dev
+                console.log("**************sStatus=" + sStatus );  //!temp
+                if( sStatus === "OK"){
+                    this._deviceToken = sDeviceToken;
+                    return 1;
+                }
+                else{
+                    try{
+                        const startMfaResult = await this._startMfa( tenant, username );
+                        if( startMfaResult["status"] === "OK"){
+                            //!forBug //!testit //!check startMfaResult["type"] === "url"
+                            //const expiry_time = result["expiry_time"];
+                            if( startMfaResult["type"] === "code" ){
+                                BrekekeOperatorConsole.getStaticInstance().onStartMfaOK( startMfaResult, tenant, username, password, hostname, port, pbxDirectoryName );
+                                return 2;
+                            }
+                            else if( startMfaResult["type"] === "none"){
+                                return 1;
+                            }
+                        }
+                        else{
+                            console.error("Failed to start MFA.");
+                            return 0;
+                        }
+                    }
+                    catch(err){
+                        console.error("Failed to start MFA. error=" , err  );
+                        if( failFunc ) {
+                            throw err;
+                        }
+                        return 0;
+                    }
+                }
+            }
+            catch( error ){
+                console.error("Failed to PAL rest API(device_token/check). error=" , error  );
+                if( failFunc ) {
+                    throw err;
+                }
+                return 0;
+            }
+            
+        }
+        else{
+            try{
+                const startMfaResult = await this._startMfa( tenant, username );
+                if( startMfaResult["status"] === "OK"){
+                    //!forBug //!testit //!check startMfaResult["type"] === "url"
+                    //const expiry_time = result["expiry_time"];
+                    if( startMfaResult["type"] === "code" ){
+                        BrekekeOperatorConsole.getStaticInstance().onStartMfaOK( startMfaResult, tenant, username, password, hostname, port, pbxDirectoryName );
+                        return 2;
+                    }
+                    else if( startMfaResult["type"] === "none"){
+                        return 1;
+                    }
+                }
+                else{
+                    console.error("Failed to start MFA.");
+                    return 0;
+                }
+            }
+            catch(err){
+                console.error("Failed to start MFA. error=" , err  );
+                throw err;
+            }
+        }
+        return 0;
+    }
+
+	async _startMfa( tenant, user ){
+		const methodName = "mfa/start";
+		const methodParams = {
+			tenant : tenant,
+			user : user,
+			//sa : false,
+			//email : "***@***.***",
+			//url : ***,
+			//options : ***,
+		};
+		const options = {
+			methodName : methodName,
+			methodParams : methodParams,
+            enableRelogin : false,
+		};
+		const result = await this.callPalRestApiMethodAsync( options );
+		//if( result["status"] === "OK" && result["type"] === "code" ){	//!forBug //!testit //!check result["type"] === "url"
+		//	//const expiry_time = result["expiry_time"];
+		//	BrekekeOperatorConsole.getStaticInstance().onStartMfaOK( result, tenant, user );
+		//}
+		if( result["status"] === "OK" && result["type"] === "code" ){
+			MfaUtil.getStaticInstance().resetBlockResendTimelimit();
+		}
+		return result;
+	}
 
     _relogin( options ){
         const retryCount = options["retryCount"];
@@ -170,7 +360,12 @@ export default class PalRestApi{
                         //const newOptions = structuredClone(options);  //!error DataCloneError
                         const newOptions = {...options};    //!modify
                         newOptions["retryCount"] = retryCount - 1;
-                        this._relogin(newOptions);
+                        //this._relogin(newOptions);
+						//!testit
+						this._reloginAsync( newOptions )
+							.then(resolve)
+							.catch(reject);
+						
                     }
                     return;
                 });
@@ -181,6 +376,7 @@ export default class PalRestApi{
     deinitPalRestApi(){
         this._palRestApiToken = null;
         this._palRestApiBaseUrlPrefix = null;
+		this._deviceToken = null;
     }
 
     isPalRestApiInitialized(){
@@ -199,7 +395,11 @@ export default class PalRestApi{
         }
 
         if( !methodParams ){
-            methodParams = "{}";
+            methodParams = {};
+        }
+
+        if( this._deviceToken ){
+            methodParams["device_token"] = this._deviceToken;
         }
 
 
@@ -210,7 +410,7 @@ export default class PalRestApi{
                 'Content-Type': 'application/json',
                 'Authorization' : "basic " + this._palRestApiToken
             },
-            body: methodParams
+            body: JSON.stringify(methodParams)
         }
         const this_ = this;
         let successError;
@@ -283,8 +483,13 @@ export default class PalRestApi{
         let methodParams = options.methodParams;
 
         if( !methodParams ){
-            methodParams = "{}";
+            methodParams = {};
         }
+
+        if( this._deviceToken ){
+            methodParams["device_token"] = this._deviceToken;
+        }
+
 
         let enableRelogin  = options["enableRelogin"];
         if( enableRelogin === undefined || enableRelogin === null ){
@@ -298,12 +503,12 @@ export default class PalRestApi{
                 'Content-Type': 'application/json',
                 'Authorization' : "basic " + this._palRestApiToken
             },
-            body: methodParams
+            body: JSON.stringify(methodParams)
         }
         const this_ = this;
         const promise = new Promise( (resolve, reject ) => {
 
-            fetch(this._palRestApiBaseUrlPrefix + methodName, fetchOptions).then(function (response) {
+            fetch(this._palRestApiBaseUrlPrefix + methodName, fetchOptions).then( async (response) => {
                 if (response.status !== 200 ) {
                     if( response.status === 401 && enableRelogin === true ) {
                         const p = this_._reloginAsync({retryCount:RELOGIN_RETRY_COUNT});
@@ -322,8 +527,12 @@ export default class PalRestApi{
                         } );
                     }
                     else {
-                        console.error("Failed to call PAL REST API method(Response status is not 200). response=", response);
-                        reject(response);
+                        console.error("Failed to call PAL REST API method(Response status is not 200). response=", response );
+                        const message =  await response.text();
+                        const err = new Error(message);
+                        err.status = response.status;
+                        reject(err);
+                        //reject(response);
                     }
                 } else {
                     const pJson = response.json();

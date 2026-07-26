@@ -18,9 +18,18 @@ export default class LegacyButtonEditorSubWidgetSettings{
         this._LegacyButtonEditorSubWidgetData = legacyButtonEditorSubWidgetData;
     }
 
+    getLegacyButtonEditorSubWidgetData(){
+        return this._LegacyButtonEditorSubWidgetData;
+    }
+
     //!abstract
     getRenderJsx(){
         throw new Error("Not implemented.");
+    }
+
+    //!virtual
+    onLegacyButtonEditorSubWidgetSettingsChangedOther(){
+
     }
 
     _onOkSelectIconModal(selectIconModalAsCaller, selectedIconValue, selectedIconName ){
@@ -204,47 +213,47 @@ export default class LegacyButtonEditorSubWidgetSettings{
     _onFormIconSelected( icon, iconName ){
         this._LegacyButtonEditorSubWidgetData.setIcon( icon );
         this._LegacyButtonEditorSubWidgetData.setIconName( iconName );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeFgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setFgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeBgColor( color ){
         this._LegacyButtonEditorSubWidgetData.setBgColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeOuterBorderColor( color ){
         this._LegacyButtonEditorSubWidgetData.setOuterBorderColor(color);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeOuterBorderRadius( n ){
         this._LegacyButtonEditorSubWidgetData.setOuterBorderRadius(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeOuterBorderThickness( n ){
         this._LegacyButtonEditorSubWidgetData.setOuterBorderThickness(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeFontSize( n ){
         this._LegacyButtonEditorSubWidgetData.setFontSize(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeIconWidth( n ){
         this._LegacyButtonEditorSubWidgetData.setIconWidth(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeIconHeight( n ){
         this._LegacyButtonEditorSubWidgetData.setIconHeight(n);
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
 }

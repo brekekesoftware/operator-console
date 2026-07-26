@@ -181,9 +181,9 @@ export default class PhonebookContactInfozInfoView extends React.Component {
         this._PbSummaryArray.length = 0;
         const getContactOptions = {
             methodName : "getContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : aid
-            })
+            }
         };
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const promise = oc.getPalRestApi().callPalRestApiMethodAsync(getContactOptions);
@@ -271,8 +271,8 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
         const getPhonebooksOptions ={
             methodName : "getPhonebooks",
-            // methodParams : JSON.stringify({
-            // }),
+            // methodParams : {
+            // },
         }
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const pbSummaryArray = await oc.getPalRestApi().callPalRestApiMethodAsync( getPhonebooksOptions ).catch( (resOrError) =>{
@@ -408,7 +408,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
         const setContactOptions = {
             methodName : "setContact",
-            methodParams : JSON.stringify(oMethodParams)
+            methodParams : oMethodParams
         };
 
 
@@ -502,6 +502,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
     _deleteContact(){
         const oc = BrekekeOperatorConsole.getStaticInstance();
+        const aid = this.state.pbContactInfo.getAid();
         const isShared = this.state.pbContactInfo.getIsShared() === true;
         const isAdmin = oc.getIsAdmin();
         const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
@@ -527,12 +528,11 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             }
         };
 
-        const aid = this.state.pbContactInfo.getAid();
         const deleteContactOptions = {
             methodName : "deleteContact",
-            methodParams : JSON.stringify({
+            methodParams : {
                 aid : aid
-            }),
+            },
             onSuccessFunction : (ret) =>{
                 let bSuccess = false;
                 const arSucceeded = ret["succeeded"];
@@ -692,7 +692,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
                     <tr>
                         <td>
                             <div className={"autoDialView_ver2_tableParent"} style={{maxHeight:"500px"}}>
-                                <table className="defaultContentTable">
+                                <table className="defaultContentTable sideTable">
                                     <thead>
                                     <tr>
                                         <th colSpan="2" className="displayNameTitleTh" style={{textTransform: "unset",height:"19px"}}>

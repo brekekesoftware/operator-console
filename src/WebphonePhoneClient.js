@@ -8,11 +8,21 @@ import WebphoneCallInfos from "./WebphoneCallInfos";
 import {reaction} from "mobx";
 import BrekekeOperatorConsole from "./index";
 import Util from "./Util";
+import ObjectUrlCaches from "./ObjectUrlCaches";
 
+class WebphoneInvalidDeviceTokenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "WebphoneInvalidDeviceTokenError";
+  }
+}
+
+const RINGTONE_OBJECT_URL_CACHE_TIMELIMIT_MILLIS = 6 * 60 * 60 * 1000;
 export default class WebphonePhoneClient  extends APhoneClient {
     constructor( options  ) {
         super( options );
         this._isPalReady = false;
+        this._ObjectUrlCachesForRingtone = new ObjectUrlCaches();
 
         const options_ = {...options}
         options_["phoneClient"] = this;
@@ -22,9 +32,25 @@ export default class WebphonePhoneClient  extends APhoneClient {
 		this._WebrtcclientSessionStatusChangedFunction = ( session ) =>{
 			this._onWebrtcclientSessionStatusChanged(session);
 		};
-
-
+		this._RingtoneUrls = {};	//{sessionId, {ringtoneUrl:ringtoneUrl, timeoutId:timeoutId }
+		this._RingtoneUrlRemoveTimeoutIds = new Array();
     }
+	
+	_deinitRingtoneUrlFromSessionId( sessionId ){
+		const obj = this._RingtoneUrls[ sessionId ];
+		if( !obj ){
+			return false;
+		}
+		const timeoutId = obj["timeoutId"];
+		clearTimeout(timeoutId);
+
+		delete this._RingtoneUrls[ sessionId ];
+		const timeoutIdIndex = this._RingtoneUrlRemoveTimeoutIds.indexOf( timeoutId );
+		if( timeoutIdIndex !== -1 ){
+			this._RingtoneUrlRemoveTimeoutIds.splice( timeoutIdIndex, 1 );
+		}
+		return true;
+	}
 
     /**
      *  override method
@@ -81,23 +107,182 @@ export default class WebphonePhoneClient  extends APhoneClient {
         return this.pal.call_pal('barge', bargeOptions);
     }
 	
+	_getCallObjectFromSessionId(sessionId) {
+		  const ctx = this._webphone.getCurrentAccountCtx();	//!cost //!overhead
+		  const callObject = ctx.call.calls.find(c => c.id === sessionId);
+		  return callObject;
+	}
+	
+	//!ex. my_tenant_111_222_phone4_webphone
+	static _isUserFromWebphoneUser( sWebphoneUser , tenant, user ){
+		const iTenantWithUnderscore = tenant.length + 1;	//+1 is _
+		if( sWebphoneUser.length <= iTenantWithUnderscore ){
+			return null;
+		}
+
+		const iPhone = sWebphoneUser.lastIndexOf("_phone");
+		if( iPhone === -1 ){
+			return null;
+		}
+		
+		const sUser = sWebphoneUser.substring( iTenantWithUnderscore, iPhone );
+		const bSame = sUser === user;
+		return bSame;
+	}
+	
 	_onWebrtcclientSessionStatusChanged( session ){
 	    //const headers = session.rtcSession._request.headers;
+		if( session.incomingMessage?.method === "INVITE" ){
+			//const callObject = this._getCallObjectFromSessionId( session.sessionId );	//!commentOut currently return undefined
+			const sData = session.incomingMessage.data;
+			if( sData ){
+				
+				//const sToUser = session.incomingMessage.to?._uri?._user;	//!ex. t1_888_phone4_webphone
+				//if( sToUser ){
+					//const oc = BrekekeOperatorConsole.getStaticInstance();
+					//const loggedinTenant = oc.getLoggedinTenant();
+					//const loggedinUser = oc.getLoggedinUsername();
+					//const bUser = WebphonePhoneClient._isUserFromWebphoneUser( sToUser, loggedinTenant, loggedinUser );
+					//if( bUser ){
+						const iFrom = sData.indexOf("\r\nX-Ringtone:");
+						if( iFrom !== -1 ){
+							const iFromStart = iFrom + 13;
+							let iEnd = sData.indexOf("\r\n", iFromStart );
+							if( iEnd === -1 ){
+								iEnd = sData.length - 1;
+							}
+							const sRingtoneUrl = sData.substring(iFromStart,iEnd).trim();
+							if( sRingtoneUrl ){
+								//callObject["RingtoneUrl_OperatorConsole_brekeke"] = sRingtoneUrl;
+								const sessionId = session.sessionId;
+								
+								//const timeoutIdIndex = this._RingtoneUrlRemoveTimeoutIds.length;
+								const timeoutId = setTimeout( () => {
+									const timeoutIdIndex = this._RingtoneUrlRemoveTimeoutIds.indexOf( timeoutId );
+									if( timeoutIdIndex !== -1 ){
+										this._RingtoneUrlRemoveTimeoutIds.splice( timeoutIdIndex, 1 );
+									}
+									delete this._RingtoneUrls[sessionId];
+								}, 60000 );
+								this._RingtoneUrls[ sessionId ] = {ringtoneUrl:sRingtoneUrl,timeoutId:timeoutId};
+								this._RingtoneUrlRemoveTimeoutIds.push( timeoutId );							
+							}
+						}
+					//}
+				//}
+			}
+		}
+		else{
+			const bCancel = session.incomingMessage?.method === "CANCEL" && session.sessionStatus === "terminated";
+			if( bCancel ){
+				const callObject = this._getCallObjectFromSessionId( session.sessionId );
+				const displayName = callObject.getDisplayName();
+				let callInfo;
+				if( callObject ){
+					callInfo = this._webphoneCallInfos.getCallInfoFromCallObject( callObject );
+				}
+				if( callInfo ){
+					//const imdp = new IncomingMessageDataParser();	//!cost new //!overhead new
+					//imdp.parse( session, callObject);
+					//imdp.getFrom()
+					
+					//parse to(=Responder)
+					//
+					
+					const sData = session.incomingMessage?.data;	//ex. "CANCEL sip:qephopju@e300rl0ggplo.invalid;transport=ws SIP/2.0\r\nVia: SIP/2.0/WSS 127.0.0.1:10081;branch=z9hG4bK3b851718b3b4c-30-18a5cd\r\nFrom: \"666\" <sip:666@127.0.0.1:10081>;tag=b97d9f585p\r\nTo: <sip:t1_888_phone4_webphone@127.0.0.1:10081>\r\nMax-Forwards: 70\r\nCall-ID: 893144fe-daaa8d0f-98b01187-51a98418\r\nUser-Agent: Brekeke SIP Server\r\nCSeq: 1 CANCEL\r\nReason: SIP ;cause=200 ;text=\"Call completed by 777\"\r\nContent-Length: 0\r\n\r\n"
+					if( sData ){
+						const iReason = sData.indexOf("\r\nReason:");
+						if( iReason !== -1 ){
+							const iCallFrom = sData.indexOf( "\"Call completed by ", iReason + 9 );
+							if( iCallFrom !== -1 ){
+								const iCallToWithEncloserTo = sData.indexOf(")\"\r\n", iCallFrom + 19 );
+								if( iCallToWithEncloserTo !== -1 ){
+									const sResponderBase = sData.substring( iCallFrom + 19, iCallToWithEncloserTo );
+
+									let sResponder;
+									if( sResponderBase ){
+										const iCallToWithEncloserFrom = sResponderBase.lastIndexOf("(");
+										
+										if( iCallToWithEncloserFrom === -1 ){
+											sResponder = sData.substring(iCallFrom + 19, iCallToWithEncloserTo + 1 );
+										}
+										else{
+											sResponder = sResponderBase.substring( 0, iCallToWithEncloserFrom );
+										}
+									}
+									else{
+										sResponder = sResponderBase;
+									}
+									callInfo.setResponder(sResponder);
+								}
+								else{
+									const iCallTo = sData.indexOf("\"\r\n", iCallFrom + 19 );
+									if( iCallTo !== -1 ){
+										const sResponder = sData.substring(iCallFrom + 19, iCallTo );
+										callInfo.setResponder(sResponder);
+									}
+								}
+							}
+						}
+					}
+			
+				}
+				else{
+					console.warn("The call info could not be obtained from the call object, so the answerer of the group call will not be recorded.");
+				}
+				
+			}
+		}
+
+		
 	}
 
+    //getObjectUrlCachesForRingtone(){
+		//return this._objectUrlCachesForRingtone;
+    //}
+
+	_deinitRingtoneUrls(){
+		for( let i = 0; i < this._RingtoneUrlRemoveTimeoutIds.length; i++ ){
+			const timeoutId = this._RingtoneUrlRemoveTimeoutIds[i];
+			clearTimeout(timeoutId);
+		}
+		this._RingtoneUrlRemoveTimeoutIds.splice(0);
+		Object.keys(this._RingtoneUrls).forEach(key => delete this._RingtoneUrls[key]);
+	}
 
     /**
      *  override mothod
      * @param options
      */
-    initPhoneClient( options, newSystemSettingsCoreData ){
-        super.initPhoneClient( options );
+    async initPhoneClient( options, newSystemSettingsCoreData, newUserSettingsCoreData = null ){
+        //const options = structuredClone( optionsOrg );
+        await super.initPhoneClient( options );
+
+        this._ObjectUrlCachesForRingtone.clearObjectUrlCaches();
+		this._deinitRingtoneUrls();
+
+		const oc = BrekekeOperatorConsole.getStaticInstance();
+		const userSettingsCoreData = newUserSettingsCoreData ? newUserSettingsCoreData : oc.getUserSettingsData();
+		const phoneIndex = userSettingsCoreData["phoneIndex"];
+        //const phoneIndex = newSystemSettingsCoreData.phoneIndex;
+        if( Number.isInteger( phoneIndex ) && phoneIndex !== -1 ) {
+            options["phoneIndex"] = phoneIndex;
+        }
+
+        const ocVersion = BrekekeOperatorConsole.BREKEKE_OPERATOR_CONSOLE_VERSION;
+        const currentVersion = window.Brekeke.Phone.getCurrentVersion();
+        const webphoneVersion = currentVersion.webphone;
+        const jssipVersion = currentVersion.jssip;
+
+        const useragent = "Brekeke Operator Console " + ocVersion + ",Brekeke Phone for Web " + webphoneVersion + ",JsSIP " + jssipVersion;
+        const useragentProduct = "Brekeke Phone for Web " + webphoneVersion + ",Brekeke Operator Console " + ocVersion + ",JsSIP " + jssipVersion;
 
         const eBrOcPhone = document.getElementById('brOCPhone');
         const desktopNotificationInterval = newSystemSettingsCoreData.desktopNotificationInterval;
+
         const args = {
             autoLogin: true,
-            clearExistingAccounts: true,
+            clearExistingAccount: true,
             palEvents: [
                 'notify_serverstatus',
                 'onClose',
@@ -111,13 +296,25 @@ export default class WebphonePhoneClient  extends APhoneClient {
             'webphone.pal.param.user': '*',
             'webphone.pal.param.line': '*',
             'webphone.pal.param.park': '*',
-            notificationInterval : desktopNotificationInterval
-            //dontShowNotificationIfFocusing : true
+            notificationInterval : desktopNotificationInterval,
+            //dontShowNotificationIfFocusing : true,
+            'webphone.useragent': useragent,
+            'webphone.http.useragent.product': useragentProduct,
+			//notificationCallCompletedElseWhere: false,
         };
 
         this._webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
 
-        const onInitSuccessFunction = options["onInitSuccessFunction"];
+		const onInitSuccessFunction = options["onInitSuccessFunction"];
+		this.notify_serverstatus = async (e) => {
+			console.log('pal.notify_serverstatus', e);
+			if (e?.status === 'active') {
+				await this._initialize( onInitSuccessFunction, newUserSettingsCoreData );
+			}
+			this._OperatorConsoleAsParent.onPalNotifyServerstatusByWebphonePhoneClient(e);
+		}
+		this._webphone.on("pal.notify_serverstatus", this.notify_serverstatus );
+
         const ctx = this._webphone.getCurrentAccountCtx();
         let language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
         if( language !== "ja"){
@@ -153,7 +350,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._webphone.on("onclose", this._onWebphoneOnclose  );
 
         const this_ = this;
-        this._webphone.on("webrtcclient", function( webrcclient ) {
+        this._webphone.on("webrtcclient", async ( webrcclient ) => {
             this_._webphone.removeAllListeners("webrtcclient");
 			if( this_._webrtcclient ){
 				this_._webrtcclient.removeEventListener("sessionStatusChanged", this_._WebrtcclientSessionStatusChangedFunction );
@@ -187,17 +384,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
             console.log('call_end', c);
             this._webphoneCallInfos.onEndCallByPhoneClient( c.id );
         })
-        this.notify_serverstatus = e => {
-            console.log('pal.notify_serverstatus', e);
-
-            if (e?.status === 'active' ) {
-                //const staccount = this._webphone.getCurrentAccount();
-                this._initialize( onInitSuccessFunction );   //initialize
-            }
-            this._OperatorConsoleAsParent.onPalNotifyServerstatusByWebphonePhoneClient(e);
-        }
-        this._webphone.on("pal.notify_serverstatus", this.notify_serverstatus );
-
 
         this._webphone.on('pal', ( pal) => {
 
@@ -222,7 +408,13 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 //this.old_notify_status = pal.notify_status
                 //pal.notify_status = this.notify_status;
                 this._webphone.on('pal.notify_status', this.notify_status);
-
+				
+				//Not support
+				//this.notify_voicemail = (e) =>{
+                    //console.log('pal.notify_voicemail', e);					
+				//}
+                //this._webphone.on('pal.notify_voicemail', this.notify_voicemail);
+				
                 // NOTE: currently unused, Shin said registered events are not ready yet
                 // var old_notify_registered = pal.notify_registered
                 // pal.notify_registered = e => {
@@ -289,6 +481,62 @@ export default class WebphonePhoneClient  extends APhoneClient {
 
             //this._initialize( account, pal );   //initialize  for new webphone 2023/04/10~
         } /* ~this._webphone.on( */ )  //~this._webphone.on
+
+        const tenant = oc.getLoginTenantname();
+        const user = oc.getLoginUsername();
+        const sDeviceTokenKey = "br+dtoken+" + tenant + "+" + user;
+        const sDeviceToken = window.localStorage.getItem(sDeviceTokenKey);
+		if( sDeviceToken ){
+			const onInitFailFunction = options["onInitFailFunction"];
+			//if( sDeviceToken ){
+            const params = {
+                tenant : tenant,
+                user : user,
+                hostname : oc.getLoginHostname(),
+                port : oc.getLoginPort(),
+                token : sDeviceToken
+            };
+            const sResult = await this._webphone.setDeviceToken(params);
+            if( !sResult.ok ){
+                const err = new WebphoneInvalidDeviceTokenError( i18n.t("The_device_token_required_for_MFA_is_invalid~") );
+                onInitFailFunction(err);
+                return;
+            }
+			// }
+			// else{
+			// 	const err = new WebphoneInvalidDeviceTokenError( i18n.t("The_device_token_required_for_MFA_is_missing~") );
+			// 	onInitFailFunction(err);
+			// 	return;
+			// }
+		}
+
+        // if( oc.getMfaRequired() === true ){
+		// 	const onInitFailFunction = options["onInitFailFunction"];
+		// 	const tenant = oc.getLoginTenantname();
+		// 	const user = oc.getLoginUsername();
+		// 	const sDeviceTokenKey = "br+dtoken+" + tenant + "+" + user;
+		// 	const sDeviceToken = window.localStorage.getItem(sDeviceTokenKey);
+		// 	if( sDeviceToken ){
+		// 		const params = {
+		// 			tenant : tenant,
+		// 			user : user,
+		// 			hostname : oc.getLoginHostname(),
+		// 			port : oc.getLoginPort(),
+		// 			token : sDeviceToken
+		// 		};
+		// 		const sResult = await this._webphone.setDeviceToken(params);
+		// 		if( !sResult.ok ){
+		// 			const err = new WebphoneInvalidDeviceTokenError( i18n.t("The_device_token_required_for_MFA_is_invalid~") );
+		// 			onInitFailFunction(err);
+		// 			return;
+		// 		}
+		// 	}
+		// 	else{
+		// 		const err = new WebphoneInvalidDeviceTokenError( i18n.t("The_device_token_required_for_MFA_is_missing~") );
+		// 		onInitFailFunction(err);
+		// 		return;
+		// 	}
+		// }
     }
 
     statusEvents = [];
@@ -321,7 +569,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
         for (const e of this.statusEvents) {
             this._webphoneCallInfos.onFlushPalNofityStatusEventByWebphonePhoneClient(e);
         }
-
     }
 
     _flushExtensionStatusEvents(){
@@ -351,7 +598,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                     status = 'ringing';
                     break;
                 default:
-                    break;
+                    continue;
             }
 
             // //!temp
@@ -382,11 +629,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 setProperty(extensionsStatus, path, status);
                 this._OperatorConsoleAsParent.getExtensionsStatusInstance().onSetExtensionStatusProperty( this, extensionsStatus, path, status, e );    //!bad //!fixit
             }
-
-            // const options = {
-            //     event : e
-            // }
-            // this._OperatorConsoleAsParent.onPalNotifyStatus(options);   //!bad //!fixit
         }
 
         this._OperatorConsoleAsParent.setExtensionsStatusAndMonitoringExtension( extensionsStatus, monitoringExtension );
@@ -429,41 +671,140 @@ export default class WebphonePhoneClient  extends APhoneClient {
         //}
 
         //set custom incoming sound.
-        const ringtoneInfos2 = this._OperatorConsoleAsParent.getSystemSettingsData().getRingtoneInfos2();
-
         const brOCCallObjectStatus = OCUtil.getCallStatusFromWebphoneCallObject( call  );
         if(  brOCCallObjectStatus === BROC_BROCCALLOBJECT_CALL_STATUSES.incoming  ) {
-            let incomingRingtone = "";
-            //set custom incoming sound.
-            if (ringtoneInfos2 && Array.isArray(ringtoneInfos2)) {
-                for (let i = 0; i < ringtoneInfos2.length; i++) {
-                    const ringtoneInfo = ringtoneInfos2[i];
-                    const caller = ringtoneInfo["ringtoneCaller"];
-                    const matches = call.partyNumber.match(caller);
-                    if (matches) {
-                        const resType = ringtoneInfo["ringtoneResourceType"];
+			//const sessionId = call["id"];
+			const sessionId = call.rawSession.sessionId;
+			
+			const oRingtoneUrl = this._RingtoneUrls[ sessionId ];
+			if( oRingtoneUrl ){
+				//Set incoming sound from INVITE X-Ringtone header.
+				const sRingtoneUrl = oRingtoneUrl["ringtoneUrl"];
+				this._webphone.setIncomingRingtone( sRingtoneUrl );
+				const bRemoved = this._deinitRingtoneUrlFromSessionId( sessionId );
+			}
+			else{
+				
+				const incomingRingtoneFromUserSettings = this._getCustomRingtoneFromUserSettings( call.partyNumber );
+				let incomingRingtone;
+				if( incomingRingtoneFromUserSettings ) {
+					incomingRingtone = incomingRingtoneFromUserSettings;
+				}
+				else{
+					incomingRingtone = this.getCustomRingtoneFromSystemSettings(call.partyNumber);
+				}
 
-                        if( resType === "preset"){
-                            const presetFilename = ringtoneInfo["preset"];
-                            const fileInfos = BrekekeOperatorConsole.getStaticInstance().getPresetRingtoneSoundFilesInfos();
-                            const fileInfo = fileInfos.getFileInfoByFilename( presetFilename );
-                            if( fileInfo ) {
-                                const fileUrlOrPath = fileInfo["urlOrPath"];
-                                incomingRingtone = fileUrlOrPath;
-                            }
-                        }
-                        else if( resType === "urlOrRelativePath" ){
-                            const ringtoneFilepathOrFileurl = ringtoneInfo["urlOrRelativePath"];
-                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
-                        }
-                        break;
-                    }
-
-                }
-            }
-            this._setIncomingRingtone(incomingRingtone);
+				//Set custom incoming sound.
+				this._webphone.setIncomingRingtone( incomingRingtone );
+			}
         }
 
+    }
+
+    _getCustomRingtoneFromUserSettings( partyNumber ){
+        const userSettings = BrekekeOperatorConsole.getStaticInstance().getUserSettingsData();
+		const ringtoneInfos2 = userSettings.getRingtoneInfos2Array();
+		
+		let incomingRingtone;
+		if( !ringtoneInfos2 || !Array.isArray( ringtoneInfos2 ) ){
+			incomingRingtone = "";
+		}
+		else{
+            for (let i = 0; i < ringtoneInfos2.length; i++) {
+                const ringtoneInfo = ringtoneInfos2[i];
+                const caller = ringtoneInfo["ringtoneCaller"];
+                const matches = partyNumber.match(caller);
+                if (matches) {
+                    const resType = ringtoneInfo["ringtoneResourceType"];
+
+                    if( resType === "preset"){
+                        const presetFilename = ringtoneInfo["preset"];
+                        const fileInfos = BrekekeOperatorConsole.getStaticInstance().getPresetRingtoneSoundFilesInfos();
+                        const fileInfo = fileInfos.getFileInfoByFilename( presetFilename );
+                        if( fileInfo ) {
+                            const fileUrlOrPath = fileInfo["urlOrPath"];
+                            //incomingRingtone = fileUrlOrPath;
+                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( fileUrlOrPath, this._RootURLString );
+                        }
+                    }
+                    else if( resType === "urlOrRelativePath" ){
+                        const ringtoneFilepathOrFileurl = ringtoneInfo["urlOrRelativePath"];
+                        incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
+                    }
+                    else if( resType === "uploadedFile" ){
+						const fileId = ringtoneInfo["uploadedFileId"];
+						if( fileId ){
+							const files = BrekekeOperatorConsole.getStaticInstance().getUserSettingsRingtoneFiles();
+							const fileDataArray = files.getRingtoneFileDataArray();
+							if( Array.isArray( fileDataArray ) ){
+								for( let k = 0; k < fileDataArray.length; k++ ){
+									const fileData = fileDataArray[k];
+									const fileDatazFileId = fileData["id"];
+									if( fileDatazFileId === fileId ){
+										const file = fileData["file"];
+										let cache = this._ObjectUrlCachesForRingtone.getObjectUrlCache( fileDatazFileId );
+										if( cache ){
+											const timelimitMillis = cache.getTimelimitMillis();
+											cache.setTimelimitMillis( timelimitMillis );	//reset timelimit
+										}
+										else{
+											cache = this._ObjectUrlCachesForRingtone.createObjectUrlCache( file, fileDatazFileId, RINGTONE_OBJECT_URL_CACHE_TIMELIMIT_MILLIS );
+										}
+										const objectUrl = cache.getObjectUrl();
+										incomingRingtone = objectUrl;
+										
+										break;
+									}
+								}
+								if( !!incomingRingtone ){
+									break;
+								}
+							}
+						}
+                    }
+                    break;
+				}	
+				
+			}
+		}
+		return incomingRingtone;
+    }
+
+    getCustomRingtoneFromSystemSettings( partyNumber ){
+        let incomingRingtone = "";
+        const ringtoneInfos2 = this._OperatorConsoleAsParent.getSystemSettingsData().getRingtoneInfos2();
+        if (ringtoneInfos2 && Array.isArray(ringtoneInfos2)) {
+            for (let i = 0; i < ringtoneInfos2.length; i++) {
+                const ringtoneInfo = ringtoneInfos2[i];
+                const caller = ringtoneInfo["ringtoneCaller"];
+                const matches = partyNumber.match(caller);
+                if (matches) {
+                    const resType = ringtoneInfo["ringtoneResourceType"];
+
+                    if( resType === "preset"){
+                        const presetFilename = ringtoneInfo["preset"];
+                        const fileInfos = BrekekeOperatorConsole.getStaticInstance().getPresetRingtoneSoundFilesInfos();
+                        const fileInfo = fileInfos.getFileInfoByFilename( presetFilename );
+                        if( fileInfo ) {
+                            const fileUrlOrPath = fileInfo["urlOrPath"];
+	                        //incomingRingtone = fileUrlOrPath;
+                            incomingRingtone = OCUtil.getUrlStringFromPathOrUrl( fileUrlOrPath, this._RootURLString );
+                        }
+                    }
+                    else if( resType === "urlOrRelativePath" ){
+                        const ringtoneFilepathOrFileurl = ringtoneInfo["urlOrRelativePath"];
+                        incomingRingtone = OCUtil.getUrlStringFromPathOrUrl(ringtoneFilepathOrFileurl, this._RootURLString);
+                    }
+                    else if( resType === "uploadedFile" ){
+                        //This cannot be configured in the system settings, so do nothing
+                        const temp = 0;
+                    }
+                    break;
+                }
+
+            }
+            return incomingRingtone;
+        }
     }
 
     // /**
@@ -596,7 +937,9 @@ export default class WebphonePhoneClient  extends APhoneClient {
      */
     deinitPhoneClient(){
         this._isPalReady = false;
-		
+
+		this._deinitRingtoneUrls();
+
 		if( this._webrtcclient ){
 			this._webrtcclient.removeEventListener("sessionStatusChanged", this._WebrtcclientSessionStatusChangedFunction );
 		}
@@ -642,8 +985,14 @@ export default class WebphonePhoneClient  extends APhoneClient {
         //     this._windowBlurEventListener = null;
         // }
 
+        this._ObjectUrlCachesForRingtone.clearObjectUrlCaches();
+
         super.deinitPhoneClient();
     }
+
+	getObjectUrlCachesForRingtone(){
+		return this._ObjectUrlCachesForRingtone;
+	}
 
     /**
      *  overload method
@@ -685,42 +1034,51 @@ export default class WebphonePhoneClient  extends APhoneClient {
     /**
      *  overload method
      * @param tenant
-     * @param talker_id
      * @param signal
+     * @param callInfo
      */
     sendDTMF( tenant, signal, callInfo ){
-		//const oc = BrekekeOperatorConsole.getStaticInstance();
-		//const systemSettingsData = oc.getSystemSettingsData();
-		//let dtmfSendMode = systemSettingsData.getDtmfSendMode();
-		//if( !dtmfSendMode && dtmfSendMode !== 0 ){
-		//	dtmfSendMode = 0;	//0 = SIP INFO
-		//}
-		//
-		//if( dtmfSendMode === 2 ){
-		//	const bCanInsertDTMF = callInfo.canInsertDTMF();
-		//	if( !bCanInsertDTMF ){
-        //        Notification.warning({ key: 'canNotInsetDTMF', message: i18n.t('The_DTMF_send_mode_is_set_to_2_but~'), duration: 10 });
-		//		dtmfSendMode = 0;
-		//	}
-		//}
-		//
-		//const sessionId = callInfo.getSessionId();
-		//
-		//this._webrtcclient.dtmfSendMode = dtmfSendMode;
-		//this._webrtcclient.sendDTMF( signal, sessionId );
+		const oc = BrekekeOperatorConsole.getStaticInstance();
 
-		const talker_id = callInfo.getPbxTalkerId();
-        const sendDTMFOptions =  {
-            signal: signal,
-            tenant: tenant,
-            talker_id: talker_id
-        };
-        const promise = this.pal.call_pal('sendDTMF', sendDTMFOptions );
-        promise.then( res =>{
-        }).catch( err =>{
-            console.error("Failed to send DTMF err=" , err );
-            Notification.error({message: i18n.t("failedToSendDTMF") + "\r\n" +  err, duration:0 });
-        });
+		const userSettingsData = oc.getUserSettingsData();
+		let dtmfSendMode = userSettingsData.getDtmfSendMode();
+		if( !dtmfSendMode && dtmfSendMode !== 0 ){
+			dtmfSendMode = -100000000;	//-100000000 = Use layout settings
+		}
+		
+		if( dtmfSendMode === -100000000 ){
+			const systemSettingsData = oc.getSystemSettingsData();
+			dtmfSendMode = systemSettingsData.getDtmfSendMode();
+			if( !dtmfSendMode && dtmfSendMode !== 0 ){
+				dtmfSendMode = 0;	//0 = SIP INFO
+			}
+		}
+		
+		if( dtmfSendMode === 2 ){
+			const bCanInsertDTMF = callInfo.canInsertDTMF();
+			if( !bCanInsertDTMF ){
+                Notification.warning({ key: 'canNotInsetDTMF', message: i18n.t('The_DTMF_send_mode_is_set_to_2_but~'), duration: 10 });
+				dtmfSendMode = 0;
+			}
+		}
+		
+		const sessionId = callInfo.getSessionId();
+
+		this._webrtcclient.dtmfSendMode = dtmfSendMode;
+		this._webrtcclient.sendDTMF( signal, sessionId );
+
+        //const sendDTMFOptions =  {
+        //    signal: signal,
+        //    tenant: tenant,
+        //    talker_id: talker_id
+        //};
+        //const promise = this.pal.call_pal('sendDTMF', sendDTMFOptions );
+        //promise.then( res =>{
+		//
+        //}).catch( err =>{
+        //    console.error("Failed to send DTMF err=" , err );
+        //    Notification.error({message: i18n.t("failedToSendDTMF") + "\r\n" +  err, duration:0 });
+        //});
     }
 
     /**
@@ -766,7 +1124,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
     //     return promise;
     // }
 
-    _initialize(  onInitSuccessFunction ){
+    async _initialize(  onInitSuccessFunction, newUserSettingsCoreData = null ){
         window.focus();  //for document.hasFocus() should true.
 
         // prompt for permission if needed
@@ -799,7 +1157,9 @@ export default class WebphonePhoneClient  extends APhoneClient {
             const intervalId = setInterval( ()=>{
                 if( this._webrtcclient ){
                     clearInterval( intervalId );
-                    onInitSuccessFunction( oExtensions );
+                    if( onInitSuccessFunction ){
+						onInitSuccessFunction( oExtensions );
+					}
                 }
             }, 1000);
         })
@@ -815,6 +1175,37 @@ export default class WebphonePhoneClient  extends APhoneClient {
         // };
         // window.addEventListener("blur", this._windowBlurEventListener );
 
+				
+		const oc = BrekekeOperatorConsole.getStaticInstance();
+		const userSettingsCoreData = newUserSettingsCoreData ? newUserSettingsCoreData : oc.getUserSettingsData().getData();
+		const webphone = this._webphone;
+		
+		const [camerasData, microphonesData, speakersData] = await Promise.all([
+		  webphone.getAvailableCameras(),
+		  webphone.getAvailableMicrophones(),
+		  webphone.getAvailableSpeakers(),
+		]);
+		
+		const camera = userSettingsCoreData["webphone_camera"];
+		let pCamera;
+		if( camera && camerasData && camerasData.findIndex( (cameraData) => cameraData.deviceId === camera ) !== -1 ){
+			pCamera = webphone.setVideoInputDevice( camera );
+		}
+		
+		const mic = userSettingsCoreData["webphone_microphone"];
+		let pMic;
+		if( mic && microphonesData && microphonesData.findIndex( (micData) => micData.deviceId === mic ) !== -1 ){
+			pMic = webphone.setAudioInputDevice( mic );
+		}
+		
+		const speaker = userSettingsCoreData["webphone_speaker"];
+		let pSpeaker;
+		if( speaker && speakersData && speakersData.findIndex( (speakerData) => speakerData.deviceId === speaker ) !== -1 ){
+			pSpeaker = webphone.setAudioOutputDevice( speaker );
+		}
+		
+		await Promise.all([pCamera,pMic,pSpeaker]);				
+
 
     }
 
@@ -826,17 +1217,13 @@ export default class WebphonePhoneClient  extends APhoneClient {
     //     this._isWindowFocus  = false;
     // }
 
-    _setIncomingRingtone( soundFileUrl ){
-        this._webphone.setIncomingRingtone( soundFileUrl );
-    }
-
     /**
      *  overload method
      * @param sDialing
      * @param bUsingLine
      * @returns {boolean}
      */
-    callByPhoneClient( sDialing, usingLine ){
+    callByPhoneClient( sDialing, usingLine, videoEnabled = false ){
         // if (!this._webphone) {
         //     return false;
         // }
@@ -848,7 +1235,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
         } else {
 
             const options = null;
-            const videoEnabled = false;
             const videoOptions = null;
             const exInfo = null;
 
@@ -868,4 +1254,47 @@ export default class WebphonePhoneClient  extends APhoneClient {
     //     const talkerId = aCallInfo.getPbxTalkerId();
     //     this.pal.hold({tenant:tenant,tid:talkerId}, onOkFunc, onErrorFunc );
     // }
+
+    onDisconnectByWebphoneCallInfo( callInfoAsCaller, notifyStatusEvent ){
+        const callId = callInfoAsCaller.getCallId();
+        this.getCallInfos().onEndCallByPhoneClient( callId, notifyStatusEvent );
+    }
+
+}
+
+class IncomingMessageDataParser{
+	
+	constructor(){
+		this._sFrom = undefined;
+	}
+	
+	//data ex "CANCEL sip:ncst3gu8@163mipt7mg7s.invalid;transport=ws SIP/2.0\r\nVia: SIP/2.0/WSS 127.0.0.1:10081;branch=z9hG4bK56b11e5ae646e-30-18ee71\r\nFrom: \"666name\" <sip:666@127.0.0.1:10081>;tag=b868203bfp\r\nTo: <sip:t1_888_phone4_webphone@127.0.0.1:10081>\r\nMax-Forwards: 70\r\nCall-ID: 77d95338-ae1fe86c-f8be599-c3427946\r\nUser-Agent: Brekeke SIP Server\r\nCSeq: 1 CANCEL\r\nReason: SIP ;cause=200 ;text=\"Call completed by 777\"\r\nContent-Length: 0\r\n\r\n"
+	parse( session, callObject ){
+	}
+	
+	//!Do not use //!Not tested
+	_parseFrom( session ){
+		//parse from	
+		let sFrom = session.rtcSession?._request?.from?._display_name;
+		//let sFrom = null;
+		if( !sFrom ){
+			const sData = session?.incomingMessage?.data;
+			if( sData ){
+				const iFromFrom = sData.indexOf("\r\nFrom: \"");
+				if( iFromFrom !== -1 ){
+					const iFromEnd = sData.indexOf("\"", iFromFrom + 1 ); //!limitation User names containing double quotes are not supported.
+					if( iFromEnd !== -1 ){
+						sFrom = sData.substring( iFromFrom + 1, ( iFromEnd + 1 ) - iFromFrom );
+					}
+				}
+			}
+		}
+		this._sFrom = sFrom;
+		
+	}
+	
+	//getFrom(){
+		//return this._sFrom;
+	//}
+	
 }

@@ -55,7 +55,7 @@ class CallHistory2FoTInfo{  //FoT is FREQUENCY_OF_TRANSMISSION
 export class CallHistory2 {
     constructor(operatorConsoleAsParent ) {
         this._OperatorConsoleAsParent = operatorConsoleAsParent;
-        this._CallHistoryCallInfosObject = new Object();
+        this._CallHistoryCallInfosObject = new Object();    //callInfo's UUID, CallHistory2CallInfo
         this._CallHistoryCallInfoArray = new Array();   //sortable array
         this._latestCallHistoryCallInfoArrayRefreshDate = null;   //new Date();
         this._prevSort = null;  //Set dirty
@@ -142,10 +142,10 @@ export class CallHistory2 {
         const oData = {"lines": sData};
         const setAppDataOptions = {
             methodName: "setAppData",
-            methodParams: JSON.stringify({
+            methodParams: {
                 data_id: CALLHISTORY2_CALL_HISTORIES_DATA_ID,
                 data: oData
-            }),
+            },
             onSuccessFunction: onSuccessFunction,
             onFailFunction: onFailFunction
         }
@@ -211,9 +211,9 @@ export class CallHistory2 {
     loadCallHistory2( palRestApi, onSuccessFunction, onFailFunction ){
         const getAppDataOptions = {
             methodName : "getAppData",
-            methodParams : JSON.stringify({
+            methodParams : {
                 data_id: CALLHISTORY2_CALL_HISTORIES_DATA_ID
-            }),
+            },
             onSuccessFunction : ( sJsonData ) => {
                 if( !sJsonData || sJsonData.length === 0 ){
                     this._isLoadedEvenOnce = true;
@@ -276,6 +276,8 @@ export class CallHistory2 {
                 let isIncomingColumnIndex = -1;
                 let answeredAtColumnIndex = -1;
                 let isTransferColumnIndex = -1;
+                let recIdColumnIndex = -1;
+                let responderColumnIndex = -1;
 
                 //read header line
                 const headerColumnNames = headerLine.split("\t");
@@ -303,6 +305,12 @@ export class CallHistory2 {
                             break;
                         case "isTransfer":
                             isTransferColumnIndex = i;
+                            break;
+                        case "recId":
+                            recIdColumnIndex = i;
+                            break;
+                        case "responder":
+                            responderColumnIndex = i;
                             break;
                         default:
                             console.warn("Unknown header value('" + headerColumnName + "') was found. Processing of this value will be skipped.");
@@ -343,7 +351,9 @@ export class CallHistory2 {
                         isIncomingColumnIndex,
                         answeredAtColumnIndex,
                         line,
-                        isTransferColumnIndex
+                        isTransferColumnIndex,
+                        recIdColumnIndex,
+                        responderColumnIndex
                     };
                     const ch2CallInfo = CallHistory2CallInfo.createTryFromLineForCallHistory2( options );
                     if( ch2CallInfo === null ) {
@@ -531,14 +541,14 @@ export class CallHistory2 {
     }
 
     //call end
-    onRemoveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
+    onRemoveCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi, notifyStatusEvent ){
         const callInfoUuid = callInfo.getCallInfoUuid();
 
         const callHistory2CallInfo = this._CallHistoryCallInfosObject[ callInfoUuid ];
         if( !callHistory2CallInfo ) {
             return; //This will be null if the number of saves exceeds the maximum.
         }
-        callHistory2CallInfo.onRemoveCallInfoForCallHistory2CallInfo( this, callInfo );
+        callHistory2CallInfo.onRemoveCallInfoForCallHistory2CallInfo( this, callInfo, notifyStatusEvent );
         //delete this._CallHistoryCallInfosObject[ callInfoUuid ];
 
         //const funcIsCallInfoUuid = ( item ) => item === callInfoUuid;
@@ -622,6 +632,11 @@ export class CallHistory2 {
         this._FlushSave( palRestApi );
 
     }
+	
+	// getCallHistoryCallInfoFromCallInfoUuid( uuid ){
+	// 	const callHistoryCallInfo = this._CallHistoryCallInfosObject[ uuid ];
+	// 	return callHistoryCallInfo;
+	// }
 
 
 }

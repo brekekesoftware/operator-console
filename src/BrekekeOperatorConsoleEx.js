@@ -158,8 +158,14 @@ export default  class BrekekeOperatorConsoleEx{
         return setIndex;
     }
 
-    removeOnPalNotifyStatusEventListener( index ){
-        this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( index );
+    removeOnPalNotifyStatusEventListener( indexOrFunction ){
+        const removedIndex = this._OperatorConsoleAsParent.removeOnPalNotifyStatusEventListener( indexOrFunction );
+        return removedIndex;
+    }
+
+    getOnPalNotifyStatusEventListenerIndex( function_ ){
+        const index = this._OperatorConsoleAsParent.getOnPalNotifyStatusEventListenerIndex( function_  );
+        return index;
     }
 
     getOnPalNotifyStatusEventListenerCount(){

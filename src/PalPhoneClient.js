@@ -86,13 +86,13 @@ export default class PalPhoneClient  extends APhoneClient {
      *  override mothod
      * @param options
      */
-    initPhoneClient( options, newSystemSettingsCoreData ){
+    async initPhoneClient( options, newSystemSettingsCoreData ){
 
         this.statusEvents = new Array();
         this.parkEvents = new Array();
         this.lineEvents = new Array();
 
-        super.initPhoneClient( options );
+        await super.initPhoneClient( options );
         const onInitSuccessFunction = options["onInitSuccessFunction"];
         const this_ = this;
         const initPalWrapperOptions ={
@@ -105,10 +105,12 @@ export default class PalPhoneClient  extends APhoneClient {
             },
             onInitSuccessFunction : function(){
 
+				const tenant = options.tenant;
+				const user = options.username;
 
                 const getPalOptions ={
-                    tenant : options.tenant,
-                    login_user : options.username,
+                    tenant : tenant,
+                    login_user : user,
                     login_password : options.password,
                     user : "*",
                     line: "*",
@@ -119,6 +121,13 @@ export default class PalPhoneClient  extends APhoneClient {
                     registered : "self",
                     secure_login_password : false
                 };
+				
+				const sDeviceTokenKey = "br+dtoken+" + tenant + "+" + user;
+				const sDeviceToken = window.localStorage.getItem(sDeviceTokenKey);
+				if( sDeviceToken ){
+					getPalOptions["device_token"] = sDeviceToken;
+				}
+		
                 const pal = this_._PalWrapper.getPal( getPalOptions );
                 pal.debugLevel = 2;
 
@@ -151,10 +160,12 @@ export default class PalPhoneClient  extends APhoneClient {
                                 const oExtensions = res.map(([id,name]) => ({id,name}));
                                 //this_.setState({isSigningin: false});
                                 this_._pal = pal;
-                                onInitSuccessFunction( oExtensions );
+                                if( onInitSuccessFunction ){
+									onInitSuccessFunction( oExtensions );
+								}
                             },
                             function( error ) {
-                                console.error("Faild to getExtensionProperties. error=",error);
+                                console.error("Faild to getExtensions. error=",error);
                                 pal.close();
                                 //!fixit call oninitFailFunction
                             }
@@ -254,7 +265,7 @@ export default class PalPhoneClient  extends APhoneClient {
                     status = 'ringing';
                     break;
                 default:
-                    break;
+                    continue;
             }
 
             // //!temp
@@ -525,9 +536,9 @@ export default class PalPhoneClient  extends APhoneClient {
     }, 250)
 
 
-    onDisconnectByPalCallInfo( callInfoAsCaller ){
+    onDisconnectByPalCallInfo( callInfoAsCaller, notifyStatusEvent ){
         const callId = callInfoAsCaller.getCallId();
-        this.getCallInfos().onEndCallByPhoneClient( callId );
+        this.getCallInfos().onEndCallByPhoneClient( callId, notifyStatusEvent );
     }
 
 
@@ -608,8 +619,8 @@ export default class PalPhoneClient  extends APhoneClient {
     /**
      *  overload method
      * @param tenant
-     * @param talker_id
      * @param signal
+     * @param callInfo
      */
     sendDTMF( tenant, signal, callInfo ){
 		const talker_id = callInfo.getPbxTalkerId();
@@ -712,7 +723,7 @@ export default class PalPhoneClient  extends APhoneClient {
      * @param bUsingLine
      * @returns {boolean}
      */
-    callByPhoneClient( sDialing, usingLine ){
+    callByPhoneClient( sDialing, usingLine, videoEnabled = false ){
         const user = this._OperatorConsoleAsParent.getLoggedinUsername();
         const options = {
             user : user,

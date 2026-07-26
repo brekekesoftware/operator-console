@@ -50,6 +50,8 @@ import LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton
     from "./LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton";
 import LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton
     from "./LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton";
+import LegacyButtonEditorSubWidgetSettings_voicemailButton
+    from "./LegacyButtonEditorSubWidgetSettings_voicemailButton";
 
 export default class LegacyButtonEditorSubWidgetSettingsFactory  {
 
@@ -174,6 +176,9 @@ export default class LegacyButtonEditorSubWidgetSettingsFactory  {
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleVideoCall:
                 legacyButtonEditorSubWidgetSettings = new LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton( legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.voicemail:
+                legacyButtonEditorSubWidgetSettings = new LegacyButtonEditorSubWidgetSettings_voicemailButton( legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData );
                 break;
             default:
                 throw new Error("The legacy button editor sub widget settings was not present. legacyButtonWidgetSubTypeId=" +widgetSubTypeId  );

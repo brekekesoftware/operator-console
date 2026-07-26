@@ -42,7 +42,16 @@ export default class LegacyButtonRuntimeSubWidget_keypadButton extends LegacyBut
                            () => {
                                let sDialing = BrekekeOperatorConsole.getQuickCallDialingBySymbol( symbol, oc.getCurrentScreenQuickCallWidgetSubDataFromState() );
                                if( sDialing ) {
-                                   oc.setDialingAndMakeCall( sDialing );
+								   const oc = BrekekeOperatorConsole.getStaticInstance();
+								   const bHasActiaveCall = !!oc.getCurrentCallInfo();
+								   if ( sDialing && bHasActiaveCall) {
+										//show transfer method modal.
+									   const runtimeScreenView = oc.getCurrentRuntimeScreenView_ver2();
+									   runtimeScreenView.setIsShowSelectCallingMethodModal(true, sDialing );									   
+								   }
+								   else{
+									oc.setDialingAndMakeCallWithShowCallSelectionModal( sDialing );
+								   }
                                }
                                else if( symbol ){
                                    oc.appendKeypadValue(symbol);

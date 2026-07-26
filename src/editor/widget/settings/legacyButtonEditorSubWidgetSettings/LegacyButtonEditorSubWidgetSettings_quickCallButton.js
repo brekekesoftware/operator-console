@@ -15,79 +15,79 @@ export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends
     _onChangeLabel(label){
         //const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadZero(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadZero( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadOne(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadOne( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadTwo(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadTwo( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadThree(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadThree( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadFour(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadFour( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadFive(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadFive( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadSix(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadSix( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadSeven(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadSeven( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadEight(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadEight( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadNine(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadNine( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadAsterisk(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadAsterisk( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     _onChangeKeypadSharp(e){
         const sKey = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setKeypadSharp( sKey  );
-        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().setState({rerender:true});
+        this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
     //!override

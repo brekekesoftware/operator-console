@@ -202,7 +202,7 @@ export default function EditorTabFunctionComponent(props){
             const activeIndex = tabItems.findIndex((i) => i.key === active.id);
             const overIndex = tabItems.findIndex((i) => i.key === over?.id);
             tabsData.replaceTabData( activeIndex, overIndex );
-            editorPaneAsParent.setState({rerender:true});
+            editorPaneAsParent.getEditScreenView().commitEdit();
 
             // setItems((prev) => {
             //     const activeIndex = prev.findIndex((i) => i.key === active.id);
@@ -215,7 +215,7 @@ export default function EditorTabFunctionComponent(props){
 
     const _onChangeByTabs = ( selectedKey ) =>{
         tabsData.setSelectedTabKeyAsString( selectedKey );
-        editorPaneAsParent.setState({rerender:true});
+        editorPaneAsParent.getEditScreenView().commitEdit();
     }
 
 

@@ -9,79 +9,79 @@ export default class VideoCallWindowsEditorWidgetSettings extends EditorWidgetSe
     _onChangeFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_horizontalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_horizontalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_varticalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_verticalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_blur( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_blur(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_spread( n ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_spread(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeInsideShadow_color( color ){
         const widgetData = this._getWidgetData();
         widgetData.setInsideShadow_color(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_horizontalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_horizontalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_varticalOffset( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_verticalOffset(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_blur( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_blur(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_spread( n ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_spread(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeOutsideShadow_color( color ){
         const widgetData = this._getWidgetData();
         widgetData.setOutsideShadow_color(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

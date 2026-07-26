@@ -31,7 +31,7 @@ export default class APhoneClient {
      *  virtual method
      * @param options
      */
-    initPhoneClient(options, newSystemSettingsData ) {
+    async initPhoneClient(options, newSystemSettingsData ) {
     }
 
     /**
@@ -153,7 +153,7 @@ export default class APhoneClient {
      *  abstract method
      * @param tenant
      * @param signal
-	 * @param callInfo
+     * @param callInfo
      */
     sendDTMF(tenant, signal, callInfo ) {
         throw new Error("Not implemented.");
@@ -183,7 +183,7 @@ export default class APhoneClient {
      * @param sDialing
      * @param bUsingLine
      */
-    callByPhoneClient(sDialing, bUsingLine) {
+    callByPhoneClient(sDialing, bUsingLine, videoEnabled = false ) {
         throw new Error("Not implemented.");
     }
 }

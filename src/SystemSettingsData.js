@@ -15,7 +15,7 @@ export default class SystemSettingsData {
             this._Data = {};
             this._setDefaultDatas();
         } else {
-            this.setCloneDatas(cloneSystemSettingsData);
+            this.setCloneDatasFromDataData(cloneSystemSettingsData.getData());
         }
     }
 
@@ -96,7 +96,6 @@ export default class SystemSettingsData {
         this._Data.ucChatAgentComponentEnabled = appData.ucChatAgentComponentEnabled;
         this._Data.phoneTerminal = appData.phoneTerminal;
         this._Data.extensionScript = appData.extensionScript;
-        this._camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
         this._Data.autoDialRecentDisplayOrder = appData.autoDialRecentDisplayOrder;
 		this._Data.autoDialPhonebookName = appData.autoDialPhonebookName;
         this._Data.autoDialTableHeaderFontSize = appData.autoDialTableHeaderFontSize;
@@ -110,7 +109,9 @@ export default class SystemSettingsData {
         this._Data.autoDialTabFontSize = appData.autoDialTabFontSize;
         this._Data.autoDialOtherFontSize = appData.autoDialOtherFontSize;
         this._Data.desktopNotificationInterval = appData.desktopNotificationInterval;
-		//this._Data.dtmfSendMode = appData.dtmfSendMode;
+		//this._Data.phoneIndex = appData.phoneIndex;
+		this._Data.dtmfSendMode = appData.dtmfSendMode;
+		
         initSuccessFunction();
     }
 
@@ -205,8 +206,8 @@ export default class SystemSettingsData {
         // return successCount;
     }
 
-    setSystemSettingsDataData( appDataBase, initSuccessFunction, initFailFunction  ){
-        const appData = this._formatSystemSettingsAppData(appDataBase);
+    setSystemSettingsDataData( appData, initSuccessFunction, initFailFunction  ){
+        appData = this._formatSystemSettingsAppData(appData);
 
         const startInit = this._onBeginSetSystemSettingsData( appData, initSuccessFunction, initFailFunction  );
         return startInit;
@@ -221,12 +222,10 @@ export default class SystemSettingsData {
     }
 
    _setDefaultDatas(){
-       this._camponTimeoutMillis = Campon.getDefaultCamponTimeoutMilliSeconds();
-
         this._Data.autoDialMaxDisplayCount = CallHistory.getDefaultMaxDisplayCount();
         this._Data.autoDialMaxSaveCount = CallHistory.getDefaultMaxSaveCount();
        this._Data.camponTimeoutMillis = Campon.getDefaultCamponTimeoutMilliSeconds();
-       this._Data.camponTimeoutSeconds =  this._camponTimeoutMillis / 1000;
+       this._Data.camponTimeoutSeconds =  this._Data.camponTimeoutMillis / 1000;
        this._Data.quickBusyClickToCall = true;
         this._Data.shortDials = null;
         this._Data.ringtoneInfos = null;
@@ -249,13 +248,13 @@ export default class SystemSettingsData {
        this._Data.autoDialInputFieldFontSize = undefined;
        this._Data.autoDialTabFontSize = undefined;
        this._Data.autoDialOtherFontSize = undefined;
-       this._Data.desktopNotificationInterval = 3000;  //Milliseconds
-	   //this._Data.dtmfSendMode = 0;	//0 = SIP INFO
+       this._Data.desktopNotificationInterval =  3000;  //Milliseconds
+       //this._Data.phoneIndex = undefined;
+	   this._Data.dtmfSendMode = 0;	//0 = SIP INFO
     }
 
-    setCloneDatas( srcSystemSettingsData ) {
-        this._camponTimeoutMillis = srcSystemSettingsData._camponTimeoutMillis;
-		this._Data = structuredClone( srcSystemSettingsData._Data );
+	setCloneDatasFromDataData( srcSystemSettingsDataData ){
+		this._Data = structuredClone( srcSystemSettingsDataData );
 		/*
         this._Data.autoDialMaxDisplayCount = srcSystemSettingsData._Data.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = srcSystemSettingsData._Data.autoDialMaxSaveCount;
@@ -304,7 +303,7 @@ export default class SystemSettingsData {
     }
 
     getCamponTimeoutMillis(){
-        return this._camponTimeoutMillis;
+        return this._Data.camponTimeoutMillis;
     }
 
     getUcUrl(){
@@ -391,6 +390,18 @@ export default class SystemSettingsData {
         return this._Data.autoDialOtherFontSize;
     }
 
+    //setPhoneIndex(nOrObject){
+    //    this._Data.phoneIndex = nOrObject;
+    //}
+
+    //getPhoneIndex(){
+    //    return this._Data.phoneIndex;
+    //}
+
+	getDtmfSendMode(){
+		return this._Data.dtmfSendMode;
+	}
+	
     /**
      *
      * @returns {number|*}
@@ -398,19 +409,11 @@ export default class SystemSettingsData {
     getDesktopNotificationInterval(){
         return this._Data.desktopNotificationInterval;  //Milliseconds
     }
-	
-	//getDtmfSendMode(){
-	//	return this._Data.dtmfSendMode;
-	//}
 
-    _formatSystemSettingsAppData(appDataBase){
-		let appData;
-        if( !appDataBase ){
+    _formatSystemSettingsAppData(appData){
+        if( !appData ){
             appData = {};
         }
-		else{
-			appData = window.structuredClone( appDataBase );
-		}
         appData.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount ? appData.autoDialMaxDisplayCount : CallHistory.getDefaultMaxDisplayCount();
         appData.autoDialMaxSaveCount = appData.autoDialMaxSaveCount ? appData.autoDialMaxSaveCount : CallHistory.getDefaultMaxSaveCount();
         appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
@@ -426,9 +429,10 @@ export default class SystemSettingsData {
 		appData.autoDialPhonebookName = appData.autoDialPhonebookName ? appData.autoDialPhonebookName : "";
         appData.autoDialOneTouchCall = OCUtil.isBoolean( appData.autoDialOneTouchCall )  ? appData.autoDialOneTouchCall : true;
         appData.desktopNotificationInterval = appData.desktopNotificationInterval ? appData.desktopNotificationInterval : 3000; //Milliseconds
-		//if( !Number.isInteger( appData.dtmfSendMode ) ){
-		//	appData.dtmfSendMode = appData.dtmfSendMode ? parseInt( appData.dtmfSendMode ) : 0;	//0 = SIP INFO
-		//}
+        //appData.phoneIndex = appData.phoneIndex !== undefined  && appData.phoneIndex !== "undefined" ? appData.phoneIndex : null;
+		if( !Number.isInteger( appData.dtmfSendMode ) ){
+			appData.dtmfSendMode = appData.dtmfSendMode ? parseInt( appData.dtmfSendMode ) : 0;	//0 = SIP INFO
+		}
         return appData;
     }
 

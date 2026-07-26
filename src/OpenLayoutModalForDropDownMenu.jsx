@@ -61,10 +61,10 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
         const noteName = BrekekeOperatorConsole.getOCNoteName(shortname);
         const getNoteOptions = {
             methodName: "getNote",
-            methodParams: JSON.stringify({
+            methodParams: {
                 tenant: operatorConsole.getLoggedinTenant(),
                 name: noteName
-            }),
+            },
             onSuccessFunction: (res) => {
                 if (res) {
                     const sNote = res.note;
@@ -142,7 +142,7 @@ export function refreshNoteNamesContent( operatorConsole, setNoteNamesContentFun
 
     const getNoteNamesOptions ={
         methodName : "getNoteNames",
-        methodParams : JSON.stringify({tenant:operatorConsole.getLoggedinTenant()}),
+        methodParams : {tenant:operatorConsole.getLoggedinTenant()},
         onSuccessFunction : ( allNoteNames ) => {
             if (!allNoteNames || allNoteNames.length == 0) {
                 setNoteNamesContentFunc(i18n.t("Layout_does_not_exist"));

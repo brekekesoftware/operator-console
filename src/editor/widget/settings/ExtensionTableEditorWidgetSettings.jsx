@@ -9,79 +9,79 @@ export default class ExtensionTableEditorWidgetSettings extends EditorWidgetSett
     _onChangeExtensiontableBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableOuterBorderThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableOuterBorderThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableOuterBorderColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableOuterBorderColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableOuterBorderRadius( n ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableOuterBorderRadius(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableHeaderFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableHeaderFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableHeaderBgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableHeaderBgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableHeaderRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableHeaderRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableHeaderRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableHeaderRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableBodyFgColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableBodyFgColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableBodyRowUnderlineThickness( n ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableBodyRowUnderlineThickness(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     _onChangeExtensiontableBodyRowUnderlineColor( color ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableBodyRowUnderlineColor(color);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
   _onChangeExtensiontableBodyFontSize( n ){
     const widgetData = this._getWidgetData();
     widgetData.setExtensiontableBodyFontSize(n);
-    this._EditScreenViewAsParent.setState({rerender:true});
+    this._EditScreenViewAsParent.commitEdit();
   }
 
     _onChangeExtensiontableHeaderFontSize( n ){
         const widgetData = this._getWidgetData();
         widgetData.setExtensiontableHeaderFontSize(n);
-        this._EditScreenViewAsParent.setState({rerender:true});
+        this._EditScreenViewAsParent.commitEdit();
     }
 
     //!override

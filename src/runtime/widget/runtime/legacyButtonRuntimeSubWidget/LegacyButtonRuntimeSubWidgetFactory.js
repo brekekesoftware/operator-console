@@ -36,6 +36,8 @@ import LegacyButtonRuntimeSubWidget_autoDialButton from "./LegacyButtonRuntimeSu
 import LegacyButtonRuntimeSubWidget_oneTouchDialButton from "./LegacyButtonRuntimeSubWidget_oneTouchDialButton";
 import LegacyButtonRuntimeSubWidget_toggleHoldCallButton from "./LegacyButtonRuntimeSubWidget_toggleHoldCallButton";
 import LegacyButtonRuntimeSubWidget_toggleVideoCallButton from "./LegacyButtonRuntimeSubWidget_toggleVideoCallButton";
+import LegacyButtonRuntimeSubWidget_voicemailButton from "./LegacyButtonRuntimeSubWidget_voicemailButton";
+
 export default class LegacyButtonRuntimeSubWidgetFactory  {
 
     //!private
@@ -159,6 +161,9 @@ export default class LegacyButtonRuntimeSubWidgetFactory  {
                 break;
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleVideoCall:
                 legacyButtonRuntimeSubWidget = new LegacyButtonRuntimeSubWidget_toggleVideoCallButton( legacyButtonRuntimeWidgetAsParent, widgetSubData );
+                break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.voicemail:
+                legacyButtonRuntimeSubWidget = new LegacyButtonRuntimeSubWidget_voicemailButton( legacyButtonRuntimeWidgetAsParent, widgetSubData );
                 break;
             default:
                 throw new Error("The legacy button runtime  sub widget was not present. legacyButtonWidgetSubTypeId=" +widgetSubTypeId  );

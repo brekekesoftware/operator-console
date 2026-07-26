@@ -141,6 +141,8 @@ export default class EditorDivider extends BaseDivider  {
 
         document.removeEventListener('mousemove', this._mouseMoveEventListenerForHorizontalFunction );
         document.removeEventListener('mouseup', this._mouseUpEventListenerForHorizontalFunction );
+
+        this._EditorPaneAsParent.getEditScreenView().commitEdit();
     };
 
     _mouseMoveHandlerForVertical (e) {
@@ -202,6 +204,8 @@ export default class EditorDivider extends BaseDivider  {
 
         document.removeEventListener('mousemove', this._mouseMoveEventListenerForVerticalFunction  );
         document.removeEventListener('mouseup', this._mouseUpEventListenerForVerticalFunction);
+
+        this._EditorPaneAsParent.getEditScreenView().commitEdit();
     };
 
     render(){

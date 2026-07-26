@@ -155,7 +155,7 @@ export default class EditorPane extends BasePane {
     setDivider( direction ){
         const paneData = this.props["paneData"];
         paneData.setDivider(direction);
-        this.setState({rerender:true});
+        this.getEditScreenView().commitEdit();
     }
 
     getDividerData(){
@@ -170,13 +170,10 @@ export default class EditorPane extends BasePane {
         const paneData = this.props["paneData"];
         paneData.removeDividerData();
 
-        this.setState({rerender:true},
-            ()=>{
-                if( onRemoveEditorDividerFunction ){
-                    onRemoveEditorDividerFunction(this);
-                }
-            }
-        );
+        this.getEditScreenView().commitEdit();
+        if( onRemoveEditorDividerFunction ){
+            onRemoveEditorDividerFunction(this);
+        }
     }
 
     // _getChildContainerElement( className ){
@@ -255,6 +252,7 @@ export default class EditorPane extends BasePane {
         widgetDatas.addWidgetData( widgetTypeId, widgetRelativePositionX, widgetRelativePositionY, widgetWidth, widgetHeight );
         const widgetIndex = widgetDatas.getWidgetDataCount() - 1;
         const widgetData = widgetDatas.getWidgetDataAt( widgetIndex );
+        this.getEditScreenView().commitEdit();
         this.getEditScreenView().setSelectingEditorWidgetDataToState( widgetData );
     }
 

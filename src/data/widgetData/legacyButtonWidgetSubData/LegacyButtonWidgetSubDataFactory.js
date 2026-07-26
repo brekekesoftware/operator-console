@@ -37,6 +37,7 @@ import LegacyButtonWidgetSubData_autoDialButton from "./LegacyButtonWidgetSubDat
 import LegacyButtonWidgetSubData_oneTouchDialButton from "./LegacyButtonWidgetSubData_oneTouchDialButton";
 import LegacyButtonWidgetSubData_toggleHoldCallButton from "./LegacyButtonWidgetSubData_toggleHoldCallButton";
 import LegacyButtonWidgetSubData_toggleVideoCallButton from "./LegacyButtonWidgetSubData_toggleVideoCallButton";
+import LegacyButtonWidgetSubData_voicemailButton from "./LegacyButtonWidgetSubData_voicemailButton";
 import OCUtil from "../../../OCUtil";
 import i18n from "../../../i18n";
 
@@ -174,12 +175,15 @@ export default class LegacyButtonWidgetSubDataFactory{
             case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.toggleVideoCall:
                 subData = new LegacyButtonWidgetSubData_toggleVideoCallButton( dataOptions, subDataOptions, dataVersion  );
                 break;
+            case LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_IDS.voicemail:
+                subData = new LegacyButtonWidgetSubData_voicemailButton( dataOptions, subDataOptions, dataVersion  );
+                break;
             default:
 				OCUtil.logErrorWithNotification("Could not create an instance of the Button widget because the subtype is unknown.subTypeId=" + subDataTypeId,i18n.t("Could_not_create_an_instance_of_the_button_widget~") + subDataTypeId);
                 throw new Error("Cannot create an instance of the Button widget because the subtype is unknown.subTypeId=" + subDataTypeId );
                 //subData = null;
                 //break;
-			}
+        }
 
         return subData;
 

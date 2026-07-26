@@ -23,7 +23,6 @@ export default class QuickBusy_ver2 extends React.Component {
         oc.addOnChangeIsDTMFInputCallBack( this._onChangeIsDTMFInput.bind(this));
         oc.addOnAppendKeyValueCallback( this._onAppendKeyValue.bind(this) );
         oc.addOnDeleteKeyValueCallback( this._onDeleteKeyValue.bind(this));
-        //oc.addOnSetDialingCallback( this._onSetDialingCallback.bind(this));
         //oc.addOnSetCurrentScreenIndexCallback( this._onSetCurrentScreenIndex.bind(this) );
     }
 
@@ -173,7 +172,7 @@ export default class QuickBusy_ver2 extends React.Component {
             oc.setDialing( callNo );
         }
         else{
-            oc.setDialingAndMakeCall2( callNo );
+            oc.setDialingAndMakeCall2WithShowCallSelectionModal( callNo );
         }
     }
 

@@ -15,8 +15,15 @@ export default class RingtoneAudioPlayer{
         this._StopElement.style.display = "none";
     }
 
-    async playRingtoneAudio( src ){
-        this._Audio.src = src;
+    async playRingtoneAudio( srcOptions ){
+		const srcObject = srcOptions["srcObject"];
+		if( srcObject ){
+			this._Audio.srcObject = srcObject;
+		}
+		else{
+			this._Audio.src = srcOptions["src"];
+		}
+		
         let promiseError = null;
         try{
             await this._Audio.play();
@@ -24,7 +31,7 @@ export default class RingtoneAudioPlayer{
             this._StopElement.style.display = "unset";
         }
         catch(ex){
-            console.warn( ex + ",src=" + src  );
+            console.warn( ex + ",srcOptions=" + srcOptions  );
             promiseError = ex;
         }
         return promiseError;

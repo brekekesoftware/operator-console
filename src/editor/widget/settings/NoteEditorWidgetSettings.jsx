@@ -1,11 +1,7 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Divider, Input} from "antd";
-import AutoComplete from "antd/lib/auto-complete";
 import BrekekeOperatorConsole from "../../../index";
-import {Colorpicker} from "antd-colorpicker";
-import InputNumber from "antd/lib/input-number";
 import OCUtil from "../../../OCUtil";
 
 export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
@@ -142,40 +138,23 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
         }
 
         const jsx =   (
-            <>
-                <p>{i18n.t("borderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getNoteBorderRadius()}
-                             onChange={(n) => this._onChangeNoteBorderRadius(n)}/>
-                <Divider>{i18n.t("Note_name_settings")}</Divider>
-                <p>{i18n.t("Name")}</p>
-                <AutoComplete value={noteName} options={this.state.nameOptions}
-                              onChange={(noteName) => this._onChangeNoteName(noteName)} style={{width: "100%"}}/>
-                <p>{i18n.t("Label")}</p>
-                <Input placeholder={i18n.t("Label")} allowClear value={sNoteLabel}
-                       defaultValue={sNoteLabel} onChange={(e) => this._onChangeNoteLabel(e)} />
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getNoteTitleFontSize()}
-                             onChange={(n) => this._onChangeNoteTitleFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getNoteNameFgColor()}
-                             onChange={(color) => this._onChangeNoteNameFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getNoteNameBgColor()}
-                             onChange={(color) => this._onChangeNoteNameBgColor(color)}/>
-                <Divider>{i18n.t("noteText_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getNoteBodyFontSize()}
-                             onChange={(n) => this._onChangeNoteBodyFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getNoteTextFgColor()}
-                             onChange={(color) => this._onChangeNoteTextFgColor(color)}/>
-                <p>{i18n.t("startBgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getNoteBgStartColor()}
-                             onChange={(color) => this._onChangeNoteBgStartColor(color)}/>
-                <p>{i18n.t("endBgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getNoteBgEndColor()}
-                             onChange={(color) => this._onChangeNoteBgEndColor(color)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderNumberField("borderRadius", widgetData.getNoteBorderRadius(), (n) => this._onChangeNoteBorderRadius(n), {min: 0})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("Note_name_settings")}</p>
+                {this._renderAutoCompleteField("Name", noteName, (noteName) => this._onChangeNoteName(noteName), {options: this.state.nameOptions})}
+                {this._renderTextField("Label", sNoteLabel, (e) => this._onChangeNoteLabel(e), {placeholder: i18n.t("Label"), allowClear: true, defaultValue: sNoteLabel})}
+                {this._renderNumberField("Text_size", widgetData.getNoteTitleFontSize(), (n) => this._onChangeNoteTitleFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getNoteNameFgColor(), (color) => this._onChangeNoteNameFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getNoteNameBgColor(), (color) => this._onChangeNoteNameBgColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("noteText_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getNoteBodyFontSize(), (n) => this._onChangeNoteBodyFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getNoteTextFgColor(), (color) => this._onChangeNoteTextFgColor(color))}
+                {this._renderColorField("startBgColor", widgetData.getNoteBgStartColor(), (color) => this._onChangeNoteBgStartColor(color))}
+                {this._renderColorField("endBgColor", widgetData.getNoteBgEndColor(), (color) => this._onChangeNoteBgEndColor(color))}
+            </div>
         );
         return jsx;
     }

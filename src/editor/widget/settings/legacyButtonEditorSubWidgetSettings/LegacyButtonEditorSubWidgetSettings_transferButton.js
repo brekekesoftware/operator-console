@@ -1,11 +1,7 @@
 import React from 'react';
 import LegacyButtonEditorSubWidgetSettings from "./LegacyButtonEditorSubWidgetSettings";
 import i18n from "../../../../i18n";
-import Input from "antd/lib/input";
-import InputNumber from "antd/lib/input-number";
-import {Colorpicker} from "antd-colorpicker";
-import {Divider, Select} from "antd";
-import TextArea from "antd/es/input/TextArea";
+import {Select} from "antd";
 
 export default class LegacyButtonEditorSubWidgetSettings_transferButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -146,87 +142,37 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         const transferMode = this._LegacyButtonEditorSubWidgetData.getTransferMode() ? this._LegacyButtonEditorSubWidgetData.getTransferMode() : "attendedTransfer";
 
         return  (
-            <>
-                <Divider>{i18n.t("Transfer_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {transferIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getIconWidth()}
-                             onChange={(n) => this._onChangeIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getIconHeight()}
-                             onChange={(n) => this._onChangeIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                    /* placeholder={i18n.t("label")} */
-                    /* allowClear */
-                          value={sLabel}
-                          defaultValue={sLabel}
-                          rows={3}
-                          onChange={(e) => this._onChangeLabel(e.target.value)}
-                />
-                <p>{i18n.t("mode")}</p>
-                <Select
-                    // onChange={(value) => {
-                    // }}
-                    style={{width: "100%"}}
-                    //placeholder="Please select a option"
-                    value={transferMode}
-                    defaultValue={transferMode}
-                    onSelect={(e) => this._onChangeTransferMode(e)}
-                >
-                    <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
-                    <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
-                </Select>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getFontSize()}
-                             onChange={(n) => this._onChangeFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getFgColor()}
-                             onChange={(color) => this._onChangeFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getBgColor()}
-                             onChange={(color) => this._onChangeBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getOuterBorderColor()}
-                             onChange={(color) => this._onChangeOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getOuterBorderRadius()}
-                             onChange={(n) => this._onChangeOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getOuterBorderThickness()}
-                             onChange={(n) => this._onChangeOuterBorderThickness(n)}/>
-                <Divider>{i18n.t("Cancel_transfer_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {cancelTransferIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getCancelTransferIconWidth()}
-                             onChange={(n) => this._onChangeCancelTransferIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getCancelTransferIconHeight()}
-                             onChange={(n) => this._onChangeCancelTransferIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <Input placeholder={i18n.t(`Cancel_transfer`)} allowClear value={sCancelTransferLabel}
-                       defaultValue={sCancelTransferLabel} onChange={(e) => this._onChangeCancelTransferLabel(e)}/>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getCancelTransferFontSize()}
-                             onChange={(n) => this._onChangeCancelTransferFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getCancelTransferFgColor()}
-                             onChange={(color) => this._onChangeCancelTransferFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getCancelTransferBgColor()}
-                             onChange={(color) => this._onChangeCancelTransferBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getCancelTransferOuterBorderColor()}
-                             onChange={(color) => this._onChangeCancelTransferOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getCancelTransferOuterBorderRadius()}
-                             onChange={(n) => this._onChangeCancelTransferOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getCancelTransferOuterBorderThickness()}
-                             onChange={(n) => this._onChangeCancelTransferOuterBorderThickness(n)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Transfer_button_settings")}</p>
+                {this._renderIconField("icon", transferIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})}
+                {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sLabel, rows: 3})}
+                {this._renderSelectField("mode", transferMode, (e) => this._onChangeTransferMode(e), (
+                    <>
+                        <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
+                        <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
+                    </>
+                ))}
+                {this._renderNumberField("Text_size", subWidgetData.getFontSize(), (n) => this._onChangeFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getFgColor(), (color) => this._onChangeFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getBgColor(), (color) => this._onChangeBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getOuterBorderColor(), (color) => this._onChangeOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getOuterBorderRadius(), (n) => this._onChangeOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getOuterBorderThickness(), (n) => this._onChangeOuterBorderThickness(n), {min: "1"})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("Cancel_transfer_button_settings")}</p>
+                {this._renderIconField("icon", cancelTransferIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getCancelTransferIconWidth(), (n) => this._onChangeCancelTransferIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getCancelTransferIconHeight(), (n) => this._onChangeCancelTransferIconHeight(n), {min: "0"})}
+                {this._renderTextField("label", sCancelTransferLabel, (e) => this._onChangeCancelTransferLabel(e), {placeholder: i18n.t(`Cancel_transfer`), allowClear: true, defaultValue: sCancelTransferLabel})}
+                {this._renderNumberField("Text_size", subWidgetData.getCancelTransferFontSize(), (n) => this._onChangeCancelTransferFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getCancelTransferFgColor(), (color) => this._onChangeCancelTransferFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getCancelTransferBgColor(), (color) => this._onChangeCancelTransferBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getCancelTransferOuterBorderColor(), (color) => this._onChangeCancelTransferOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getCancelTransferOuterBorderRadius(), (n) => this._onChangeCancelTransferOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getCancelTransferOuterBorderThickness(), (n) => this._onChangeCancelTransferOuterBorderThickness(n), {min: "1"})}
+            </div>
         );
     }
 

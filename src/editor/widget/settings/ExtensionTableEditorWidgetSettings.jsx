@@ -1,9 +1,6 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Colorpicker} from "antd-colorpicker";
-import InputNumber from "antd/lib/input-number";
-import {Divider} from "antd";
 
 export default class ExtensionTableEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeExtensiontableBgColor( color ){
@@ -88,49 +85,26 @@ export default class ExtensionTableEditorWidgetSettings extends EditorWidgetSett
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const jsx = (
-            <>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableBgColor()}
-                             onChange={(color) => this._onChangeExtensiontableBgColor(color)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableOuterBorderThickness()}
-                             onChange={(n) => this._onChangeExtensiontableOuterBorderThickness(n)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableOuterBorderColor()}
-                             onChange={(color) => this._onChangeExtensiontableOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableOuterBorderRadius()}
-                             onChange={(n) => this._onChangeExtensiontableOuterBorderRadius(n)}/>
-                <Divider>{i18n.t("header_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableHeaderFontSize()}
-                             onChange={(n) => this._onChangeExtensiontableHeaderFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableHeaderFgColor()}
-                             onChange={(color) => this._onChangeExtensiontableHeaderFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableHeaderBgColor()}
-                             onChange={(color) => this._onChangeExtensiontableHeaderBgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableHeaderRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeExtensiontableHeaderRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableHeaderRowUnderlineColor()}
-                             onChange={(color) => this._onChangeExtensiontableHeaderRowUnderlineColor(color)}/>
-                <Divider>{i18n.t("body_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableBodyFontSize()}
-                             onChange={(n) => this._onChangeExtensiontableBodyFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableBodyFgColor()}
-                             onChange={(color) => this._onChangeExtensiontableBodyFgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getExtensiontableBodyRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeExtensiontableBodyRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensiontableBodyRowUnderlineColor()}
-                             onChange={(color) => this._onChangeExtensiontableBodyRowUnderlineColor(color)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderColorField("bgColor", widgetData.getExtensiontableBgColor(), (color) => this._onChangeExtensiontableBgColor(color))}
+                {this._renderNumberField("outerBorderThickness", widgetData.getExtensiontableOuterBorderThickness(), (n) => this._onChangeExtensiontableOuterBorderThickness(n), {min: 0})}
+                {this._renderColorField("outerBorderColor", widgetData.getExtensiontableOuterBorderColor(), (color) => this._onChangeExtensiontableOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getExtensiontableOuterBorderRadius(), (n) => this._onChangeExtensiontableOuterBorderRadius(n), {min: 0})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getExtensiontableHeaderFontSize(), (n) => this._onChangeExtensiontableHeaderFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getExtensiontableHeaderFgColor(), (color) => this._onChangeExtensiontableHeaderFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getExtensiontableHeaderBgColor(), (color) => this._onChangeExtensiontableHeaderBgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableHeaderRowUnderlineThickness(), (n) => this._onChangeExtensiontableHeaderRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getExtensiontableHeaderRowUnderlineColor(), (color) => this._onChangeExtensiontableHeaderRowUnderlineColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("body_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getExtensiontableBodyFontSize(), (n) => this._onChangeExtensiontableBodyFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getExtensiontableBodyFgColor(), (color) => this._onChangeExtensiontableBodyFgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableBodyRowUnderlineThickness(), (n) => this._onChangeExtensiontableBodyRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getExtensiontableBodyRowUnderlineColor(), (color) => this._onChangeExtensiontableBodyRowUnderlineColor(color))}
+            </div>
         );
         return jsx;
     }

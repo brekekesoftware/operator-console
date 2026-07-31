@@ -1,35 +1,107 @@
-import React, {useRef} from 'react'
-import {useState} from "react";
-import {Button, Form, Input, Modal} from "antd";
-import i18n from "./i18n";
+import React, {useEffect, useRef, useState} from 'react'
+import {Button, Form, Input, Modal, Radio} from "antd";
 import Popconfirm from "antd/lib/popconfirm";
 import Notification from "antd/lib/notification";
-import BrekekeOperatorConsole from "./index";
-import OpenLayoutModalForNoScreensView from "./OpenLayoutModalForNoScreensView";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import i18n from "./i18n";
 import Spin from "antd/lib/spin";
+import BrekekeOperatorConsole from "./index";
 import ScreenData from "./data/ScreenData";
 import OCUtil from "./OCUtil";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
+function fetchLayouts( operatorConsoleAsParent, setLayouts, setIsLoadingNames ) {
+    setIsLoadingNames( true );
+    const getNoteNamesOptions = {
+        methodName: "getNoteNames",
+        methodParams: {
+            tenant: operatorConsoleAsParent.getLoggedinTenant(),
+            filter: BrekekeOperatorConsole.LAYOUT_NOTE_NAME_FILTER,
+            limit: -1,
+            offset: 0
+        },
+        onSuccessFunction: ( allNoteNames ) => {
+            const layouts = [];
+            if( allNoteNames && allNoteNames.length !== 0 ){
+                for( let i = 0; i < allNoteNames.length; i++ ){
+                    const noteName = allNoteNames[i];
+                    if( BrekekeOperatorConsole.isOCNoteName( noteName ) !== true ){
+                        continue;
+                    }
+                    const shortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
+                    if( shortname.length === 0 ){
+                        continue;
+                    }
+                    layouts.push( {shortname} );
+                }
+            }
+            setLayouts( layouts );
+            setIsLoadingNames( false );
+        },
+        onFailFunction: ( errOrResponse ) => {
+            setLayouts( [] );
+            setIsLoadingNames( false );
+            OCUtil.logErrorWithNotification( "Failed to get note names.", i18n.t( "Failed_to_get_note_names" ), errOrResponse );
+        }
+    };
+    operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
+}
+
+function deleteLayout( operatorConsoleAsParent, shortname, onDone ) {
+    const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
+    const options = {};
+    const tenant = operatorConsoleAsParent.getLoggedinTenant();
+    if( tenant ){
+        options["tenant"] = tenant;
+    }
+    options["name"] = noteName;
+    const deleteNoteOptions = {
+        methodName: "deleteNote",
+        methodParams: options,
+        onSuccessFunction: () => {
+            Notification.success( {message: i18n.t( "Layouts_have_been_deleted" )} );
+            onDone();
+        },
+        onFailFunction: ( errOrResponse ) => {
+            OCUtil.logErrorWithNotification( "Failed to delete layouts.", i18n.t( "Failed_to_delete_layouts" ), errOrResponse );
+            onDone();
+        }
+    };
+    operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( deleteNoteOptions );
+}
+
 export default function NoScreensView( props ){
     const operatorConsoleAsParent = props.operatorConsoleAsParent;
-    const [open, setOpen] = useState(true);
-    const showModal = () => {
-        setOpen(true);
-    };
-    const handleOk = () => {
-        setOpen(false);
-    };
+    const isAdmin = operatorConsoleAsParent.getLoggedinUserIsAdmin();
+    const newLayoutModalOpen = operatorConsoleAsParent.getState().newLayoutModalOpen;
+
+    const [layouts, setLayouts] = useState( [] );
+    const [isLoadingNames, setIsLoadingNames] = useState( false );
+    const [selectedShortname, setSelectedShortname] = useState( null );
+    const prevNewLayoutModalOpenRef = useRef( newLayoutModalOpen );
+
+    useEffect( () => {
+        fetchLayouts( operatorConsoleAsParent, setLayouts, setIsLoadingNames );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [] );
+
+    useEffect( () => {
+        if( prevNewLayoutModalOpenRef.current === true && newLayoutModalOpen === false ){
+            fetchLayouts( operatorConsoleAsParent, setLayouts, setIsLoadingNames );
+        }
+        prevNewLayoutModalOpenRef.current = newLayoutModalOpen;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [newLayoutModalOpen] );
+
     const handleCancel = ( operatorConsoleAsParent ) => {
-        setOpen(false);
         operatorConsoleAsParent.logout();
     };
 
     const [ newLayoutUseForm ] = Form.useForm();
     const [newLayoutConfirmOpen, setNewLayoutConfirmOpen] = useState(false);
     const [newLayoutName, setNewLayoutName ] = useState( "" );
-    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
 
     const handleNewLayoutOk = () => {
         newLayoutUseForm.validateFields().then(( values ) => {
@@ -128,18 +200,10 @@ export default function NoScreensView( props ){
             };
             operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
         });
-
-        // setLoading(true);
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setNewLayoutModalOpen(false);
-        // }, 3000);
-
     };
     const handleNewLayoutCancel = () => {
         cancelConfirmNewLayout();
         operatorConsoleAsParent.setState({newLayoutModalOpen:false} );
-        setOpen(true);
     };
 
     const confirmNewLayout = (  ) => {
@@ -175,11 +239,6 @@ export default function NoScreensView( props ){
                         setNewLayoutConfirmOpen(false);
                     },
                     function( e ){
-                        ////!testit
-                        // const message = eventArg.message;
-                        // console.error("Failed to save data to PBX.", message);
-                        // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
-                        // Notification.error({message: msg, duration: 0});
                         //!testit
                         if( Array.isArray(e)){
                             for( let i = 0; i < e.length; i++ ){
@@ -202,17 +261,15 @@ export default function NoScreensView( props ){
     };
     const cancelConfirmNewLayout = () => {
         setNewLayoutConfirmOpen(false);
-        //message.error('Click on cancelNewLayout.');
     };
     const handleNewLayoutConfirmOpenChange = (newOpen) => {
         if (!newLayoutConfirmOpen) {
             return;
         }
-        //handleOk( { newLayoutConfirmOpen, setNewLayoutConfirmOpen } );
         setNewLayoutConfirmOpen(newOpen);
     };
 
-    const [openLayoutOpen, setOpenLayoutOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const selectOCNoteByShortname = ( shortname ) =>{
         const noteName = BrekekeOperatorConsole.getOCNoteName( shortname );
@@ -260,13 +317,12 @@ export default function NoScreensView( props ){
                 else{
                     setIsLoading(false);
                     Notification.warning({message:i18n.t("The_note_does_not_exist") });
-                    refreshNoteNames();
+                    fetchLayouts( operatorConsoleAsParent, setLayouts, setIsLoadingNames );
                 }
             },
             onFailFunction : ( errorOrResponse ) =>{
                 //!testit
                 setIsLoading(false);
-                //const message = eventArg.message;
                 console.error("Failed to getNote.", errorOrResponse  );
                 let err;
                 try {
@@ -283,103 +339,18 @@ export default function NoScreensView( props ){
         setIsLoading(true);
     };
 
-    const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
-    const [isLoading, setIsLoading] = useState(false);
+    const handleConfirm = () => {
+        if( !selectedShortname ){
+            return;
+        }
+        selectOCNoteByShortname( selectedShortname );
+    };
 
-    const refreshNoteNames = () => {
-        setNoteNamesContent(<Spin />);
-
-        const getNoteNamesByPalRestApiOptions = {
-          methodName : "getNoteNames",
-          methodParams: {
-              tenant : operatorConsoleAsParent.getLoggedinTenant()
-          },
-            onSuccessFunction : ( res ) =>{
-                const allNoteNames = res;
-                console.log("*************allNoteNames=" + allNoteNames); //!temp
-                if( !allNoteNames || Array.isArray(allNoteNames) !== true ){
-                    setNoteNamesContent(i18n.t("Layout_does_not_exist"));
-                    return;
-                }
-                const noteNames = allNoteNames.filter( function(value){ return value.startsWith( BrekekeOperatorConsole.LAYOUT_NOTE_NAME_PREFIX )} );
-                if (!noteNames || noteNames.length == 0) {
-                    setNoteNamesContent(i18n.t("Layout_does_not_exist"));
-                } else {
-                    let jsxContents = [];
-                    // const lastLayoutShortname = operatorConsoleAsParent.getLastLayoutShortname();
-                    // let isFontWeightBolded = false;
-                    for (let i = 0; i < noteNames.length; i++) {
-                        const noteName = noteNames[i];
-                        const noteShortname = BrekekeOperatorConsole.getOCNoteShortname( noteName );
-                        if( noteShortname.length === 0 ){    //Skip. Because can not click
-                            continue;
-                        }
-
-                        // let fontWeight = "normal";
-                        // if( isFontWeightBolded === false ){
-                        //     const isFontBold = noteShortname === lastLayoutShortname;
-                        //     if( isFontBold === true ){
-                        //         isFontWeightBolded = true;
-                        //         fontWeight = "bold";
-                        //     }
-                        // }
-                        //const sNoteShortname = <div key={i}><a style={{fontWeight:fontWeight}} onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
-                        const sNoteShortname = <div key={i}><a onClick={ () => selectOCNoteByShortname( noteShortname ) } >{noteShortname}</a><br /></div>;
-                        jsxContents.push( sNoteShortname );
-                    }
-                    setNoteNamesContent(jsxContents);
-                }
-            },
-            onFailFunction : ( errOrResponse ) =>{
-                //!testit
-                OCUtil.logErrorWithNotification( null, i18n.t("failed_to_load_data_from_pbx"), errOrResponse );
-            }
-        };
-        operatorConsoleAsParent.getPalRestApi().callPalRestApiMethod( getNoteNamesByPalRestApiOptions );
-    }
-
-    const handleOpenLayoutOpen = () =>{
-        setOpen(false);
-        setOpenLayoutOpen(true);
-        refreshNoteNames();
-    }
-
-    let newOrOpenLayoutFooter;
-    let newOrOpenLayoutTitle;
-    let newOrOpenLayoutText;
-    const isAdmin = operatorConsoleAsParent.getLoggedinUserIsAdmin();
-    if( isAdmin === true ){
-        newOrOpenLayoutTitle = i18n.t("NewOrOpenLayoutTitle");
-        newOrOpenLayoutText = i18n.t("NewOrOpenLayoutText");
-        newOrOpenLayoutFooter =[
-            <Button key="back" onClick={ () => handleCancel( operatorConsoleAsParent ) }>
-                {i18n.t("cancel")}
-            </Button>,
-            <Button key="submit" type="primary" className="brOCMarginLeftButtonToButton" onClick={ () =>{
-                setOpen(false);
-                operatorConsoleAsParent.setState({newLayoutModalOpen:true});
-            } }>
-                {i18n.t("newLayout")}
-            </Button>,
-            <Button key="submit2" type="primary" className="brOCMarginLeftButtonToButton" onClick={handleOpenLayoutOpen}>
-                {i18n.t("openLayout")}
-            </Button>
-        ];
-    }
-    else{
-        newOrOpenLayoutTitle = i18n.t("OpenLayoutTitle");
-        newOrOpenLayoutText = i18n.t("OpenLayoutText");
-        newOrOpenLayoutFooter =[
-            <Button key="back" onClick={ () => handleCancel( operatorConsoleAsParent ) }>
-                {i18n.t("cancel")}
-            </Button>,
-            <Button key="submit2" type="primary" onClick={handleOpenLayoutOpen} className="brOCMarginLeftButtonToButton">
-                {i18n.t("openLayout")}
-            </Button>
-        ];
-
-    }
-
+    const handleDelete = ( shortname ) => {
+        deleteLayout( operatorConsoleAsParent, shortname, () => {
+            fetchLayouts( operatorConsoleAsParent, setLayouts, setIsLoadingNames );
+        } );
+    };
 
     const displayLoadingStyle =  isLoading ? "block" : "none";
     const spinScreen = useRef(null);
@@ -387,16 +358,63 @@ export default function NoScreensView( props ){
         spinScreen.current.style.display = displayLoadingStyle;
     }
 
-    const bNewLayoutModalOpen = operatorConsoleAsParent.getState().newLayoutModalOpen;
+    const footer = [
+        isAdmin ? (
+            <Button key="new" className="brOCSelectLayoutNewButton" onClick={ () => operatorConsoleAsParent.setState({newLayoutModalOpen:true}) }>
+                {i18n.t( "newLayout" )}
+            </Button>
+        ) : null,
+        <Button key="confirm" className="brOCSelectLayoutConfirmButton" disabled={!selectedShortname || isLoading}
+                onClick={handleConfirm}>
+            {i18n.t( "confirm" )}
+        </Button>
+    ];
+
+    let mainJsx;
+    if( isLoadingNames ){
+        mainJsx = <Spin/>;
+    }
+    else if( layouts.length === 0 ){
+        mainJsx = i18n.t( "Layout_does_not_exist" );
+    }
+    else {
+        mainJsx = (
+            <Radio.Group className="brOCSelectLayoutRadioGroup" value={selectedShortname}
+                         onChange={( e ) => setSelectedShortname( e.target.value )}>
+                {layouts.map( ( layout ) => (
+                    <div key={layout.shortname} className="brOCSelectLayoutRow">
+                        <Radio value={layout.shortname}>
+                            <span>{layout.shortname}</span>
+                        </Radio>
+                        {isAdmin ? (
+                            <Popconfirm title={i18n.t( "are_you_sure" )} onConfirm={() => handleDelete( layout.shortname )}
+                                        okText={i18n.t( "yes" )} cancelText={i18n.t( "no" )}>
+                                <a className="icon_general brOCSelectLayoutDeleteIcon">
+                                    <FontAwesomeIcon icon={faTrash}/>
+                                </a>
+                            </Popconfirm>
+                        ) : null}
+                    </div>
+                ) )}
+            </Radio.Group>
+        );
+    }
+
     return (
         <>
-            <OpenLayoutModalForNoScreensView
-                operatorConsoleAsParent={operatorConsoleAsParent}
-                useStateOpen={openLayoutOpen} useStateSetOpen={ setOpenLayoutOpen} useStateSetNewOrOpenLayoutOpen={ setOpen }
-                useStateNoteNamesContent = { noteNamesContent }
-            />
             <Modal
-                open={ bNewLayoutModalOpen }
+                open={true}
+                title={i18n.t( "selectLayout" )}
+                onCancel={ () => handleCancel( operatorConsoleAsParent ) }
+                footer={footer}
+                maskClosable={false}
+            >
+                <div className="brOCReset">
+                    {mainJsx}
+                </div>
+            </Modal>
+            <Modal
+                open={ newLayoutModalOpen }
                 title={i18n.t("newLayout")}
                 onOk={   handleNewLayoutOk }
                 onCancel={handleNewLayoutCancel}
@@ -416,36 +434,13 @@ export default function NoScreensView( props ){
                                 okText={i18n.t("ok")}
                                 cancelText={i18n.t("cancel")}
                     >
-                        {/*<Button type="link">Delete a task</Button>*/}
-                        {/*<Button key="submit" type="primary" onClick={handleOk}>*/}
                         <Button key="submit" type="primary" onClick={handleNewLayoutOk} className="brOCMarginLeftButtonToButton">
                             {i18n.t("ok")}
                         </Button>
                     </Popconfirm>
-
-                    //<Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-                    // <Button
-                    //     key="link"
-                    //     href="https://google.com"
-                    //     type="primary"
-                    //     loading={loading}
-                    //     onClick={handleOk}
-                    // >
-                    //     Search on Google
-                    // </Button>,
                 ]}
             >
                 <NewLayoutForm  newLayoutUseForm={newLayoutUseForm} />
-            </Modal>
-            <Modal
-                open={open}
-                title={newOrOpenLayoutTitle}
-                onOk={handleOk}
-                onCancel={ () => handleCancel( operatorConsoleAsParent ) }
-                maskClosable={false}
-                footer={newOrOpenLayoutFooter}
-            >
-                {newOrOpenLayoutText}
             </Modal>
             <div ref={spinScreen} className="spinScreen">
                 <div>

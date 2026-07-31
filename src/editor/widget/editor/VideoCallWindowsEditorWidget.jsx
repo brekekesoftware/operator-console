@@ -45,7 +45,8 @@ export default class VideoCallWindowsEditorWidget extends EditorWidget{
             boxShadow: sBoxShadow,
             color: fgColor,
             padding:6,
-            boxSizing:"border-box"
+            boxSizing:"border-box",
+            fontSize: 12
         }}>{i18n.t("VideoCallWindowsWidgetIsInEditMode")}</div> );
     }
 

@@ -2,12 +2,7 @@ import React from 'react';
 import LegacyButtonEditorSubWidgetSettings from "./LegacyButtonEditorSubWidgetSettings";
 import Form from "antd/lib/form";
 import i18n from "../../../../i18n";
-import Input from "antd/lib/input";
-import {Divider} from "antd";
-import InputNumber from "antd/lib/input-number";
-import {Colorpicker} from "antd-colorpicker";
 import EditScreenView from "../../../EditScreenView";
-import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -185,80 +180,31 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
 			(ev) => this._onClickRemoveVideoOffIcon(ev)
 		);
         return  (
-            <>
-                <Divider>{i18n.t("VideoOn_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {videoOnIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOnIconWidth()}
-                             onChange={(n) => this._onChangeVideoOnIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOnIconHeight()}
-                             onChange={(n) => this._onChangeVideoOnIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                    /* placevideoOner={i18n.t("VideoOn")} */
-                    /* allowClear */
-                          value={sVideoOnLabel}
-                          defaultValue={sVideoOnLabel}
-                          rows={3}
-                          onChange={(e) => this._onChangeVideoOnLabel(e.target.value)}
-                />
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOnFontSize()}
-                             onChange={(n) => this._onChangeVideoOnFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOnFgColor()}
-                             onChange={(color) => this._onChangeVideoOnFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOnBgColor()}
-                             onChange={(color) => this._onChangeVideoOnBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOnOuterBorderColor()}
-                             onChange={(color) => this._onChangeVideoOnOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOnOuterBorderRadius()}
-                             onChange={(n) => this._onChangeVideoOnOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getVideoOnOuterBorderThickness()}
-                             onChange={(n) => this._onChangeVideoOnOuterBorderThickness(n)}/>
-                <Divider>{i18n.t("VideoOff_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {unvideoOnIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOffIconWidth()}
-                             onChange={(n) => this._onChangeVideoOffIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOffIconHeight()}
-                             onChange={(n) => this._onChangeVideoOffIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                    /* placevideoOner={i18n.t("VideoOff")} */
-                    /* allowClear */
-                          value={sVideoOffLabel}
-                          defaultValue={sVideoOffLabel}
-                          rows={3}
-                          onChange={(e) => this._onChangeVideoOffLabel(e.target.value)}
-                />
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOffFontSize()}
-                             onChange={(n) => this._onChangeVideoOffFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOffFgColor()}
-                             onChange={(color) => this._onChangeVideoOffFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOffBgColor()}
-                             onChange={(color) => this._onChangeVideoOffBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getVideoOffOuterBorderColor()}
-                             onChange={(color) => this._onChangeVideoOffOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getVideoOffOuterBorderRadius()}
-                             onChange={(n) => this._onChangeVideoOffOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getVideoOffOuterBorderThickness()}
-                             onChange={(n) => this._onChangeVideoOffOuterBorderThickness(n)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("VideoOn_button_settings")}</p>
+                {this._renderIconField("icon", videoOnIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getVideoOnIconWidth(), (n) => this._onChangeVideoOnIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getVideoOnIconHeight(), (n) => this._onChangeVideoOnIconHeight(n), {min: "0"})}
+                {this._renderTextAreaField("label", sVideoOnLabel, (e) => this._onChangeVideoOnLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sVideoOnLabel, rows: 3})}
+                {this._renderNumberField("Text_size", subWidgetData.getVideoOnFontSize(), (n) => this._onChangeVideoOnFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getVideoOnFgColor(), (color) => this._onChangeVideoOnFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getVideoOnBgColor(), (color) => this._onChangeVideoOnBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getVideoOnOuterBorderColor(), (color) => this._onChangeVideoOnOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOnOuterBorderRadius(), (n) => this._onChangeVideoOnOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOnOuterBorderThickness(), (n) => this._onChangeVideoOnOuterBorderThickness(n), {min: "1"})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("VideoOff_button_settings")}</p>
+                {this._renderIconField("icon", unvideoOnIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getVideoOffIconWidth(), (n) => this._onChangeVideoOffIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getVideoOffIconHeight(), (n) => this._onChangeVideoOffIconHeight(n), {min: "0"})}
+                {this._renderTextAreaField("label", sVideoOffLabel, (e) => this._onChangeVideoOffLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sVideoOffLabel, rows: 3})}
+                {this._renderNumberField("Text_size", subWidgetData.getVideoOffFontSize(), (n) => this._onChangeVideoOffFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getVideoOffFgColor(), (color) => this._onChangeVideoOffFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getVideoOffBgColor(), (color) => this._onChangeVideoOffBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getVideoOffOuterBorderColor(), (color) => this._onChangeVideoOffOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOffOuterBorderRadius(), (n) => this._onChangeVideoOffOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOffOuterBorderThickness(), (n) => this._onChangeVideoOffOuterBorderThickness(n), {min: "1"})}
+            </div>
         );
     }
 

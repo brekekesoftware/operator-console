@@ -9,6 +9,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import EditScreenView from "../../../EditScreenView";
 import SelectIconModal from "../../../SelectIconModal";
 import i18n from "../../../../i18n";
+import {Colorpicker} from "antd-colorpicker";
+import InputNumber from "antd/lib/input-number";
+import Input from "antd/lib/input";
 import "./LegacyButtonEditorSubWidgetSettings.css";
 
 //!abstract
@@ -25,6 +28,103 @@ export default class LegacyButtonEditorSubWidgetSettings{
     //!abstract
     getRenderJsx(){
         throw new Error("Not implemented.");
+    }
+
+    //!presentational helper. Renders a "Settings"-style bordered field: label above, a
+    //!light-grey box below containing the antd-colorpicker swatch plus a live hex/percent readout.
+    _renderColorField( labelKey, colorValue, onChange ){
+        const rgb = colorValue && colorValue.rgb;
+        const hex = colorValue && colorValue.hex ? colorValue.hex.replace("#", "").toUpperCase() : "";
+        const percent = rgb && typeof rgb.a === "number" ? Math.round(rgb.a * 100) : 100;
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Colorpicker format="rgb" value={colorValue} onChange={onChange}/>
+                    <span className="brOCSettingsFieldHex">{hex}</span>
+                    <span className="brOCSettingsFieldPercent">{percent}%</span>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled number field in the same bordered-box style.
+    _renderNumberField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <InputNumber className="brOCSettingsFieldInput" variant="borderless" value={value}
+                                 onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled single-line text field in the same bordered-box style.
+    _renderTextField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Input className="brOCSettingsFieldInput" variant="borderless" value={value}
+                           onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled multi-line text field in the same bordered-box style.
+    _renderTextAreaField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Input.TextArea className="brOCSettingsFieldInput" variant="borderless" value={value}
+                                    onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled select field in the same bordered-box style.
+    _renderSelectField( labelKey, value, onChange, optionsJsx, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Select className="brOCSettingsFieldInput" variant="borderless" value={value}
+                            onChange={onChange} {...extraProps}>
+                        {optionsJsx}
+                    </Select>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled single-line text field whose label is shown as literal text (not looked up via i18n).
+    _renderRawLabelTextField( label, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{label}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Input className="brOCSettingsFieldInput" variant="borderless" value={value}
+                           onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled field for the icon-select block (preview + select/remove buttons).
+    _renderIconField( labelKey, iconJsx ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox" style={{flexDirection: "column", alignItems: "flex-start"}}>
+                    {iconJsx}
+                </div>
+            </div>
+        );
     }
 
     //!virtual
@@ -130,8 +230,8 @@ export default class LegacyButtonEditorSubWidgetSettings{
                     : (null)
                 }
                 <div className="brOCMarginTopButtonToElement_short">
-                    <Button onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, sIconName, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
-                    <Button className="brOCMarginLeftButtonToButton" onClick={(ev) => onClickRemoveIconButtonFunction_(ev) } disabled={!sIcon}>{ i18n.t("RemoveIcon")}</Button>
+                    <Button className="brOCSettingsButton" onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, sIconName, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
+                    <Button className="brOCSettingsButton brOCMarginLeftButtonToButton" onClick={(ev) => onClickRemoveIconButtonFunction_(ev) } disabled={!sIcon}>{ i18n.t("RemoveIcon")}</Button>
                 </div>
             </>
         );

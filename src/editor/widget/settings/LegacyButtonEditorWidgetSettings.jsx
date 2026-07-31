@@ -5,9 +5,7 @@ import LegacyButtonEditorSubWidgetSettingsFactory
 import {Button, Select} from "antd";
 import i18n from "../../../i18n";
 import LegacyButtonWidgetSubData from "../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
-import Input from "antd/lib/input";
 import BrekekeOperatorConsole from "../../../index";
-import TextArea from "antd/es/input/TextArea";
 import Popconfirm from "antd/lib/popconfirm";
 
 export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettings {
@@ -121,40 +119,26 @@ export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettin
 
 
         const jsx = (
-            <>
-                <p>{i18n.t("function")}</p>
-                <Select
-                    style={{width: '100%'}}
-                    onSelect={(ev1, ev2) => this._onFormSubtypeSelected(ev1, ev2)}
-                    defaultValue={sEditingWidgetSubtypeId}
-                    value={sEditingWidgetSubtypeId}
-                >
-                    {enSubtype.map(([subtypeId, subtypeName], i) => {
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderSelectField("function", sEditingWidgetSubtypeId, (ev1) => this._onFormSubtypeSelected(ev1), (
+                    enSubtype.map(([subtypeId, subtypeName], i) => {
                         return <Select.Option key={i} value={subtypeId}
                                               title={i18n.t(`legacy_button_description.${subtypeName}`)}>
                             {i18n.t(`legacy_button_label.${subtypeName}`)}
                         </Select.Option>
-                    })}
-                </Select>
-                <p>{i18n.t("Tooltip")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                          placeholder={i18n.t("Tooltip")} value={sTooltipOfButtonWidget}
-                          defaultValue={sTooltipOfButtonWidget}
-						  /* allowClear */
-                          rows={3}
-                          onChange={(e) => this._onChangeTooltipOfButtonWidget(e.target.value)}/>
+                    })
+                ))}
+                {this._renderTextAreaField("Tooltip", sTooltipOfButtonWidget, (e) => this._onChangeTooltipOfButtonWidget(e.target.value), {maxLength: 1000, style: {minHeight: 68}, placeholder: i18n.t("Tooltip"), rows: 3})}
                 <Popconfirm key="submitConfirm" title={i18n.t("are_you_sure")} onConfirm={()=> this._setTooltipOfButtonWidgetToInitial()}
                             okText={i18n.t("yes")}
                             cancelText={i18n.t("no")}
                 >
-                    <Button className="defaultButtonMarginTop">{i18n.t("RevertToInitial")}</Button>
+                    <Button className="brOCSettingsButton">{i18n.t("RevertToInitial")}</Button>
                 </Popconfirm>
-                <p style={{
-                    marginTop: 12,
-                    marginBottom: 0
-                }}>{i18n.t(`legacy_button_description.${editingWidgetSubtypeName}`)}</p>
+                <p className="brOCSettingsFieldLabel">{i18n.t(`legacy_button_description.${editingWidgetSubtypeName}`)}</p>
                 {subWidgetSettingsJsx}
-            </>
+            </div>
         );
         return jsx;
     }

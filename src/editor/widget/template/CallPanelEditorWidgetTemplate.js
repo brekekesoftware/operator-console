@@ -1,7 +1,6 @@
 import EditorWidgetTemplate from "./EditorWidgetTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
-import React from 'react';
-import i18n from "../../../i18n";
+import iconSrc from "./icons/callPanel.jpg";
 
 export default class CallPanelEditorWidgetTemplate extends EditorWidgetTemplate{
 
@@ -20,10 +19,13 @@ export default class CallPanelEditorWidgetTemplate extends EditorWidgetTemplate{
     }
 
     //!overload
-    getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
-        return <div className="brOCCallPanel" style={{
-        }}>
-        </div>
+    getIconSrc(){
+        return iconSrc;
+    }
+
+    //!overload
+    getLabelKey(){
+        return "CallPanel";
     }
 
 }

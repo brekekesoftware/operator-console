@@ -1,7 +1,6 @@
 import EditorWidgetTemplate from "./EditorWidgetTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
-import React from 'react';
-import i18n from "../../../i18n";
+import iconSrc from "./icons/note.jpg";
 
 export default class NoteEditorWidgetTemplate extends EditorWidgetTemplate{
 
@@ -20,10 +19,13 @@ export default class NoteEditorWidgetTemplate extends EditorWidgetTemplate{
     }
 
     //!overload
-    getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
-        return (
-            <div className="brOCStickyNote brOCStickyNoteAddForTemplate">{i18n.t("Note")}</div>
-        );
+    getIconSrc(){
+        return iconSrc;
+    }
+
+    //!overload
+    getLabelKey(){
+        return "Note";
     }
 
 }

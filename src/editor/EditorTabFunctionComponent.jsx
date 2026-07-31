@@ -267,12 +267,6 @@ export default function EditorTabFunctionComponent(props){
 				tabBarStyle={tabBarCss}
 				style={css}
 				data-br-container-id={paneId}
-				// onMouseDown={ (ev) => {
-				//         ev.stopPropagation();
-				//         //ev.preventDefault();
-				//         editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
-				//     }
-				// }
 				className={className + " Tabs_general"}
 				//tabBarStyle={{overflow:"auto"}}
 				activeKey={activeKey}
@@ -285,13 +279,19 @@ export default function EditorTabFunctionComponent(props){
 				renderTabBar={(tabBarProps, DefaultTabBar) => (
 					<DndContext sensors={[sensor]} onDragEnd={onDragEnd}>
 						<SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
-							<DefaultTabBar {...tabBarProps}>
-								{(node) => (
-									<DraggableTabNode {...node.props} key={node.key}>
-										{node}
-									</DraggableTabNode>
-								)}
-							</DefaultTabBar>
+							<div onClick={ (ev) => {
+								if( !ev.target.closest('.ant-tabs-tab') ){
+									editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+								}
+							} }>
+								<DefaultTabBar {...tabBarProps}>
+									{(node) => (
+										<DraggableTabNode {...node.props} key={node.key}>
+											{node}
+										</DraggableTabNode>
+									)}
+								</DefaultTabBar>
+							</div>
 						</SortableContext>
 					</DndContext>
 				)}

@@ -281,6 +281,12 @@ export default class EditorWidget extends React.Component {
             dragGrid={[editingScreenGrid, editingScreenGrid]}
             resizeGrid={[editingScreenGrid, editingScreenGrid]}
             enableResizing={true}
+            resizeHandleClasses={{
+                topLeft:"brOCResizeHandleCorner",
+                topRight:"brOCResizeHandleCorner",
+                bottomLeft:"brOCResizeHandleCorner",
+                bottomRight:"brOCResizeHandleCorner"
+            }}
             onDragStop={ (ev,data) => this._onDragStop(ev,data, widgetData )}
             onResizeStop={ (e, dir, ref, delta, pos)  => this._onResizeStop( e,dir,ref,delta,pos, widgetData ) }
             onMouseDown={ (ev)=> this._onMouseDown( ev, widgetData  )}

@@ -16,7 +16,6 @@ body{
 		/* Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", */
 		/* "Segoe UI Symbol"; */
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-	/* font-size:14px; */
 }
 
 :root{
@@ -45,6 +44,7 @@ body{
   --broc_headerHeight: 47px;
   --broc_editorSettingsArea_width:260px;
   --broc_editorSettingsArea_margin:4px;
+  --broc_editorDefaultFontSize:12px;
 }
 
 .brOC .defaultElementMarginTop_s{
@@ -77,6 +77,7 @@ body{
 .brOC .editorRightFrameRoot{
 	padding:4px;
 	overflow:auto;
+  font-size:var(--broc_editorDefaultFontSize);
 }
 
 .brOC :where(.css-dev-only-do-not-override-1htoz2s).ant-btn {
@@ -347,7 +348,326 @@ $kbc-btn-size-map: (
   }
 }
 .brOCSelectingWidget {
-  border: solid 1px #4cc5de;
+  border: solid 2px #4ac5de;
+}
+
+.brOCSelectingWidget .brOCResizeHandleCorner {
+  width: 8px !important;
+  height: 8px !important;
+  background-color: #ffffff;
+  border: solid 1px #4ac5de;
+  box-sizing: border-box;
+}
+
+.brOC .brOCWidgetTemplatesArea {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 16px;
+}
+
+.brOC .brOCWidgetTemplateCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+.brOC .brOCWidgetTemplateCardIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+/* SelectLayoutModalForDropDownMenu renders inside an antd Modal, which portals its content */
+/* to document.body rather than under .brOC, so these rules cannot be scoped under .brOC. */
+.brOCSelectLayoutRadioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.brOCSelectLayoutRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: solid 1px #e0e0e0;
+  /* antd's .ant-radio-group sets font-size:0 to remove inline-block gaps between radios; */
+  /* reset it here so the trash icon (sized in em) doesn't collapse to 0. */
+  font-size: 14px;
+}
+
+.brOCSelectLayoutDeleteIcon {
+  color: #757575;
+}
+
+.brOCSelectLayoutDeleteIcon:hover {
+  color: #e0605a;
+}
+
+.brOCSelectLayoutNewButton {
+  background-color: #fafafa;
+  border: solid 1px #e0e0e0;
+  color: #212121;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brOCSelectLayoutNewButton:hover {
+  background-color: #f0f0f0;
+  color: #212121;
+  border-color: #e0e0e0;
+}
+
+.brOCSelectLayoutConfirmButton {
+  background-color: #74c054;
+  border: none;
+  color: #ffffff;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brOCSelectLayoutConfirmButton:hover:not(:disabled) {
+  background-color: #5fac3f;
+  color: #ffffff;
+}
+
+.brOC .brOCWidgetTemplateCardLabel {
+  margin: 0;
+  font-size: 12px;
+  color: #000000;
+  text-align: center;
+}
+
+.brOC .brOCWidgetSettingsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 16px;
+}
+
+.brOC .brOCSettingsSectionHeading {
+  font-weight: bold;
+  font-size: 13px;
+  color: #000000;
+  margin: 8px 0 0 0;
+}
+
+.brOC .brOCSettingsField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brOC .brOCSettingsFieldLabel {
+  font-size: 12px;
+  color: #000000;
+  margin: 0;
+}
+
+.brOC .brOCSettingsFieldBox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 4px 8px;
+  background-color: #f6f6f6;
+  border: solid 1px #e0e0e0;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.brOC .brOCSettingsFieldHex {
+  flex: 1 0 0;
+  font-size: 13px;
+  color: #17181b;
+}
+
+.brOC .brOCSettingsFieldPercent {
+  font-size: 12px;
+  color: #bdbdbd;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.brOC .brOCSettingsFieldBox .brOCSettingsFieldInput {
+  width: 100%;
+  font-size: 12px !important;
+}
+
+.brOC .brOCSettingsFieldBox .brOCSettingsFieldInput .ant-input-number-input {
+  padding: 0;
+  font-size: 12px !important;
+}
+
+.brOC .brOCSettingsFieldBox .ant-select,
+.brOC .brOCSettingsFieldBox .ant-select *,
+.brOC .brOCSettingsFieldBox textarea,
+.brOC .brOCSettingsFieldBox textarea *,
+.brOC .brOCSettingsFieldBox input {
+  font-size: 12px !important;
+}
+
+.brOC .brOCSettingsButton,
+.brOC .brOCSettingsButton * {
+  font-size: 12px !important;
+}
+
+.brOC .brOCSettingsButton {
+  height: 28px;
+}
+
+.brOC a.brOCSettingsDeleteIcon {
+  color: #757575;
+  cursor: pointer;
+}
+
+.brOC a.brOCSettingsDeleteIcon:hover {
+  color: #e0605a;
+}
+
+.brOC .editorHeaderBar {
+  background-color: #ffffff;
+  border-bottom: solid 1px #e0e0e0;
+  height: 56px;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  overflow-x: auto;
+  font-size:var(--broc_editorDefaultFontSize);
+}
+
+.brOC .editorRightFrameButton{
+  font-size:var(--broc_editorDefaultFontSize);
+}
+
+.brOC .editorHeaderLogo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brOC .editorHeaderControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.brOC .editorHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.brOC .editorHeaderIconButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background-color: #ffffff;
+  color: #212121;
+}
+
+.brOC .editorHeaderIconButton:hover:not(:disabled) {
+  color: #74c054;
+}
+
+.brOC .editorHeaderIconButton:disabled {
+  color: #bdbdbd;
+  background-color: #ffffff;
+}
+
+.brOC .editorHeaderDiscardButton {
+  background-color: #fafafa;
+  border: solid 1px #e0e0e0;
+  color: #212121;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brOC .editorHeaderDiscardButton:hover {
+  background-color: #f0f0f0;
+  color: #212121;
+  border-color: #e0e0e0;
+}
+
+.brOC .editorHeaderSaveButton {
+  background-color: #74c054;
+  border: none;
+  color: #ffffff;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brOC .editorHeaderSaveButton:hover {
+  background-color: #5fac3f;
+  color: #ffffff;
+}
+
+/* The save-confirmation Modal portals to document.body (outside .brOC), so its buttons */
+/* are styled with unscoped selectors instead of reusing the .brOC-scoped rules above. */
+.editorSaveConfirmDiscardButton {
+  background-color: #fafafa;
+  border: solid 1px #e0e0e0;
+  color: #212121;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.editorSaveConfirmDiscardButton:hover {
+  background-color: #f0f0f0;
+  color: #212121;
+  border-color: #e0e0e0;
+}
+
+.editorSaveConfirmSaveButton {
+  background-color: #74c054;
+  border: none;
+  color: #ffffff;
+  height: 32px;
+  padding: 6px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.editorSaveConfirmSaveButton:hover {
+  background-color: #5fac3f;
+  color: #ffffff;
 }
 .brOCWidgetBox {
   .kbc-button {
@@ -695,6 +1015,20 @@ table.brOCLinetable tbody tr td
   margin-top:2px;
 }
 
+.brOC .brOCSettingsFieldBox .brOCMarginTopButtonToElement_short {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.brOC .brOCSettingsFieldBox .brOCMarginTopButtonToElement_short .ant-btn {
+  width: auto;
+  flex: 0 0 auto;
+  margin-left: 0 !important;
+}
+
 .brOC .ant-form-item {
   margin-bottom: 13px;
   margin-top:13px;
@@ -1007,6 +1341,79 @@ table.brOCLinetable tbody tr td
 .brOC div.editorSettingsArea{
   width:var(--broc_editorSettingsArea_width);
   margin:var(--broc_editorSettingsArea_margin);
+}
+
+.brOC .editorHeaderBar_OcBr {
+  background: #ffffff;
+  border-bottom: solid 1px #e0e0e0;
+  height: 56px;
+  box-sizing: border-box;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
+.brOC .editorHeaderIconButton_OcBr {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #212121;
+}
+
+.brOC .editorHeaderIconButton_OcBr:hover:not(:disabled) {
+  background: #f5f5f5;
+  color: #212121;
+}
+
+.brOC .editorHeaderIconButton_OcBr:disabled {
+  color: #bdbdbd;
+  background: #ffffff;
+}
+
+.brOC .editorHeaderPillButton_OcBr {
+  height: 32px;
+  min-width: 96px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-size: 8px;
+  line-height: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.brOC .editorHeaderDiscardButton_OcBr {
+  background: #fafafa;
+  border: solid 1px #e0e0e0;
+  color: #212121;
+}
+
+.brOC .editorHeaderDiscardButton_OcBr:hover {
+  background: #f0f0f0;
+  color: #212121;
+  border-color: #e0e0e0;
+}
+
+.brOC .editorHeaderSaveButton_OcBr {
+  background: #74c054;
+  border: none;
+  color: #ffffff;
+}
+
+.brOC .editorHeaderSaveButton_OcBr:hover {
+  background: #5fac3f;
+  color: #ffffff;
 }
 
 .ant-select-selector{

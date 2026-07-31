@@ -2,12 +2,7 @@ import React from 'react';
 import LegacyButtonEditorSubWidgetSettings from "./LegacyButtonEditorSubWidgetSettings";
 import Form from "antd/lib/form";
 import i18n from "../../../../i18n";
-import Input from "antd/lib/input";
-import {Divider} from "antd";
-import InputNumber from "antd/lib/input-number";
-import {Colorpicker} from "antd-colorpicker";
 import EditScreenView from "../../../EditScreenView";
-import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -185,80 +180,31 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
 			(ev) => this._onClickRemoveUnholdIcon(ev)
 		);
         return  (
-            <>
-                <Divider>{i18n.t("Hold_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {holdIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getHoldIconWidth()}
-                             onChange={(n) => this._onChangeHoldIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getHoldIconHeight()}
-                             onChange={(n) => this._onChangeHoldIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                    /* placeholder={i18n.t("Hold")} */
-                    /* allowClear */
-                          value={sHoldLabel}
-                          defaultValue={sHoldLabel}
-                          rows={3}
-                          onChange={(e) => this._onChangeHoldLabel(e.target.value)}
-                />
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getHoldFontSize()}
-                             onChange={(n) => this._onChangeHoldFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getHoldFgColor()}
-                             onChange={(color) => this._onChangeHoldFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getHoldBgColor()}
-                             onChange={(color) => this._onChangeHoldBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getHoldOuterBorderColor()}
-                             onChange={(color) => this._onChangeHoldOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getHoldOuterBorderRadius()}
-                             onChange={(n) => this._onChangeHoldOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getHoldOuterBorderThickness()}
-                             onChange={(n) => this._onChangeHoldOuterBorderThickness(n)}/>
-                <Divider>{i18n.t("Unhold_button_settings")}</Divider>
-                <p>{i18n.t("icon")}</p>
-                {unholdIconSelectJsx}
-                <p>{i18n.t("Icon_width")}</p>
-                <InputNumber min="0" value={subWidgetData.getUnholdIconWidth()}
-                             onChange={(n) => this._onChangeUnholdIconWidth(n)}/>
-                <p>{i18n.t("Icon_height")}</p>
-                <InputNumber min="0" value={subWidgetData.getUnholdIconHeight()}
-                             onChange={(n) => this._onChangeUnholdIconHeight(n)}/>
-                <p>{i18n.t("label")}</p>
-                <TextArea maxLength={1000} style={{minHeight:68}}
-                    /* placeholder={i18n.t("Unhold")} */
-                    /* allowClear */
-                          value={sUnholdLabel}
-                          defaultValue={sUnholdLabel}
-                          rows={3}
-                          onChange={(e) => this._onChangeUnholdLabel(e.target.value)}
-                />
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={subWidgetData.getUnholdFontSize()}
-                             onChange={(n) => this._onChangeUnholdFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getUnholdFgColor()}
-                             onChange={(color) => this._onChangeUnholdFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getUnholdBgColor()}
-                             onChange={(color) => this._onChangeUnholdBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={subWidgetData.getUnholdOuterBorderColor()}
-                             onChange={(color) => this._onChangeUnholdOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={subWidgetData.getUnholdOuterBorderRadius()}
-                             onChange={(n) => this._onChangeUnholdOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={subWidgetData.getUnholdOuterBorderThickness()}
-                             onChange={(n) => this._onChangeUnholdOuterBorderThickness(n)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Hold_button_settings")}</p>
+                {this._renderIconField("icon", holdIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getHoldIconWidth(), (n) => this._onChangeHoldIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getHoldIconHeight(), (n) => this._onChangeHoldIconHeight(n), {min: "0"})}
+                {this._renderTextAreaField("label", sHoldLabel, (e) => this._onChangeHoldLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sHoldLabel, rows: 3})}
+                {this._renderNumberField("Text_size", subWidgetData.getHoldFontSize(), (n) => this._onChangeHoldFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getHoldFgColor(), (color) => this._onChangeHoldFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getHoldBgColor(), (color) => this._onChangeHoldBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getHoldOuterBorderColor(), (color) => this._onChangeHoldOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getHoldOuterBorderRadius(), (n) => this._onChangeHoldOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getHoldOuterBorderThickness(), (n) => this._onChangeHoldOuterBorderThickness(n), {min: "1"})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("Unhold_button_settings")}</p>
+                {this._renderIconField("icon", unholdIconSelectJsx)}
+                {this._renderNumberField("Icon_width", subWidgetData.getUnholdIconWidth(), (n) => this._onChangeUnholdIconWidth(n), {min: "0"})}
+                {this._renderNumberField("Icon_height", subWidgetData.getUnholdIconHeight(), (n) => this._onChangeUnholdIconHeight(n), {min: "0"})}
+                {this._renderTextAreaField("label", sUnholdLabel, (e) => this._onChangeUnholdLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sUnholdLabel, rows: 3})}
+                {this._renderNumberField("Text_size", subWidgetData.getUnholdFontSize(), (n) => this._onChangeUnholdFontSize(n), {min: "0"})}
+                {this._renderColorField("fgColor", subWidgetData.getUnholdFgColor(), (color) => this._onChangeUnholdFgColor(color))}
+                {this._renderColorField("bgColor", subWidgetData.getUnholdBgColor(), (color) => this._onChangeUnholdBgColor(color))}
+                {this._renderColorField("outerBorderColor", subWidgetData.getUnholdOuterBorderColor(), (color) => this._onChangeUnholdOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", subWidgetData.getUnholdOuterBorderRadius(), (n) => this._onChangeUnholdOuterBorderRadius(n), {min: "0"})}
+                {this._renderNumberField("outerBorderThickness", subWidgetData.getUnholdOuterBorderThickness(), (n) => this._onChangeUnholdOuterBorderThickness(n), {min: "1"})}
+            </div>
         );
     }
 

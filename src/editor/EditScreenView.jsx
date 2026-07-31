@@ -10,7 +10,7 @@ import EditorRootPane from "./EditorRootPane";
 import EditorPane from "./EditorPane";
 import EditorDivider from "./EditorDivider";
 import BaseDividerData from "../data/BaseDividerData";
-import {Divider, Input, Select} from "antd";
+import {Divider, Input, Modal, Select} from "antd";
 import Notification from "antd/lib/notification";
 import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
 import EditorWidgetSettingsFactory from "./widget/settings/EditorWidgetSettingsFactory";
@@ -21,6 +21,7 @@ import SelectIconModal from "./SelectIconModal";
 import EditorWidget from "./widget/editor/EditorWidget";
 import OCUtil from "../OCUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUndo, faRedo} from "@fortawesome/free-solid-svg-icons";
 import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
@@ -50,7 +51,8 @@ export default class EditScreenView extends React.Component {
     this.state = {
       settingsContainerOrDivider:null,
       propertiesMode : _PROPERTIES_MODE.none,
-      selectingEditorWidgetData:null
+      selectingEditorWidgetData:null,
+      saveConfirmOpen:false
     };
     this._ScreenData = props["screenData"];
 	this._CloneSystemSettingsData = props["cloneSystemSettingsData"];
@@ -328,6 +330,19 @@ export default class EditScreenView extends React.Component {
     this._OperatorConsoleAsParent.saveEditingScreen_ver2(this._CloneSystemSettingsData);
   }
 
+  _openSaveConfirm(){
+    this.setState({saveConfirmOpen:true});
+  }
+
+  _closeSaveConfirm(){
+    this.setState({saveConfirmOpen:false});
+  }
+
+  _confirmSave(){
+    this.setState({saveConfirmOpen:false});
+    this._saveEditingScreen();
+  }
+
   onMouseDownEditorPaneInSettingsMode( ev ){
     const eContainerDiv = ev.currentTarget;
     const containerId = eContainerDiv.getAttribute("data-br-container-id");
@@ -430,11 +445,11 @@ export default class EditScreenView extends React.Component {
     // ev.preventDefault();
     ev.dataTransfer.clearData();
 
-    const  widgetTypeId = ev.target.getAttribute("data-br-widget-type-id");
+    const  widgetTypeId = ev.currentTarget.getAttribute("data-br-widget-type-id");
     //const e = ev.target.querySelector("[data-br-widget-type-id]");
     //const widgetTypeId = e.getAttribute("data-br-widget-type-id");
     ev.dataTransfer.setData('editorWidgetTypeId', widgetTypeId );
-    const itemRect = ev.target.getBoundingClientRect();
+    const itemRect = ev.currentTarget.getBoundingClientRect();
     const offsetX = ev.clientX - itemRect.left;
     const offsetY = ev.clientY - itemRect.top;
     ev.dataTransfer.setData('offsetX', offsetX.toString() );
@@ -490,7 +505,7 @@ export default class EditScreenView extends React.Component {
     const widgetTemplateArray = EditorWidgetTemplateFactory.getStaticEditorWidgetSettingsFactoryInstance().getEditorWidgetTemplateArray();
 
     return (
-        <div style={{display:"flex",justifyContent:"center",flexFlow:"column",alignItems:"center"}} >
+        <div className="brOCWidgetTemplatesArea">
           {widgetTemplateArray.map( ( widgetTemplate, index ) =>{
             return widgetTemplate.getRenderJsx( index, this );
           })}
@@ -723,13 +738,13 @@ export default class EditScreenView extends React.Component {
                   {i18n.t("Area")}:
                 </div>
                 <div>
-                  <Button style={{width: "100%"}} onClick={() => {
+                  <Button style={{width: "100%"}} className="editorRightFrameButton" onClick={() => {
                     this._splitVertically();
                   }}>{i18n.t("splitVertically")}
                   </Button>
                 </div>
                 <div className="defaultButtonMarginTop">
-                  <Button style={{width: "100%"}} onClick={() => {
+                  <Button style={{width: "100%"}} className="editorRightFrameButton" onClick={() => {
                     this._splitHorizontally();
                   }}>{i18n.t("splitHorizontally")}
                   </Button>
@@ -1066,13 +1081,29 @@ export default class EditScreenView extends React.Component {
         <>
          <EditorAutoDialView_ver2/>
           <SelectIconModal editScreenViewAsParent={this}/>
+          <Modal
+              open={this.state.saveConfirmOpen}
+              title={i18n.t("SaveThisLayoutTitle")}
+              onCancel={() => this._closeSaveConfirm()}
+              maskClosable={false}
+              footer={[
+                <Button key="discard" className="editorSaveConfirmDiscardButton" onClick={() => this._closeSaveConfirm()}>
+                  {i18n.t("discard")}
+                </Button>,
+                <Button key="save" className="editorSaveConfirmSaveButton" onClick={() => this._confirmSave()}>
+                  {i18n.t("save")}
+                </Button>
+              ]}
+          >
+            {i18n.t("SaveThisLayoutText")}
+          </Modal>
           <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
-            <div style={{display: "flex", alignItems: "center", height: "47px", overflowX:"auto"}}>
-              <div style={{width: "240px"}}>
-                <img style={{marginTop: "4px", marginLeft: "4px"}} src={logo}/>
+            <div className="editorHeaderBar">
+              <div className="editorHeaderLogo">
+                <img height={28} src={logo}/>
               </div>
               {/*<DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>*/}
-              <Space>
+              <Space className="editorHeaderControls">
                 <label style={{whiteSpace: "nowrap"}}>{i18n.t("grid")}{": "}
                   <InputNumber value={this.getEditingScreenGrid()}
                                onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
@@ -1124,25 +1155,23 @@ export default class EditScreenView extends React.Component {
                 </a>
               </Popconfirm>) : null }
             </Space>
-            <div style={{marginLeft: "auto", marginRight: "4px"}}>
-              <Space>
-                <Button disabled={!this.canUndo()} onClick={() => this.undo()}>{i18n.t("undo")}</Button>
-                <Button disabled={!this.canRedo()} onClick={() => this.redo()}>{i18n.t("redo")}</Button>
-                <Space/>
-                <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._abortEditingScreen()}
-                            okText={i18n.t("yes")}
-                            cancelText={i18n.t("no")}
-                >
-                  <Button type="secondary">{i18n.t("discard")}</Button>
-                </Popconfirm>
-                <Space/>
-                <Button type="success" htmlType="cancel" onClick={() => this._saveEditingScreen()}>
-                  {i18n.t("save")}
-                </Button>
-              </Space>
+            <div className="editorHeaderActions">
+              <Button className="editorHeaderIconButton" disabled={!this.canUndo()} onClick={() => this.undo()}
+                      title={i18n.t("undo")} icon={<FontAwesomeIcon icon={faUndo}/>}/>
+              <Button className="editorHeaderIconButton" disabled={!this.canRedo()} onClick={() => this.redo()}
+                      title={i18n.t("redo")} icon={<FontAwesomeIcon icon={faRedo}/>}/>
+              <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._abortEditingScreen()}
+                          okText={i18n.t("yes")}
+                          cancelText={i18n.t("no")}
+              >
+                <Button className="editorHeaderDiscardButton">{i18n.t("discard")}</Button>
+              </Popconfirm>
+              <Button className="editorHeaderSaveButton" htmlType="cancel" onClick={() => this._openSaveConfirm()}>
+                {i18n.t("save")}
+              </Button>
             </div>
           </div>
-          <div style={{display: "flex", height: "calc(100% - 47px)"}}>
+          <div style={{display: "flex", height: "calc(100% - 56px)"}}>
             <div style={{width: "240px", overflowY: "auto", zIndex:0}}>
               {/* left -  widget templates area*/}
               {this._getWidgetTemplatesAreaJsx()}

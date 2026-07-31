@@ -502,7 +502,6 @@ export default class PhonebookContactInfozInfoView extends React.Component {
 
     _deleteContact(){
         const oc = BrekekeOperatorConsole.getStaticInstance();
-        const aid = this.state.pbContactInfo.getAid();
         const isShared = this.state.pbContactInfo.getIsShared() === true;
         const isAdmin = oc.getIsAdmin();
         const isDeletable = isShared === false || ( isShared === true && isAdmin === true );
@@ -528,6 +527,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             }
         };
 
+        const aid = this.state.pbContactInfo.getAid();
         const deleteContactOptions = {
             methodName : "deleteContact",
             methodParams : {

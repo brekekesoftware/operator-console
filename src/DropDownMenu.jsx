@@ -1,18 +1,14 @@
 import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
 import MoreOutlined from "@ant-design/icons/MoreOutlined";
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import Notification from "antd/lib/notification";
 import {Form, Input, Modal } from "antd";
 import { Dropdown, Button } from 'antd';
 import BrekekeOperatorConsole from "./index";
-import OpenLayoutModalForDropdownMenu, {refreshNoteNamesContent} from "./OpenLayoutModalForDropDownMenu";
-import Spin from "antd/lib/spin";
+import SelectLayoutModalForDropDownMenu from "./SelectLayoutModalForDropDownMenu";
 import ScreenData from "./data/ScreenData";
 import OCUtil from "./OCUtil";
-import DeleteLayoutsModalForDropDownMenu, {
-    refreshNoteNamesForDeleteLayoutsModalForDropDownMenu
-} from "./DeleteLayoutsModalForDropDownMenu";
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
 export default function DropDownMenu( { operatorConsole } ){
@@ -24,71 +20,11 @@ export default function DropDownMenu( { operatorConsole } ){
         operatorConsole.setState({newLayoutModalOpen:true});
     };
 
-    const [ openLayoutModalOpen,  setOpenLayoutModalOpen ] = useState( false );
-    const [ deleteLayoutsModalOpen,  setDeleteLayoutsModalOpen ] = useState( false );
-
-    const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
-    const [isLoading, setIsLoading ] = useState(false);
-    const showOpenLayoutModalFunc = ( ) =>{
-
-        const setOpenLayoutModalFunc = (b) =>{
-            if( b ) {
-                operatorConsole.addDisableKeydownToDialingCounter();
-                operatorConsole.addDisablePasteToDialingCounter();
-            }
-            else{
-                operatorConsole.subtractDisableKeydownToDialingCounter()
-                operatorConsole.subtractDisablePasteToDialingCounter();
-            }
-            setOpenLayoutModalOpen(b);
-        }
-
-        setOpenLayoutModalFunc( true );
-        // const setIsLoadingFunc = (b) =>{
-        //     //if( b !== true && isLoading === true ){
-        //     if( b !== true ){
-        //         operatorConsole.subtractDisableKeydownToDialingCounter();
-        //         operatorConsole.subtractDisablePasteToDialingCounter();
-        //     }
-        //     setIsLoading(b);
-        // }
-        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalFunc, setIsLoading  );;
-    }
-
-    //let layoutNamesForDeleteLayouts;
-    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
-    const [ layoutNamesForDeleteLayouts, setLayoutNamesForDeleteLayouts ] = useState(null);
-    const setNoteNamesFunctionForDeleteLayouts = ( noteNames ) =>{
-        if( !noteNames || Array.isArray(noteNames ) !== true || noteNames.length === 0 ){
-            setLayoutNamesForDeleteLayouts( new Array() );
-        }
-        else {
-            const layoutNamesForDeleteLayouts = new Array();
-            for( let i = 0; i < noteNames.length; i++ ) {
-                const noteName = noteNames[i];
-                if( BrekekeOperatorConsole.isOCNoteName( noteName) ){
-                    const layoutName = BrekekeOperatorConsole.getOCNoteShortname( noteName );
-                    layoutNamesForDeleteLayouts.push( layoutName );
-                }
-            }
-            setLayoutNamesForDeleteLayouts( layoutNamesForDeleteLayouts );
-        }
-    };
-
-    const [isLoadingNoteNamesForDeleteLayouts, setIsLoadingNoteNamesFunctionForDeleteLayouts ] = useState(false);
-    //
-    // let isLoadingNoteNamesForDeleteLayouts = false;
-    // const setIsLoadingNoteNamesFunctionForDeleteLayouts = ( b ) =>{
-    //     isLoadingNoteNamesForDeleteLayouts = b;
-    // };
-
-    const showDeleteLayoutsModalFunc = ( ) =>{
-        if( deleteLayoutsModalOpen !== true ) {
-            operatorConsole.addDisableKeydownToDialingCounter();
-            operatorConsole.addDisablePasteToDialingCounter();
-        }
-        setDeleteLayoutsModalOpen( true );
-        refreshNoteNamesForDeleteLayoutsModalForDropDownMenu( operatorConsole, setNoteNamesFunctionForDeleteLayouts, setIsLoadingNoteNamesFunctionForDeleteLayouts);;
+    const [ selectLayoutModalOpen, setSelectLayoutModalOpen ] = useState( false );
+    const showSelectLayoutModalFunc = ( ) => {
+        operatorConsole.addDisableKeydownToDialingCounter();
+        operatorConsole.addDisablePasteToDialingCounter();
+        setSelectLayoutModalOpen( true );
     }
 
     let items;
@@ -191,24 +127,8 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '2',
                 label: (
-                    <a onClick={showNewLayoutModalFunc} className="dropdownMenuItem_OcBr">
-                        {i18n.t("newLayout")}
-                    </a>
-                ),
-            },
-            {
-                key: '3',
-                label: (
-                    <a onClick={showOpenLayoutModalFunc} className="dropdownMenuItem_OcBr">
-                        {i18n.t("openLayout")}
-                    </a>
-                ),
-            },
-            {
-                key: '4',
-                label: (
-                    <a onClick={showDeleteLayoutsModalFunc} className="dropdownMenuItem_OcBr">
-                        {i18n.t("DeleteLayouts")}
+                    <a onClick={showSelectLayoutModalFunc} className="dropdownMenuItem_OcBr">
+                        {i18n.t("selectLayout")}
                     </a>
                 ),
             },
@@ -273,8 +193,8 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <a onClick={showOpenLayoutModalFunc} className="dropdownMenuItem_OcBr">
-                        {i18n.t("openLayout")}
+                    <a onClick={showSelectLayoutModalFunc} className="dropdownMenuItem_OcBr">
+                        {i18n.t("selectLayout")}
                     </a>
                 ),
             },
@@ -304,39 +224,10 @@ export default function DropDownMenu( { operatorConsole } ){
             },
         ];
     }
-    const displayLoadingStyle = isLoading ? "block" : "none";
-    const spinScreen = useRef(null);
-    if( spinScreen.current ){
-        spinScreen.current.style.display = displayLoadingStyle;
-    }
-
-    // const setDeleteLayoutsModalOpenFunc = (b) =>{
-    //     if(b) {
-    //         operatorConsole.addDisableKeydownToDialingCounter();
-    //         operatorConsole.addDisablePasteToDialingCounter();
-    //     }
-    //     else{
-    //         operatorConsole.subtractDisableKeydownToDialingCounter();
-    //         operatorConsole.subtractDisablePasteToDialingCounter();
-    //     }
-    //     setDeleteLayoutsModalOpen(b);
-    // }
-
     return (
         <>
             <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={operatorConsole.getState().newLayoutModalOpen} />
-            <OpenLayoutModalForDropdownMenu noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
-            <DeleteLayoutsModalForDropDownMenu
-                operatorConsole={ operatorConsole } useStateOpen={ deleteLayoutsModalOpen  } useStateSetOpen={ setDeleteLayoutsModalOpen }
-                layoutNamesForDeleteLayouts = { layoutNamesForDeleteLayouts } isLoadingNoteNamesForDeleteLayouts = { isLoadingNoteNamesForDeleteLayouts }
-                setNoteNamesFunctionForDeleteLayouts={setNoteNamesFunctionForDeleteLayouts}
-                setIsLoadingNoteNamesFunctionForDeleteLayouts={setIsLoadingNoteNamesFunctionForDeleteLayouts}
-            />
-            <div ref={spinScreen} className="spinScreen">
-                <div>
-                    <Spin/>
-                </div>
-            </div>
+            <SelectLayoutModalForDropDownMenu operatorConsole={ operatorConsole } useStateOpen={ selectLayoutModalOpen } useStateSetOpen={ setSelectLayoutModalOpen } />
             <Dropdown
                 menu={{
                     items,

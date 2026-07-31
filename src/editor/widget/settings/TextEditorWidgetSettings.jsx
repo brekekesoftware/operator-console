@@ -1,9 +1,6 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Input} from "antd";
-import {Colorpicker} from "antd-colorpicker";
-import InputNumber from "antd/lib/input-number";
 
 export default class TextEditorWidgetSettings extends EditorWidgetSettings {
     constructor( props ) {
@@ -57,23 +54,14 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const jsx =   (
-            <>
-                <p>{i18n.t("text")}</p>
-                <Input.TextArea style={{width: "100%", height: "160px"}} value={widgetData.getText()}
-                                onChange={(e) => this._onChangeTextArea(e)}/>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getTextFontSize()}
-                             onChange={(n) => this._onChangeTextFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTextFgColor()}
-                             onChange={(color) => this._onChangeTextFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTextBgColor()}
-                             onChange={(color) => this._onChangeTextBgColor(color)}/>
-                <p>{i18n.t("borderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getTextBorderRadius()}
-                             onChange={(n) => this._onChangeTextBorderRadius(n)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderTextAreaField("text", widgetData.getText(), (e) => this._onChangeTextArea(e), {style: {width: "100%", height: "160px"}})}
+                {this._renderNumberField("Text_size", widgetData.getTextFontSize(), (n) => this._onChangeTextFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getTextFgColor(), (color) => this._onChangeTextFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getTextBgColor(), (color) => this._onChangeTextBgColor(color))}
+                {this._renderNumberField("borderRadius", widgetData.getTextBorderRadius(), (n) => this._onChangeTextBorderRadius(n), {min: 0})}
+            </div>
         );
         return jsx;
     }

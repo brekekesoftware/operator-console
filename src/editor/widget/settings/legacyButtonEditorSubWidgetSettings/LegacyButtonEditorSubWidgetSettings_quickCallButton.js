@@ -2,9 +2,6 @@ import React from 'react';
 import LegacyButtonEditorSubWidgetSettings from "./LegacyButtonEditorSubWidgetSettings";
 import i18n from "../../../../i18n";
 import Input from "antd/lib/input";
-import InputNumber from "antd/lib/input-number";
-import {Colorpicker} from "antd-colorpicker";
-import TextArea from "antd/es/input/TextArea";
 
 export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends LegacyButtonEditorSubWidgetSettings  {
 
@@ -118,79 +115,30 @@ export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends
 
         const subWidgetData = this._LegacyButtonEditorSubWidgetData;
         return  (
-                <>
-                    <p>{i18n.t("icon")}</p>
-                    {iconSelectJsx}
-                    <p>{i18n.t("Icon_width")}</p>
-                    <InputNumber min="0" value={subWidgetData.getIconWidth()}
-                                 onChange={(n) => this._onChangeIconWidth(n)}/>
-                    <p>{i18n.t("Icon_height")}</p>
-                    <InputNumber min="0" value={subWidgetData.getIconHeight()}
-                                 onChange={(n) => this._onChangeIconHeight(n)}/>
-                    <p>{i18n.t("label")}</p>
-                    <TextArea maxLength={1000} style={{minHeight:68}}
-                        /* placeholder={i18n.t("label")} */
-                        /* allowClear */
-                              value={sLabel}
-                              defaultValue={sLabel}
-                              rows={3}
-                              onChange={(e) => this._onChangeLabel(e.target.value)}
-                    />
-                    <p>0</p>
-                    <Input allowClear value={sKeypadZero} defaultValue={sKeypadZero}
-                           onChange={(e) => this._onChangeKeypadZero(e)}/>
-                    <p>1</p>
-                    <Input allowClear value={sKeypadOne} defaultValue={sKeypadOne}
-                           onChange={(e) => this._onChangeKeypadOne(e)}/>
-                    <p>2</p>
-                    <Input allowClear value={sKeypadTwo} defaultValue={sKeypadTwo}
-                           onChange={(e) => this._onChangeKeypadTwo(e)}/>
-                    <p>3</p>
-                    <Input allowClear value={sKeypadThree} defaultValue={sKeypadThree}
-                           onChange={(e) => this._onChangeKeypadThree(e)}/>
-                    <p>4</p>
-                    <Input allowClear value={sKeypadFour} defaultValue={sKeypadFour}
-                           onChange={(e) => this._onChangeKeypadFour(e)}/>
-                    <p>5</p>
-                    <Input allowClear value={sKeypadFive} defaultValue={sKeypadFive}
-                           onChange={(e) => this._onChangeKeypadFive(e)}/>
-                    <p>6</p>
-                    <Input allowClear value={sKeypadSix} defaultValue={sKeypadSix}
-                           onChange={(e) => this._onChangeKeypadSix(e)}/>
-                    <p>7</p>
-                    <Input allowClear value={sKeypadSeven} defaultValue={sKeypadSeven}
-                           onChange={(e) => this._onChangeKeypadSeven(e)}/>
-                    <p>8</p>
-                    <Input allowClear value={sKeypadEight} defaultValue={sKeypadEight}
-                           onChange={(e) => this._onChangeKeypadEight(e)}/>
-                    <p>9</p>
-                    <Input allowClear value={sKeypadNine} defaultValue={sKeypadNine}
-                           onChange={(e) => this._onChangeKeypadNine(e)}/>
-                    <p>*</p>
-                    <Input allowClear value={sKeypadAsterisk} defaultValue={sKeypadAsterisk}
-                           onChange={(e) => this._onChangeKeypadAsterisk(e)}/>
-                    <p>#</p>
-                    <Input allowClear value={sKeypadSharp} defaultValue={sKeypadSharp}
-                           onChange={(e) => this._onChangeKeypadSharp(e)}/>
-                    <p>{i18n.t("Text_size")}</p>
-                    <InputNumber min="0" value={subWidgetData.getFontSize()}
-                                 onChange={(n) => this._onChangeFontSize(n)}/>
-                    <p>{i18n.t("fgColor")}</p>
-                    <Colorpicker format="rgb" value={subWidgetData.getFgColor()}
-                                 onChange={(color) => this._onChangeFgColor(color)}/>
-                    <p>{i18n.t("bgColor")}</p>
-                    <Colorpicker format="rgb" value={subWidgetData.getBgColor()}
-                                 onChange={(color) => this._onChangeBgColor(color)}/>
-                    <p>{i18n.t("outerBorderColor")}</p>
-                    <Colorpicker format="rgb" value={subWidgetData.getOuterBorderColor()}
-                                 onChange={(color) => this._onChangeOuterBorderColor(color)}/>
-                    <p>{i18n.t("outerBorderRadius")}</p>
-                    <InputNumber min="0" value={subWidgetData.getOuterBorderRadius()}
-                                 onChange={(n) => this._onChangeOuterBorderRadius(n)}/>
-                    <p>{i18n.t("outerBorderThickness")}</p>
-                    <InputNumber min="1" value={subWidgetData.getOuterBorderThickness()}
-                                 onChange={(n) => this._onChangeOuterBorderThickness(n)}/>
-                </>
+                <div className="brOCWidgetSettingsPanel">
+                    {this._renderIconField("icon", iconSelectJsx)}
+                    {this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"})}
+                    {this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})}
+                    {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e.target.value), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3})}
+                    {this._renderRawLabelTextField("0", sKeypadZero, (e) => this._onChangeKeypadZero(e), {allowClear: true, defaultValue: sKeypadZero})}
+                    {this._renderRawLabelTextField("1", sKeypadOne, (e) => this._onChangeKeypadOne(e), {allowClear: true, defaultValue: sKeypadOne})}
+                    {this._renderRawLabelTextField("2", sKeypadTwo, (e) => this._onChangeKeypadTwo(e), {allowClear: true, defaultValue: sKeypadTwo})}
+                    {this._renderRawLabelTextField("3", sKeypadThree, (e) => this._onChangeKeypadThree(e), {allowClear: true, defaultValue: sKeypadThree})}
+                    {this._renderRawLabelTextField("4", sKeypadFour, (e) => this._onChangeKeypadFour(e), {allowClear: true, defaultValue: sKeypadFour})}
+                    {this._renderRawLabelTextField("5", sKeypadFive, (e) => this._onChangeKeypadFive(e), {allowClear: true, defaultValue: sKeypadFive})}
+                    {this._renderRawLabelTextField("6", sKeypadSix, (e) => this._onChangeKeypadSix(e), {allowClear: true, defaultValue: sKeypadSix})}
+                    {this._renderRawLabelTextField("7", sKeypadSeven, (e) => this._onChangeKeypadSeven(e), {allowClear: true, defaultValue: sKeypadSeven})}
+                    {this._renderRawLabelTextField("8", sKeypadEight, (e) => this._onChangeKeypadEight(e), {allowClear: true, defaultValue: sKeypadEight})}
+                    {this._renderRawLabelTextField("9", sKeypadNine, (e) => this._onChangeKeypadNine(e), {allowClear: true, defaultValue: sKeypadNine})}
+                    {this._renderRawLabelTextField("*", sKeypadAsterisk, (e) => this._onChangeKeypadAsterisk(e), {allowClear: true, defaultValue: sKeypadAsterisk})}
+                    {this._renderRawLabelTextField("#", sKeypadSharp, (e) => this._onChangeKeypadSharp(e), {allowClear: true, defaultValue: sKeypadSharp})}
+                    {this._renderNumberField("Text_size", subWidgetData.getFontSize(), (n) => this._onChangeFontSize(n), {min: "0"})}
+                    {this._renderColorField("fgColor", subWidgetData.getFgColor(), (color) => this._onChangeFgColor(color))}
+                    {this._renderColorField("bgColor", subWidgetData.getBgColor(), (color) => this._onChangeBgColor(color))}
+                    {this._renderColorField("outerBorderColor", subWidgetData.getOuterBorderColor(), (color) => this._onChangeOuterBorderColor(color))}
+                    {this._renderNumberField("outerBorderRadius", subWidgetData.getOuterBorderRadius(), (n) => this._onChangeOuterBorderRadius(n), {min: "0"})}
+                    {this._renderNumberField("outerBorderThickness", subWidgetData.getOuterBorderThickness(), (n) => this._onChangeOuterBorderThickness(n), {min: "1"})}
+                </div>
         );
     }
 

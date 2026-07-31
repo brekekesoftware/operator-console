@@ -1,9 +1,6 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Colorpicker} from "antd-colorpicker";
-import InputNumber from "antd/lib/input-number";
-import {Divider} from "antd";
 
 export default class CallTableEditorWidgetSettings extends EditorWidgetSettings {
 
@@ -119,65 +116,33 @@ export default class CallTableEditorWidgetSettings extends EditorWidgetSettings 
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const jsx = (
-            <>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableBgColor()}
-                             onChange={(color) => this._onChangeCalltableBgColor(color)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableOuterBorderThickness()}
-                             onChange={(n) => this._onChangeCalltableOuterBorderThickness(n)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableOuterBorderColor()}
-                             onChange={(color) => this._onChangeCalltableOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableOuterBorderRadius()}
-                             onChange={(n) => this._onChangeCalltableOuterBorderRadius(n)}/>
-                <Divider>{i18n.t("header_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableHeaderFontSize()}
-                             onChange={(size) => this._onChangeCalltableHeaderFontSize(size)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableHeaderFgColor()}
-                             onChange={(color) => this._onChangeCalltableHeaderFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableHeaderBgColor()}
-                             onChange={(color) => this._onChangeCalltableHeaderBgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableHeaderRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeCalltableHeaderRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableHeaderRowUnderlineColor()}
-                             onChange={(color) => this._onChangeCalltableHeaderRowUnderlineColor(color)}/>
-                <Divider>{i18n.t("body_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableBodyFontSize()}
-                             onChange={(size) => this._onChangeCalltableBodyFontSize(size)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableBodyFgColor()}
-                             onChange={(color) => this._onChangeCalltableBodyFgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableBodyRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeCalltableBodyRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableBodyRowUnderlineColor()}
-                             onChange={(color) => this._onChangeCalltableBodyRowUnderlineColor(color)}/>
-                <p>{i18n.t("activeRowFgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableBodyActiveRowFgColor()}
-                             onChange={(color) => this._onChangeCalltableBodyActiveRowFgColor(color)}/>
-                <p>{i18n.t("activeRowBgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getCalltableBodyActiveRowBgColor()}
-                             onChange={(color) => this._onChangeCalltableBodyActiveRowBgColor(color)}/>
-                <Divider>{i18n.t("Active_button_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableActiveButtonFontSize()}
-                             onChange={(n) => this._onChangeCalltableActiveButtonFontSize(n)}/>
-                <p>{i18n.t("width")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableActiveButtonWidth()}
-                             onChange={(n) => this._onChangeCalltableActiveButtonWidth(n)}/>
-                <p>{i18n.t("height")}</p>
-                <InputNumber min="0" value={widgetData.getCalltableActiveButtonHeight()}
-                             onChange={(n) => this._onChangeCalltableActiveButtonHeight(n)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderColorField("bgColor", widgetData.getCalltableBgColor(), (color) => this._onChangeCalltableBgColor(color))}
+                {this._renderNumberField("outerBorderThickness", widgetData.getCalltableOuterBorderThickness(), (n) => this._onChangeCalltableOuterBorderThickness(n), {min: 0})}
+                {this._renderColorField("outerBorderColor", widgetData.getCalltableOuterBorderColor(), (color) => this._onChangeCalltableOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getCalltableOuterBorderRadius(), (n) => this._onChangeCalltableOuterBorderRadius(n), {min: 0})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getCalltableHeaderFontSize(), (size) => this._onChangeCalltableHeaderFontSize(size), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getCalltableHeaderFgColor(), (color) => this._onChangeCalltableHeaderFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getCalltableHeaderBgColor(), (color) => this._onChangeCalltableHeaderBgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getCalltableHeaderRowUnderlineThickness(), (n) => this._onChangeCalltableHeaderRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getCalltableHeaderRowUnderlineColor(), (color) => this._onChangeCalltableHeaderRowUnderlineColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("body_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getCalltableBodyFontSize(), (size) => this._onChangeCalltableBodyFontSize(size), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getCalltableBodyFgColor(), (color) => this._onChangeCalltableBodyFgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getCalltableBodyRowUnderlineThickness(), (n) => this._onChangeCalltableBodyRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getCalltableBodyRowUnderlineColor(), (color) => this._onChangeCalltableBodyRowUnderlineColor(color))}
+                {this._renderColorField("activeRowFgColor", widgetData.getCalltableBodyActiveRowFgColor(), (color) => this._onChangeCalltableBodyActiveRowFgColor(color))}
+                {this._renderColorField("activeRowBgColor", widgetData.getCalltableBodyActiveRowBgColor(), (color) => this._onChangeCalltableBodyActiveRowBgColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("Active_button_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getCalltableActiveButtonFontSize(), (n) => this._onChangeCalltableActiveButtonFontSize(n), {min: 0})}
+                {this._renderNumberField("width", widgetData.getCalltableActiveButtonWidth(), (n) => this._onChangeCalltableActiveButtonWidth(n), {min: 0})}
+                {this._renderNumberField("height", widgetData.getCalltableActiveButtonHeight(), (n) => this._onChangeCalltableActiveButtonHeight(n), {min: 0})}
+            </div>
         );
         return jsx;
     }

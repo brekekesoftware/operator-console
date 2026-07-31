@@ -313,6 +313,9 @@
     "undo": "元に戻す",
     "redo": "やり直す",
 
+    "SaveThisLayoutTitle": "レイアウトを保存",
+    "SaveThisLayoutText": "保存してもよろしいですか?",
+
     "no_widgets": "ウィジェットがありません",
 
     "function": "関数",
@@ -455,6 +458,7 @@
 	"openLayout" : "レイアウトを開く",
 	"Layout_does_not_exist" : "レイアウトが存在しません。",
 	"selectLayout" : "レイアウトを選択",
+	"confirm" : "確定",
 	"DataVersionMismatch" : "データのバージョンが一致しません。",
 	"status" : "ステータス",
 	"id" : "ID",
@@ -462,6 +466,8 @@
 	"ExtensionTable" : "エクステンションテーブル",
 	"Note" : "ノート",
 	"LineTable" : "ラインテーブル",
+	"CallPanel" : "LCDスクリーン",
+	"LegacyButton" : "ボタン",
 
 	"PartyNumber" : "電話番号",
 	"PartyName" : "名前",
@@ -489,6 +495,7 @@
 	
 	"bgColor" : "背景色",
 	"bgColor_is_not_valid" : "背景色が正しくありません。",
+	"Settings" : "設定",
 	"insideShadow_settings" : "内側の影の設定",
 	"horizontalOffset" : "水平方向のオフセット",
 	"insideShadow_horizontalOffset_is_not_valid" : "内側の影の水平方向のオフセットが正しくありません。",

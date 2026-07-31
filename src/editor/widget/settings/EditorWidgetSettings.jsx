@@ -2,8 +2,12 @@ import React from 'react';
 import Button from "antd/lib/button";
 import i18n from "../../../i18n";
 import Popconfirm from "antd/lib/popconfirm";
-import {Checkbox, Divider, Input, Modal, Select} from "antd";
-//import AutoComplete from "antd/lib/auto-complete";
+import {Checkbox, Input, Modal, Select} from "antd";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {Colorpicker} from "antd-colorpicker";
+import InputNumber from "antd/lib/input-number";
+import AutoComplete from "antd/lib/auto-complete";
 import WidgetSettingsTemplates from "./template/WidgetSettingsTemplates";
 import Notification from "antd/lib/notification";
 import BrekekeOperatorConsole from "../../../index";
@@ -12,6 +16,7 @@ import WidgetSettingsTemplate from "./template/WidgetSettingsTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
 import LegacyButtonEditorSubWidgetSettingsFactory
     from "./legacyButtonEditorSubWidgetSettings/LegacyButtonEditorSubWidgetSettingsFactory";
+import EditorWidgetTemplateFactory from "../template/EditorWidgetTemplateFactory";
 
 
 let _select_widget_settings_template_name = null;
@@ -33,6 +38,91 @@ export default class EditorWidgetSettings extends React.Component {
     _getRenderMainJsx(){
         throw new Error("Not implemented.");
         return null;
+    }
+
+    //!presentational helper. Renders a "Settings"-style bordered field: label above, a
+    //!light-grey box below containing the antd-colorpicker swatch plus a live hex/percent readout.
+    _renderColorField( labelKey, colorValue, onChange ){
+        const rgb = colorValue && colorValue.rgb;
+        const hex = colorValue && colorValue.hex ? colorValue.hex.replace("#", "").toUpperCase() : "";
+        const percent = rgb && typeof rgb.a === "number" ? Math.round(rgb.a * 100) : 100;
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Colorpicker format="rgb" value={colorValue} onChange={onChange}/>
+                    <span className="brOCSettingsFieldHex">{hex}</span>
+                    <span className="brOCSettingsFieldPercent">{percent}%</span>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled number field in the same bordered-box style.
+    _renderNumberField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <InputNumber className="brOCSettingsFieldInput" variant="borderless" value={value}
+                                 onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled single-line text field in the same bordered-box style.
+    _renderTextField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Input className="brOCSettingsFieldInput" variant="borderless" value={value}
+                           onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled multi-line text field in the same bordered-box style.
+    _renderTextAreaField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Input.TextArea className="brOCSettingsFieldInput" variant="borderless" value={value}
+                                    onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled select field in the same bordered-box style.
+    _renderSelectField( labelKey, value, onChange, optionsJsx, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <Select className="brOCSettingsFieldInput" variant="borderless" value={value}
+                            onChange={onChange} {...extraProps}>
+                        {optionsJsx}
+                    </Select>
+                </div>
+            </div>
+        );
+    }
+
+    //!presentational helper. Renders a labelled autocomplete field in the same bordered-box style.
+    _renderAutoCompleteField( labelKey, value, onChange, extraProps ){
+        return (
+            <div className="brOCSettingsField">
+                <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
+                <div className="brOCSettingsFieldBox">
+                    <AutoComplete className="brOCSettingsFieldInput" variant="borderless" value={value}
+                                  onChange={onChange} {...extraProps}/>
+                </div>
+            </div>
+        );
     }
 
     componentDidUpdate(){
@@ -453,9 +543,22 @@ export default class EditorWidgetSettings extends React.Component {
 		
 		
         const bDisabled = !wsta || wsta.length === 0;
+        const widgetDescMessageKey = `widget_description.${widgetNameForII18n}`;
+        const widgetTemplate = EditorWidgetTemplateFactory.getStaticEditorWidgetSettingsFactoryInstance().getEditorWidgetTemplateByWidgetTypeId( widgetData.getWidgetTypeId() );
+        const widgetNameLabelKey = widgetTemplate ? widgetTemplate.getLabelKey() : widgetNameForII18n;
         const jsx = (
             <>
-                <div style={{padding: "12px 12px 0px 12px"}}>{i18n.t(`widget_description.${widgetNameForII18n}`)}</div>
+                <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 12px 0px 12px"}}>
+                    <p className="brOCSettingsSectionHeading" style={{margin: 0}}>{i18n.t( widgetNameLabelKey)}</p>
+                    <Popconfirm title={i18n.t("are_you_sure")}
+                                onConfirm={() => this._EditScreenViewAsParent.onConfirmOkRemoveEditorWidget(widgetData)}
+                                okText={i18n.t("yes")}
+                                cancelText={i18n.t("no")}
+                    >
+                        <a className="icon_general brOCSettingsDeleteIcon"><FontAwesomeIcon icon={faTrash}/></a>
+                    </Popconfirm>
+                </div>
+                <div className="brOCSettingsFieldLabel" style={{padding: "4px 12px 0px 12px"}}>{i18n.t( widgetDescMessageKey)}</div>
                 <div style={{
                     overflowY: 'auto',
                     flexGrow: "1",
@@ -464,131 +567,84 @@ export default class EditorWidgetSettings extends React.Component {
                     paddingRight: 12
                 }}>
                     {this._getRenderMainJsx()}
-                    <Divider>{i18n.t("Template")}</Divider>
-                    {/*<h3>{i18n.t("Template")}</h3>*/}
-					{ widgetData.getWidgetTypeId() === WidgetData.WIDGET_TYPE_ID__LEGACY_BUTTON  ? (
-                        <div>
-                            <Checkbox
-                                id="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke"
-                                    checked={_load_button_function === true }
-                                onChange={(e) => this._onChangeLoadButtonFunction(e)}
-                             />
-                            <label style={{marginLeft: "2px"}}
-                                   htmlFor="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke">{i18n.t("Load_function")}</label>
-                        </div>
-					)
-					: null
-					}
-                    <div className={"defaultElementMarginTop_s"}>
-                        {/*<AutoComplete*/}
-                        {/*    style={{width: "100%"}}*/}
-                        {/*    options={widgetSettingsTemplateOptions}*/}
-                        {/*    value={_select_widget_settings_template_name}*/}
-                        {/*    onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}*/}
-                        {/*    placeholder={i18n.t("Select_or_enter_a_template")}*/}
-                        {/*    allowClear={true}*/}
-                        {/*    filterOption={(inputValue, option) => {*/}
-                        {/*        const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());*/}
-                        {/*        return b;*/}
-                        {/*    }*/}
-                        {/*    }*/}
-                        {/*/>*/}
-                        {/*<AutoComplete*/}
-                        {/*    style={{width: "100%"}}*/}
-                        {/*    options={widgetSettingsTemplateOptions}*/}
-                        {/*    value={_select_widget_settings_template_name}*/}
-                        {/*    onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}*/}
-                        {/*    placeholder={i18n.t("Select_or_enter_a_template")}*/}
-                        {/*    allowClear={true}*/}
-                        {/*    filterOption={(inputValue, option) => {*/}
-                        {/*        const b = option.value.toLowerCase().startsWith(inputValue.toLowerCase());*/}
-                        {/*        return b;*/}
-                        {/*    }*/}
-                        {/*    }*/}
-                        {/*/>*/}
-                        <Select
-                                style={{width:"100%"}}
-                                onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}
-                                value={_select_widget_settings_template_name}
-                                placeholder={i18n.t("Select_a_template")}
-                        >
-                            { wsta && wsta.map( ( wst, i ) => {
-                                    const wstn = wst.getWidgetSettingsTemplateName();
-                                    if( wstn ) {
-                                        return <Select.Option value={wstn}>{wstn}</Select.Option>
+                    <div className="brOCWidgetSettingsPanel">
+                        <p className="brOCSettingsSectionHeading">{i18n.t("Template")}</p>
+						{ widgetData.getWidgetTypeId() === WidgetData.WIDGET_TYPE_ID__LEGACY_BUTTON  ? (
+                            <div>
+                                <Checkbox
+                                    id="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke"
+                                        checked={_load_button_function === true }
+                                    onChange={(e) => this._onChangeLoadButtonFunction(e)}
+                                 />
+                                <label className="brOCSettingsFieldLabel" style={{marginLeft: "2px", display: "inline"}}
+                                       htmlFor="loadButtonFunction_EditorWidgetSettings_OperatorConsole_Brekeke">{i18n.t("Load_function")}</label>
+                            </div>
+						)
+						: null
+						}
+                        <div className="brOCSettingsField">
+                            <p className="brOCSettingsFieldLabel">{i18n.t("Select_a_template")}</p>
+                            <div className="brOCSettingsFieldBox">
+                                <Select
+                                        className="brOCSettingsFieldInput"
+                                        variant="borderless"
+                                        style={{width:"100%"}}
+                                        onChange={(widgetSettingsTemplateTitle) => this._onChangeSelectWidgetSettingsTemplateName(widgetSettingsTemplateTitle)}
+                                        value={_select_widget_settings_template_name}
+                                        placeholder={i18n.t("Select_a_template")}
+                                >
+                                    { wsta && wsta.map( ( wst, i ) => {
+                                            const wstn = wst.getWidgetSettingsTemplateName();
+                                            if( wstn ) {
+                                                return <Select.Option value={wstn}>{wstn}</Select.Option>
+                                            }
+                                        })
                                     }
-                                })
-                            }
-                        </Select>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className={"defaultButtonMarginTop"}>
+                                <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")} disabled={bDisabled}
+                        			onConfirm={() => this._onClickOverwriteSaveWidgetSettingsTemplateButton()}
+                        			okText={i18n.t("yes")}
+                        			cancelText={i18n.t("no")}
+                        		>
+                        			<Button className="brOCSettingsButton" disabled={bDisabled}>{i18n.t("Save")}</Button>
+                        		</Popconfirm>
+								<Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
+											onConfirm={() => this._onClickLoadWidgetSettingsTemplateButton()}
+											okText={i18n.t("yes")}
+											cancelText={i18n.t("no")}
+								>
+									<Button className="brOCSettingsButton defaultButtonMarginLeft" disabled={bDisabled} >{i18n.t("Load")}</Button>
+								</Popconfirm>
+                        </div>
+                        <div className={"defaultButtonMarginTop"}>
+                            <Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
+                                        onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
+                                        okText={i18n.t("yes")}
+                                        cancelText={i18n.t("no")}
+                            >
+                                <Button className="brOCSettingsButton" disabled={bDisabled}>{i18n.t("Delete")}</Button>
+                            </Popconfirm>
+                        </div>
+                        <div className="brOCSettingsField">
+                            <p className="brOCSettingsFieldLabel">{i18n.t("Create_or_rename_a_template")}</p>
+                            <div className="brOCSettingsFieldBox">
+                                <Input
+                                    className="brOCSettingsFieldInput"
+                                    variant="borderless"
+                                    style={{width: "100%"}}
+                                    placeholder={i18n.t("Enter_a_new_name")}
+                                    onChange={(ev) => this._onChangeNewWidgetSettingsTemplateName(ev)}
+                                />
+                            </div>
+                        </div>
+                        <div className={"defaultButtonMarginTop"}>
+                            <Button className="brOCSettingsButton" onClick={() => this._onClickCreateWidgetSettingsTemplateButton()}>{i18n.t("Create")}</Button>
+                            <Button disabled={bDisabled} onClick={() => this._onClickRenameTemplateButton()} className="brOCSettingsButton brOCMarginLeftButtonToButton" >{i18n.t("Rename")}</Button>
+                        </div>
                     </div>
-                    <div className={"defaultButtonMarginTop"}>
-                            <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")} disabled={bDisabled}
-                    			onConfirm={() => this._onClickOverwriteSaveWidgetSettingsTemplateButton()}
-                    			okText={i18n.t("yes")}
-                    			cancelText={i18n.t("no")}
-                    		>
-                    			<Button disabled={bDisabled}>{i18n.t("Save")}</Button>
-                    		</Popconfirm>
-							<Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
-										onConfirm={() => this._onClickLoadWidgetSettingsTemplateButton()}
-										okText={i18n.t("yes")}
-										cancelText={i18n.t("no")}
-							>
-								<Button className={"defaultButtonMarginLeft"} disabled={bDisabled} >{i18n.t("Load")}</Button>
-							</Popconfirm>
-                    </div>
-                    {/*<div className={"defaultButtonMarginTop"}>*/}
-					{/*	{ bOverwriteTemplate ? (*/}
-	                {/*        <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")}*/}
-					{/*			onConfirm={() => this._onClickSaveWidgetSettingsTemplateButton()}*/}
-					{/*			okText={i18n.t("yes")}*/}
-					{/*			cancelText={i18n.t("no")}*/}
-					{/*		>*/}
-					{/*			<Button>{i18n.t("Save")}</Button>*/}
-					{/*		</Popconfirm>*/}
-					{/*	) */}
-					{/*	: (*/}
-					{/*		<Button*/}
-					{/*			onClick={() => this._onClickSaveWidgetSettingsTemplateButton()}>{i18n.t("Save")}</Button>*/}
-					{/*	)}*/}
-                    {/*    <Button className={"defaultButtonMarginLeft"}*/}
-                    {/*            onClick={() => this._onClickLoadWidgetSettingsTemplateButton()}>{i18n.t("Load")}</Button>*/}
-                    {/*</div>*/}
-                    <div className={"defaultButtonMarginTop"}>
-                        <Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
-                                    onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
-                                    okText={i18n.t("yes")}
-                                    cancelText={i18n.t("no")}
-                        >
-                            <Button disabled={bDisabled}>{i18n.t("Delete")}</Button>
-                        </Popconfirm>
-                    </div>
-                    <p>{i18n.t("Create_or_rename_a_template")}</p>
-                    <div><Input
-                        style={{width: "100%"}}
-                        placeholder={i18n.t("Enter_a_new_name")}
-                        onChange={(ev) => this._onChangeNewWidgetSettingsTemplateName(ev)}
-                    /></div>
-                    <div className={"defaultButtonMarginTop"}>
-                        {/*<Button onClick={() => this._onClickCreateTemplateButton()}>{i18n.t("Create")}</Button>*/}
-                        {/*<Button onClick={() => this._onClickRenameTemplateButton()}*/}
-                        {/*        className={"defaultButtonMarginLeft"}>{i18n.t("Rename")}</Button>*/}
-                        <Button onClick={() => this._onClickCreateWidgetSettingsTemplateButton()}>{i18n.t("Create")}</Button>
-                        <Button disabled={bDisabled} onClick={() => this._onClickRenameTemplateButton()} className="brOCMarginLeftButtonToButton" >{i18n.t("Rename")}</Button>
-                    </div>
-                </div>
-                <div style={{padding: "0px 12px 12px 12px"}}>
-                {/*<Button type="secondary"*/}
-                    {/*        onClick={() => this.duplicateWidget(this.state.selectingWidgetIndex)}>*/}
-                    {/*    {i18n.t("duplicate")}*/}
-                    {/*</Button>*/}
-                    <Popconfirm title={i18n.t("are_you_sure")}
-                                onConfirm={() => this._EditScreenViewAsParent.onConfirmOkRemoveEditorWidget(widgetData)}
-                                okText={i18n.t("yes")}
-                                cancelText={i18n.t("no")}
-                    >
-                        <Button type="danger">{i18n.t("remove")}</Button>
-                    </Popconfirm>
                 </div>
             </>
         );

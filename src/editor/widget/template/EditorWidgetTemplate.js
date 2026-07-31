@@ -1,5 +1,5 @@
 import React from "react";
-import OCUtil from "../../../OCUtil";
+import i18n from "../../../i18n";
 
 //!abstract class
 export default class EditorWidgetTemplate {
@@ -13,48 +13,35 @@ export default class EditorWidgetTemplate {
         return this._WidgetTypeId;
     }
 
-    //!abstract
+    //!abstract. Initial width/height given to a widget of this type when dropped onto the canvas.
     getWidth(){
         throw new Error("Not implemented.");
     }
 
-    //!abstract
+    //!abstract. Initial width/height given to a widget of this type when dropped onto the canvas.
     getHeight(){
         throw new Error("Not implemented.");
     }
 
-    //!abstract
-    getRenderMainJsx(){
+    //!abstract. Palette card icon (72x72).
+    getIconSrc(){
+        throw new Error("Not implemented.");
+    }
+
+    //!abstract. i18n key for the palette card label.
+    getLabelKey(){
         throw new Error("Not implemented.");
     }
 
     getRenderJsx( jsxKey, editScreenViewAsCaller  ) {
-        const width = this.getWidth();
-        const height = this.getHeight();
-        const renderMainJsx = this.getRenderMainJsx();
-        let sWidth;
-        if( OCUtil.isNumber( width ) ){
-            sWidth = width + "px";
-        }
-        else{
-            sWidth = width;
-        }
-        let sHeight;
-        if( OCUtil.isNumber( height ) ){
-            sHeight = height + "px";
-        }
-        else{
-            sHeight = height;
-        }
-
         return <div
             key={jsxKey}
-            className="grabbable"
+            className="grabbable brOCWidgetTemplateCard"
             data-br-widget-type-id={this._WidgetTypeId }
-            style={{width:sWidth,height:sHeight,margin:"0 4px 4px 4px"}}
             draggable={true}
             onDragStart={(ev) => editScreenViewAsCaller.onDragEditorWidgetTemplateStart(ev) }>
-            {renderMainJsx}
+            <img className="brOCWidgetTemplateCardIcon" src={this.getIconSrc()} alt=""/>
+            <p className="brOCWidgetTemplateCardLabel">{i18n.t(this.getLabelKey())}</p>
             </div>
     }
 

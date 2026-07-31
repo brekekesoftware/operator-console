@@ -1,9 +1,6 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Colorpicker} from "antd-colorpicker";
-import InputNumber from "antd/lib/input-number";
-import {Divider} from "antd";
 
 export default class VideoCallWindowsEditorWidgetSettings extends EditorWidgetSettings {
     _onChangeFgColor( color ){
@@ -88,49 +85,26 @@ export default class VideoCallWindowsEditorWidgetSettings extends EditorWidgetSe
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const jsx = (
-            <>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getFgColor()}
-                             onChange={(color) => this._onChangeFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getBgColor()}
-                             onChange={(color) => this._onChangeBgColor(color)}/>
-                <p>{i18n.t("borderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getBorderRadius()}
-                             onChange={(n) => this._onChangeBorderRadius(n)}/>
-                <Divider>{i18n.t("insideShadow_settings")}</Divider>
-                <p>{i18n.t("horizontalOffset")}</p>
-                <InputNumber step={1} value={widgetData.getInsideShadow_horizontalOffset()}
-                             onChange={(n) => this._onChangeInsideShadow_horizontalOffset(n)}/>
-                <p>{i18n.t("verticalOffset")}</p>
-                <InputNumber step={1} value={widgetData.getInsideShadow_verticalOffset()}
-                             onChange={(n) => this._onChangeInsideShadow_varticalOffset(n)}/>
-                <p>{i18n.t("blur")}</p>
-                <InputNumber step={1} value={widgetData.getInsideShadow_blur()}
-                             onChange={(n) => this._onChangeInsideShadow_blur(n)}/>
-                <p>{i18n.t("spread")}</p>
-                <InputNumber step={1} value={widgetData.getInsideShadow_spread()}
-                             onChange={(n) => this._onChangeInsideShadow_spread(n)}/>
-                <p>{i18n.t("color")}</p>
-                <Colorpicker format="rgb" value={widgetData.getInsideShadow_color()}
-                             onChange={(color) => this._onChangeInsideShadow_color(color)}/>
-                <Divider>{i18n.t("outsideShadow_settings")}</Divider>
-                <p>{i18n.t("horizontalOffset")}</p>
-                <InputNumber step={1} value={widgetData.getOutsideShadow_horizontalOffset()}
-                             onChange={(n) => this._onChangeOutsideShadow_horizontalOffset(n)}/>
-                <p>{i18n.t("verticalOffset")}</p>
-                <InputNumber step={1} value={widgetData.getOutsideShadow_verticalOffset()}
-                             onChange={(n) => this._onChangeOutsideShadow_varticalOffset(n)}/>
-                <p>{i18n.t("blur")}</p>
-                <InputNumber step={1} value={widgetData.getOutsideShadow_blur()}
-                             onChange={(n) => this._onChangeOutsideShadow_blur(n)}/>
-                <p>{i18n.t("spread")}</p>
-                <InputNumber step={1} value={widgetData.getOutsideShadow_spread()}
-                             onChange={(n) => this._onChangeOutsideShadow_spread(n)}/>
-                <p>{i18n.t("color")}</p>
-                <Colorpicker format="rgb" value={widgetData.getOutsideShadow_color()}
-                             onChange={(color) => this._onChangeOutsideShadow_color(color)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderColorField("fgColor", widgetData.getFgColor(), (color) => this._onChangeFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getBgColor(), (color) => this._onChangeBgColor(color))}
+                {this._renderNumberField("borderRadius", widgetData.getBorderRadius(), (n) => this._onChangeBorderRadius(n), {min: 0})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("insideShadow_settings")}</p>
+                {this._renderNumberField("horizontalOffset", widgetData.getInsideShadow_horizontalOffset(), (n) => this._onChangeInsideShadow_horizontalOffset(n), {step: 1})}
+                {this._renderNumberField("verticalOffset", widgetData.getInsideShadow_verticalOffset(), (n) => this._onChangeInsideShadow_varticalOffset(n), {step: 1})}
+                {this._renderNumberField("blur", widgetData.getInsideShadow_blur(), (n) => this._onChangeInsideShadow_blur(n), {step: 1})}
+                {this._renderNumberField("spread", widgetData.getInsideShadow_spread(), (n) => this._onChangeInsideShadow_spread(n), {step: 1})}
+                {this._renderColorField("color", widgetData.getInsideShadow_color(), (color) => this._onChangeInsideShadow_color(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("outsideShadow_settings")}</p>
+                {this._renderNumberField("horizontalOffset", widgetData.getOutsideShadow_horizontalOffset(), (n) => this._onChangeOutsideShadow_horizontalOffset(n), {step: 1})}
+                {this._renderNumberField("verticalOffset", widgetData.getOutsideShadow_verticalOffset(), (n) => this._onChangeOutsideShadow_varticalOffset(n), {step: 1})}
+                {this._renderNumberField("blur", widgetData.getOutsideShadow_blur(), (n) => this._onChangeOutsideShadow_blur(n), {step: 1})}
+                {this._renderNumberField("spread", widgetData.getOutsideShadow_spread(), (n) => this._onChangeOutsideShadow_spread(n), {step: 1})}
+                {this._renderColorField("color", widgetData.getOutsideShadow_color(), (color) => this._onChangeOutsideShadow_color(color))}
+            </div>
         );
         return jsx;
     }

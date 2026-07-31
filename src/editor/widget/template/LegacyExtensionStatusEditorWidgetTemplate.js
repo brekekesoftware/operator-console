@@ -1,7 +1,6 @@
 import EditorWidgetTemplate from "./EditorWidgetTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
-import React from 'react';
-import i18n from "../../../i18n";
+import iconSrc from "./icons/legacyExtensionStatus.jpg";
 
 export default class LegacyExtensionStatusEditorWidgetTemplate extends EditorWidgetTemplate{
 
@@ -20,14 +19,13 @@ export default class LegacyExtensionStatusEditorWidgetTemplate extends EditorWid
     }
 
     //!overload
-    getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
-        return (
-            <div className="led-box" style={{
-            }}>
-                <div className="led-grey"></div>
-                <p>{i18n.t("extension_status")}</p>
-            </div>
-        );
+    getIconSrc(){
+        return iconSrc;
+    }
+
+    //!overload
+    getLabelKey(){
+        return "extension_status";
     }
 
 }

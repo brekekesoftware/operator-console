@@ -1,10 +1,7 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Divider, Input, Select} from "antd";
-import InputNumber from "antd/lib/input-number";
-import Form from "antd/lib/form";
-import {Colorpicker} from "antd-colorpicker";
+import {Select} from "antd";
 
 const MAX_LINE_COUNT = 300;
 
@@ -282,154 +279,73 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
         const lineCount = lineDataArray.length;
         const linetableTransferMethod = widgetData.getLinetableTransferMethod() ? widgetData.getLinetableTransferMethod() : "selectTransferMethod";
         const jsx =   (
-            <>
-                <p>{i18n.t("lineCount")}</p>
-                <InputNumber min="0" max={MAX_LINE_COUNT} value={lineCount}
-                             onChange={(count) => this._onChangeLineCount(count)}/>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderNumberField("lineCount", lineCount, (count) => this._onChangeLineCount(count), {min: 0, max: MAX_LINE_COUNT})}
                 {lineDataArray.map((lineData, i) => {
                     return (<div key={i}>
-                        <h3>{i18n.t("line") + " " + (i + 1)}</h3>
-                        <p>{i18n.t("resourceName")}</p>
-                        <Input maxLength={300} allowClear value={lineData.getResourceName()}
-                               onChange={(e) => this._onChangeResourceName(e, i)}/>
-                        <p>{i18n.t("lineLabel")}</p>
-                        <Input allowClear maxLength={300} value={lineData.getLineLabel()}
-                               onChange={(e) => this._onChangeLineLabel(e, i)}/>
+                        <p className="brOCSettingsSectionHeading">{i18n.t("line") + " " + (i + 1)}</p>
+                        {this._renderTextField("resourceName", lineData.getResourceName(), (e) => this._onChangeResourceName(e, i), {maxLength: 300, allowClear: true})}
+                        {this._renderTextField("lineLabel", lineData.getLineLabel(), (e) => this._onChangeLineLabel(e, i), {maxLength: 300, allowClear: true})}
                     </div>);
                 })}
-                <p>{i18n.t("TransferMethod")}</p>
-                <Select
-                    // onChange={(value) => {
-                    // }}
-                    style={{width: "100%"}}
-                    //placeholder="Please select a option"
-                    value={linetableTransferMethod}
-                    defaultValue={linetableTransferMethod}
-                    onSelect={(e) => this._onChangeLinetableTransferMethod(e)}
-                >
-                    <Select.Option value="selectTransferMethod">{i18n.t("Select_a_transfer_method")}</Select.Option>
-                    <Select.Option
-                        value="attendedTransferWithSwitchCall">{i18n.t("Attended_transfer(Switch_a_call)")}</Select.Option>
-                    <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
-                    <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
-                </Select>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableBgColor()}
-                             onChange={(color) => this._onChangeLinetableBgColor(color)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableOuterBorderThickness()}
-                             onChange={(n) => this._onChangeLinetableOuterBorderThickness(n)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableOuterBorderColor()}
-                             onChange={(color) => this._onChangeLinetableOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableOuterBorderRadius()}
-                             onChange={(n) => this._onChangeLinetableOuterBorderRadius(n)}/>
-                <Divider>{i18n.t("header_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableHeaderFontSize()}
-                             onChange={(n) => this._onChangeLinetableHeaderFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableHeaderFgColor()}
-                             onChange={(color) => this._onChangeLinetableHeaderFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableHeaderBgColor()}
-                             onChange={(color) => this._onChangeLinetableHeaderBgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableHeaderRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeLinetableHeaderRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableHeaderRowUnderlineColor()}
-                             onChange={(color) => this._onChangeLinetableHeaderRowUnderlineColor(color)}/>
-                <Divider>{i18n.t("body_settings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableBodyFontSize()}
-                             onChange={(n) => this._onChangeLinetableBodyFontSize(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableBodyFgColor()}
-                             onChange={(color) => this._onChangeLinetableBodyFgColor(color)}/>
-                <p>{i18n.t("rowUnderlineThickness")}</p>
-                <InputNumber min="0" value={widgetData.getLinetableBodyRowUnderlineThickness()}
-                             onChange={(n) => this._onChangeLinetableBodyRowUnderlineThickness(n)}/>
-                <p>{i18n.t("rowUnderlineColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLinetableBodyRowUnderlineColor()}
-                             onChange={(color) => this._onChangeLinetableBodyRowUnderlineColor(color)}/>
-                <Divider>{i18n.t("lineButtonSettings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getLineButtonFontSize()}
-                             onChange={(n) => this._onChangeLineButtonFontSize(n)}/>
-                <p>{i18n.t("width")}</p>
-                <InputNumber min="1" value={widgetData.getLineButtonWidth()}
-                             onChange={(n) => this._onChangeLineButtonWidth(n)}/>
-                <p>{i18n.t("height")}</p>
-                <InputNumber min="1" value={widgetData.getLineButtonHeight()}
-                             onChange={(n) => this._onChangeLineButtonHeight(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLineButtonFgColor()}
-                             onChange={(color) => this._onChangeLineButtonFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLineButtonBgColor()}
-                             onChange={(color) => this._onChangeLineButtonBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getLineButtonOuterBorderColor()}
-                             onChange={(color) => this._onChangeLineButtonOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getLineButtonOuterBorderRadius()}
-                             onChange={(n) => this._onChangeLineButtonOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={widgetData.getLineButtonOuterBorderThickness()}
-                             onChange={(n) => this._onChangeLineButtonOuterBorderThickness(n)}/>
-                <Divider>{i18n.t("transferButtonSettings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getTransferButtonFontSize()}
-                             onChange={(n) => this._onChangeTransferButtonFontSize(n)}/>
-                <p>{i18n.t("width")}</p>
-                <InputNumber min="1" value={widgetData.getTransferButtonWidth()}
-                             onChange={(n) => this._onChangeTransferButtonWidth(n)}/>
-                <p>{i18n.t("height")}</p>
-                <InputNumber min="1" value={widgetData.getTransferButtonHeight()}
-                             onChange={(n) => this._onChangeTransferButtonHeight(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferButtonFgColor()}
-                             onChange={(color) => this._onChangeTransferButtonFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferButtonBgColor()}
-                             onChange={(color) => this._onChangeTransferButtonBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferButtonOuterBorderColor()}
-                             onChange={(color) => this._onChangeTransferButtonOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getTransferButtonOuterBorderRadius()}
-                             onChange={(n) => this._onChangeTransferButtonOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={widgetData.getTransferButtonOuterBorderThickness()}
-                             onChange={(n) => this._onChangeTransferButtonOuterBorderThickness(n)}/>
-                <Divider>{i18n.t("transferCancelButtonSettings")}</Divider>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min="0" value={widgetData.getTransferCancelButtonFontSize()}
-                             onChange={(n) => this._onChangeTransferCancelButtonFontSize(n)}/>
-                <p>{i18n.t("width")}</p>
-                <InputNumber min="1" value={widgetData.getTransferCancelButtonWidth()}
-                             onChange={(n) => this._onChangeTransferCancelButtonWidth(n)}/>
-                <p>{i18n.t("height")}</p>
-                <InputNumber min="1" value={widgetData.getTransferCancelButtonHeight()}
-                             onChange={(n) => this._onChangeTransferCancelButtonHeight(n)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferCancelButtonFgColor()}
-                             onChange={(color) => this._onChangeTransferCancelButtonFgColor(color)}/>
-                <p>{i18n.t("bgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferCancelButtonBgColor()}
-                             onChange={(color) => this._onChangeTransferCancelButtonBgColor(color)}/>
-                <p>{i18n.t("outerBorderColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getTransferCancelButtonOuterBorderColor()}
-                             onChange={(color) => this._onChangeTransferCancelButtonOuterBorderColor(color)}/>
-                <p>{i18n.t("outerBorderRadius")}</p>
-                <InputNumber min="0" value={widgetData.getTransferCancelButtonOuterBorderRadius()}
-                             onChange={(n) => this._onChangeTransferCancelButtonOuterBorderRadius(n)}/>
-                <p>{i18n.t("outerBorderThickness")}</p>
-                <InputNumber min="1" value={widgetData.getTransferCancelButtonOuterBorderThickness()}
-                             onChange={(n) => this._onChangeTransferCancelButtonOuterBorderThickness(n)}/>
-            </>
+                {this._renderSelectField("TransferMethod", linetableTransferMethod, (e) => this._onChangeLinetableTransferMethod(e), (
+                    <>
+                        <Select.Option value="selectTransferMethod">{i18n.t("Select_a_transfer_method")}</Select.Option>
+                        <Select.Option
+                            value="attendedTransferWithSwitchCall">{i18n.t("Attended_transfer(Switch_a_call)")}</Select.Option>
+                        <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
+                        <Select.Option value="blindTransfer">{i18n.t("Blind_transfer")}</Select.Option>
+                    </>
+                ))}
+                {this._renderColorField("bgColor", widgetData.getLinetableBgColor(), (color) => this._onChangeLinetableBgColor(color))}
+                {this._renderNumberField("outerBorderThickness", widgetData.getLinetableOuterBorderThickness(), (n) => this._onChangeLinetableOuterBorderThickness(n), {min: 0})}
+                {this._renderColorField("outerBorderColor", widgetData.getLinetableOuterBorderColor(), (color) => this._onChangeLinetableOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getLinetableOuterBorderRadius(), (n) => this._onChangeLinetableOuterBorderRadius(n), {min: 0})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getLinetableHeaderFontSize(), (n) => this._onChangeLinetableHeaderFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getLinetableHeaderFgColor(), (color) => this._onChangeLinetableHeaderFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getLinetableHeaderBgColor(), (color) => this._onChangeLinetableHeaderBgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableHeaderRowUnderlineThickness(), (n) => this._onChangeLinetableHeaderRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getLinetableHeaderRowUnderlineColor(), (color) => this._onChangeLinetableHeaderRowUnderlineColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("body_settings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getLinetableBodyFontSize(), (n) => this._onChangeLinetableBodyFontSize(n), {min: 0})}
+                {this._renderColorField("fgColor", widgetData.getLinetableBodyFgColor(), (color) => this._onChangeLinetableBodyFgColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableBodyRowUnderlineThickness(), (n) => this._onChangeLinetableBodyRowUnderlineThickness(n), {min: 0})}
+                {this._renderColorField("rowUnderlineColor", widgetData.getLinetableBodyRowUnderlineColor(), (color) => this._onChangeLinetableBodyRowUnderlineColor(color))}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("lineButtonSettings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getLineButtonFontSize(), (n) => this._onChangeLineButtonFontSize(n), {min: 0})}
+                {this._renderNumberField("width", widgetData.getLineButtonWidth(), (n) => this._onChangeLineButtonWidth(n), {min: 1})}
+                {this._renderNumberField("height", widgetData.getLineButtonHeight(), (n) => this._onChangeLineButtonHeight(n), {min: 1})}
+                {this._renderColorField("fgColor", widgetData.getLineButtonFgColor(), (color) => this._onChangeLineButtonFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getLineButtonBgColor(), (color) => this._onChangeLineButtonBgColor(color))}
+                {this._renderColorField("outerBorderColor", widgetData.getLineButtonOuterBorderColor(), (color) => this._onChangeLineButtonOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getLineButtonOuterBorderRadius(), (n) => this._onChangeLineButtonOuterBorderRadius(n), {min: 0})}
+                {this._renderNumberField("outerBorderThickness", widgetData.getLineButtonOuterBorderThickness(), (n) => this._onChangeLineButtonOuterBorderThickness(n), {min: 1})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("transferButtonSettings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getTransferButtonFontSize(), (n) => this._onChangeTransferButtonFontSize(n), {min: 0})}
+                {this._renderNumberField("width", widgetData.getTransferButtonWidth(), (n) => this._onChangeTransferButtonWidth(n), {min: 1})}
+                {this._renderNumberField("height", widgetData.getTransferButtonHeight(), (n) => this._onChangeTransferButtonHeight(n), {min: 1})}
+                {this._renderColorField("fgColor", widgetData.getTransferButtonFgColor(), (color) => this._onChangeTransferButtonFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getTransferButtonBgColor(), (color) => this._onChangeTransferButtonBgColor(color))}
+                {this._renderColorField("outerBorderColor", widgetData.getTransferButtonOuterBorderColor(), (color) => this._onChangeTransferButtonOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getTransferButtonOuterBorderRadius(), (n) => this._onChangeTransferButtonOuterBorderRadius(n), {min: 0})}
+                {this._renderNumberField("outerBorderThickness", widgetData.getTransferButtonOuterBorderThickness(), (n) => this._onChangeTransferButtonOuterBorderThickness(n), {min: 1})}
+
+                <p className="brOCSettingsSectionHeading">{i18n.t("transferCancelButtonSettings")}</p>
+                {this._renderNumberField("Text_size", widgetData.getTransferCancelButtonFontSize(), (n) => this._onChangeTransferCancelButtonFontSize(n), {min: 0})}
+                {this._renderNumberField("width", widgetData.getTransferCancelButtonWidth(), (n) => this._onChangeTransferCancelButtonWidth(n), {min: 1})}
+                {this._renderNumberField("height", widgetData.getTransferCancelButtonHeight(), (n) => this._onChangeTransferCancelButtonHeight(n), {min: 1})}
+                {this._renderColorField("fgColor", widgetData.getTransferCancelButtonFgColor(), (color) => this._onChangeTransferCancelButtonFgColor(color))}
+                {this._renderColorField("bgColor", widgetData.getTransferCancelButtonBgColor(), (color) => this._onChangeTransferCancelButtonBgColor(color))}
+                {this._renderColorField("outerBorderColor", widgetData.getTransferCancelButtonOuterBorderColor(), (color) => this._onChangeTransferCancelButtonOuterBorderColor(color))}
+                {this._renderNumberField("outerBorderRadius", widgetData.getTransferCancelButtonOuterBorderRadius(), (n) => this._onChangeTransferCancelButtonOuterBorderRadius(n), {min: 0})}
+                {this._renderNumberField("outerBorderThickness", widgetData.getTransferCancelButtonOuterBorderThickness(), (n) => this._onChangeTransferCancelButtonOuterBorderThickness(n), {min: 1})}
+            </div>
         );
         return jsx;
     }

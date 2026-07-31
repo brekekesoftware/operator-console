@@ -1,9 +1,6 @@
 import React from 'react';
 import EditorWidgetSettings from "./EditorWidgetSettings";
 import i18n from "../../../i18n";
-import {Input} from "antd";
-import {InputNumber} from "antd";
-import {Colorpicker} from "antd-colorpicker";
 
 export default class LegacyExtensionStatusEditorWidgetSettings extends EditorWidgetSettings {
     constructor( props ) {
@@ -57,22 +54,14 @@ export default class LegacyExtensionStatusEditorWidgetSettings extends EditorWid
     _getRenderMainJsx(){
         const widgetData = this._getWidgetData();
         const jsx =   (
-            <>
-                <p>{i18n.t("extension")}</p>
-                <Input value={widgetData.getExtension()} onChange={(e) => this._onChangeExtension(e)}/>
-                <p>{i18n.t("fgColor")}</p>
-                <Colorpicker format="rgb" value={widgetData.getExtensionStatusFgColor()}
-                             onChange={(color) => this._onChangeExtensionStatusFgColor(color)}/>
-                <p>{i18n.t("Lamp_size")}</p>
-                <InputNumber min={0} value={widgetData.getExtensionStatusLampSize()}
-                             onChange={(val) => this._onChangeExtensionStatusLampSize(val)}/>
-                <p>{i18n.t("Text_top_margin")}</p>
-                <InputNumber value={widgetData.getExtensionStatusExtensionTextTopMargin()}
-                             onChange={(val) => this._onChangeExtensionStatusExtensionTextTopMargin(val)}/>
-                <p>{i18n.t("Text_size")}</p>
-                <InputNumber min={0} value={widgetData.getExtensionStatusExtensionFontSize()}
-                             onChange={(val) => this._onChangeExtensionStatusExtensionFontSize(val)}/>
-            </>
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderTextField("extension", widgetData.getExtension(), (e) => this._onChangeExtension(e))}
+                {this._renderColorField("fgColor", widgetData.getExtensionStatusFgColor(), (color) => this._onChangeExtensionStatusFgColor(color))}
+                {this._renderNumberField("Lamp_size", widgetData.getExtensionStatusLampSize(), (val) => this._onChangeExtensionStatusLampSize(val), {min: 0})}
+                {this._renderNumberField("Text_top_margin", widgetData.getExtensionStatusExtensionTextTopMargin(), (val) => this._onChangeExtensionStatusExtensionTextTopMargin(val))}
+                {this._renderNumberField("Text_size", widgetData.getExtensionStatusExtensionFontSize(), (val) => this._onChangeExtensionStatusExtensionFontSize(val), {min: 0})}
+            </div>
         );
         return jsx;
     }

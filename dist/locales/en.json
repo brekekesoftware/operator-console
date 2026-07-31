@@ -313,6 +313,9 @@
     "undo": "Undo",
     "redo": "Redo",
 
+    "SaveThisLayoutTitle": "Save this layout",
+    "SaveThisLayoutText": "Are you sure you want to save?",
+
     "no_widgets": "No widgets",
 
     "function": "Function",
@@ -454,6 +457,7 @@
 	"openLayout" : "Open layout",	
 	"Layout_does_not_exist" : "Layout does not exist.",
 	"selectLayout" : "Select layout",
+	"confirm" : "Confirm",
 	"DataVersionMismatch" : "Data version mismatch.",
 	"status" : "Status",
 	"id" : "ID",
@@ -461,6 +465,8 @@
 	"ExtensionTable" : "Extension Table",
 	"Note" : "Note",
 	"LineTable" : "Line Table",
+	"CallPanel" : "LCD Screen",
+	"LegacyButton" : "Button",
 
 	"PartyNumber" : "Number",
 	"PartyName" : "Name",
@@ -489,6 +495,7 @@
 	
 	"bgColor" : "Background color",
 	"bgColor_is_not_valid" : "Background color is not valid.",
+	"Settings" : "Settings",
 	"insideShadow_settings" : "Inside shadow settings",
 	"horizontalOffset" : "Horizontal offset",
 	"insideShadow_horizontalOffset_is_not_valid" : "Horizontal offset of inside shadow is not valid.",

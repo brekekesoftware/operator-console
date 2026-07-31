@@ -78,7 +78,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "2.1.52";
+const VERSION = "3.0.0";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"

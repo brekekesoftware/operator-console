@@ -1,7 +1,6 @@
 import EditorWidgetTemplate from "./EditorWidgetTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
-import React from 'react';
-import i18n from "../../../i18n";
+import iconSrc from "./icons/text.jpg";
 
 export default class TextEditorWidgetTemplate extends EditorWidgetTemplate{
 
@@ -20,10 +19,13 @@ export default class TextEditorWidgetTemplate extends EditorWidgetTemplate{
     }
 
     //!overload
-    getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
-        return (
-            <div className="TextEditorWidgetTemplate">{i18n.t("text")}</div>
-        );
+    getIconSrc(){
+        return iconSrc;
+    }
+
+    //!overload
+    getLabelKey(){
+        return "text";
     }
 
 }

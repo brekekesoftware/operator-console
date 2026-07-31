@@ -1,7 +1,6 @@
 import EditorWidgetTemplate from "./EditorWidgetTemplate";
 import WidgetData from "../../../data/widgetData/WidgetData";
-import React from 'react';
-import i18n from "../../../i18n";
+import iconSrc from "./icons/legacyButton.jpg";
 
 export default class LegacyButtonEditorWidgetTemplate extends EditorWidgetTemplate{
 
@@ -20,8 +19,13 @@ export default class LegacyButtonEditorWidgetTemplate extends EditorWidgetTempla
     }
 
     //!overload
-    getRenderMainJsx( jsxKey, editScreenViewAsCaller  ) {
-            return <button className="kbc-button kbc-button-fill-parent" disabled={true}></button>
+    getIconSrc(){
+        return iconSrc;
+    }
+
+    //!overload
+    getLabelKey(){
+        return "LegacyButton";
     }
 
 }

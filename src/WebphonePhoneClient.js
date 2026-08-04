@@ -262,8 +262,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 		this._deinitRingtoneUrls();
 
 		const oc = BrekekeOperatorConsole.getStaticInstance();
-		const userSettingsCoreData = newUserSettingsCoreData ? newUserSettingsCoreData : oc.getUserSettingsData();
-		const phoneIndex = userSettingsCoreData["phoneIndex"];
+		const phoneIndex = newUserSettingsCoreData ? newUserSettingsCoreData["phoneIndex"] : oc.getUserSettingsData().getPhoneIndex();
         //const phoneIndex = newSystemSettingsCoreData.phoneIndex;
         if( Number.isInteger( phoneIndex ) && phoneIndex !== -1 ) {
             options["phoneIndex"] = phoneIndex;
@@ -274,7 +273,8 @@ export default class WebphonePhoneClient  extends APhoneClient {
         const webphoneVersion = currentVersion.webphone;
         const jssipVersion = currentVersion.jssip;
 
-        const useragent = "Brekeke Operator Console " + ocVersion + ",Brekeke Phone for Web " + webphoneVersion + ",JsSIP " + jssipVersion;
+        //const useragent = "Brekeke Operator Console " + ocVersion + ",Brekeke Phone for Web " + webphoneVersion + ",JsSIP " + jssipVersion;
+        const useragent = "Brekeke Operator Console " + ocVersion;
         const useragentProduct = "Brekeke Phone for Web " + webphoneVersion + ",Brekeke Operator Console " + ocVersion + ",JsSIP " + jssipVersion;
 
         const eBrOcPhone = document.getElementById('brOCPhone');

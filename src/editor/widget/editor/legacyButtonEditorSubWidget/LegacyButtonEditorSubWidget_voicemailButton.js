@@ -30,10 +30,9 @@ export default class LegacyButtonEditorSubWidget_voicemailButton extends LegacyB
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const hasVoicemail = oc.getNotifyVoicemailsInfo().hasVoicemail();
-
         const iconJsx = this._getIconJsx();
         return <button title={tooltipOfButtonWidget}
-			className={clsx("kbc-button kbc-button-fill-parent", hasVoicemail && 'kbc-button-danger-flash')}
+			className={clsx("kbc-button kbc-button-fill-parent", hasVoicemail && 'kbc-voicemail-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

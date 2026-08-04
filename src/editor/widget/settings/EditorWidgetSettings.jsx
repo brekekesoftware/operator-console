@@ -51,8 +51,8 @@ export default class EditorWidgetSettings extends React.Component {
                 <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
                 <div className="brOCSettingsFieldBox">
                     <Colorpicker format="rgb" value={colorValue} onChange={onChange}/>
-                    <span className="brOCSettingsFieldHex">{hex}</span>
-                    <span className="brOCSettingsFieldPercent">{percent}%</span>
+                    {/* <span className="brOCSettingsFieldHex">{hex}</span>
+                    <span className="brOCSettingsFieldPercent">{percent}%</span> */}
                 </div>
             </div>
         );

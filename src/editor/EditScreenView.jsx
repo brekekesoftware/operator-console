@@ -23,6 +23,9 @@ import OCUtil from "../OCUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUndo, faRedo} from "@fortawesome/free-solid-svg-icons";
 import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
+import SplitVerticallyIcon from "./icons/split-vertically.svg";
+import SplitHorizontallyIcon from "./icons/split-horizontally.svg";
+
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
   disable : false,
@@ -734,17 +737,17 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Area")}:
                 </div>
                 <div>
-                  <Button style={{width: "100%"}} className="editorRightFrameButton" onClick={() => {
+                  <Button icon={<img src={SplitVerticallyIcon} alt=""/>} className="editorRightFrameButton" onClick={() => {
                     this._splitVertically();
                   }}>{i18n.t("splitVertically")}
                   </Button>
                 </div>
                 <div className="defaultButtonMarginTop">
-                  <Button style={{width: "100%"}} className="editorRightFrameButton" onClick={() => {
+                  <Button icon={<img src={SplitHorizontallyIcon} alt=""/>} className="editorRightFrameButton" onClick={() => {
                     this._splitHorizontally();
                   }}>{i18n.t("splitHorizontally")}
                   </Button>
@@ -753,7 +756,7 @@ export default class EditScreenView extends React.Component {
               { !enableTabs ? (
                   <>
                 <div>
-                  <div className="defaultSectionMarginTop">
+                  <div className="defaultSectionMargin">
                     {i18n.t("foreground")}:
                   </div>
                   <div>
@@ -772,7 +775,7 @@ export default class EditScreenView extends React.Component {
                   </div>
                 </div>
                 <div>
-                  <div className="defaultSectionMarginTop">
+                  <div className="defaultSectionMargin">
                     {i18n.t("background")}:
                   </div>
                   <div>
@@ -791,7 +794,7 @@ export default class EditScreenView extends React.Component {
                   </div>
                 </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("BackgroundImage")}:
                 </div>
                 <div>
@@ -858,7 +861,7 @@ export default class EditScreenView extends React.Component {
               </div>
               <Divider>{i18n.t("Header")}</Divider>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Item_font_size")}:
                 </div>
                 <div>
@@ -867,7 +870,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Item_color")}:
                 </div>
                 <div>
@@ -886,7 +889,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Item_color_on_hover")}:
                 </div>
                 <div>
@@ -905,7 +908,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Item_color_on_selected")}:
                 </div>
                 <div>
@@ -924,7 +927,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("Item_bar_color")}:
                 </div>
                 <div>
@@ -943,7 +946,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("background")}:
                 </div>
                 <div>
@@ -962,7 +965,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("BackgroundImage")}:
                 </div>
                 <div>
@@ -983,7 +986,7 @@ export default class EditScreenView extends React.Component {
               </div>
               <Divider>{i18n.t("Body")}</Divider>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("foreground")}:
                 </div>
                 <div>
@@ -1002,7 +1005,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("background")}:
                 </div>
                 <div>
@@ -1021,7 +1024,7 @@ export default class EditScreenView extends React.Component {
                 </div>
               </div>
               <div>
-                <div className="defaultSectionMarginTop">
+                <div className="defaultSectionMargin">
                   {i18n.t("BackgroundImage")}:
                 </div>
                 <div>

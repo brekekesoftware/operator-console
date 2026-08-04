@@ -63,8 +63,9 @@ body{
 	margin-top:var(--defaultButtonVerticalSpace);
 }
 
-.brOC .defaultSectionMarginTop{
+.brOC .defaultSectionMargin{
 	margin-top:var(--defaultSectionVerticalSpace);
+	margin-bottom:2px;
 }
 
 //.brOC .defaultHoverForIcon:hover {
@@ -455,7 +456,6 @@ $kbc-btn-size-map: (
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 8px 16px;
 }
 
 .brOC .brOCSettingsSectionHeading {
@@ -553,7 +553,11 @@ $kbc-btn-size-map: (
 }
 
 .brOC .editorRightFrameButton{
-  font-size:var(--broc_editorDefaultFontSize);
+	font-size:var(--broc_editorDefaultFontSize);
+	width:100%;
+	justify-content:flex-start;
+	text-align:left;
+	background:#FAFAFA;
 }
 
 .brOC .editorHeaderLogo {
@@ -4642,6 +4646,246 @@ a.kbc-button-lg.kbc-toggleVideoCall-button-danger.active {
 /* line 201, src/scss/abstracts/_mixins.scss */
 button.kbc-button-lg.kbc-toggleVideoCall-button-danger::after,
 a.kbc-button-lg.kbc-toggleVideoCall-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 10, src/scss/components/_button.scss */
+.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xxs.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xxs.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-xs.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-xs.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-sm.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-sm.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 21, src/scss/components/_button.scss */
+.kbc-button-lg.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 239, src/scss/abstracts/_mixins.scss */
+.kbc-button-lg.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 74, src/scss/components/_button.scss */
+button.kbc-voicemail-button-danger,
+a.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 2px 2.5px 4px #adb5bd, 0 -1px 2.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-voicemail-button-danger:hover, button.kbc-voicemail-button-danger:focus, button.kbc-voicemail-button-danger.hover, button.kbc-voicemail-button-danger.focus,
+a.kbc-voicemail-button-danger:hover,
+a.kbc-voicemail-button-danger:focus,
+a.kbc-voicemail-button-danger.hover,
+a.kbc-voicemail-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 2px 2px 4px #adb5bd, 0 -1px 2px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-voicemail-button-danger:active, button.kbc-voicemail-button-danger.active,
+a.kbc-voicemail-button-danger:active,
+a.kbc-voicemail-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-voicemail-button-danger::after,
+a.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xxs.kbc-voicemail-button-danger,
+a.kbc-button-xxs.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-voicemail-button-danger:hover, button.kbc-button-xxs.kbc-voicemail-button-danger:focus, button.kbc-button-xxs.kbc-voicemail-button-danger.hover, button.kbc-button-xxs.kbc-voicemail-button-danger.focus,
+a.kbc-button-xxs.kbc-voicemail-button-danger:hover,
+a.kbc-button-xxs.kbc-voicemail-button-danger:focus,
+a.kbc-button-xxs.kbc-voicemail-button-danger.hover,
+a.kbc-button-xxs.kbc-voicemail-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-voicemail-button-danger:active, button.kbc-button-xxs.kbc-voicemail-button-danger.active,
+a.kbc-button-xxs.kbc-voicemail-button-danger:active,
+a.kbc-button-xxs.kbc-voicemail-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xxs.kbc-voicemail-button-danger::after,
+a.kbc-button-xxs.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-xs.kbc-voicemail-button-danger,
+a.kbc-button-xs.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-voicemail-button-danger:hover, button.kbc-button-xs.kbc-voicemail-button-danger:focus, button.kbc-button-xs.kbc-voicemail-button-danger.hover, button.kbc-button-xs.kbc-voicemail-button-danger.focus,
+a.kbc-button-xs.kbc-voicemail-button-danger:hover,
+a.kbc-button-xs.kbc-voicemail-button-danger:focus,
+a.kbc-button-xs.kbc-voicemail-button-danger.hover,
+a.kbc-button-xs.kbc-voicemail-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 2px 0.5px 4px #adb5bd, 0 -1px 0.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-voicemail-button-danger:active, button.kbc-button-xs.kbc-voicemail-button-danger.active,
+a.kbc-button-xs.kbc-voicemail-button-danger:active,
+a.kbc-button-xs.kbc-voicemail-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-xs.kbc-voicemail-button-danger::after,
+a.kbc-button-xs.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-sm.kbc-voicemail-button-danger,
+a.kbc-button-sm.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 2px 1.5px 4px #adb5bd, 0 -1px 1.5px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-voicemail-button-danger:hover, button.kbc-button-sm.kbc-voicemail-button-danger:focus, button.kbc-button-sm.kbc-voicemail-button-danger.hover, button.kbc-button-sm.kbc-voicemail-button-danger.focus,
+a.kbc-button-sm.kbc-voicemail-button-danger:hover,
+a.kbc-button-sm.kbc-voicemail-button-danger:focus,
+a.kbc-button-sm.kbc-voicemail-button-danger.hover,
+a.kbc-button-sm.kbc-voicemail-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 2px 1px 4px #adb5bd, 0 -1px 1px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-voicemail-button-danger:active, button.kbc-button-sm.kbc-voicemail-button-danger.active,
+a.kbc-button-sm.kbc-voicemail-button-danger:active,
+a.kbc-button-sm.kbc-voicemail-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-sm.kbc-voicemail-button-danger::after,
+a.kbc-button-sm.kbc-voicemail-button-danger::after {
+  border-color: #eb8c95;
+}
+
+/* line 85, src/scss/components/_button.scss */
+button.kbc-button-lg.kbc-voicemail-button-danger,
+a.kbc-button-lg.kbc-voicemail-button-danger {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 0 8px #e77681, 2px 4px 4px #adb5bd, 0 -1px 4px #adb5bd;
+  background-color: #dc3545;
+  border-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 185, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-voicemail-button-danger:hover, button.kbc-button-lg.kbc-voicemail-button-danger:focus, button.kbc-button-lg.kbc-voicemail-button-danger.hover, button.kbc-button-lg.kbc-voicemail-button-danger.focus,
+a.kbc-button-lg.kbc-voicemail-button-danger:hover,
+a.kbc-button-lg.kbc-voicemail-button-danger:focus,
+a.kbc-button-lg.kbc-voicemail-button-danger.hover,
+a.kbc-button-lg.kbc-voicemail-button-danger.focus {
+  box-shadow: 0 0 #e77681, 0 0px #e77681, 0 1px #e77681, 0 2px #e77681, 0 3px #e77681, 0 4px #e77681, 0 5px #e77681, 0 6px #e77681, 0 7px #e77681, 2px 3.5px 4px #adb5bd, 0 -1px 3.5px #adb5bd;
+  background-color: #e4606d;
+  color: #f8f9fa;
+}
+
+/* line 194, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-voicemail-button-danger:active, button.kbc-button-lg.kbc-voicemail-button-danger.active,
+a.kbc-button-lg.kbc-voicemail-button-danger:active,
+a.kbc-button-lg.kbc-voicemail-button-danger.active {
+  background-color: #e4606d;
+  box-shadow: 0 0 1px 1px #f3b7bd;
+  color: #f8f9fa;
+}
+
+/* line 201, src/scss/abstracts/_mixins.scss */
+button.kbc-button-lg.kbc-voicemail-button-danger::after,
+a.kbc-button-lg.kbc-voicemail-button-danger::after {
   border-color: #eb8c95;
 }
 /*                                       */

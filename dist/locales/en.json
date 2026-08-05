@@ -264,6 +264,7 @@
 	"Phonebook" : "Phonebook",
 	"Area" : "Area",
   	"Are_you_sure_you_want_to_remove_the_tab" : "Are you sure you want to remove the tab?",
+	"Are_you_sure_you_want_to_remove_all_tabs_and_disable_tabs" : "Are you sure you want to remove all tabs and disable tabs?",
 	"Add_tab" : "Add tab",
 	"Rename_tab" : "Rename tab",
 	"Remove_tab" : "Remove tab",	  
@@ -272,6 +273,8 @@
 	"Disable" : "Disable",
 	"Enable" : "Enable",
 	"Tabs" : "Tabs",
+	"Tab" : "Tab",
+	"newTab" : "New tab",
 	"splitVertically" : "Split vertically",
 	"splitHorizontally" : "Split horizontally",
 	"removeSplitter" : "Remove splitter",
@@ -322,7 +325,8 @@
     "symbol": "Symbol",
     "line": "Line",
     "extension": "Extension",
-
+	"LegacyButton" : "Button",
+	"CallPanel" : "LCD Screen",
     "extension_status": "Extension Status",
 
     "duplicate": "Duplicate",

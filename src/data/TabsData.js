@@ -127,6 +127,31 @@ export default class TabsData{
         return tabData;
     }
 
+    getTabDataArray(){
+        return this._TabDataArray;
+    }
+
+    removeAllTabData(){
+        this._TabDataArray.splice( 0, this._TabDataArray.length );
+        const tabData = this.addTab( i18n.t("UntitledTab") );
+        this.setSelectedTabKeyAsInt( tabData.getTabKeyAsInt() );
+    }
+
+    removeTabDataByTabKeyAsInt( tabKeyAsInt ){
+        const tabIndex = this.getTabDataIndexByTabKeyAsInt( tabKeyAsInt );
+        if( tabIndex === -1 ){
+            return false;
+        }
+        const wasSelected = tabKeyAsInt === this.getSelectedTabKeyAsInt();
+        this._TabDataArray.splice( tabIndex, 1 );
+        if( wasSelected && this._TabDataArray.length !== 0 ){
+            const newSelectedTabDataIndex = this._TabDataArray.length <= tabIndex ? this._TabDataArray.length - 1 : tabIndex;
+            const newSelectedTabKeyAsInt = this._TabDataArray[ newSelectedTabDataIndex ].getTabKeyAsInt();
+            this.setSelectedTabKeyAsInt( newSelectedTabKeyAsInt );
+        }
+        return true;
+    }
+
     replaceTabData( index1, index2 ){
         const tabData1 = this._TabDataArray[ index1];
         const tabData2 = this._TabDataArray[ index2];

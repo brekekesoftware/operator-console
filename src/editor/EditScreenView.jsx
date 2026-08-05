@@ -25,6 +25,7 @@ import {faUndo, faRedo} from "@fortawesome/free-solid-svg-icons";
 import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
 import SplitVerticallyIcon from "./icons/split-vertically.svg";
 import SplitHorizontallyIcon from "./icons/split-horizontally.svg";
+import EditorTabsListPanel from "./EditorTabsListPanel";
 
 
 const _TABS_SELECT_OPTIONS   = Object.freeze({
@@ -37,7 +38,8 @@ const _PROPERTIES_MODE = Object.freeze({
   pane : 0,
   divider : 1,
   tab : 2,
-  widget:3
+  widget:3,
+  tabsList:4
 });
 
 const BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES = 10;  //10MB
@@ -358,6 +360,17 @@ export default class EditScreenView extends React.Component {
 
   setCurrentEditorPaneToState( editorPane ){
     this.setState({settingsContainerOrDivider: editorPane, propertiesMode : _PROPERTIES_MODE.pane } );
+  }
+
+  setTabsListModeToState( editorPaneAsCaller ){
+    this.setState({settingsContainerOrDivider: editorPaneAsCaller, propertiesMode: _PROPERTIES_MODE.tabsList } );
+  }
+
+  removeAllTabsAndDisableTabs( editorPaneAsCaller ){
+    const tabsData = editorPaneAsCaller.getEditingPaneData().getTabsData();
+    tabsData.removeAllTabData();
+    editorPaneAsCaller.setEditorPanezEnableTabs( false );
+    this.commitEdit({settingsContainerOrDivider: editorPaneAsCaller, propertiesMode: _PROPERTIES_MODE.pane } );
   }
 
   getCurrentPropertiesModeFromState(){
@@ -1057,6 +1070,11 @@ export default class EditScreenView extends React.Component {
         //     </div>
         // );
         jsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx(this, widgetData);
+        break;
+      }
+      case _PROPERTIES_MODE.tabsList: {
+        const currentEditingPane = this.state.settingsContainerOrDivider;
+        jsx = <EditorTabsListPanel editScreenView={this} currentEditingPane={currentEditingPane}/>;
         break;
       }
       default: {

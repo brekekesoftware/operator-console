@@ -281,7 +281,7 @@ export default function EditorTabFunctionComponent(props){
 						<SortableContext items={tabItems.map((i) => i.key)} strategy={horizontalListSortingStrategy}>
 							<div onClick={ (ev) => {
 								if( !ev.target.closest('.ant-tabs-tab') ){
-									editScreenView.setCurrentEditorPaneToState( editorPaneAsParent );
+									editScreenView.setTabsListModeToState( editorPaneAsParent );
 								}
 							} }>
 								<DefaultTabBar {...tabBarProps}>

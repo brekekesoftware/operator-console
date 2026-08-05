@@ -445,6 +445,45 @@ $kbc-btn-size-map: (
   color: #ffffff;
 }
 
+.brOC .brOCTabsListRows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brOC .brOCTabsListRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: #f6f6f6;
+  border: solid 1px #e0e0e0;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.brOC .brOCTabsListDragHandle {
+  display: flex;
+  align-items: center;
+  color: #bdbdbd;
+  cursor: grab;
+}
+
+.brOC .brOCTabsListRow .brOCTabsListLabelInput {
+  flex: 1 0 0;
+  font-size: 12px !important;
+}
+
+.brOC a.brOCTabsListRemoveIcon {
+  color: #757575;
+  cursor: pointer;
+}
+
+.brOC a.brOCTabsListRemoveIcon:hover {
+  color: #e0605a;
+}
+
 .brOC .brOCWidgetTemplateCardLabel {
   margin: 0;
   font-size: 12px;

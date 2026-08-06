@@ -31,6 +31,22 @@ export default class EditorWidgetTemplateFactory{
         this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.legacyUccac ] =   new LegacyUccacEditorWidgetTemplate(this);
         this._EditorWidgetTemplates[ WidgetData.WIDGET_TYPE_IDS.videoCallWindows ] =   new VideoCallWindowsEditorWidgetTemplate(this);
         Object.freeze( this._EditorWidgetTemplates );
+
+        // Object keys that look like array indices (all of WIDGET_TYPE_IDS's values) are
+        // always iterated in ascending numeric order by JS engines, regardless of insertion
+        // order, so Object.values() can't be used to control the palette's display order.
+        this._EditorWidgetTemplateDisplayOrder = [
+            WidgetData.WIDGET_TYPE_IDS.callPanel,
+            WidgetData.WIDGET_TYPE_IDS.legacyButton,
+            WidgetData.WIDGET_TYPE_IDS.text,
+            WidgetData.WIDGET_TYPE_IDS.note,
+            WidgetData.WIDGET_TYPE_IDS.legacyExtensionStatus,
+            WidgetData.WIDGET_TYPE_IDS.callTable,
+            WidgetData.WIDGET_TYPE_IDS.lineTable,
+            WidgetData.WIDGET_TYPE_IDS.extensionTable,
+            WidgetData.WIDGET_TYPE_IDS.legacyUccac,
+            WidgetData.WIDGET_TYPE_IDS.videoCallWindows,
+        ];
     }
 
     static getStaticEditorWidgetSettingsFactoryInstance(){
@@ -38,8 +54,7 @@ export default class EditorWidgetTemplateFactory{
     }
 
     getEditorWidgetTemplateArray(){
-        const array =  Object.values(this._EditorWidgetTemplates);
-        return array;
+        return this._EditorWidgetTemplateDisplayOrder.map( ( widgetTypeId ) => this._EditorWidgetTemplates[ widgetTypeId ] );
     }
 
     getEditorWidgetTemplateByWidgetTypeId( widgetTypeId ){

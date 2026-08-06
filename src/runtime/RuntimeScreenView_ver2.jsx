@@ -312,8 +312,12 @@ export default class RuntimeScreenView_ver2 extends React.Component{
         <RuntimeHiddenUccacUcClient runtimeScreenView_ver2AsParent={this}  />
         <div style={{height: "100%"}}>
 			<div className="header_RuntimeScreenView_ver2">
-				<img style={{position: 'absolute', top: 4, left: 4, zIndex: 1}} src={logo}/>
+				<img className="logo_header_RuntimeScreenView_ver2" src={logo}/>
 				{loggedInUserInfo_header_jsx}
+				<a className="headerLink_OcBr newLayoutHeaderLink_OcBr"
+				   onClick={() => this._OperatorConsoleAsParent.setState({newLayoutModalOpen: true})}>
+					{i18n.t("newLayout")}
+				</a>
 			</div>
 			<div>
             <DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>

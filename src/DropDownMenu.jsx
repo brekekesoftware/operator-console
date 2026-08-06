@@ -1,6 +1,5 @@
 import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
-import MoreOutlined from "@ant-design/icons/MoreOutlined";
 import React, {useState} from "react";
 import Notification from "antd/lib/notification";
 import {Form, Input, Modal } from "antd";
@@ -9,6 +8,8 @@ import BrekekeOperatorConsole from "./index";
 import SelectLayoutModalForDropDownMenu from "./SelectLayoutModalForDropDownMenu";
 import ScreenData from "./data/ScreenData";
 import OCUtil from "./OCUtil";
+import SettingsIcon from "./icons/settings_icon.svg";
+import EditLayoutIcon from "./icons/edit_layout.svg";
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
 export default function DropDownMenu( { operatorConsole } ){
@@ -228,20 +229,27 @@ export default function DropDownMenu( { operatorConsole } ){
         <>
             <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={operatorConsole.getState().newLayoutModalOpen} />
             <SelectLayoutModalForDropDownMenu operatorConsole={ operatorConsole } useStateOpen={ selectLayoutModalOpen } useStateSetOpen={ setSelectLayoutModalOpen } />
-            <Dropdown
-                menu={{
-                    items,
-                }}
-				placement="topRight"
-			  align={{
-				offset: [0, 0], // [x, y]
-			  }}
-                trigger="click"
-            >
-                <Button className="menuIcon menuIcon_custom" shape="circle"
-                        icon={<MoreOutlined/>}></Button>
-                {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
-            </Dropdown>
+            <div className="headerActionsGroup_OcBr">
+                <a className="headerLink_OcBr" onClick={operatorConsole.startEditingScreen_ver2}>
+                    <span className="headerLinkIcon_OcBr" style={{WebkitMaskImage: `url("${EditLayoutIcon}")`, maskImage: `url("${EditLayoutIcon}")`}}/>
+                    {i18n.t("editLayout")}
+                </a>
+                <Dropdown
+                    menu={{
+                        items,
+                    }}
+                    placement="topRight"
+                    align={{
+                        offset: [0, 0], // [x, y]
+                    }}
+                    trigger="click"
+                >
+                    <a className="headerLink_OcBr">
+                        <span className="headerLinkIcon_OcBr" style={{WebkitMaskImage: `url("${SettingsIcon}")`, maskImage: `url("${SettingsIcon}")`}}/>
+                        {i18n.t("Settings")}
+                    </a>
+                </Dropdown>
+            </div>
         </>
     );
 

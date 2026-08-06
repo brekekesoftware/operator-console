@@ -641,6 +641,10 @@ $kbc-btn-size-map: (
   background-color: #ffffff;
 }
 
+.brOC .editorHeaderIconButton:disabled img {
+  opacity: 0.3;
+}
+
 .brOC .editorHeaderDiscardButton {
   background-color: #fafafa;
   border: solid 1px #e0e0e0;
@@ -1273,11 +1277,41 @@ table.brOCLinetable tbody tr td
   margin:0 0 0 8px;
 }
 
-.brOC .menuIcon {
+.brOC .headerActionsGroup_OcBr {
   position: absolute;
   top: 4px;
   right: 20px;
   z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.brOC .headerLink_OcBr {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  color: #212121;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.brOC .headerLink_OcBr:hover {
+  color: #74c054;
+}
+
+.brOC .headerLinkIcon_OcBr {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 .dropdownMenuItem_OcBr{
@@ -1345,17 +1379,22 @@ table.brOCLinetable tbody tr td
 .brOC .header_RuntimeScreenView_ver2{
 	position:relative;
 	height:var(--broc_headerHeight);
+	display:flex;
+	align-items:center;
+	gap:16px;
+	padding-left:4px;
 }
 
-.brOC .loggedinUserInfo_header_RuntimeScreenView_ver2{
-	position:absolute;
-	left:0;
-	margin-left:150px;
-	top:12px;
+.brOC .logo_header_RuntimeScreenView_ver2 {
+	flex-shrink:0;
 }
 
 .brOC .loggedinUserInfo_header_RuntimeScreenView_ver2 > span {
 	white-space:nowrap;
+}
+
+.brOC .newLayoutHeaderLink_OcBr {
+	white-space: nowrap;
 }
 
 .brOC .videoCallDiv_other{

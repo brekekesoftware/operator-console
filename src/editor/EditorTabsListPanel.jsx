@@ -5,9 +5,10 @@ import Notification from "antd/lib/notification";
 import {DndContext, PointerSensor, useSensor} from "@dnd-kit/core";
 import {SortableContext, verticalListSortingStrategy, useSortable} from "@dnd-kit/sortable";
 import {CSS} from '@dnd-kit/utilities';
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrash, faGripVertical, faXmark} from "@fortawesome/free-solid-svg-icons";
 import i18n from "../i18n";
+import TabDndIcon from "./icons/tab_dnd.svg";
+import TabsDeleteIcon from "./icons/tabs_delete.svg";
+import TabDeleteIcon from "./icons/tab_delete.svg";
 
 const _SortableTabRow = ({tabData, onSelect, onChangeLabel, onRemove}) => {
     const {attributes, listeners, setNodeRef, transform, transition} = useSortable({
@@ -21,7 +22,7 @@ const _SortableTabRow = ({tabData, onSelect, onChangeLabel, onRemove}) => {
         <div ref={setNodeRef} style={style} className="brOCTabsListRow"
              onClick={() => onSelect(tabData.getTabKeyAsInt())}>
             <span className="brOCTabsListDragHandle" {...attributes} {...listeners}>
-                <FontAwesomeIcon icon={faGripVertical}/>
+                <img src={TabDndIcon} alt=""/>
             </span>
             <Input className="brOCTabsListLabelInput" variant="borderless" value={tabData.getTabLabel()}
                    onClick={(ev) => ev.stopPropagation()}
@@ -41,7 +42,7 @@ const _SortableTabRow = ({tabData, onSelect, onChangeLabel, onRemove}) => {
                         cancelText={i18n.t("no")}
             >
                 <a className="icon_general brOCTabsListRemoveIcon" onClick={(ev) => ev.stopPropagation()}>
-                    <FontAwesomeIcon icon={faXmark}/>
+                    <img src={TabDeleteIcon} alt=""/>
                 </a>
             </Popconfirm>
         </div>
@@ -110,7 +111,7 @@ export default function EditorTabsListPanel(props) {
                             okText={i18n.t("yes")}
                             cancelText={i18n.t("no")}
                 >
-                    <a className="icon_general brOCSettingsDeleteIcon"><FontAwesomeIcon icon={faTrash}/></a>
+                    <a className="icon_general brOCSettingsDeleteIcon"><img src={TabsDeleteIcon} alt=""/></a>
                 </Popconfirm>
             </div>
             <DndContext sensors={[sensor]} onDragEnd={_onDragEnd}>

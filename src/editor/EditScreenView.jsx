@@ -21,10 +21,11 @@ import SelectIconModal from "./SelectIconModal";
 import EditorWidget from "./widget/editor/EditorWidget";
 import OCUtil from "../OCUtil";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUndo, faRedo} from "@fortawesome/free-solid-svg-icons";
 import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
 import SplitVerticallyIcon from "./icons/split-vertically.svg";
 import SplitHorizontallyIcon from "./icons/split-horizontally.svg";
+import UndoIcon from "./icons/undo.svg";
+import RedoIcon from "./icons/redo.svg";
 import EditorTabsListPanel from "./EditorTabsListPanel";
 
 
@@ -1178,9 +1179,9 @@ export default class EditScreenView extends React.Component {
             </Space>
             <div className="editorHeaderActions">
               <Button className="editorHeaderIconButton" disabled={!this.canUndo()} onClick={() => this.undo()}
-                      title={i18n.t("undo")} icon={<FontAwesomeIcon icon={faUndo}/>}/>
+                      title={i18n.t("undo")} icon={<img src={UndoIcon} alt=""/>}/>
               <Button className="editorHeaderIconButton" disabled={!this.canRedo()} onClick={() => this.redo()}
-                      title={i18n.t("redo")} icon={<FontAwesomeIcon icon={faRedo}/>}/>
+                      title={i18n.t("redo")} icon={<img src={RedoIcon} alt=""/>}/>
               <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._abortEditingScreen()}
                           okText={i18n.t("yes")}
                           cancelText={i18n.t("no")}

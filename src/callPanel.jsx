@@ -1,7 +1,6 @@
 import React from 'react'
 import { IconKeyboard, IconPhoneIncoming, IconPhoneOutgoing } from './icons'
 import "./callPanel.scss"
-import {Colorpicker} from "antd-colorpicker";
 import Util from "./Util"
 import {OperatorConsole} from "./index";
 import BrekekeOperatorConsole from "./index";

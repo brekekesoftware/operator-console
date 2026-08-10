@@ -5,14 +5,14 @@ import BrekekeOperatorConsole from "../../../../index";
 import {fas} from "@fortawesome/free-solid-svg-icons";
 import {far} from "@fortawesome/free-regular-svg-icons";
 import {fab} from "@fortawesome/free-brands-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import EditScreenView from "../../../EditScreenView";
 import SelectIconModal from "../../../SelectIconModal";
 import i18n from "../../../../i18n";
-import {Colorpicker} from "antd-colorpicker";
+import {ColorPicker} from "antd";
 import InputNumber from "antd/lib/input-number";
 import Input from "antd/lib/input";
 import "./LegacyButtonEditorSubWidgetSettings.css";
+import Util from "../../../../Util";
 
 //!abstract
 export default class LegacyButtonEditorSubWidgetSettings{
@@ -36,13 +36,12 @@ export default class LegacyButtonEditorSubWidgetSettings{
         const rgb = colorValue && colorValue.rgb;
         const hex = colorValue && colorValue.hex ? colorValue.hex.replace("#", "").toUpperCase() : "";
         const percent = rgb && typeof rgb.a === "number" ? Math.round(rgb.a * 100) : 100;
-        return (
+
+		return (
             <div className="brOCSettingsField">
                 <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
                 <div className="brOCSettingsFieldBox">
-                    <Colorpicker format="rgb" value={colorValue} onChange={onChange}/>
-                    <span className="brOCSettingsFieldHex">{hex}</span>
-                    <span className="brOCSettingsFieldPercent">{percent}%</span>
+                    <ColorPicker value={Util.toAntdColorPickerValue(colorValue)} onChange={(color) => onChange(Util.fromAntdColorPickerOnChange(color))} showText allowClear />
                 </div>
             </div>
         );

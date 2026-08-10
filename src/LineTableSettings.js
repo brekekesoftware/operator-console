@@ -4,7 +4,7 @@ import Form from "antd/lib/form";
 import i18n from "./i18n";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
-import {Colorpicker} from "antd-colorpicker";
+import {ColorPicker} from "antd";
 import {Divider} from "antd";
 
 export default class LineTableSettings extends React.Component {
@@ -248,7 +248,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("outerBorderThickness")} name="linetableOuterBorderThickness" rules={[
@@ -263,7 +263,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("outerBorderRadius")} name="linetableOuterBorderRadius" rules={[
                     {
@@ -278,7 +278,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("rowUnderlineThickness")} name="linetableHeaderRowUnderlineThickness" rules={[
@@ -293,7 +293,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 {/*<Form.Item label={i18n.t("bgColor")} name={`linetableHeaderBgColor`} rules={[*/}
@@ -309,7 +309,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("rowUnderlineThickness")} name="linetableBodyRowUnderlineThickness" rules={[
@@ -324,7 +324,7 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 {/*<Form.Item label={i18n.t("bgColor")} name={`linetableBodyBgColor`} rules={[*/}
@@ -362,21 +362,21 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("bgColor")} name={"lineButtonBgColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("outerBorderColor")} name={"lineButtonOuterBorderColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item  label={i18n.t("outerBorderRadius")} name={"lineButtonOuterBorderRadius"}  rules={[
                     {
@@ -415,21 +415,21 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("bgColor")} name={"transferButtonBgColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("outerBorderColor")} name={"transferButtonOuterBorderColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item  label={i18n.t("outerBorderRadius")} name={"transferButtonOuterBorderRadius"}  rules={[
                     {
@@ -467,21 +467,21 @@ export default class LineTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("bgColor")} name={"transferCancelButtonBgColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("outerBorderColor")} name={"transferCancelButtonOuterBorderColor" } rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item  label={i18n.t("outerBorderRadius")} name={"transferCancelButtonOuterBorderRadius"}  rules={[
                     {

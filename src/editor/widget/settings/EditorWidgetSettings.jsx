@@ -5,7 +5,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import {Checkbox, Input, Modal, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
-import {Colorpicker} from "antd-colorpicker";
+import {ColorPicker} from "antd";
 import InputNumber from "antd/lib/input-number";
 import AutoComplete from "antd/lib/auto-complete";
 import WidgetSettingsTemplates from "./template/WidgetSettingsTemplates";
@@ -17,6 +17,7 @@ import WidgetData from "../../../data/widgetData/WidgetData";
 import LegacyButtonEditorSubWidgetSettingsFactory
     from "./legacyButtonEditorSubWidgetSettings/LegacyButtonEditorSubWidgetSettingsFactory";
 import EditorWidgetTemplateFactory from "../template/EditorWidgetTemplateFactory";
+import Util from "../../../Util";
 
 
 let _select_widget_settings_template_name = null;
@@ -50,9 +51,8 @@ export default class EditorWidgetSettings extends React.Component {
             <div className="brOCSettingsField">
                 <p className="brOCSettingsFieldLabel">{i18n.t(labelKey)}</p>
                 <div className="brOCSettingsFieldBox">
-                    <Colorpicker format="rgb" value={colorValue} onChange={onChange}/>
-                    {/* <span className="brOCSettingsFieldHex">{hex}</span>
-                    <span className="brOCSettingsFieldPercent">{percent}%</span> */}
+                    {/* <Colorpicker value={colorValue} onChange={onChange} showText allowClear /> */}
+                    <ColorPicker value={Util.toAntdColorPickerValue(colorValue)} onChange={(color) => onChange(Util.fromAntdColorPickerOnChange(color))} showText allowClear />
                 </div>
             </div>
         );

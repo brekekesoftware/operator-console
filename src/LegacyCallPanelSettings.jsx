@@ -4,7 +4,7 @@ import Form from "antd/lib/form";
 import i18n from "./i18n";
 import Input from "antd/lib/input";
 import InputNumber from "antd/lib/input-number";
-import { Colorpicker  } from 'antd-colorpicker';
+import { ColorPicker  } from 'antd';
 import {Divider} from "antd";
 import Util from "./Util";
 
@@ -229,14 +229,14 @@ export default class LegacyCallPanelSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("bgColor")} name={`callpanelBgColor`} rules={[
                     {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPickershowText allowClear />
                 </Form.Item>
                 <Form.Item key={key++}  label={i18n.t("borderRadius")} name="borderRadius" rules={[
                     {
@@ -279,7 +279,7 @@ export default class LegacyCallPanelSettings extends React.Component {
                         required: false,
                     },
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Divider>{i18n.t("outsideShadow_settings")}</Divider>
                 <Form.Item key={key++} label={i18n.t("horizontalOffset")} name="outsideShadow_horizontalOffset" rules={[
@@ -315,7 +315,7 @@ export default class LegacyCallPanelSettings extends React.Component {
                         required: false,
                     },
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
             </Form>
         )

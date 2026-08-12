@@ -88,9 +88,11 @@ export default class ExtensionTableEditorWidgetSettings extends EditorWidgetSett
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
                 {this._renderColorField("bgColor", widgetData.getExtensiontableBgColor(), (color) => this._onChangeExtensiontableBgColor(color))}
-                {this._renderNumberField("outerBorderThickness", widgetData.getExtensiontableOuterBorderThickness(), (n) => this._onChangeExtensiontableOuterBorderThickness(n), {min: 0})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", widgetData.getExtensiontableOuterBorderThickness(), (n) => this._onChangeExtensiontableOuterBorderThickness(n), {min: 0}),
+                    this._renderNumberField("outerBorderRadius", widgetData.getExtensiontableOuterBorderRadius(), (n) => this._onChangeExtensiontableOuterBorderRadius(n), {min: 0})
+                )}
                 {this._renderColorField("outerBorderColor", widgetData.getExtensiontableOuterBorderColor(), (color) => this._onChangeExtensiontableOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", widgetData.getExtensiontableOuterBorderRadius(), (n) => this._onChangeExtensiontableOuterBorderRadius(n), {min: 0})}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getExtensiontableHeaderFontSize(), (n) => this._onChangeExtensiontableHeaderFontSize(n), {min: 0})}

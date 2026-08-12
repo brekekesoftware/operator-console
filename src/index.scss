@@ -63,6 +63,15 @@ body{
 	margin-top:var(--defaultButtonVerticalSpace);
 }
 
+.brOC .brOCTemplateActionsRow {
+  display: flex;
+  align-items: center;
+}
+
+.brOC .brOCTemplateActionsRow .brOCSettingsDeleteIcon {
+  margin-left: auto;
+}
+
 .brOC .defaultSectionMargin{
 	margin-top:var(--defaultSectionVerticalSpace);
 	margin-bottom:2px;
@@ -410,6 +419,15 @@ $kbc-btn-size-map: (
   color: #e0605a;
 }
 
+.brOCSelectLayoutFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.brOCSelectLayoutFooter .brOCSelectLayoutNewButton {
+  margin-right: auto;
+}
+
 .brOCSelectLayoutNewButton {
   background-color: #fafafa;
   border: solid 1px #e0e0e0;
@@ -508,6 +526,24 @@ $kbc-btn-size-map: (
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.brOC .brOCSettingsFieldRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: 8px;
+  row-gap: 4px;
+}
+
+.brOC .brOCSettingsFieldRow .brOCSettingsField {
+  display: contents;
+}
+
+.brOC .brOCSettingsFieldRow .brOCSettingsFieldLabel,
+.brOC .brOCSettingsFieldRow .brOCSettingsFieldBox {
+  min-width: 0;
 }
 
 .brOC .brOCSettingsFieldLabel {
@@ -1064,10 +1100,17 @@ table.brOCLinetable tbody tr td
 
 .brOC .brOCSettingsFieldBox .brOCMarginTopButtonToElement_short {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
   width: 100%;
+}
+
+.brOC .brOCSettingsFieldBox .brOCMarginTopButtonToElement_short .brOCSettingsDeleteIconDisabled {
+  color: #bdbdbd;
+  cursor: default;
+  pointer-events: none;
 }
 
 .brOC .brOCSettingsFieldBox .brOCMarginTopButtonToElement_short .ant-btn {

@@ -57,10 +57,12 @@ export default class TextEditorWidgetSettings extends EditorWidgetSettings {
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
                 {this._renderTextAreaField("text", widgetData.getText(), (e) => this._onChangeTextArea(e), {style: {width: "100%", height: "160px"}})}
-                {this._renderNumberField("Text_size", widgetData.getTextFontSize(), (n) => this._onChangeTextFontSize(n), {min: 0})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Text_size", widgetData.getTextFontSize(), (n) => this._onChangeTextFontSize(n), {min: 0}),
+                    this._renderNumberField("borderRadius", widgetData.getTextBorderRadius(), (n) => this._onChangeTextBorderRadius(n), {min: 0})
+                )}
                 {this._renderColorField("fgColor", widgetData.getTextFgColor(), (color) => this._onChangeTextFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getTextBgColor(), (color) => this._onChangeTextBgColor(color))}
-                {this._renderNumberField("borderRadius", widgetData.getTextBorderRadius(), (n) => this._onChangeTextBorderRadius(n), {min: 0})}
             </div>
         );
         return jsx;

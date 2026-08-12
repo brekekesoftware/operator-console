@@ -41,6 +41,15 @@ export default class EditorWidgetSettings extends React.Component {
         return null;
     }
 
+    //!presentational helper. Lays out two or more brOCSettingsField blocks side by side in one row.
+    _renderFieldRow( ...fieldsJsx ){
+        return (
+            <div className="brOCSettingsFieldRow">
+                {fieldsJsx}
+            </div>
+        );
+    }
+
     //!presentational helper. Renders a "Settings"-style bordered field: label above, a
     //!light-grey box below containing the antd-colorpicker swatch plus a live hex/percent readout.
     _renderColorField( labelKey, colorValue, onChange ){
@@ -603,7 +612,7 @@ export default class EditorWidgetSettings extends React.Component {
                                 </Select>
                             </div>
                         </div>
-                        <div className={"defaultButtonMarginTop"}>
+                        <div className={"defaultButtonMarginTop brOCTemplateActionsRow"}>
                                 <Popconfirm title={i18n.t("Are_you_sure_you_want_to_overwrite_it?")} disabled={bDisabled}
                         			onConfirm={() => this._onClickOverwriteSaveWidgetSettingsTemplateButton()}
                         			okText={i18n.t("yes")}
@@ -618,15 +627,16 @@ export default class EditorWidgetSettings extends React.Component {
 								>
 									<Button className="brOCSettingsButton defaultButtonMarginLeft" disabled={bDisabled} >{i18n.t("Load")}</Button>
 								</Popconfirm>
-                        </div>
-                        <div className={"defaultButtonMarginTop"}>
-                            <Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
-                                        onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
-                                        okText={i18n.t("yes")}
-                                        cancelText={i18n.t("no")}
-                            >
-                                <Button className="brOCSettingsButton" disabled={bDisabled}>{i18n.t("Delete")}</Button>
-                            </Popconfirm>
+                                <Popconfirm disabled={bDisabled} title={i18n.t("are_you_sure")}
+                                            onConfirm={() => this._onConfirmOkDeleteWidgetSettingsTemplate()}
+                                            okText={i18n.t("yes")}
+                                            cancelText={i18n.t("no")}
+                                >
+                                    <a title={i18n.t("Delete")}
+                                       className={"icon_general brOCSettingsDeleteIcon" + (bDisabled ? " brOCSettingsDeleteIconDisabled" : "")}>
+                                        <FontAwesomeIcon icon={faTrash}/>
+                                    </a>
+                                </Popconfirm>
                         </div>
                         <div className="brOCSettingsField">
                             <p className="brOCSettingsFieldLabel">{i18n.t("Create_or_rename_a_template")}</p>

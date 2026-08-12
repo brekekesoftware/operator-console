@@ -47,6 +47,15 @@ export default class LegacyButtonEditorSubWidgetSettings{
         );
     }
 
+    //!presentational helper. Lays out two or more brOCSettingsField blocks side by side in one row.
+    _renderFieldRow( ...fieldsJsx ){
+        return (
+            <div className="brOCSettingsFieldRow">
+                {fieldsJsx}
+            </div>
+        );
+    }
+
     //!presentational helper. Renders a labelled number field in the same bordered-box style.
     _renderNumberField( labelKey, value, onChange, extraProps ){
         return (
@@ -230,7 +239,11 @@ export default class LegacyButtonEditorSubWidgetSettings{
                 }
                 <div className="brOCMarginTopButtonToElement_short">
                     <Button className="brOCSettingsButton" onClick={(ev) => this._onClickSelectIconModalButton(ev,sIcon, sIconName, okFunction, cancelFunction )}>{i18n.t("SelectAnIcon")}</Button>
-                    <Button className="brOCSettingsButton brOCMarginLeftButtonToButton" onClick={(ev) => onClickRemoveIconButtonFunction_(ev) } disabled={!sIcon}>{ i18n.t("RemoveIcon")}</Button>
+                    <a className={"icon_general brOCSettingsDeleteIcon" + (!sIcon ? " brOCSettingsDeleteIconDisabled" : "")}
+                       title={i18n.t("RemoveIcon")}
+                       onClick={(ev) => { if( sIcon ) onClickRemoveIconButtonFunction_(ev); }}>
+                        <FontAwesomeIcon icon={fas.faTrash}/>
+                    </a>
                 </div>
             </>
         );

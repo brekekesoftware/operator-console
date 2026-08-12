@@ -117,9 +117,11 @@ export default class LegacyButtonEditorSubWidgetSettings_quickCallButton extends
         return  (
                 <div className="brOCWidgetSettingsPanel">
                     {this._renderIconField("icon", iconSelectJsx)}
-                    {this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"})}
-                    {this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})}
-                    {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e.target.value), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3})}
+                    {this._renderFieldRow(
+                        this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"}),
+                        this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
+                    )}
+                    {this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel})}
                     {this._renderRawLabelTextField("0", sKeypadZero, (e) => this._onChangeKeypadZero(e), {allowClear: true, defaultValue: sKeypadZero})}
                     {this._renderRawLabelTextField("1", sKeypadOne, (e) => this._onChangeKeypadOne(e), {allowClear: true, defaultValue: sKeypadOne})}
                     {this._renderRawLabelTextField("2", sKeypadTwo, (e) => this._onChangeKeypadTwo(e), {allowClear: true, defaultValue: sKeypadTwo})}

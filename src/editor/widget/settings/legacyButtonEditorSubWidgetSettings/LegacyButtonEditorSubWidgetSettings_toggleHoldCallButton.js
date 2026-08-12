@@ -183,10 +183,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("Hold_button_settings")}</p>
                 {this._renderIconField("icon", holdIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getHoldIconWidth(), (n) => this._onChangeHoldIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getHoldIconHeight(), (n) => this._onChangeHoldIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sHoldLabel, (e) => this._onChangeHoldLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sHoldLabel, rows: 3})}
-                {this._renderNumberField("Text_size", subWidgetData.getHoldFontSize(), (n) => this._onChangeHoldFontSize(n), {min: "0"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getHoldIconWidth(), (n) => this._onChangeHoldIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getHoldIconHeight(), (n) => this._onChangeHoldIconHeight(n), {min: "0"})
+                )}
+                {this._renderFieldRow(
+                    this._renderTextField("label", sHoldLabel, (e) => this._onChangeHoldLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sHoldLabel}),
+                    this._renderNumberField("Text_size", subWidgetData.getHoldFontSize(), (n) => this._onChangeHoldFontSize(n), {min: "0"})
+                )}
                 {this._renderColorField("fgColor", subWidgetData.getHoldFgColor(), (color) => this._onChangeHoldFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getHoldBgColor(), (color) => this._onChangeHoldBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getHoldOuterBorderColor(), (color) => this._onChangeHoldOuterBorderColor(color))}
@@ -195,10 +199,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("Unhold_button_settings")}</p>
                 {this._renderIconField("icon", unholdIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getUnholdIconWidth(), (n) => this._onChangeUnholdIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getUnholdIconHeight(), (n) => this._onChangeUnholdIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sUnholdLabel, (e) => this._onChangeUnholdLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sUnholdLabel, rows: 3})}
-                {this._renderNumberField("Text_size", subWidgetData.getUnholdFontSize(), (n) => this._onChangeUnholdFontSize(n), {min: "0"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getUnholdIconWidth(), (n) => this._onChangeUnholdIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getUnholdIconHeight(), (n) => this._onChangeUnholdIconHeight(n), {min: "0"})
+                )}
+                {this._renderFieldRow(
+                    this._renderTextField("label", sUnholdLabel, (e) => this._onChangeUnholdLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sUnholdLabel}),
+                    this._renderNumberField("Text_size", subWidgetData.getUnholdFontSize(), (n) => this._onChangeUnholdFontSize(n), {min: "0"})
+                )}
                 {this._renderColorField("fgColor", subWidgetData.getUnholdFgColor(), (color) => this._onChangeUnholdFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getUnholdBgColor(), (color) => this._onChangeUnholdBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getUnholdOuterBorderColor(), (color) => this._onChangeUnholdOuterBorderColor(color))}

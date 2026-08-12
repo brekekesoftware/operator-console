@@ -154,27 +154,39 @@ export default class CallPanelEditorWidgetSettings extends EditorWidgetSettings 
                 {this._renderNumberField("borderRadius", widgetData.getCallpanelBorderRadius(), (n) => this._onChangeCallpanelBorderRadius(n), {min: 0})}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("insideShadow_settings")}</p>
-                {this._renderNumberField("horizontalOffset", widgetData.getInsideShadow_horizontalOffset(), (n) => this._onChangeInsideShadow_horizontalOffset(n), {step: 1})}
-                {this._renderNumberField("verticalOffset", widgetData.getInsideShadow_verticalOffset(), (n) => this._onChangeInsideShadow_verticalOffset(n), {step: 1})}
-                {this._renderNumberField("blur", widgetData.getInsideShadow_blur(), (n) => this._onChangeInsideShadow_blur(n), {step: 1})}
-                {this._renderNumberField("spread", widgetData.getInsideShadow_spread(), (n) => this._onChangeInsideShadow_spread(n), {step: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("horizontalOffset", widgetData.getInsideShadow_horizontalOffset(), (n) => this._onChangeInsideShadow_horizontalOffset(n), {step: 1}),
+                    this._renderNumberField("verticalOffset", widgetData.getInsideShadow_verticalOffset(), (n) => this._onChangeInsideShadow_verticalOffset(n), {step: 1})
+                )}
+                {this._renderFieldRow(
+                    this._renderNumberField("blur", widgetData.getInsideShadow_blur(), (n) => this._onChangeInsideShadow_blur(n), {step: 1}),
+                    this._renderNumberField("spread", widgetData.getInsideShadow_spread(), (n) => this._onChangeInsideShadow_spread(n), {step: 1})
+                )}
                 {this._renderColorField("color", widgetData.getInsideShadow_color(), (color) => this._onChangeInsideShadow_color(color))}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("outsideShadow_settings")}</p>
-                {this._renderNumberField("horizontalOffset", widgetData.getOutsideShadow_horizontalOffset(), (n) => this._onChangeOutsideShadow_horizontalOffset(n), {step: 1})}
-                {this._renderNumberField("verticalOffset", widgetData.getOutsideShadow_verticalOffset(), (n) => this._onChangeOutsideShadow_verticalOffset(n), {step: 1})}
-                {this._renderNumberField("blur", widgetData.getOutsideShadow_blur(), (n) => this._onChangeOutsideShadow_blur(n), {step: 1})}
-                {this._renderNumberField("spread", widgetData.getOutsideShadow_spread(), (n) => this._onChangeOutsideShadow_spread(n), {step: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("horizontalOffset", widgetData.getOutsideShadow_horizontalOffset(), (n) => this._onChangeOutsideShadow_horizontalOffset(n), {step: 1}),
+                    this._renderNumberField("verticalOffset", widgetData.getOutsideShadow_verticalOffset(), (n) => this._onChangeOutsideShadow_verticalOffset(n), {step: 1})
+                )}
+                {this._renderFieldRow(
+                    this._renderNumberField("blur", widgetData.getOutsideShadow_blur(), (n) => this._onChangeOutsideShadow_blur(n), {step: 1}),
+                    this._renderNumberField("spread", widgetData.getOutsideShadow_spread(), (n) => this._onChangeOutsideShadow_spread(n), {step: 1})
+                )}
                 {this._renderColorField("color", widgetData.getOutsideShadow_color(), (color) => this._onChangeOutsideShadow_color(color))}
 
-                {this._renderNumberField("CallIconWidth", widgetData.getCallIconWidth(), (n) => this._onChangeCallIconWidth(n), {step: 1, min: 0})}
-                {this._renderNumberField("CallIconHeight", widgetData.getCallIconHeight(), (n) => this._onChangeCallIconHeight(n), {step: 1, min: 0})}
+                {this._renderFieldRow(
+                    this._renderNumberField("CallIconWidth", widgetData.getCallIconWidth(), (n) => this._onChangeCallIconWidth(n), {step: 1, min: 0}),
+                    this._renderNumberField("CallIconHeight", widgetData.getCallIconHeight(), (n) => this._onChangeCallIconHeight(n), {step: 1, min: 0})
+                )}
                 {this._renderNumberField("CallerNameSize", widgetData.getCallerNameSize(), (n) => this._onChangeCallerNameSize(n), {step: 1, min: 0})}
                 {this._renderNumberField("CallerNumberSizeWithCallerName", widgetData.getCallerNumberSizeWithCallerName(), (n) => this._onChangeCallerNumberSizeWithCallerName(n), {step: 1, min: 0})}
                 {this._renderNumberField("CallerNumberSizeWithoutCallerName", widgetData.getCallerNumberSizeWithoutCallerName(), (n) => this._onChangeCallerNumberSizeWithoutCallerName(n), {step: 1, min: 0})}
                 {this._renderNumberField("CallDurationSize", widgetData.getCallDurationSize(), (n) => this._onChangeCallDurationSize(n), {step: 1, min: 0})}
-                {this._renderNumberField("KeyboardIconWidth", widgetData.getKeyboardIconWidth(), (n) => this._onChangeKeyboardIconWidth(n), {step: 1, min: 0})}
-                {this._renderNumberField("KeyboardIconHeight", widgetData.getKeyboardIconHeight(), (n) => this._onChangeKeyboardIconHeight(n), {step: 1, min: 0})}
+                {this._renderFieldRow(
+                    this._renderNumberField("KeyboardIconWidth", widgetData.getKeyboardIconWidth(), (n) => this._onChangeKeyboardIconWidth(n), {step: 1, min: 0}),
+                    this._renderNumberField("KeyboardIconHeight", widgetData.getKeyboardIconHeight(), (n) => this._onChangeKeyboardIconHeight(n), {step: 1, min: 0})
+                )}
                 {this._renderNumberField("InputNumberOrTextSize", widgetData.getInputTextSize(), (n) => this._onChangeInputTextSize(n), {step: 1, min: 0})}
                 {this._renderNumberField("MissedCallSize", widgetData.getMissedCallSize(), (n) => this._onChangeMissedCallSize(n), {step: 1, min: 0})}
             </div>

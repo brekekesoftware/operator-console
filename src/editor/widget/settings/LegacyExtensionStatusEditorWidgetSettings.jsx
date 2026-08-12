@@ -58,9 +58,11 @@ export default class LegacyExtensionStatusEditorWidgetSettings extends EditorWid
                 <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
                 {this._renderTextField("extension", widgetData.getExtension(), (e) => this._onChangeExtension(e))}
                 {this._renderColorField("fgColor", widgetData.getExtensionStatusFgColor(), (color) => this._onChangeExtensionStatusFgColor(color))}
+                {this._renderFieldRow(
+                    this._renderNumberField("Text_top_margin", widgetData.getExtensionStatusExtensionTextTopMargin(), (val) => this._onChangeExtensionStatusExtensionTextTopMargin(val)),
+                    this._renderNumberField("Text_size", widgetData.getExtensionStatusExtensionFontSize(), (val) => this._onChangeExtensionStatusExtensionFontSize(val), {min: 0})
+                )}
                 {this._renderNumberField("Lamp_size", widgetData.getExtensionStatusLampSize(), (val) => this._onChangeExtensionStatusLampSize(val), {min: 0})}
-                {this._renderNumberField("Text_top_margin", widgetData.getExtensionStatusExtensionTextTopMargin(), (val) => this._onChangeExtensionStatusExtensionTextTopMargin(val))}
-                {this._renderNumberField("Text_size", widgetData.getExtensionStatusExtensionFontSize(), (val) => this._onChangeExtensionStatusExtensionFontSize(val), {min: 0})}
             </div>
         );
         return jsx;

@@ -145,9 +145,11 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("Transfer_button_settings")}</p>
                 {this._renderIconField("icon", transferIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sLabel, rows: 3})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
+                )}
+                {this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel})}
                 {this._renderSelectField("mode", transferMode, (e) => this._onChangeTransferMode(e), (
                     <>
                         <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
@@ -163,10 +165,14 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("Cancel_transfer_button_settings")}</p>
                 {this._renderIconField("icon", cancelTransferIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getCancelTransferIconWidth(), (n) => this._onChangeCancelTransferIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getCancelTransferIconHeight(), (n) => this._onChangeCancelTransferIconHeight(n), {min: "0"})}
-                {this._renderTextField("label", sCancelTransferLabel, (e) => this._onChangeCancelTransferLabel(e), {placeholder: i18n.t(`Cancel_transfer`), allowClear: true, defaultValue: sCancelTransferLabel})}
-                {this._renderNumberField("Text_size", subWidgetData.getCancelTransferFontSize(), (n) => this._onChangeCancelTransferFontSize(n), {min: "0"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getCancelTransferIconWidth(), (n) => this._onChangeCancelTransferIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getCancelTransferIconHeight(), (n) => this._onChangeCancelTransferIconHeight(n), {min: "0"})
+                )}
+                {this._renderFieldRow(
+                    this._renderTextField("label", sCancelTransferLabel, (e) => this._onChangeCancelTransferLabel(e), {placeholder: i18n.t(`Cancel_transfer`), allowClear: true, defaultValue: sCancelTransferLabel}),
+                    this._renderNumberField("Text_size", subWidgetData.getCancelTransferFontSize(), (n) => this._onChangeCancelTransferFontSize(n), {min: "0"})
+                )}
                 {this._renderColorField("fgColor", subWidgetData.getCancelTransferFgColor(), (color) => this._onChangeCancelTransferFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getCancelTransferBgColor(), (color) => this._onChangeCancelTransferBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getCancelTransferOuterBorderColor(), (color) => this._onChangeCancelTransferOuterBorderColor(color))}

@@ -47,9 +47,11 @@ export default class LegacyButtonEditorSubWidgetSettings_parkCallButton extends 
         return  (
             <div className="brOCWidgetSettingsPanel">
                 {this._renderIconField("icon", iconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e.target.value), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
+                )}
+                {this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel})}
                 {this._renderTextField("number", sNumber, (e) => this._onChangeNumber(e), {allowClear: true, defaultValue: sNumber})}
                 {this._renderNumberField("Text_size", subWidgetData.getFontSize(), (n) => this._onChangeFontSize(n), {min: "0"})}
                 {this._renderColorField("fgColor", subWidgetData.getFgColor(), (color) => this._onChangeFgColor(color))}

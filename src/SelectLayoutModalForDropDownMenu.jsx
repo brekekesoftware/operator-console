@@ -190,17 +190,19 @@ export default function SelectLayoutModalForDropDownMenu( {operatorConsole, useS
         } );
     };
 
-    const footer = [
-        isAdmin ? (
-            <Button key="new" className="brOCSelectLayoutNewButton" onClick={handleNewLayout}>
-                {i18n.t( "newLayout" )}
+    const footer = (
+        <div className="brOCSelectLayoutFooter">
+            {isAdmin ? (
+                <Button key="new" className="brOCSelectLayoutNewButton" onClick={handleNewLayout}>
+                    {i18n.t( "newLayout" )}
+                </Button>
+            ) : null}
+            <Button key="confirm" className="brOCSelectLayoutConfirmButton" disabled={!selectedShortname || isApplying}
+                    onClick={handleConfirm}>
+                {i18n.t( "confirm" )}
             </Button>
-        ) : null,
-        <Button key="confirm" className="brOCSelectLayoutConfirmButton" disabled={!selectedShortname || isApplying}
-                onClick={handleConfirm}>
-            {i18n.t( "confirm" )}
-        </Button>
-    ];
+        </div>
+    );
 
     let mainJsx;
     if( isLoading ){

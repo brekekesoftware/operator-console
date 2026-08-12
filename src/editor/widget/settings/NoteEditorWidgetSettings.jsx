@@ -144,8 +144,10 @@ export default class NoteEditorWidgetSettings extends EditorWidgetSettings {
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("Note_name_settings")}</p>
                 {this._renderAutoCompleteField("Name", noteName, (noteName) => this._onChangeNoteName(noteName), {options: this.state.nameOptions})}
-                {this._renderTextField("Label", sNoteLabel, (e) => this._onChangeNoteLabel(e), {placeholder: i18n.t("Label"), allowClear: true, defaultValue: sNoteLabel})}
-                {this._renderNumberField("Text_size", widgetData.getNoteTitleFontSize(), (n) => this._onChangeNoteTitleFontSize(n), {min: 0})}
+                {this._renderFieldRow(
+                    this._renderTextField("Label", sNoteLabel, (e) => this._onChangeNoteLabel(e), {placeholder: i18n.t("Label"), allowClear: true, defaultValue: sNoteLabel}),
+                    this._renderNumberField("Text_size", widgetData.getNoteTitleFontSize(), (n) => this._onChangeNoteTitleFontSize(n), {min: 0})
+                )}
                 {this._renderColorField("fgColor", widgetData.getNoteNameFgColor(), (color) => this._onChangeNoteNameFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getNoteNameBgColor(), (color) => this._onChangeNoteNameBgColor(color))}
 

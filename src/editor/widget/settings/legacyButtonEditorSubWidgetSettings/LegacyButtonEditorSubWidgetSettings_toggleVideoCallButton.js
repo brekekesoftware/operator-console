@@ -183,10 +183,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("VideoOn_button_settings")}</p>
                 {this._renderIconField("icon", videoOnIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getVideoOnIconWidth(), (n) => this._onChangeVideoOnIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getVideoOnIconHeight(), (n) => this._onChangeVideoOnIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sVideoOnLabel, (e) => this._onChangeVideoOnLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sVideoOnLabel, rows: 3})}
-                {this._renderNumberField("Text_size", subWidgetData.getVideoOnFontSize(), (n) => this._onChangeVideoOnFontSize(n), {min: "0"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getVideoOnIconWidth(), (n) => this._onChangeVideoOnIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getVideoOnIconHeight(), (n) => this._onChangeVideoOnIconHeight(n), {min: "0"})
+                )}
+                {this._renderFieldRow(
+                    this._renderTextField("label", sVideoOnLabel, (e) => this._onChangeVideoOnLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sVideoOnLabel}),
+                    this._renderNumberField("Text_size", subWidgetData.getVideoOnFontSize(), (n) => this._onChangeVideoOnFontSize(n), {min: "0"})
+                )}
                 {this._renderColorField("fgColor", subWidgetData.getVideoOnFgColor(), (color) => this._onChangeVideoOnFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getVideoOnBgColor(), (color) => this._onChangeVideoOnBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getVideoOnOuterBorderColor(), (color) => this._onChangeVideoOnOuterBorderColor(color))}
@@ -195,10 +199,14 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("VideoOff_button_settings")}</p>
                 {this._renderIconField("icon", unvideoOnIconSelectJsx)}
-                {this._renderNumberField("Icon_width", subWidgetData.getVideoOffIconWidth(), (n) => this._onChangeVideoOffIconWidth(n), {min: "0"})}
-                {this._renderNumberField("Icon_height", subWidgetData.getVideoOffIconHeight(), (n) => this._onChangeVideoOffIconHeight(n), {min: "0"})}
-                {this._renderTextAreaField("label", sVideoOffLabel, (e) => this._onChangeVideoOffLabel(e.target.value), {maxLength: 1000, style: {minHeight: 68}, defaultValue: sVideoOffLabel, rows: 3})}
-                {this._renderNumberField("Text_size", subWidgetData.getVideoOffFontSize(), (n) => this._onChangeVideoOffFontSize(n), {min: "0"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("Icon_width", subWidgetData.getVideoOffIconWidth(), (n) => this._onChangeVideoOffIconWidth(n), {min: "0"}),
+                    this._renderNumberField("Icon_height", subWidgetData.getVideoOffIconHeight(), (n) => this._onChangeVideoOffIconHeight(n), {min: "0"})
+                )}
+                {this._renderFieldRow(
+                    this._renderTextField("label", sVideoOffLabel, (e) => this._onChangeVideoOffLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sVideoOffLabel}),
+                    this._renderNumberField("Text_size", subWidgetData.getVideoOffFontSize(), (n) => this._onChangeVideoOffFontSize(n), {min: "0"})
+                )}
                 {this._renderColorField("fgColor", subWidgetData.getVideoOffFgColor(), (color) => this._onChangeVideoOffFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getVideoOffBgColor(), (color) => this._onChangeVideoOffBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getVideoOffOuterBorderColor(), (color) => this._onChangeVideoOffOuterBorderColor(color))}

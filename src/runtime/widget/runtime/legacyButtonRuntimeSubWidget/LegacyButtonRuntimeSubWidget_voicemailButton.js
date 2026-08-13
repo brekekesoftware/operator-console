@@ -30,10 +30,10 @@ export default class LegacyButtonRuntimeSubWidget_voicemailCallButton extends Le
 
         const oc = BrekekeOperatorConsole.getStaticInstance();
         const hasVoicemail = oc.getNotifyVoicemailsInfo().hasVoicemail();
-
+        const hasCall = oc.getPhoneClient().getCallInfos().getCallInfoArray().length != 0;
         const iconJsx = this._getIconJsx();
-        return <button title={tooltipOfButtonWidget} 
-			className={clsx("kbc-button kbc-button-fill-parent", hasVoicemail && 'kbc-button-danger-flash')}
+        return <button title={tooltipOfButtonWidget} disabled={hasCall}
+			className={clsx("kbc-button kbc-button-fill-parent", hasVoicemail && 'kbc-voicemail-button-danger')}
                        style={{
                            fontSize:sButtonFontSize,
                            border:border,

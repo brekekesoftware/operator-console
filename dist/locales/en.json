@@ -631,7 +631,7 @@
 	  "LegacyOneTouchDialButton": "To Call the specified number.",
 	  "LegacyToggleHoldCallButton": "To toggle hold the current call.",
 	  "LegacyToggleVideoCallButton": "To toggle video on or off for the current call.",
-	  "LegacyVoicemailButton": "If there is a voicemail, it will blink, and you can listen to the voicemail by pressing it."
+	  "LegacyVoicemailButton": "If there is a voicemail, it will lights up, and you can listen to the voicemail by pressing it."
     },
     "widget_description": {
       "LegacyButton": "This widget shows a button that you can assign a preset function to it.",

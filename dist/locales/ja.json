@@ -630,7 +630,7 @@
 	  "LegacyOneTouchDialButton": "指定された番号に発信します。",
 	  "LegacyToggleHoldCallButton": "現在の通話の保留/保留解除を切り替えます。",
 	  "LegacyToggleVideoCallButton" : "現在の通話のビデオのオン/オフを切り替えます。",
-	  "LegacyVoicemailButton" : "留守番電話がある場合は点滅し、押下すると留守番電話を聞くことができます。"
+	  "LegacyVoicemailButton" : "留守番電話がある場合は点灯し、押下すると留守番電話を聞くことができます。"
     },
     "widget_description": {
       "LegacyButton": "このウィジェットには、プリセット機能を割り当てることができるボタンが表示されます。",

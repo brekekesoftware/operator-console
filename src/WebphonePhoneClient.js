@@ -274,7 +274,8 @@ export default class WebphonePhoneClient  extends APhoneClient {
         const webphoneVersion = currentVersion.webphone;
         const jssipVersion = currentVersion.jssip;
 
-        const useragent = "Brekeke Operator Console " + ocVersion + ",Brekeke Phone for Web " + webphoneVersion + ",JsSIP " + jssipVersion;
+        //const useragent = "Brekeke Operator Console " + ocVersion + ",Brekeke Phone for Web " + webphoneVersion + ",JsSIP " + jssipVersion;
+		const useragent = "Brekeke Operator Console " + ocVersion;
         const useragentProduct = "Brekeke Phone for Web " + webphoneVersion + ",Brekeke Operator Console " + ocVersion + ",JsSIP " + jssipVersion;
 
         const eBrOcPhone = document.getElementById('brOCPhone');

@@ -1,7 +1,14 @@
+###### [バージョン 2.1.53]
+1. ログイン時の（Webphoneの)端末が、選択しても端末4でログインされる不具合を修正しました。
+1. Webphone使用時にPBX/SIPServerの管理画面のSIP SERVER > Registered Clientsページに表示されるUser Agentの項目の値を、<br />
+例としてBrekeke Operator Console 2.1.50 w356c142と表示するように変更しました。
+1. ボイスメール(留守番電話)ボタンについて、ボイスメールがある場合は点滅ではなくて点灯するように変更しました。<br />
+なお、カスタムCSS(operator-console_custom.css)に記されたkbc-voicemail-button-dangerに関する定義を変更することで、ボイスメールがある場合のボタンの状態をカスタマイズすることができます。
+1. ボイスメール(留守番電話)ボタンについて、通話中は無効(押せない)状態にするようにしました。
 ###### [バージョン 2.1.52]
 1. 機能追加に伴い、PBXの動作要件をバージョン3.19.0.7d以上としました。
 1. オートダイヤルビューの留守番電話タブに、相手番号とステータスのフィルタを配置しました。
-1. (PBX/SIPServerの管理画面のSIP SERVER > Registered Clientsページに表示される)User Agentの項目に、Operator Consoleなどのバージョンを明記するようにしました。<br />
+1. (PBX/SIPServerの管理画面のSIP SERVER > Registered Clientsページに表示される)User Agentの項目に、Operator Consoleなどのバージョンを明記するようにしました(Webphone使用時)。<br />
 (例)Brekeke Operator Console 2.1.50,Brekeke Phone for Web 2.17.0,JsSIP 3.2.15 w356c142
 1. オートダイヤルビューの横スクロールバーが操作できない不具合を修正しました。
 1. オートダイヤルビューに、必要に応じて縦スクロールバーを表示するようにしました。

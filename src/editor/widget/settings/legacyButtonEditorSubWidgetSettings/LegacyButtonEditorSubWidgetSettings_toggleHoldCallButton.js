@@ -194,8 +194,10 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                 {this._renderColorField("fgColor", subWidgetData.getHoldFgColor(), (color) => this._onChangeHoldFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getHoldBgColor(), (color) => this._onChangeHoldBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getHoldOuterBorderColor(), (color) => this._onChangeHoldOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getHoldOuterBorderRadius(), (n) => this._onChangeHoldOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getHoldOuterBorderThickness(), (n) => this._onChangeHoldOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getHoldOuterBorderThickness(), (n) => this._onChangeHoldOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getHoldOuterBorderRadius(), (n) => this._onChangeHoldOuterBorderRadius(n), {min: "0"})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("Unhold_button_settings")}</p>
                 {this._renderIconField("icon", unholdIconSelectJsx)}
@@ -210,8 +212,10 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                 {this._renderColorField("fgColor", subWidgetData.getUnholdFgColor(), (color) => this._onChangeUnholdFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getUnholdBgColor(), (color) => this._onChangeUnholdBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getUnholdOuterBorderColor(), (color) => this._onChangeUnholdOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getUnholdOuterBorderRadius(), (n) => this._onChangeUnholdOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getUnholdOuterBorderThickness(), (n) => this._onChangeUnholdOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getUnholdOuterBorderThickness(), (n) => this._onChangeUnholdOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getUnholdOuterBorderRadius(), (n) => this._onChangeUnholdOuterBorderRadius(n), {min: "0"})
+                )}
             </div>
         );
     }

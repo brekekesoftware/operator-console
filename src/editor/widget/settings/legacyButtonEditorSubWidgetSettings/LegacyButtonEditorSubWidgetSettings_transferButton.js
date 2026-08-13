@@ -160,8 +160,10 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
                 {this._renderColorField("fgColor", subWidgetData.getFgColor(), (color) => this._onChangeFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getBgColor(), (color) => this._onChangeBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getOuterBorderColor(), (color) => this._onChangeOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getOuterBorderRadius(), (n) => this._onChangeOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getOuterBorderThickness(), (n) => this._onChangeOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getOuterBorderThickness(), (n) => this._onChangeOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getOuterBorderRadius(), (n) => this._onChangeOuterBorderRadius(n), {min: "0"})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("Cancel_transfer_button_settings")}</p>
                 {this._renderIconField("icon", cancelTransferIconSelectJsx)}
@@ -176,8 +178,10 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
                 {this._renderColorField("fgColor", subWidgetData.getCancelTransferFgColor(), (color) => this._onChangeCancelTransferFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getCancelTransferBgColor(), (color) => this._onChangeCancelTransferBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getCancelTransferOuterBorderColor(), (color) => this._onChangeCancelTransferOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getCancelTransferOuterBorderRadius(), (n) => this._onChangeCancelTransferOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getCancelTransferOuterBorderThickness(), (n) => this._onChangeCancelTransferOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getCancelTransferOuterBorderThickness(), (n) => this._onChangeCancelTransferOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getCancelTransferOuterBorderRadius(), (n) => this._onChangeCancelTransferOuterBorderRadius(n), {min: "0"})
+                )}
             </div>
         );
     }

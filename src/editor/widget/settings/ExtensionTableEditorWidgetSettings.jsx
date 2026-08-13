@@ -88,24 +88,24 @@ export default class ExtensionTableEditorWidgetSettings extends EditorWidgetSett
             <div className="brOCWidgetSettingsPanel">
                 <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
                 {this._renderColorField("bgColor", widgetData.getExtensiontableBgColor(), (color) => this._onChangeExtensiontableBgColor(color))}
+                {this._renderColorField("outerBorderColor", widgetData.getExtensiontableOuterBorderColor(), (color) => this._onChangeExtensiontableOuterBorderColor(color))}
                 {this._renderFieldRow(
                     this._renderNumberField("outerBorderThickness", widgetData.getExtensiontableOuterBorderThickness(), (n) => this._onChangeExtensiontableOuterBorderThickness(n), {min: 0}),
                     this._renderNumberField("outerBorderRadius", widgetData.getExtensiontableOuterBorderRadius(), (n) => this._onChangeExtensiontableOuterBorderRadius(n), {min: 0})
                 )}
-                {this._renderColorField("outerBorderColor", widgetData.getExtensiontableOuterBorderColor(), (color) => this._onChangeExtensiontableOuterBorderColor(color))}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getExtensiontableHeaderFontSize(), (n) => this._onChangeExtensiontableHeaderFontSize(n), {min: 0})}
                 {this._renderColorField("fgColor", widgetData.getExtensiontableHeaderFgColor(), (color) => this._onChangeExtensiontableHeaderFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getExtensiontableHeaderBgColor(), (color) => this._onChangeExtensiontableHeaderBgColor(color))}
-                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableHeaderRowUnderlineThickness(), (n) => this._onChangeExtensiontableHeaderRowUnderlineThickness(n), {min: 0})}
                 {this._renderColorField("rowUnderlineColor", widgetData.getExtensiontableHeaderRowUnderlineColor(), (color) => this._onChangeExtensiontableHeaderRowUnderlineColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableHeaderRowUnderlineThickness(), (n) => this._onChangeExtensiontableHeaderRowUnderlineThickness(n), {min: 0})}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("body_settings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getExtensiontableBodyFontSize(), (n) => this._onChangeExtensiontableBodyFontSize(n), {min: 0})}
                 {this._renderColorField("fgColor", widgetData.getExtensiontableBodyFgColor(), (color) => this._onChangeExtensiontableBodyFgColor(color))}
-                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableBodyRowUnderlineThickness(), (n) => this._onChangeExtensiontableBodyRowUnderlineThickness(n), {min: 0})}
                 {this._renderColorField("rowUnderlineColor", widgetData.getExtensiontableBodyRowUnderlineColor(), (color) => this._onChangeExtensiontableBodyRowUnderlineColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getExtensiontableBodyRowUnderlineThickness(), (n) => this._onChangeExtensiontableBodyRowUnderlineThickness(n), {min: 0})}
             </div>
         );
         return jsx;

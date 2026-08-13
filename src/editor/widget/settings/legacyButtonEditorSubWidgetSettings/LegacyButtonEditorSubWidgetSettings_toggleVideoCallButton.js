@@ -194,8 +194,10 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
                 {this._renderColorField("fgColor", subWidgetData.getVideoOnFgColor(), (color) => this._onChangeVideoOnFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getVideoOnBgColor(), (color) => this._onChangeVideoOnBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getVideoOnOuterBorderColor(), (color) => this._onChangeVideoOnOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOnOuterBorderRadius(), (n) => this._onChangeVideoOnOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOnOuterBorderThickness(), (n) => this._onChangeVideoOnOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOnOuterBorderThickness(), (n) => this._onChangeVideoOnOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOnOuterBorderRadius(), (n) => this._onChangeVideoOnOuterBorderRadius(n), {min: "0"})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("VideoOff_button_settings")}</p>
                 {this._renderIconField("icon", unvideoOnIconSelectJsx)}
@@ -210,8 +212,10 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
                 {this._renderColorField("fgColor", subWidgetData.getVideoOffFgColor(), (color) => this._onChangeVideoOffFgColor(color))}
                 {this._renderColorField("bgColor", subWidgetData.getVideoOffBgColor(), (color) => this._onChangeVideoOffBgColor(color))}
                 {this._renderColorField("outerBorderColor", subWidgetData.getVideoOffOuterBorderColor(), (color) => this._onChangeVideoOffOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOffOuterBorderRadius(), (n) => this._onChangeVideoOffOuterBorderRadius(n), {min: "0"})}
-                {this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOffOuterBorderThickness(), (n) => this._onChangeVideoOffOuterBorderThickness(n), {min: "1"})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", subWidgetData.getVideoOffOuterBorderThickness(), (n) => this._onChangeVideoOffOuterBorderThickness(n), {min: "1"}),
+                    this._renderNumberField("outerBorderRadius", subWidgetData.getVideoOffOuterBorderRadius(), (n) => this._onChangeVideoOffOuterBorderRadius(n), {min: "0"})
+                )}
             </div>
         );
     }

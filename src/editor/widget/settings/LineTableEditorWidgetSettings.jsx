@@ -299,52 +299,66 @@ export default class LineTableEditorWidgetSettings extends EditorWidgetSettings 
                     </>
                 ))}
                 {this._renderColorField("bgColor", widgetData.getLinetableBgColor(), (color) => this._onChangeLinetableBgColor(color))}
-                {this._renderNumberField("outerBorderThickness", widgetData.getLinetableOuterBorderThickness(), (n) => this._onChangeLinetableOuterBorderThickness(n), {min: 0})}
                 {this._renderColorField("outerBorderColor", widgetData.getLinetableOuterBorderColor(), (color) => this._onChangeLinetableOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", widgetData.getLinetableOuterBorderRadius(), (n) => this._onChangeLinetableOuterBorderRadius(n), {min: 0})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", widgetData.getLinetableOuterBorderThickness(), (n) => this._onChangeLinetableOuterBorderThickness(n), {min: 0}),
+                    this._renderNumberField("outerBorderRadius", widgetData.getLinetableOuterBorderRadius(), (n) => this._onChangeLinetableOuterBorderRadius(n), {min: 0})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("header_settings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getLinetableHeaderFontSize(), (n) => this._onChangeLinetableHeaderFontSize(n), {min: 0})}
                 {this._renderColorField("fgColor", widgetData.getLinetableHeaderFgColor(), (color) => this._onChangeLinetableHeaderFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getLinetableHeaderBgColor(), (color) => this._onChangeLinetableHeaderBgColor(color))}
-                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableHeaderRowUnderlineThickness(), (n) => this._onChangeLinetableHeaderRowUnderlineThickness(n), {min: 0})}
                 {this._renderColorField("rowUnderlineColor", widgetData.getLinetableHeaderRowUnderlineColor(), (color) => this._onChangeLinetableHeaderRowUnderlineColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableHeaderRowUnderlineThickness(), (n) => this._onChangeLinetableHeaderRowUnderlineThickness(n), {min: 0})}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("body_settings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getLinetableBodyFontSize(), (n) => this._onChangeLinetableBodyFontSize(n), {min: 0})}
                 {this._renderColorField("fgColor", widgetData.getLinetableBodyFgColor(), (color) => this._onChangeLinetableBodyFgColor(color))}
-                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableBodyRowUnderlineThickness(), (n) => this._onChangeLinetableBodyRowUnderlineThickness(n), {min: 0})}
                 {this._renderColorField("rowUnderlineColor", widgetData.getLinetableBodyRowUnderlineColor(), (color) => this._onChangeLinetableBodyRowUnderlineColor(color))}
+                {this._renderNumberField("rowUnderlineThickness", widgetData.getLinetableBodyRowUnderlineThickness(), (n) => this._onChangeLinetableBodyRowUnderlineThickness(n), {min: 0})}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("lineButtonSettings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getLineButtonFontSize(), (n) => this._onChangeLineButtonFontSize(n), {min: 0})}
-                {this._renderNumberField("width", widgetData.getLineButtonWidth(), (n) => this._onChangeLineButtonWidth(n), {min: 1})}
-                {this._renderNumberField("height", widgetData.getLineButtonHeight(), (n) => this._onChangeLineButtonHeight(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("width", widgetData.getLineButtonWidth(), (n) => this._onChangeLineButtonWidth(n), {min: 1}),
+                    this._renderNumberField("height", widgetData.getLineButtonHeight(), (n) => this._onChangeLineButtonHeight(n), {min: 1})
+                )}
                 {this._renderColorField("fgColor", widgetData.getLineButtonFgColor(), (color) => this._onChangeLineButtonFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getLineButtonBgColor(), (color) => this._onChangeLineButtonBgColor(color))}
                 {this._renderColorField("outerBorderColor", widgetData.getLineButtonOuterBorderColor(), (color) => this._onChangeLineButtonOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", widgetData.getLineButtonOuterBorderRadius(), (n) => this._onChangeLineButtonOuterBorderRadius(n), {min: 0})}
-                {this._renderNumberField("outerBorderThickness", widgetData.getLineButtonOuterBorderThickness(), (n) => this._onChangeLineButtonOuterBorderThickness(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", widgetData.getLineButtonOuterBorderThickness(), (n) => this._onChangeLineButtonOuterBorderThickness(n), {min: 1}),
+                    this._renderNumberField("outerBorderRadius", widgetData.getLineButtonOuterBorderRadius(), (n) => this._onChangeLineButtonOuterBorderRadius(n), {min: 0})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("transferButtonSettings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getTransferButtonFontSize(), (n) => this._onChangeTransferButtonFontSize(n), {min: 0})}
-                {this._renderNumberField("width", widgetData.getTransferButtonWidth(), (n) => this._onChangeTransferButtonWidth(n), {min: 1})}
-                {this._renderNumberField("height", widgetData.getTransferButtonHeight(), (n) => this._onChangeTransferButtonHeight(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("width", widgetData.getTransferButtonWidth(), (n) => this._onChangeTransferButtonWidth(n), {min: 1}),
+                    this._renderNumberField("height", widgetData.getTransferButtonHeight(), (n) => this._onChangeTransferButtonHeight(n), {min: 1})
+                )}
                 {this._renderColorField("fgColor", widgetData.getTransferButtonFgColor(), (color) => this._onChangeTransferButtonFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getTransferButtonBgColor(), (color) => this._onChangeTransferButtonBgColor(color))}
                 {this._renderColorField("outerBorderColor", widgetData.getTransferButtonOuterBorderColor(), (color) => this._onChangeTransferButtonOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", widgetData.getTransferButtonOuterBorderRadius(), (n) => this._onChangeTransferButtonOuterBorderRadius(n), {min: 0})}
-                {this._renderNumberField("outerBorderThickness", widgetData.getTransferButtonOuterBorderThickness(), (n) => this._onChangeTransferButtonOuterBorderThickness(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", widgetData.getTransferButtonOuterBorderThickness(), (n) => this._onChangeTransferButtonOuterBorderThickness(n), {min: 1}),
+                    this._renderNumberField("outerBorderRadius", widgetData.getTransferButtonOuterBorderRadius(), (n) => this._onChangeTransferButtonOuterBorderRadius(n), {min: 0})
+                )}
 
                 <p className="brOCSettingsSectionHeading">{i18n.t("transferCancelButtonSettings")}</p>
                 {this._renderNumberField("Text_size", widgetData.getTransferCancelButtonFontSize(), (n) => this._onChangeTransferCancelButtonFontSize(n), {min: 0})}
-                {this._renderNumberField("width", widgetData.getTransferCancelButtonWidth(), (n) => this._onChangeTransferCancelButtonWidth(n), {min: 1})}
-                {this._renderNumberField("height", widgetData.getTransferCancelButtonHeight(), (n) => this._onChangeTransferCancelButtonHeight(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("width", widgetData.getTransferCancelButtonWidth(), (n) => this._onChangeTransferCancelButtonWidth(n), {min: 1}),
+                    this._renderNumberField("height", widgetData.getTransferCancelButtonHeight(), (n) => this._onChangeTransferCancelButtonHeight(n), {min: 1})
+                )}
                 {this._renderColorField("fgColor", widgetData.getTransferCancelButtonFgColor(), (color) => this._onChangeTransferCancelButtonFgColor(color))}
                 {this._renderColorField("bgColor", widgetData.getTransferCancelButtonBgColor(), (color) => this._onChangeTransferCancelButtonBgColor(color))}
                 {this._renderColorField("outerBorderColor", widgetData.getTransferCancelButtonOuterBorderColor(), (color) => this._onChangeTransferCancelButtonOuterBorderColor(color))}
-                {this._renderNumberField("outerBorderRadius", widgetData.getTransferCancelButtonOuterBorderRadius(), (n) => this._onChangeTransferCancelButtonOuterBorderRadius(n), {min: 0})}
-                {this._renderNumberField("outerBorderThickness", widgetData.getTransferCancelButtonOuterBorderThickness(), (n) => this._onChangeTransferCancelButtonOuterBorderThickness(n), {min: 1})}
+                {this._renderFieldRow(
+                    this._renderNumberField("outerBorderThickness", widgetData.getTransferCancelButtonOuterBorderThickness(), (n) => this._onChangeTransferCancelButtonOuterBorderThickness(n), {min: 1}),
+                    this._renderNumberField("outerBorderRadius", widgetData.getTransferCancelButtonOuterBorderRadius(), (n) => this._onChangeTransferCancelButtonOuterBorderRadius(n), {min: 0})
+                )}
             </div>
         );
         return jsx;

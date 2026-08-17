@@ -1004,8 +1004,7 @@ div.brOCCalltableWrapper{
 
 table.brOCCalltable{
   display:table;
-  /* border-collapse:separate; */
-  border-collapse:collapse;
+  border-collapse:separate;
   border-spacing:0;
 }
 
@@ -1029,8 +1028,15 @@ table.brOCCalltable thead{
     /* z-index:1; */
 }
 
+div.brOCExtensiontableWrapper{
+	overflow-x: auto;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+}
+
 table.brOCExtensiontable{
-  /* display:table; */
+  display:table;
   border-collapse:separate;
   border-spacing:0;
 }
@@ -1046,6 +1052,13 @@ table.brOCExtensiontable tbody tr td
   background-color:unset;
 }
 
+table.brOCExtensiontable thead{
+    position: sticky;
+	top:0;
+	left:0;
+	background-color:#f8f8f8;
+}
+
 button.brOCDefaultKbcButtonMargin {
   margin-left:2px;
   margin-right:2px;
@@ -1053,10 +1066,24 @@ button.brOCDefaultKbcButtonMargin {
   margin-top:0px;
 }
 
+div.brOCLinetableWrapper{
+	overflow-x: auto;
+	overflow-y: scroll;
+	width: 100%;
+	height: 100%;
+}
+
 table.brOCLinetable{
-  /* display:table; */
+  display:table;
   border-collapse:separate;
   border-spacing:0;
+}
+
+table.brOCLinetable thead{
+    position: sticky;
+	top:0;
+	left:0;
+	background-color:#f8f8f8;
 }
 
 //table.brOCLinetable tr,

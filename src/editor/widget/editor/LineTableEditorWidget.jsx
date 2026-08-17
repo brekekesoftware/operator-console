@@ -139,7 +139,7 @@ function EditorTransferButton_ver2({ lineInfo, callInfo, title,
     );
 }
 
-function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness, bodyRowUnderlineColor, outerBorderRadius,
+function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness, bodyRowUnderlineColor,
                            lineButtonWidth,
                            lineButtonHeight,
                            lineButtonFgColor,
@@ -177,22 +177,25 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
         "solid " + lineButtonOuterBorderThickness + "px " + Util.getRgbaCSSStringFromAntdColor( lineButtonOuterBorderColor )  : "";
     const lineButtonBorderRadius = Util.isNumber( lineButtonOuterBorderRadius ) ? lineButtonOuterBorderRadius + "px" : "";
 
-    return (<tr key={index} className={lightClassname} style={{
-        color: bodyFgColor,
-        //borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor
+    const bodyCellUnderlineStyle = {
         borderBottomStyle : "solid",
         borderBottomColor : bodyRowUnderlineColor,
         borderBottomWidth: bodyRowUnderlineThickness +  "px"
+    };
+
+    return (<tr key={index} className={lightClassname} style={{
+        color: bodyFgColor
     }}>
         <td style={{
             fontSize: bodyFontSize + "px",
-            borderRadius:"0 " + outerBorderRadius +  "px 0 0",
+            ...bodyCellUnderlineStyle
         }}>{title}</td>
         <td style={{
-            fontSize: bodyFontSize + "px"
+            fontSize: bodyFontSize + "px",
+            ...bodyCellUnderlineStyle
         }}>{lineInfo.talker}</td>
         {/*<td style={{width:70,height:70}}>*/}
-        <td>
+        <td style={bodyCellUnderlineStyle}>
             <EditorLineButton_ver2
                 line={lineInfo.line}
                 label={lineInfo.label}
@@ -206,7 +209,7 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
             ></EditorLineButton_ver2>
         </td>
         {/*<td style={{width:100,height:70}}>*/}
-        <td>
+        <td style={bodyCellUnderlineStyle}>
             {
                 index % 2 === 0 ?
                     <EditorTransferButton_ver2 lineInfo={lineInfo} callInfo={callInfo} title={title}
@@ -234,7 +237,7 @@ function EditorLineTableRow_ver2( { index, lineInfo, bodyFgColor, bodyRowUnderli
         </td>
         <td style={{
             fontSize : bodyFontSize + "px",
-            borderRadius:"0 " + outerBorderRadius + "px 0 0 "
+            ...bodyCellUnderlineStyle
         }}>
             { callInfo && callInfo.camponDstExtensionId ?  callInfo.camponDstExtensionId : "" }
         </td>
@@ -281,9 +284,9 @@ export default class LineTableEditorWidget extends EditorWidget{
         const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getLinetableBodyFgColor() , "" );
         //const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.linetableBodyActiveRowBgColor, "#B9DFA9" );   //!default
         const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getLinetableBgColor(), "" );
-        const headerRowUnderlineThickness = ( widgetData.getLinetableHeaderRowUnderlineThickness() || widgetData.getLinetableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getLinetableHeaderRowUnderlineThickness() : 1; //!default
+        const headerRowUnderlineThickness = ( widgetData.getLinetableHeaderRowUnderlineThickness() || widgetData.getLinetableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getLinetableHeaderRowUnderlineThickness() : 0; //!default
         const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getLinetableHeaderRowUnderlineColor() , "#e0e0e0" );   //!default
-        const bodyRowUnderlineThickness = ( widgetData.getLinetableBodyRowUnderlineThickness() || widgetData.getLinetableBodyRowUnderlineThickness() === 0 ) ? widgetData.getLinetableBodyRowUnderlineThickness() : 1; //!default
+        const bodyRowUnderlineThickness = ( widgetData.getLinetableBodyRowUnderlineThickness() || widgetData.getLinetableBodyRowUnderlineThickness() === 0 ) ? widgetData.getLinetableBodyRowUnderlineThickness() : 0; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getLinetableBodyRowUnderlineColor() , "#e0e0e0" );   //!default
 
         const lineButtonWidth = ( widgetData.getLineButtonWidth() || widgetData.getLineButtonWidth() === 0 ) ? widgetData.getLineButtonWidth() : 40; //!default
@@ -296,46 +299,56 @@ export default class LineTableEditorWidget extends EditorWidget{
         const transferCancelButtonFontSize = widgetData.getTransferCancelButtonFontSize() ? widgetData.getTransferCancelButtonFontSize() : 14;    //!default
 
         return (
-            <table className="brOCLinetable" style={{
+            <div className="brOCLinetableWrapper" style={{
                 backgroundColor:backgroundColor,
                 borderRadius:outerBorderRadius,
                 borderStyle : "solid",
                 borderColor : outerBorderColor,
                 borderWidth: outerBorderThickness +  "px"
-                //border: outerBorderThickness + "px solid " + outerBorderColor,
             }}>
+            <table className="brOCLinetable">
                 <thead>
                 <tr style={{
                     color:headerFgColor,
-                    backgroundColor:headerBgColor,
-                    borderBottomStyle : "solid",
-                    borderBottomColor : headerRowUnderlineColor,
-                    borderBottomWidth: headerRowUnderlineThickness +  "px"
-                    //borderBottom: headerRowUnderlineThickness +  "px solid " + headerRowUnderlineColor
+                    backgroundColor:headerBgColor
                 }}>
                     <th style={{
                         fontSize : headerFontSize + "px",
-                        borderRadius:outerBorderRadius +  "px 0 0 0",
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
                     }}>{i18n.t("name")}</th>
                     <th style={{
-                        fontSize : headerFontSize + "px"
+                        fontSize : headerFontSize + "px",
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
                     }}>{i18n.t("responder")}</th>
                     {/*<th style={{width:70}}>{i18n.t("line")}</th>*/}
                     <th style={{
-                        fontSize : headerFontSize + "px"
+                        fontSize : headerFontSize + "px",
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
                     }}>{i18n.t("line")}</th>
                     {/*<th style={{width:120}}>{i18n.t("transfer")}</th>*/}
                     <th style={{
-                        fontSize : headerFontSize + "px"
+                        fontSize : headerFontSize + "px",
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
                     }}>{i18n.t("transfer")}</th>
                     <th style={{
                         fontSize : headerFontSize + "px",
-                        borderRadius:"0 " + outerBorderRadius + "px 0 0",
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
                     }}>{i18n.t("camponDest")}</th>
                 </tr>
                 </thead>
                 <tbody style={{
                     color:bodyFgColor,
+                    display:"table-row-group"
                 }}>
                 { lineInfos.map((lineInfo,index) =>(
                     <EditorLineTableRow_ver2
@@ -345,7 +358,6 @@ export default class LineTableEditorWidget extends EditorWidget{
                         bodyFgColor={bodyFgColor}
                         bodyRowUnderlineThickness={bodyRowUnderlineThickness}
                         bodyRowUnderlineColor={bodyRowUnderlineColor}
-                        outerBorderRadius={outerBorderRadius}
                         lineButtonWidth={lineButtonWidth}
                         lineButtonHeight={lineButtonHeight}
                         lineButtonFgColor={widgetData.getLineButtonFgColor()}
@@ -376,6 +388,7 @@ export default class LineTableEditorWidget extends EditorWidget{
                 </tbody>
 
             </table>
+            </div>
         );
     }
 

@@ -8,8 +8,8 @@ export default class LegacyButtonEditorSubWidgetSettings_voicemailButton extends
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onChangeLabel(label){
-        //const label = e.currentTarget.value;
+    _onChangeLabel(e){
+        const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -37,7 +37,7 @@ export default class LegacyButtonEditorSubWidgetSettings_voicemailButton extends
                     this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel}),
+                    this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getFontSize(), (n) => this._onChangeFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getFgColor(), (color) => this._onChangeFgColor(color))}

@@ -64,31 +64,26 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
         const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyActiveRowBgColor(), "#B9DFA9" );   //!default
         const bodyActiveRowFgColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyActiveRowFgColor(), bodyFgColor );
         const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBgColor(), "" );
-        const headerRowUnderlineThickness = ( widgetData.getCalltableHeaderRowUnderlineThickness() || widgetData.getCalltableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getCalltableHeaderRowUnderlineThickness() : 1; //!default
+        const headerRowUnderlineThickness = ( widgetData.getCalltableHeaderRowUnderlineThickness() || widgetData.getCalltableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getCalltableHeaderRowUnderlineThickness() : 0; //!default
         const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableHeaderRowUnderlineColor() , "#e0e0e0" );   //!default
-        const bodyRowUnderlineThickness = ( widgetData.getCalltableBodyRowUnderlineThickness() || widgetData.getCalltableBodyRowUnderlineThickness() === 0 ) ? widgetData.getCalltableBodyRowUnderlineThickness() : 1; //!default
+        const bodyRowUnderlineThickness = ( widgetData.getCalltableBodyRowUnderlineThickness() || widgetData.getCalltableBodyRowUnderlineThickness() === 0 ) ? widgetData.getCalltableBodyRowUnderlineThickness() : 0; //!default
         const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getCalltableBodyRowUnderlineColor(), "#e0e0e0" );   //!default
 
         const cellCount = CallTableColumns.length + 1;   //1 is active botton
 
         return (
-            <div className="brOCCalltableWrapper">
-                <table className="brOCCalltable"  style={{
+            <div className="brOCCalltableWrapper" style={{
                     borderRadius:outerBorderRadius,
                     backgroundColor:backgroundColor,
                     borderStyle : "solid",
                     borderColor : outerBorderColor,
                     borderWidth: outerBorderThickness +  "px"
-                    //border: outerBorderThickness + "px solid " + outerBorderColor,
                 }}>
+                <table className="brOCCalltable">
                     <thead>
                     <tr style={{
                         color: headerFgColor,
                         backgroundColor: headerBgColor,
-                        borderBottomStyle : "solid",
-                        borderBottomColor : headerRowUnderlineColor,
-                        borderBottomWidth: headerRowUnderlineThickness +  "px",
-                        //borderBottom: headerRowUnderlineThickness + "px solid " + headerRowUnderlineColor,
                         display: "table-row",
                         tableLayout: "unset",
                         height: callTableTheadRowHeight
@@ -97,20 +92,14 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                             const key = item.key;
                             const title = item.title;
 
-                            let borderRadiusTH;
-                            const isFirstTH = i === 0;
-                            if (isFirstTH === true) {
-                                borderRadiusTH = outerBorderRadius + "px 0 0 0";
-                            } else {
-                                borderRadiusTH = "";   //"0"
-                            }
-
                             return <th key={key}
                                        style={{
                                            paddingTop: 0,
                                            paddingBottom: 0,
-                                           borderRadius: borderRadiusTH,
-                                           fontSize: callTableThFontSize
+                                           fontSize: callTableThFontSize,
+                                           borderBottomStyle : "solid",
+                                           borderBottomColor : headerRowUnderlineColor,
+                                           borderBottomWidth: headerRowUnderlineThickness +  "px"
                                        }}>{title}</th>;
                         })
                         }
@@ -119,8 +108,10 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                             height: activeButtonCellHeight,
                             paddingTop: 0,
                             paddingBottom: 0,
-                            borderRadius: "0 " + outerBorderRadius + "px 0 0",
-                            fontSize: callTableThFontSize
+                            fontSize: callTableThFontSize,
+                            borderBottomStyle : "solid",
+                            borderBottomColor : headerRowUnderlineColor,
+                            borderBottomWidth: headerRowUnderlineThickness +  "px"
                         }}>{i18n.t("activeButton")}</th>
                         {/*<th style={{*/}
                         {/*    // width:activeButtonCellWidth,*/}
@@ -136,15 +127,15 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                         color: bodyFgColor,
                         display: "table-row-group"
                     }}>
-                    {callInfoArray.map((callInfo, i) => {
-                        const isCurrentCallIndex = i === currentCallIndex;
+                    {callInfoArray.map((callInfo, rowIndex) => {
+                        const isCurrentCallIndex = rowIndex === currentCallIndex;
 
                         let tdActive;
                         if (isCurrentCallIndex) {
                             tdActive = "\u00A0";
                         }
                         else{
-                            tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(i)}>{i18n.t("active")}</button></div>;
+                            tdActive = <div style={{width:activeButtonWidth,height:activeButtonHeight,margin:"0 auto"}}><button title={i18n.t("activeButtonDesc")} className="kbc-button kbc-button-fill-parent" style={{fontSize:activeButtonFontSize}} onClick={ () => oc.switchCallIndex(rowIndex)}>{i18n.t("active")}</button></div>;
                         }
 
                         //const callStatus = callInfo.getCallStatus();
@@ -152,30 +143,14 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                         //const isStopVideoButtonEnable = isCurrentCallIndex === true && callInfo.isVideoEnable() === true && callStatus === ACallInfo.CALL_STATUSES.talking && callInfo.isVideoActive() === true;
 
                         return (<tr key={idKey++} style={{
-                            color:  i === currentCallIndex ? bodyActiveRowFgColor : bodyFgColor,
-                            backgroundColor: i === currentCallIndex ? bodyActiveRowBgColor : "",
+                            color:  isCurrentCallIndex ? bodyActiveRowFgColor : bodyFgColor,
+                            backgroundColor: isCurrentCallIndex ? bodyActiveRowBgColor : "",
                             paddingTop:0,
                             paddingBottom:0,
-                            borderBottomStyle : "solid",
-                            borderBottomColor : bodyRowUnderlineColor,
-                            borderBottomWidth: bodyRowUnderlineThickness +  "px",
-                            //borderBottom: bodyRowUnderlineThickness +  "px solid " + bodyRowUnderlineColor,
                             display:"table-row",
                             height: callTableTbodyRowHeight
                         }}>
                             {CallTableColumns.map((column, i) => {
-                                    let borderRadiusTD;
-                                    const isFirstTD = i === 0;
-
-                                    //!forBug //!check //!deadCode
-                                    if( isFirstTD === true ){
-                                        borderRadiusTD =  "0 " + outerBorderRadius +  "px 0 0";
-                                    }
-                                    else{
-                                        borderRadiusTD =  "";   //"0"
-                                    }
-                                    borderRadiusTD =  "";   //"0"
-
                                     const key = column.key;
                                     const formatter = column.formatter;
                                     let v;
@@ -189,15 +164,19 @@ export default class CallTableRuntimeWidget extends RuntimeWidget{
                                                style={{
                                                    paddingTop:0,
                                                    paddingBottom:0,
-                                                   borderRadius:borderRadiusTD,
-                                                   fontSize:callTableTdFontSize
+                                                   fontSize:callTableTdFontSize,
+                                                   borderBottomStyle : "solid",
+                                                   borderBottomColor : bodyRowUnderlineColor,
+                                                   borderBottomWidth: bodyRowUnderlineThickness +  "px"
                                                }}>{v}</td>
                                 }
                             )}
                             <td style={{
                                 //width:activeButtonCellWidth,
                                 paddingTop:0,paddingBottom:0,
-                                borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
+                                borderBottomStyle : "solid",
+                                borderBottomColor : bodyRowUnderlineColor,
+                                borderBottomWidth: bodyRowUnderlineThickness +  "px"
                             }}>
                                 {tdActive}
                             </td>

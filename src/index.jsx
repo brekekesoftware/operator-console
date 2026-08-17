@@ -1358,9 +1358,9 @@ function CallTable( props ) {
     const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  props.calltableBodyFgColor , "" );
     const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBodyActiveRowBgColor, "#B9DFA9" );   //!default
     const backgroundColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBgColor, "" );
-    const headerRowUnderlineThickness = props.calltableHeaderRowUnderlineThickness ? props.calltableHeaderRowUnderlineThickness : 1; //!default
+    const headerRowUnderlineThickness = props.calltableHeaderRowUnderlineThickness ? props.calltableHeaderRowUnderlineThickness : 0; //!default
     const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableHeaderRowUnderlineColor , "#e0e0e0" );   //!default
-    const bodyRowUnderlineThickness = props.calltableBodyRowUnderlineThickness ? props.calltableBodyRowUnderlineThickness : 1; //!default
+    const bodyRowUnderlineThickness = props.calltableBodyRowUnderlineThickness ? props.calltableBodyRowUnderlineThickness : 0; //!default
     const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.calltableBodyRowUnderlineColor , "#e0e0e0" );   //!default
     const callTableTheadRowHeight = 44;
     const callTableTbodyRowHeight = 44;
@@ -1528,10 +1528,10 @@ function ExtensionTable( props ) {
     const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  props.extensiontableBodyFgColor , "" );
     //const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBodyActiveRowBgColor, "'#B9DFA9'" );   //!default
     const backgroundColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBgColor, "" );
-    const headerRowUnderlineThickness = props.extensiontableHeaderRowUnderlineThickness ? props.extensiontableHeaderRowUnderlineThickness : 1; //!default
-    const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableHeaderRowUnderlineColor , "'#e0e0e0'" );   //!default
-    const bodyRowUnderlineThickness = props.extensiontableBodyRowUnderlineThickness ? props.extensiontableBodyRowUnderlineThickness : 1; //!default
-    const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBodyRowUnderlineColor , "'#e0e0e0'" );   //!default
+    const headerRowUnderlineThickness = props.extensiontableHeaderRowUnderlineThickness ? props.extensiontableHeaderRowUnderlineThickness : 0; //!default
+    const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableHeaderRowUnderlineColor , "#e0e0e0" );   //!default
+    const bodyRowUnderlineThickness = props.extensiontableBodyRowUnderlineThickness ? props.extensiontableBodyRowUnderlineThickness : 0; //!default
+    const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBodyRowUnderlineColor , "#e0e0e0" );   //!default
 
     let key = 0;
     return (

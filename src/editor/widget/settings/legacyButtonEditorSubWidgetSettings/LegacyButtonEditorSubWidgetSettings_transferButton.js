@@ -36,8 +36,8 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
-    _onChangeLabel(label){
-        //const label = e.currentTarget.value;
+    _onChangeLabel(e){
+        const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -149,7 +149,7 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
                     this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"}),
                     this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
                 )}
-                {this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel})}
+                {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3})}
                 {this._renderSelectField("mode", transferMode, (e) => this._onChangeTransferMode(e), (
                     <>
                         <Select.Option value="attendedTransfer">{i18n.t("Attended_transfer")}</Select.Option>
@@ -172,7 +172,7 @@ export default class LegacyButtonEditorSubWidgetSettings_transferButton extends 
                     this._renderNumberField("Icon_height", subWidgetData.getCancelTransferIconHeight(), (n) => this._onChangeCancelTransferIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sCancelTransferLabel, (e) => this._onChangeCancelTransferLabel(e), {placeholder: i18n.t(`Cancel_transfer`), allowClear: true, defaultValue: sCancelTransferLabel}),
+                    this._renderTextAreaField("label", sCancelTransferLabel, (e) => this._onChangeCancelTransferLabel(e), {placeholder: i18n.t(`Cancel_transfer`), style: {minHeight:68}, defaultValue: sCancelTransferLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getCancelTransferFontSize(), (n) => this._onChangeCancelTransferFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getCancelTransferFgColor(), (color) => this._onChangeCancelTransferFgColor(color))}

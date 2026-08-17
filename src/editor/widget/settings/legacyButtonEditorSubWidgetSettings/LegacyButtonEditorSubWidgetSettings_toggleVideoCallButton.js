@@ -71,8 +71,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
-    _onChangeVideoOnLabel(videoOnLabel){
-        //const videoOnLabel = e.currentTarget.value;
+    _onChangeVideoOnLabel(e){
+        const videoOnLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setVideoOnLabel( videoOnLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -138,8 +138,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
-    _onChangeVideoOffLabel(unvideoOnLabel){
-        //const unvideoOnLabel = e.currentTarget.value;
+    _onChangeVideoOffLabel(e){
+        const unvideoOnLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setVideoOffLabel( unvideoOnLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -188,7 +188,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
                     this._renderNumberField("Icon_height", subWidgetData.getVideoOnIconHeight(), (n) => this._onChangeVideoOnIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sVideoOnLabel, (e) => this._onChangeVideoOnLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sVideoOnLabel}),
+                    this._renderTextAreaField("label", sVideoOnLabel, (e) => this._onChangeVideoOnLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sVideoOnLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getVideoOnFontSize(), (n) => this._onChangeVideoOnFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getVideoOnFgColor(), (color) => this._onChangeVideoOnFgColor(color))}
@@ -206,7 +206,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleVideoCallButton e
                     this._renderNumberField("Icon_height", subWidgetData.getVideoOffIconHeight(), (n) => this._onChangeVideoOffIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sVideoOffLabel, (e) => this._onChangeVideoOffLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sVideoOffLabel}),
+                    this._renderTextAreaField("label", sVideoOffLabel, (e) => this._onChangeVideoOffLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sVideoOffLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getVideoOffFontSize(), (n) => this._onChangeVideoOffFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getVideoOffFgColor(), (color) => this._onChangeVideoOffFgColor(color))}

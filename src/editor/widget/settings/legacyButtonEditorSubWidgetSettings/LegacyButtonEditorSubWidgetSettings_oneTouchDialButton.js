@@ -10,8 +10,8 @@ export default class LegacyButtonEditorSubWidgetSettings_oneTouchDialButton exte
         super(  legacyButtonEditorWidgetSettingsAsParent, legacyButtonEditorSubWidgetData  );
     }
 
-    _onChangeLabel(label){
-        //const label = e.currentTarget.value;
+    _onChangeLabel(e){
+        const label = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setLabel( label  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -51,7 +51,7 @@ export default class LegacyButtonEditorSubWidgetSettings_oneTouchDialButton exte
                     this._renderNumberField("Icon_width", subWidgetData.getIconWidth(), (n) => this._onChangeIconWidth(n), {min: "0"}),
                     this._renderNumberField("Icon_height", subWidgetData.getIconHeight(), (n) => this._onChangeIconHeight(n), {min: "0"})
                 )}
-                {this._renderTextField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sLabel})}
+                {this._renderTextAreaField("label", sLabel, (e) => this._onChangeLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sLabel, rows: 3})}
                 {this._renderTextField("number", sNumber, (e) => this._onChangeNumber(e), {allowClear: true, defaultValue: sNumber})}
                 {this._renderSelectField("mode", onetouchdialMode, (e) => this._onChangeOnetouchdialMode(e), (
                     <>

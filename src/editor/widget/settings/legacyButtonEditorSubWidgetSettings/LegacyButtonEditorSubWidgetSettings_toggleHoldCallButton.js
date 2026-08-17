@@ -71,8 +71,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
-    _onChangeHoldLabel(holdLabel){
-        //const holdLabel = e.currentTarget.value;
+    _onChangeHoldLabel(e){
+        const holdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setHoldLabel( holdLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -138,8 +138,8 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
 
-    _onChangeUnholdLabel(unholdLabel){
-        //const unholdLabel = e.currentTarget.value;
+    _onChangeUnholdLabel(e){
+        const unholdLabel = e.currentTarget.value;
         this._LegacyButtonEditorSubWidgetData.setUnholdLabel( unholdLabel  );
         this._LegacyButtonEditorWidgetSettingsAsParent.getEditScreenViewAsParent().commitEdit();
     }
@@ -188,7 +188,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                     this._renderNumberField("Icon_height", subWidgetData.getHoldIconHeight(), (n) => this._onChangeHoldIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sHoldLabel, (e) => this._onChangeHoldLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sHoldLabel}),
+                    this._renderTextAreaField("label", sHoldLabel, (e) => this._onChangeHoldLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sHoldLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getHoldFontSize(), (n) => this._onChangeHoldFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getHoldFgColor(), (color) => this._onChangeHoldFgColor(color))}
@@ -206,7 +206,7 @@ export default class LegacyButtonEditorSubWidgetSettings_toggleHoldCallButton ex
                     this._renderNumberField("Icon_height", subWidgetData.getUnholdIconHeight(), (n) => this._onChangeUnholdIconHeight(n), {min: "0"})
                 )}
                 {this._renderFieldRow(
-                    this._renderTextField("label", sUnholdLabel, (e) => this._onChangeUnholdLabel(e), {maxLength: 1000, allowClear: true, defaultValue: sUnholdLabel}),
+                    this._renderTextAreaField("label", sUnholdLabel, (e) => this._onChangeUnholdLabel(e), {maxLength: 1000, style: {minHeight:68}, defaultValue: sUnholdLabel, rows: 3}),
                     this._renderNumberField("Text_size", subWidgetData.getUnholdFontSize(), (n) => this._onChangeUnholdFontSize(n), {min: "0"})
                 )}
                 {this._renderColorField("fgColor", subWidgetData.getUnholdFgColor(), (color) => this._onChangeUnholdFgColor(color))}

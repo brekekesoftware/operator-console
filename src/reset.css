@@ -134,11 +134,13 @@ button{
     height:initial;
 }
 
+/*
 .brOC button.kbc-button-fill-parent{
-	color:unset;
+     color:unset;
 }
+*/
 
-.brOCCallInfo {
+.brOCCallPanel {
 	color:unset;
 }
 
@@ -198,11 +200,11 @@ button{
 /*}*/
 
 
-.brOC .brOCReset .defaultContentTable > tbody > tr:hover {
+.brOC .brOCReset table.defaultContentTable > tbody > tr:hover {
     background-color:#F5F5F5;
 }
 
-.brOC .brOCReset .defaultContentTable > tbody > tr:hover > td:last-child {
+.brOC .brOCReset table.defaultContentTable > tbody > tr:hover > td:last-child {
     background-color:#F5F5F5;
 }
 
@@ -224,7 +226,7 @@ button{
 
 /* .brOC .brOCReset a:hover { */
 .brOCReset a:hover {
-    color:#4BC5DE;
+    color:var(--defaultHrefHoverColor);
     text-decoration:underline;
     /* text-decoration-color:#4BC5DE; */
     cursor:pointer;
@@ -248,3 +250,11 @@ button{
     border-radius: 0px var(--defaultBorderRadius) 0px 0px;
 }
 */
+
+.brOC .brOCReset table > tbody > tr.noHoverContentColorForTr:hover{
+	background-color:unset;
+}
+
+.brOC .brOCReset table > tbody > tr.noHoverContentColorForTr:hover > td:last-child{
+	background-color:unset;
+}

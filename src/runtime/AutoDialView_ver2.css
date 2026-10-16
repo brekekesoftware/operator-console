@@ -1,0 +1,156 @@
+.brOC .autoDialViewWrapper{
+	position:absolute;
+    width: 100%;
+}
+
+.brOC .autoDialView {
+    position:fixed;
+    top:var(--broc_headerHeight);
+    border-radius: var(--defaultBorderRadius);
+    background-color:initial !important;
+	scrollbar-width:thin;
+    max-width:100%;
+	max-height:calc(100vh - var(--broc_headerHeight) - 3px );
+    overflow:auto;
+    /* animation-duration: 1s; */
+    /* animation-name: AutoDialViewSlideIn_position; */
+    animation: AutoDialViewSlideInRight 0.5s ease-out forwards;
+    /* z-index: 1; */
+	z-index: 2;
+    right:0;
+}
+
+@keyframes AutoDialViewSlideInRight {
+    from {
+        transform: translate(100%);
+    }
+    to {
+        transform: translate(0);
+    }
+}
+
+.brOC .autoDialView > table {
+	position: relative;
+    z-index: 111;
+	margin-left:auto !important;
+    background-color: var(--defaultOutsideBgColor) !important;
+    animation-duration: 0.5s;
+    animation-name: AutoDialViewTableSlideIn_color;
+}
+
+@keyframes AutoDialViewSlideIn_position {
+    0% {
+        margin-left:0;
+    }
+    100% {
+        margin-left:auto;
+    }
+}
+
+@keyframes AutoDialViewTableSlideIn_color {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
+
+/*.brOC .autoDialView{*/
+/*    --scroll-bar: unset;*/
+/*}*/
+
+/*.brOC .autoDialView::-webkit-scrollbar {*/
+/*    display: unset;*/
+/*}*/
+
+.brOC .autoDialView li.tab{
+    padding:var(--defaultItemVSpace) var(--defaultOutsideSpace);
+}
+
+.brOC .autoDialView ul li:first-child{
+    border-radius:var(--defaultBorderRadius) 0px 0px 0px;
+}
+
+.brOC .autoDialView ul li:last-child{
+    border-radius: 0px var(--defaultBorderRadius) 0px 0px;
+}
+
+.brOC .autoDialView li {
+    background-color:var(--defaultInsideBgColor);
+}
+
+.brOC .tab-panel{
+    height:100%;
+}
+
+.brOC .tab-group{
+    display: flex;
+    justify-content: center;
+    padding:0;
+    margin:0;
+}
+.brOC .tab{
+    flex-grow: 1;
+    padding: var(--defaultItemVSpace) var(--defaultItemHSpace);
+    list-style:none;
+    border:solid 1px var(--defaultBorderColor);
+    text-align:center;
+    cursor:pointer;
+}
+.brOC .panel-group{
+    height:100%;
+    border:solid 1px #CCC;
+    border-top:none;
+    /* background:#eee; */
+}
+.brOC .panel{
+    display:none;
+}
+.brOC .tab.is-active{
+    background:#5C9842;
+    color:#FFF;
+    transition: all 0.2s ease-out;
+}
+.brOC .panel.is-show{
+    display:block;
+}
+
+.brOC div.autoDialView_ver2_tableParent {
+    /* max-height:400px; */
+    max-height:calc(100vh - var(--broc_headerHeight) - 3px );
+    overflow-y:auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+.brOC div.autoDialView_ver2_tableParent > table {
+    overflow:unset;
+}
+
+.brOC div.autoDialView_ver2_tableParent > table > thead > tr > th  {
+    position: sticky;
+    left:0;
+    top:0;
+    white-space:nowrap;
+    z-index:1;
+    background-color:var(--defaultTHBackgroundColor);
+}
+
+.brOC .defaultContentTable > tbody > tr > td.paddingTopZeroImportant_AutoDialView_ver2{
+    padding-top:0 !important;;
+}
+
+.brOC .defaultContentTable > thead > tr > th {
+    text-align:center;
+}
+
+.brOC .unsetBackgroundColor_AutoDialView_ver2 {
+    background-color:unset !important;
+}
+
+.brOC .unsetBackgroundColor_AutoDialView_ver2:hover{
+    background-color:unset !important;
+}

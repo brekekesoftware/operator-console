@@ -1,42 +1,55 @@
-import Menu from "antd/lib/menu";
 import i18n from "./i18n";
 import Popconfirm from "antd/lib/popconfirm";
-import MoreOutlined from "@ant-design/icons/MoreOutlined";
 import React, {useState} from "react";
 import Notification from "antd/lib/notification";
-import {AppstoreOutlined, DownOutlined, MailOutlined, SettingOutlined, SmileOutlined} from "@ant-design/icons";
-import {icons} from "antd/es/image/PreviewGroup";
-import antd, {Form, Input, message, Modal, Switch} from "antd";
-import { Dropdown, Button, Space, Menu } from 'antd';
+import {Form, Input, Modal } from "antd";
+import { Dropdown, Button } from 'antd';
 import BrekekeOperatorConsole from "./index";
-import OpenLayoutModal2, {refreshNoteNamesContent} from "./OpenLayoutModal2";
-import Spin from "antd/lib/spin";
-
+import SelectLayoutModalForDropDownMenu from "./SelectLayoutModalForDropDownMenu";
+import ScreenData from "./data/ScreenData";
+import OCUtil from "./OCUtil";
+import SettingsIcon from "./icons/settings_icon.svg";
+import EditLayoutIcon from "./icons/edit_layout.svg";
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
 export default function DropDownMenu( { operatorConsole } ){
-    let loginLabel = operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : ''
+    let loginLabel = operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + " / " : ''
     loginLabel += operatorConsole.state.loginUser.pbxUsername;
-    const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
+    loginLabel += " / " + operatorConsole.getLastLayoutShortname();
+    //const [newLayoutModalOpen, setNewLayoutModalOpen] = useState(false);
     const showNewLayoutModalFunc = () => {
-        setNewLayoutModalOpen(true);
+        operatorConsole.setState({newLayoutModalOpen:true});
     };
 
-    const [ openLayoutModalOpen,  setOpenLayoutModalOpen ] = useState( false );
-    const [noteNamesContent, setNoteNamesContent] = useState(<Spin />);
-    const showOpenLayoutModalFunc = ( ) =>{
-        setOpenLayoutModalOpen( true );
-        refreshNoteNamesContent( operatorConsole, setNoteNamesContent, setOpenLayoutModalOpen  );;
+    const [ selectLayoutModalOpen, setSelectLayoutModalOpen ] = useState( false );
+    const showSelectLayoutModalFunc = ( ) => {
+        operatorConsole.addDisableKeydownToDialingCounter();
+        operatorConsole.addDisablePasteToDialingCounter();
+        setSelectLayoutModalOpen( true );
     }
 
     let items;
+
+    let signOutStyle;
+    let signOutOnClick;
+    const hasCall = operatorConsole.getPhoneClient().getCallInfos().getCallInfoCount() !== 0;
+    if( hasCall ){
+        signOutStyle = {color:"#DDDDDD",cursor:"default"};
+        signOutOnClick = undefined;
+    }
+    else{
+        signOutStyle = undefined;
+        signOutOnClick =  operatorConsole.logout;
+    }
 
     if( operatorConsole.getIsAdmin() === true ) {
         items = [
             {
                 key: '100',
                 label: (
-                    loginLabel
+                    <div className="dropdownMenuLoginlabel_OcBr">
+                        {loginLabel}
+                    </div>
                 )
                 ,
                 children:
@@ -44,9 +57,9 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div onClick={operatorConsole.logout}>
-                                    {i18n.t("logout")}
-                                </div>
+                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuSignout_OcBr">
+                                    {i18n.t("signout")}
+                                </a>
                             )
                         }
                     ]
@@ -56,22 +69,30 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 type: 'divider',
             },
-            // {
-            //     key: '1',
-            //     label: (
-            //         <div onClick={operatorConsole.startShowScreen}>
-            //             {i18n.t("show_screen")}
-            //         </div>
-            //     ),
-            // },
             {
                 key: '1',
                 label: (
-                    <div onClick={operatorConsole.startEditingScreen}>
+                    <a onClick={operatorConsole.startEditingScreen_ver2} className="dropdownMenuItem_OcBr">
                         {i18n.t("editLayout")}
-                    </div>
+                    </a>
                 ),
             },
+            // {
+            //     key: '2',
+            //     label: (
+            //         <a onClick={operatorConsole.startShowScreen_ver2}>
+            //             {i18n.t("show_screen")}
+            //         </a>
+            //     ),
+            // },
+            // {
+            //     key: '3',
+            //     label: (
+            //         <div onClick={operatorConsole.startEditingScreen}>
+            //             {i18n.t("editLayout")}
+            //         </div>
+            //     ),
+            // },
             // {
             //     key: '3',
             //     label: (
@@ -107,30 +128,37 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '2',
                 label: (
-                    <div onClick={showNewLayoutModalFunc}>
-                        {i18n.t("newLayout")}
-                    </div>
+                    <a onClick={showSelectLayoutModalFunc} className="dropdownMenuItem_OcBr">
+                        {i18n.t("selectLayout")}
+                    </a>
                 ),
             },
             {
-                key: '3',
+                key: '5',
                 label: (
-                    <div onClick={showOpenLayoutModalFunc}>
-                        {i18n.t("openLayout")}
-                    </div>
+                    <a onClick={operatorConsole.startSettingsScreen} className="dropdownMenuItem_OcBr">
+                        {i18n.t("Layout_settings")}
+                    </a>
                 ),
-            },,
+            },
             {
-                key: '4',
+                key: '6',
                 label: (
-                    <div onClick={operatorConsole.startSettingsScreen}>
-                        {i18n.t("settings_screen")}
-                    </div>
+                    <a onClick={operatorConsole.openUserSettingsScreen} className="dropdownMenuItem_OcBr">
+                        {i18n.t("User_settings")}
+                    </a>
+                ),
+            },
+            {
+                key: '7',
+                label: (
+                    <a onClick={ () => operatorConsole.openAboutOCModalByState() } className="dropdownMenuItem_OcBr">
+                        {i18n.t("About_OperatorConsole")}
+                    </a>
                 ),
             },
         ];
-    }
-    else{   //user menu(not admin)
+    } else {   //user menu(not admin)
         items = [
             {
                 key: '100',
@@ -143,9 +171,9 @@ export default function DropDownMenu( { operatorConsole } ){
                         {
                             key: "101",
                             label: (
-                                <div onClick={operatorConsole.logout}>
-                                    {i18n.t("logout")}
-                                </div>
+                                <a style={signOutStyle} onClick={signOutOnClick} className="dropdownMenuItem_OcBr">
+                                    {i18n.t("signout")}
+                                </a>
                             )
                         }
                     ]
@@ -166,36 +194,62 @@ export default function DropDownMenu( { operatorConsole } ){
             {
                 key: '1',
                 label: (
-                    <div onClick={showOpenLayoutModalFunc}>
-                        {i18n.t("openLayout")}
-                    </div>
+                    <a onClick={showSelectLayoutModalFunc} className="dropdownMenuItem_OcBr">
+                        {i18n.t("selectLayout")}
+                    </a>
                 ),
             },
+            // {
+            //     key: '2',
+            //     label: (
+            //         <a onClick={operatorConsole.startSettingsScreen}>
+            //             {i18n.t("Layout_settings")}
+            //         </a>
+            //     ),
+            // },
             {
                 key: '2',
                 label: (
-                    <div onClick={operatorConsole.startSettingsScreen}>
-                        {i18n.t("settings_screen")}
-                    </div>
+                    <a onClick={operatorConsole.openUserSettingsScreen} className="dropdownMenuItem_OcBr">
+                        {i18n.t("User_settings")}
+                    </a>
+                ),
+            },
+            {
+                key: '3',
+                label: (
+                    <a onClick={() => operatorConsole.openAboutOCModalByState()} className="dropdownMenuItem_OcBr">
+                        {i18n.t("About_OperatorConsole")}
+                    </a>
                 ),
             },
         ];
     }
-
     return (
         <>
-            <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={newLayoutModalOpen} setNewLayoutModalOpen={setNewLayoutModalOpen} />
-            <OpenLayoutModal2 noteNamesContent={ noteNamesContent  } operatorConsole={ operatorConsole } useStateOpen={ openLayoutModalOpen  } useStateSetOpen={ setOpenLayoutModalOpen }  />
-
-        <Dropdown
-            menu={{
-                items,
-            }}
-            trigger="click"
-        >
-            <Button style={{position: 'absolute', top:4,right:4, zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>
-            {/*<Button style={{position: 'relative', top:"calc(36px - 100vh)",right:"calc(36px - 100vw)", zIndex: 15}} shape="circle" icon={<MoreOutlined/>}></Button>*/}
-        </Dropdown>
+            <NewLayoutDialog operatorConsole={operatorConsole} showNewLayoutModalFunc={showNewLayoutModalFunc} newLayoutModalOpen={operatorConsole.getState().newLayoutModalOpen} />
+            <SelectLayoutModalForDropDownMenu operatorConsole={ operatorConsole } useStateOpen={ selectLayoutModalOpen } useStateSetOpen={ setSelectLayoutModalOpen } />
+            <div className="headerActionsGroup_OcBr">
+                <a className="headerLink_OcBr" onClick={operatorConsole.startEditingScreen_ver2}>
+                    <span className="headerLinkIcon_OcBr" style={{WebkitMaskImage: `url("${EditLayoutIcon}")`, maskImage: `url("${EditLayoutIcon}")`}}/>
+                    {i18n.t("editLayout")}
+                </a>
+                <Dropdown
+                    menu={{
+                        items,
+                    }}
+                    placement="topRight"
+                    align={{
+                        offset: [0, 0], // [x, y]
+                    }}
+                    trigger="click"
+                >
+                    <a className="headerLink_OcBr">
+                        <span className="headerLinkIcon_OcBr" style={{WebkitMaskImage: `url("${SettingsIcon}")`, maskImage: `url("${SettingsIcon}")`}}/>
+                        {i18n.t("Settings")}
+                    </a>
+                </Dropdown>
+            </div>
         </>
     );
 
@@ -279,7 +333,7 @@ export default function DropDownMenu( { operatorConsole } ){
     //     }} overlay={(
     //         <Menu style={{ width: 'max-content' }}>
     //             <Menu.SubMenu key="-1" title={`${operatorConsole.state.loginUser.pbxTenant ? operatorConsole.state.loginUser.pbxTenant + ' / ' : '' }${operatorConsole.state.loginUser.pbxUsername}`}>
-    //                 <Menu.Item key="0" onClick={operatorConsole.logout}>{i18n.t("logout")}</Menu.Item>
+    //                 <Menu.Item key="0" onClick={operatorConsole.logout}>{i18n.t("signout")}</Menu.Item>
     //             </Menu.SubMenu>
     //             <Menu.Divider />
     //             <Menu.Item key="1" onClick={operatorConsole.startShowScreen}>{i18n.t("show_screen")}</Menu.Item>
@@ -292,14 +346,14 @@ export default function DropDownMenu( { operatorConsole } ){
     //                     {i18n.t("remove_screen")}
     //                 </Popconfirm>
     //             </Menu.Item>
-    //             <Menu.Item  key="7"  onClick={operatorConsole.startSettingsScreen}>{i18n.t("settings_screen")}</Menu.Item>
+    //             <Menu.Item  key="7"  onClick={operatorConsole.startSettingsScreen}>{i18n.t("Layout_settings")}</Menu.Item>
     //         </Menu>
     //     )}>
     //         <Button style={{position: 'absolute', top:4,right:4, zIndex: 1}} shape="circle" icon={<MoreOutlined/>}></Button>
     //     </Dropdown>
     // );
 
-    function NewLayoutDialog( { operatorConsole, showNewLayoutModalFunc, newLayoutModalOpen,  setNewLayoutModalOpen } ){
+    function NewLayoutDialog( { operatorConsole, showNewLayoutModalFunc } ){
         //const [loading, setLoading] = useState(false);
         const [ newLayoutUseForm ] = Form.useForm();
         const [newLayoutConfirmOpen, setNewLayoutConfirmOpen] = useState(false);
@@ -323,62 +377,108 @@ export default function DropDownMenu( { operatorConsole } ){
 
                 //exists already?
                 const layoutNoteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
-
-                const pGetNoteNames = operatorConsole.getOCNoteNamesPromise();
-                pGetNoteNames.then( ( noteNames ) => {
-                    let bNoteExists = true;
-                    if( !noteNames || noteNames.length === 0 ){
-                        bNoteExists = false;
-                    }
-                    else{
-                        const sFind = noteNames.find( ( itm ) => itm === layoutNoteName );
-                        if( !sFind ){
+                const getNoteNamesOptions ={
+                    methodName : "getNoteNames",
+                    methodParams : {tenant:operatorConsole.getLoggedinTenant()},
+                    onSuccessFunction : ( noteNames ) =>{
+                        let bNoteExists = true;
+                        if( !noteNames || noteNames.length === 0 ){
                             bNoteExists = false;
                         }
-                    }
-
-                    if( bNoteExists ){
-
-                        setNewLayoutConfirmOpen(true);
-
-                    }
-                    else {
-                        const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
-                        const systemSettingsDataData = systemSettingsData.getData();
-
-                        const  layoutsAndSettingsData =  {
-                            version:  BrekekeOperatorConsole.getAppDataVersion(),
-                            screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                            systemSettings: systemSettingsDataData
-                        };
-
-                        const noteContent = JSON.stringify( layoutsAndSettingsData );
-                        const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
-                        setNotePromise.then(() => {
-                            const sErr = operatorConsole.setOCNote( layoutName, layoutsAndSettingsData );
-                            if( sErr ){
-                                console.error("Failed to setOCNote.", sErr );
-                                throw new Error(sErr);
+                        else{
+                            const sFind = noteNames.find( ( itm ) => itm === layoutNoteName );
+                            if( !sFind ){
+                                bNoteExists = false;
                             }
-                            Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
-                        })
-                            .catch((err) => {
-                                console.error("Failed to save data to PBX.", err);
-                                const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                                Notification.error({message: msg, duration: 0});
-                            });
-                        setNewLayoutModalOpen(false);
+                        }
+
+                        if( bNoteExists ){
+
+                            setNewLayoutConfirmOpen(true);
+
+                        }
+                        else {
+                            const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
+                            const systemSettingsDataData = systemSettingsData.getData();
+                            const oScreen_ver2 = new ScreenData().getDataAsObject();
+
+                            const  layoutsAndSettingsData =  {
+                                version:  BrekekeOperatorConsole.getAppDataVersion(),
+                                screens:  BrekekeOperatorConsole.getEmptyScreens(),
+                                systemSettings: systemSettingsDataData,
+                                screen_ver2:oScreen_ver2
+                            };
+
+                            const noteContent = JSON.stringify( layoutsAndSettingsData );
+                            const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
+
+                            const setNoteOptions = {
+                                methodName : "setNote",
+                                methodParams : {
+                                    tenant : operatorConsole.getLoggedinTenant(),
+                                    name:noteName,
+                                    description : "",
+                                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
+                                    note : noteContent
+                                },
+                                onSuccessFunction : (res) =>{
+
+                                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, function(){
+                                            Notification.success( { message:i18n.t("saved_data_to_pbx_successfully") });
+                                            operatorConsole.abortAutoDialView_ver2();
+                                            operatorConsole.setState({newLayoutModalOpen:false});
+                                        },
+                                        function(e){
+                                            //!testit
+                                            if( Array.isArray(e)){
+                                                for( let i = 0; i < e.length; i++ ){
+                                                    const err = e[i];
+                                                    console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                                }
+                                            }
+                                            else{
+                                                console.error("setOCNote failed. error=" , e );
+                                            }
+                                            Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                                            // const message = eventArg.message;
+                                            // //console.error("Failed to setOCNote.", sErr );
+                                            // console.error("Failed to save data to PBX.", message);
+                                            // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                            // Notification.error({message: msg, duration: 0});
+
+                                            //operatorConsole.setState({newLayoutModalOpen:false});
+                                    });
+                                },
+                                onFailFunction : ( errorOrResponse ) =>{
+                                    //!testit
+                                    if( Array.isArray(errorOrResponse)){
+                                        for( let i = 0; i < errorOrResponse.length; i++ ){
+                                            const err = errorOrResponse[i];
+                                            console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                        }
+                                    }
+                                    else{
+                                        console.error("setOCNote failed. error=" , errorOrResponse );
+                                    }
+                                    Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  errorOrResponse, duration:0 });
+                                    // const message = eventArg.message;
+                                    // //console.error("Failed to setOCNote.", sErr );
+                                    // console.error("Failed to save data to PBX.", message);
+                                    // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                                    // Notification.error({message: msg, duration: 0});
+                                    operatorConsole.setState({newLayoutModalOpen:false});
+                                }
+                            }
+                            operatorConsole.getPalRestApi().callPalRestApiMethod( setNoteOptions );
+
+                        }
+                    },
+                    onFailFunction : ( errOrResponse ) =>{
+                        //!testit
+                        OCUtil.logErrorWithNotification("Failed to getNoteNames from  PBX.", i18n.t("failed_to_load_data_from_pbx"), errOrResponse )
                     }
-
-                })
-                    .catch( (err) =>{
-                        console.error("Failed to getNoteNames from  PBX.", err);
-                        const msg = i18n.t("failed_to_load_data_from_pbx") + " " + err;
-                        Notification.error({message:msg, duration:0} );
-                    });
-
-
-
+                };
+                operatorConsole.getPalRestApi().callPalRestApiMethod( getNoteNamesOptions );
 
             });
             // setLoading(true);
@@ -389,39 +489,100 @@ export default function DropDownMenu( { operatorConsole } ){
 
         };
         const handleCancel = () => {
-            setNewLayoutModalOpen(false);
+            operatorConsole.setState({newLayoutModalOpen:false});
         };
 
         const confirmNewLayout = (  ) => {
             const layoutName = newLayoutName;
 
-            const systemSettingsData = BrekekeOperatorConsole.getDefaultSystemSettingsData();
+            const systemSettingsData = BrekekeOperatorConsole.getStaticInstance().getDefaultSystemSettingsData();
             const systemSettingsDataData = systemSettingsData.getData();
+            const oScreen_ver2 = new ScreenData().getDataAsObject();
 
             const  layoutsAndSettingsData =  {
                 version:  BrekekeOperatorConsole.getAppDataVersion(),
                 screens:  BrekekeOperatorConsole.getEmptyScreens(),
-                systemSettings: systemSettingsDataData
+                systemSettings: systemSettingsDataData,
+                screen_ver2:oScreen_ver2
             };
 
             const noteContent = JSON.stringify( layoutsAndSettingsData );
-            const setNotePromise = operatorConsole.setOCNoteByPal(layoutName, noteContent);
-            setNotePromise.then(() => {
-                const sErr = operatorConsole.setOCNote( layoutName, layoutsAndSettingsData );
-                if( sErr ){
-                    console.error("Failed to setOCNote.", sErr );
-                    throw new Error(sErr);
-                }
-                setNewLayoutModalOpen(false);
-                Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
-            })
-                .catch((err) => {
-                    console.error("Failed to save data to PBX.", err);
-                    const msg = i18n.t("failed_to_save_data_to_pbx") + " " + err;
-                    Notification.error({message: msg, duration: 0});
-                });
+            const noteName = BrekekeOperatorConsole.getOCNoteName( layoutName );
 
-            setNewLayoutConfirmOpen(false);
+            const setNoteOptions = {
+                methodName : "setNote",
+                methodParams : {
+                    tenant : operatorConsole.getLoggedinTenant(),
+                    name: noteName,
+                    description : "",
+                    useraccess : BrekekeOperatorConsole.PAL_NOTE_USERACCESSES.ReadOnly,
+                    note : noteContent
+                },
+                onSuccessFunction : ( res ) =>{
+                    operatorConsole.setOCNote( layoutName, layoutsAndSettingsData, () => {
+                            Notification.success( { message: i18n.t("saved_data_to_pbx_successfully") } );
+                            BrekekeOperatorConsole.getStaticInstance().abortAutoDialView_ver2();
+                            operatorConsole.setState({newLayoutModalOpen:false});
+                        },
+                        function( e){
+                            // const message = eventArg.message;
+                            // //console.error("Failed to setOCNote.", sErr );
+                            // console.error("Failed to save data to PBX.", message);
+                            // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                            // Notification.error({message: msg, duration: 0});
+                            //!testit
+                            if( Array.isArray(e)){
+                                for( let i = 0; i < e.length; i++ ){
+                                    const err = e[i];
+                                    console.error("setOCNote failed. errors[" + i + "]=" , err );
+                                }
+                            }
+                            else{
+                                console.error("setOCNote failed. error=" , e );
+                            }
+
+                            try {
+                                const sError = JSON.stringify(e);
+                                Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                            }
+                            catch( err ){
+                                Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  e, duration:0 });
+                            }
+
+
+                            operatorConsole.setState({newLayoutModalOpen:false});
+                        });
+                },
+                onFailFunction : ( errorOrResponse ) =>{
+                    // const message = eventArg.message;
+                    // //console.error("Failed to setOCNote.", sErr );
+                    // console.error("Failed to save data to PBX.", message);
+                    // const msg = i18n.t("failed_to_save_data_to_pbx") + " " + message;
+                    // Notification.error({message: msg, duration: 0});
+                    //!testit
+                    if( Array.isArray(errorOrResponse)){
+                        for( let i = 0; i < errorOrResponse.length; i++ ){
+                            const err = errorOrResponse[i];
+                            console.error("setOCNote failed. errors[" + i + "]=" , err );
+                        }
+                    }
+                    else{
+                        console.error("setOCNote failed. error=", errorOrResponse  );
+                    }
+
+                    try {
+                        const sError = JSON.stringify(errorOrResponse);
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  sError, duration:0 });
+                    }
+                    catch( err ){
+                        Notification.error({message: i18n.t('failed_to_save_data_to_pbx') + "\r\n" +  errorOrResponse, duration:0 });
+                    }
+
+                    //operatorConsole.setState({newLayoutModalOpen:false});
+                }
+            };
+            operatorConsole.getPalRestApi().callPalRestApiMethod( setNoteOptions );
+
         };
         const cancelNewLayout = () => {
             setNewLayoutConfirmOpen(false);
@@ -436,28 +597,45 @@ export default function DropDownMenu( { operatorConsole } ){
         };
         return (
             <>
+                <Modal
+                    open={ operatorConsole.getIsOpenAboutOCModalByState() }
+                    title={i18n.t("About_Brekeke_OperatorConsole")}
+                    onOk={  () => operatorConsole.closeAboutOCModalByState() }
+                    onCancel={ () => operatorConsole.closeAboutOCModalByState() }
+                    footer={[
+                            <Button key="submit" type="primary" onClick={()=>{
+                                operatorConsole.closeAboutOCModalByState();
+                            }}>
+                                {i18n.t("Close")}
+                            </Button>
+                    ]}
+                    maskClosable={false}
+                >
+                    <div>Brekeke Operator Console, {i18n.t("Version")} {BrekekeOperatorConsole.BREKEKE_OPERATOR_CONSOLE_VERSION }</div>
+                </Modal>
                 {/*<Button type="primary" onClick={showNewLayoutModalFunc}>*/}
                 {/*    Open Modal with customized footer*/}
                 {/*</Button>*/}
                 <Modal
-                    open={newLayoutModalOpen}
+                    open={ operatorConsole.getState().newLayoutModalOpen}
                     title={i18n.t("newLayout")}
-                    onOk={  () => handleOk( { newLayoutConfirmOpen, setNewLayoutConfirmOpen,newLayoutCondition, setNewLayoutCondition } ) }
+                    onOk={  () => handleOk() }
                     onCancel={handleCancel}
+                    maskClosable={false}
                     footer={[
                         <Button key="back" onClick={handleCancel}>
                             {i18n.t("cancel")}
                         </Button>,
 
                         <Popconfirm key="popconfirm"
-                            title={i18n.t("OverwriteLayout")}
-                            description={i18n.t("NewNoteOverwriteConfirm")}
-                            open={newLayoutConfirmOpen}
-                            onOpenChange={handleNewLayoutConfirmOpenChange}
-                            onConfirm={ confirmNewLayout }
-                            onCancel={cancelNewLayout}
-                            okText={i18n.t("ok")}
-                            cancelText={i18n.t("no")}
+                                    title={i18n.t("OverwriteLayout")}
+                                    description={i18n.t("NewNoteOverwriteConfirm")}
+                                    open={newLayoutConfirmOpen}
+                                    onOpenChange={handleNewLayoutConfirmOpenChange}
+                                    onConfirm={ confirmNewLayout }
+                                    onCancel={cancelNewLayout}
+                                    okText={i18n.t("ok")}
+                                    cancelText={i18n.t("no")}
                         >
                             {/*<Button type="link">Delete a task</Button>*/}
                             {/*<Button key="submit" type="primary" onClick={handleOk}>*/}

@@ -1,0 +1,117 @@
+.brOCMfaPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color:#fafafa;
+}
+
+.brOC .ant-input-forBrOCMfa {
+  background-color:#f5f5f5 !important;;
+  height:40px !important;
+  text-align: center;
+}
+
+.brOC .brOCMfaBody{
+  margin: 10px auto 10px auto;
+  width:352px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  padding:30px 20px 7px 20px;
+  background-color:#ffffff;
+}
+
+.brOC .brOCMfaVerifyButton,.brOC .brOCMfaSecondaryButton {
+  text-transform:uppercase;
+  font-size:13px;
+  font-weight:bold;
+  font-stretch: normal;
+  font-style:normal;
+  height:40px;
+  text-align:center;
+  width:100%;
+}
+
+.brOC .brOCMfaVerifyButton:hover,.brOC .brOCMfaSecondaryButton:hover {
+	cursor: pointer;
+}
+
+.brOC .brOCMfaVerifyButton:disabled{
+	background-color:#8FDC6F;
+}
+
+.brOC .brOCMfaVerifyButton:disabled,.brOC .brOCMfaSecondaryButton:disabled {
+	color:#DDDDDD;
+}
+
+.brOC .brOCMfaVerifyButton:disabled:hover{
+	background-color:#8FDC6F;
+}
+
+.brOC .brOCMfaVerifyButton:disabled:hover,.brOC .brOCMfaSecondaryButton:disabled:hover {
+	cursor: not-allowed;
+}
+
+
+
+.brOC .brOCMfaTitle{
+  text-transform: capitalize;
+  text-align: left;
+  margin: 0 0 20px 0px;
+  font-size: 24px;
+  font-weight: bold;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.23;
+  letter-spacing: 0.3px;
+  color: #212121;
+}
+
+.brOC .brOCMfaHeaderLogo{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -4px;
+}
+
+.brOC .brOCMfaHeaderLogoProduct {
+  background-color: #4bc5de;
+  border-radius:3px;
+  padding:4px;
+  font-weight:bold;
+  font-size: 12px;
+  position:relative;
+  text-transform:uppercase;
+  color:#FFFFFF;
+  top:3px;
+  margin-left:-24px;
+  margin-top:2px;
+}
+
+.brOC .brOCMfaHeaderLogoImage{
+  background-image: url(logo.png);
+  background-repeat: no-repeat;
+  height:39px;
+  width:158px;
+}
+
+.brOC  .brOCMfaMessageDiv{
+  border-left: solid 2px rgba(112, 180, 197, 1);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  margin: 2px auto 18px;
+  border-radius: 4px;
+  box-shadow: 0 5px 10px 0 rgb(0 0 0 / 20%);
+  background-color: #fff;
+
+  font-size: 13px;
+  padding: 15px 26px 15px 32px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.62;
+  letter-spacing: 0.3px;
+  color: #000;
+}

@@ -16,25 +16,26 @@ function _getExtension( context ){
 }
 
 function _getLightClassname( line, context ={} ){
-    const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser, callById } = context;
+    const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser } = context;
     const { line_talker, room_id, status } = linesStatus[line] || {};
     let lightClassname = '';
     if (status === 'on') {
-        const call = room_id ? Object.values(callById).find((call) => call.pbxRoomId === room_id) : null;
+        const oc = context.operatorConsole;
+        const callInfo = room_id ? oc.getPhoneClient().getCallInfos().getCallInfoWherePbxRoomIdEqual( room_id ) : null;
         const park = parksStatus[line];
 
         if (line_talker === loginUser?.pbxUsername) {
-            lightClassname = 'kbc-button-success-flash';
+            lightClassname = 'kbc-button-success-flash kbc-lineTable-button-loginUser-success-flash';
         } else if (park) {
-            lightClassname = myParksStatus[line] ? 'kbc-button-success-flash-slow' : 'kbc-button-danger-flash-slow';
-        } else if (call) {
-            if (call?.incoming && !call?.answered) {
-                lightClassname = 'kbc-button-danger-flash'
+            lightClassname = myParksStatus[line] ? 'kbc-button-success-flash-slow kbc-lineTable-button-park-success-flash-slow' : 'kbc-button-danger-flash-slow kbc-lineTable-button-park-danger-flash-slow';
+        } else if (callInfo) {
+            if (callInfo.getIsIncoming() && !callInfo.getIsAnswered()) {
+                lightClassname = 'kbc-button-danger-flash kbc-lineTable-button-callInfo-danger-flash';
             } else {
-                lightClassname = 'kbc-button-success'
+                lightClassname = 'kbc-button-success kbc-lineTable-button-callInfo-success';
             }
         } else {
-            lightClassname = 'kbc-button-danger'
+            lightClassname = 'kbc-button-danger kbc-lineTable-button-danger';
         }
     }
 
@@ -109,7 +110,7 @@ function LineButton({ label, line, width, height, color,  backgroundColor,  bord
 //     );
 // }
 
-function TransferCancelButton({ context, lineInfo, call,
+function TransferCancelButton({ context, lineInfo, callInfo,
     transferCancelButtonFgColor,
     transferCancelButtonBgColor,
     transferCancelButtonOuterBorderColor,
@@ -121,13 +122,13 @@ function TransferCancelButton({ context, lineInfo, call,
     const confirm = (e) => {
         const oc = context.operatorConsole;
         const campon = oc.getCampon();
-        const bSuccess = campon.tryCancelCampOn( call )
+        const bSuccess = campon.tryCancelCampOn( callInfo );
         if( bSuccess ) {
-            call.camponDstExtensionId = null;
+            callInfo.camponDstExtensionId = null;
             oc.setState({latestCamponCall: null});    //for redraw
         }
         else{
-            oc.setState({latestCamponCall: call});    //for redraw
+            oc.setState({latestCamponCall: callInfo});    //for redraw
             Notification.error({message:i18n.t("FailedToCancelTransfer")});
         }
     };
@@ -166,7 +167,7 @@ function TransferCancelButton({ context, lineInfo, call,
     </Popconfirm>
 }
 
-function TransferButton({ context, lineInfo, call, title,
+function TransferButton({ context, lineInfo, callInfo, title,
             transferButtonWidth,
             transferButtonHeight,
             transferButtonFgColor,
@@ -187,10 +188,10 @@ function TransferButton({ context, lineInfo, call, title,
         // const isBusy = es.isBusyByExtensionId( camponExtension.id );
         setOpen(false);
         if( isBusy ){
-            showModalForBusy( {camponExtension,call, title});
+            showModalForBusy( {camponExtension,callInfo, title});
         }
         else{
-            showModal( {camponExtension,call, title});
+            showModal( {camponExtension,callInfo, title});
         }
     };
 
@@ -200,8 +201,8 @@ function TransferButton({ context, lineInfo, call, title,
     }
     const myExtensionId = oc.state.loginUser.pbxUsername;
 
-    const currentCall = oc.getCurrentCall();
-    const currentCallNumber = currentCall ? currentCall.partyNumber : null;
+    const currentCallInfo = oc.getCurrentCallInfo();
+    const currentCallNumber = currentCallInfo ? currentCallInfo.getPartyNumber() : null;
     //!optimize!
     const items = new Array(  );
     for (let i = 0; i < extensions.length; i++) {
@@ -228,25 +229,27 @@ function TransferButton({ context, lineInfo, call, title,
     }
     const [modalLoading, setModalLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(null);
-    const showModal = ({ camponExtension, call, title } ) => {
-        setModalOpen( {camponExtension, call, title } );
+    const showModal = ({ camponExtension, callInfo, title } ) => {
+        setModalOpen( {camponExtension, callInfo, title } );
     };
 
     const handleBlindTransferNow = () =>{
         const transferMode =  "attended";
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = call.pbxTalkerId;
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, call.pbxTenant  ,
+        const tenant = undefined;
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     Notification.error({message: i18n.t("failed_to_transfer_call")});
                 }
                 else {
-                    const call = operatorConsoleAsCaller.findCallByTalkerId(pbxTalkerId);
-                    if (!call) {
+                    const callInfo = operatorConsoleAsCaller.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(pbxTalkerId);
+                    if (!callInfo) {
                         Notification.error({message: i18n.t("failed_to_transfer_call")});
                     } else {
-                        call.hangupWithUnhold();
+                        callInfo.hangup();
                     }
                 }
             }
@@ -255,23 +258,26 @@ function TransferButton({ context, lineInfo, call, title,
     };
 
     const handleActiveAndStartBlindTransferNow = () =>{
-        const callIndex = oc.getCallIndexByCallId( modalOpen.call.id );
+        const callId = modalOpen.callInfo.getCallId();
+        const callIndex = oc.getPhoneClient().getCallInfos().getCallIndexByCallId( callId );
         oc.switchCallIndexWithoutHold(callIndex);
 
         const transferMode =  undefined;    //attended
         const camponExtension = modalOpen.camponExtension;
-        const pbxTalkerId = call.pbxTalkerId;
-        oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, call.pbxTenant  ,
+        const tenant = undefined;
+        const pbxTalkerId = callInfo.getPbxTalkerId();
+        oc.transferCallCore(  camponExtension.id, transferMode , callInfo, tenant ,
+        //oc.transferCallCore(  camponExtension.id, transferMode , pbxTalkerId, tenant ,
             ( operatorConsoleAsCaller, message) => {
                 if( message.startsWith("fail")){
                     Notification.error({message: i18n.t("failed_to_transfer_call")});
                 }
                 else {
-                    const call = operatorConsoleAsCaller.findCallByTalkerId(pbxTalkerId);
-                    if (!call) {
+                    const callInfo = operatorConsoleAsCaller.getPhoneClient().getCallInfos().getCallInfoWhereTalkerIdEqual(pbxTalkerId);
+                    if (!callInfo) {
                         Notification.error({message: i18n.t("failed_to_transfer_call")});
                     } else {
-                        call.hangupWithUnhold();
+                        callInfo.hangup();
                     }
                 }
             }
@@ -288,8 +294,8 @@ function TransferButton({ context, lineInfo, call, title,
     };
 
     const [modalForBusyOpen, setModalForBusyOpen] = useState(null);
-    const showModalForBusy = ({ camponExtension, call, title } ) => {
-        setModalForBusyOpen( {camponExtension, call, title } );
+    const showModalForBusy = ({ camponExtension, callInfo, title } ) => {
+        setModalForBusyOpen( {camponExtension, callInfo, title } );
     };
 
     const handleModalForBusyCancel = () => {
@@ -299,7 +305,7 @@ function TransferButton({ context, lineInfo, call, title,
     const handleCamponAuto = () =>{
         setModalForBusyOpen(null);  //close modal
 
-        const call = modalForBusyOpen.call;
+        const callInfo = modalForBusyOpen.callInfo;
         const camponExtension = modalForBusyOpen.camponExtension;
         const campon = oc.getCampon();
 
@@ -307,16 +313,16 @@ function TransferButton({ context, lineInfo, call, title,
         const timeoutMillis = settingData.getCamponTimeoutMillis();
         const isBlindTransfer = true;
         const transferExtensionId = camponExtension.id;
-        call.camponDstExtensionId = transferExtensionId;
-        oc.setState({latestCamponCall:call});    //for redraw
+        callInfo.camponDstExtensionId = transferExtensionId;
+        oc.setState({latestCamponCall:callInfo});    //for redraw
         const title = modalForBusyOpen.title;
-        const bCampOn = campon.tryStartCamponOrTransfer( call,  isBlindTransfer, timeoutMillis, title );
+        const bCampOn = campon.tryStartCamponOrTransfer( callInfo,  isBlindTransfer, timeoutMillis, title );
     }
 
     const handleCamponManual = () => {
         setModalForBusyOpen(null);  //close modal
 
-        const call = modalForBusyOpen.call;
+        const callInfo = modalForBusyOpen.callInfo;
         const camponExtension = modalForBusyOpen.camponExtension;
         const campon = oc.getCampon();
 
@@ -324,11 +330,11 @@ function TransferButton({ context, lineInfo, call, title,
         const timeoutMillis = settingData.getCamponTimeoutMillis();
         const isBlindTransfer = false;
         const transferExtensionId = camponExtension.id;
-        call.camponDstExtensionId = transferExtensionId;
-        oc.setState({latestCamponCall:call});    //for redraw
+        callInfo.camponDstExtensionId = transferExtensionId;
+        oc.setState({latestCamponCall:callInfo});    //for redraw
 
         const title = modalForBusyOpen.title;
-        const bCampOn = campon.tryStartCamponOrTransfer( call, isBlindTransfer, timeoutMillis, title  );
+        const bCampOn = campon.tryStartCamponOrTransfer( callInfo, isBlindTransfer, timeoutMillis, title  );
     }
 
     const transferButtonColor = Util.isAntdRgbaProperty( transferButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( transferButtonFgColor ) : "";
@@ -363,15 +369,17 @@ function TransferButton({ context, lineInfo, call, title,
             title={i18n.t("transfer")}
             onOk={handleBlindTransferNow}
             onCancel={handleModalCancel}
+            width={700}
+            maskClosable={false}
             footer={[
                 <div key="0" style={{whiteSpace:"nowrap"}}>
                     <Button key="submit" type="primary" loading={modalLoading} onClick={handleBlindTransferNow}>
                         {i18n.t("blindTransfer")}
                     </Button>
-                    <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow}>
+                    <Button key="submit2" type="primary" loading={modalLoading} onClick={handleActiveAndStartBlindTransferNow} className="brOCMarginLeftButtonToButton">
                         {i18n.t("activateAndStartBlindTransfer")}
                     </Button>
-                    <Button key="back" onClick={handleModalCancel}>
+                    <Button key="back" onClick={handleModalCancel} className="brOCMarginLeftButtonToButton">
                         {i18n.t("cancel")}
                     </Button>
                 </div>
@@ -385,15 +393,16 @@ function TransferButton({ context, lineInfo, call, title,
                 title={i18n.t("transfer")}
                 onOk={handleCamponAuto}
                 onCancel={handleModalForBusyCancel}
+                maskClosable={false}
                 footer={[
                     <div key="1" style={{whiteSpace:"nowrap"}}>
                         <Button key="submitForBusy" type="primary" loading={modalLoading} onClick={handleCamponAuto}>
                             {i18n.t("campOnAuto")}
                         </Button>
-                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual}>
+                        <Button key="submitForBusy2" type="primary" loading={modalLoading} onClick={handleCamponManual} className="brOCMarginLeftButtonToButton">
                             {i18n.t("campOn")}
                         </Button>
-                        <Button key="backForBusy" onClick={handleModalForBusyCancel}>
+                        <Button key="backForBusy" onClick={handleModalForBusyCancel} className="brOCMarginLeftButtonToButton">
                             {i18n.t("cancel")}
                         </Button>
                     </div>
@@ -431,7 +440,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
     const lightClassname = _getLightClassname( lineInfo.line, context );
     const title = lineInfo.lineLabel ? lineInfo.lineLabel : lineInfo.line;
     const oc = context.operatorConsole;
-    const call = lineInfo.room_id ? Object.values( oc.state.callById).find((call) => call.pbxRoomId === lineInfo.room_id) : null;
+    const callInfo = lineInfo.room_id ? oc.getPhoneClient().getCallInfos().getCallInfoWherePbxRoomIdEqual( lineInfo.room_id ) : null;
 
     const lineButtonColor = Util.isAntdRgbaProperty( lineButtonFgColor  ) ? Util.getRgbaCSSStringFromAntdColor( lineButtonFgColor ) : "";
     const lineButtonBackgroundColor = Util.isAntdRgbaProperty( lineButtonBgColor ) ? Util.getRgbaCSSStringFromAntdColor( lineButtonBgColor ) : "";
@@ -463,9 +472,9 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
         </td>
         {/*<td style={{width:100,height:70}}>*/}
         <td>
-            { call && ( ( call.incoming && !call.answered ) === false ) && lineInfo.talker ?
-                call.camponDstExtensionId ?
-                    <TransferCancelButton context={context} lineInfo={lineInfo} call={call}
+            { callInfo && ( ( callInfo.getIsIncoming() && !callInfo.getIsAnswered() ) === false ) && lineInfo.talker ?
+                callInfo.camponDstExtensionId ?
+                    <TransferCancelButton context={context} lineInfo={lineInfo} callInfo={callInfo}
                       transferCancelButtonWidth = {transferCancelButtonWidth}
                       transferCancelButtonHeight = {transferCancelButtonHeight}
                         transferCancelButtonFgColor={transferCancelButtonFgColor}
@@ -475,7 +484,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
                         transferCancelButtonOuterBorderThickness = {transferCancelButtonOuterBorderThickness}
                     ></TransferCancelButton>
                     :
-                    <TransferButton context={context} lineInfo={lineInfo} call={call} title={title}
+                    <TransferButton context={context} lineInfo={lineInfo} callInfo={callInfo} title={title}
                         transferButtonWidth = {transferButtonWidth}
                         transferButtonHeight = {transferButtonHeight}
                         transferButtonFgColor={transferButtonFgColor}
@@ -488,7 +497,7 @@ function LineTableRow( { index, lineInfo, bodyFgColor, bodyRowUnderlineThickness
         <td style={{
             borderRadius:"0 " + outerBorderRadius + "px 0 0 ",
         }}>
-            { call && call.camponDstExtensionId ?  call.camponDstExtensionId : "" }
+            { callInfo && callInfo.camponDstExtensionId ?  callInfo.camponDstExtensionId : "" }
         </td>
     </tr>);
 }
@@ -503,7 +512,7 @@ export default function LineTable( props ) {
 
     let lineInfos;
     if( widget ) {
-        const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser, callById } = context;
+        const { myParksStatus = {}, linesStatus = {}, parksStatus = {}, loginUser } = context;
         const lineCount = widget.lineCount;
         lineInfos = new Array(lineCount);
         for (let i = 0; i < lineCount; i++) {
@@ -558,7 +567,7 @@ export default function LineTable( props ) {
     const lineButtonHeight = props.lineButtonHeight ? props.lineButtonHeight : 40;  //!default
 
     return (
-        <table class="brOCLinetable" style={{
+        <table className="brOCLinetable" style={{
             borderRadius:outerBorderRadius,
             border: outerBorderThickness + "px solid " + outerBorderColor,
             backgroundColor:backgroundColor,

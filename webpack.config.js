@@ -19,6 +19,29 @@ const svgToMiniDataURI = require('mini-svg-data-uri');
  * @type {RuleSetRule[]}
  */
 const baseModuleRules = [
+  //{
+  //  test: /\.tsx?|\.jsx?$/,
+  //  exclude: /node_modules\/(?!react-draggable)/, 
+  //  use: [{
+  //    loader: "esbuild-loader",
+  //    options: {
+  //      loader: 'tsx',
+  //      target: 'es2015', 
+  //   },
+  //  }],
+  //},
+	{
+	  test: /\.(js|jsx|ts|tsx)$/,
+	  // [\\/] so Windows paths match too; ulid ships `?.` which webpack 4 cannot parse
+	  exclude: /node_modules[\\/](?!(react-draggable|ulid)[\\/])/,
+	  use: {
+		loader: "esbuild-loader",
+		options: {
+		  loader: "tsx",
+		  target: "es2015",
+		},
+	  },
+	},  
   {
     test: /\.s[ac]ss$/i,
     loader: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
@@ -74,17 +97,17 @@ const baseModuleRules = [
     test: /\.css$/,
     use: [MiniCssExtractPlugin.loader, "css-loader"],
   },
-  {
-    test: /\.tsx?|\.jsx?$/,
-    exclude: /(node_modules|bower_components)/,
-    use: [{
-      loader: "esbuild-loader",
-      options: {
-        loader: 'tsx',
-        target: 'es2015',
-      },
-    }],
-  },
+  //{
+  //	test: /\.tsx?|\.jsx?$/,
+  //	exclude: /(node_modules|bower_components)/,
+  //	use: [{
+  //			loader: "esbuild-loader",
+  //			options: {
+  //			loader: 'tsx',
+  //			target: 'es2015',
+  //		},
+  //	}],
+  //},
   {
     test: /\.svg$/,
     use: [
@@ -116,20 +139,27 @@ const baseModuleRules = [
 const modules = (env, argv) => ({
   entry: {
     "operator-console": path.resolve(__dirname, "src", "index.jsx"),
+	"DropDownMenu": path.resolve(__dirname, "src", "DropDownMenu.jsx"),	//!bad
   },
   output: {
+    chunkFilename:'[name].js',
     path: path.resolve(__dirname, "dist"),
     filename: '[name].js',
     library: ['Brekeke'],
     libraryTarget: 'window',
   },
-  devtool: argv.mode === 'production' ? false : "#cheap-eval-source-map",
+  //devtool: argv.mode === 'production' ? false : "#cheap-eval-source-map",
+  devtool: argv.mode === 'production' ? false : "source-map",
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     modules: ["src", "node_modules"],
-    // alias: {
-    //   'styled-components/macro': 'styled-components/dist/styled-components.browser.esm.js',
-    // },
+    alias: {
+      // react-draggable's ESM build ("module" field) does `import { Children } from 'react'`,
+      // which webpack can't statically resolve as a named export because react's CJS entry
+      // conditionally requires the dev/prod build. Force resolution to the CJS build, which
+      // uses require() and isn't subject to that strict ESM interop check.
+      'react-draggable$': path.join(path.dirname(require.resolve('react-draggable/package.json')), 'build/cjs/cjs.js'),
+    },
   },
   watchOptions: {
     aggregateTimeout: 2000,
@@ -150,8 +180,11 @@ const modules = (env, argv) => ({
   },
   performance: {
     hints: "warning",
+    maxEntrypointSize: 102400000,
+    maxAssetSize: 102400000
   },
   optimization: {
+    chunkIds: 'named',
     // this causes "Minified React error"
     // minimize: argv.mode === 'production',
     minimize: false,

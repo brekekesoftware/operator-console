@@ -1,0 +1,4 @@
+.brOC .editorPhonebookContactInfozInfoView {
+    right:calc(var(--broc_editorSettingsArea_width) + var(--broc_editorSettingsArea_margin));
+    max-width:calc(100% -  var(--broc_editorSettingsArea_width) - var(--broc_editorSettingsArea_margin));
+}

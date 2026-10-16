@@ -1,0 +1,1229 @@
+import React from "react";
+import logo from '../logo.png'
+import DropDownMenu from "../DropDownMenu";
+import Space from "antd/lib/space";
+import Popconfirm from "antd/lib/popconfirm";
+import i18n from "../i18n";
+import Button from "antd/lib/button";
+import BrekekeOperatorConsole, {brOcDisplayStates} from "../index";
+import EditorRootPane from "./EditorRootPane";
+import EditorPane from "./EditorPane";
+import EditorDivider from "./EditorDivider";
+import BaseDividerData from "../data/BaseDividerData";
+import {Divider, Input, Modal, Select} from "antd";
+import Notification from "antd/lib/notification";
+import EditorWidgetTemplateFactory from "./widget/template/EditorWidgetTemplateFactory";
+import EditorWidgetSettingsFactory from "./widget/settings/EditorWidgetSettingsFactory";
+import InputNumber from "antd/lib/input-number";
+import Dropdown from "antd/lib/dropdown";
+import {SketchPicker} from "react-color";
+import SelectIconModal from "./SelectIconModal";
+import EditorWidget from "./widget/editor/EditorWidget";
+import OCUtil from "../OCUtil";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import EditorAutoDialView_ver2 from "./EditorAutoDialView_ver2";
+import SplitVerticallyIcon from "./icons/split-vertically.svg";
+import SplitHorizontallyIcon from "./icons/split-horizontally.svg";
+import UndoIcon from "./icons/undo.svg";
+import RedoIcon from "./icons/redo.svg";
+import EditorTabsListPanel from "./EditorTabsListPanel";
+
+
+const _TABS_SELECT_OPTIONS   = Object.freeze({
+  disable : false,
+  enable :true
+});
+
+const _PROPERTIES_MODE = Object.freeze({
+  none : -1,
+  pane : 0,
+  divider : 1,
+  tab : 2,
+  widget:3,
+  tabsList:4
+});
+
+const BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES = 10;  //10MB
+const BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES = 1024 * 1024 * BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES;
+
+const _UNDO_STACK_MAX = 50;
+
+let _EDIT_SCREEN_VIEW_INSTANCE = null;
+export default class EditScreenView extends React.Component {
+  constructor( props ) {
+    super( props );
+    _EDIT_SCREEN_VIEW_INSTANCE = this;
+    this._OperatorConsoleAsParent = props["operatorConsoleAsParent"];
+    this.state = {
+      settingsContainerOrDivider:null,
+      propertiesMode : _PROPERTIES_MODE.none,
+      selectingEditorWidgetData:null,
+      saveConfirmOpen:false
+    };
+    this._ScreenData = props["screenData"];
+	this._CloneSystemSettingsData = props["cloneSystemSettingsData"];
+	
+    const rootPaneData = this._ScreenData.getScreenPaneDatas().getOrAddRootPaneData();
+    this._RootPaneData = rootPaneData;
+    //const rootPaneData = this._OperatorConsoleAsParent.getOperatorConsoleData().getScreenData().addPaneData();
+    //this._RootPaneData = rootPaneData;
+
+    //Undo/Redo
+    this._UndoStack = [ this._ScreenData.cloneScreenData() ];
+    this._UndoIndex = 0;
+    this._RestoreGeneration = 0;
+  }
+
+  //Push the current (already-mutated) ScreenData onto the undo stack and re-render.
+  //extraState is merged into the same setState call (e.g. to close a properties panel that no longer applies).
+  commitEdit( extraState ){
+    this._UndoStack = this._UndoStack.slice( 0, this._UndoIndex + 1 );
+    this._UndoStack.push( this._ScreenData.cloneScreenData() );
+    if( this._UndoStack.length > _UNDO_STACK_MAX ){
+      this._UndoStack.shift();
+    }
+    this._UndoIndex = this._UndoStack.length - 1;
+    this.setState({ ...extraState, rerender:true });
+  }
+
+  canUndo(){
+    return this._UndoIndex > 0;
+  }
+
+  canRedo(){
+    return this._UndoIndex < this._UndoStack.length - 1;
+  }
+
+  _restoreUndoStackIndex( index ){
+    //Mutate the existing ScreenData in place (keep its identity) rather than reassigning,
+    //since the parent OperatorConsole holds its own reference to this same ScreenData for saving.
+    this._ScreenData.copyFrom( this._UndoStack[ index ] );
+    this._RootPaneData = this._ScreenData.getScreenPaneDatas().getOrAddRootPaneData();
+    this._UndoIndex = index;
+    this._RestoreGeneration++;
+    this.setState({
+      rerender:true,
+      selectingEditorWidgetData:null,
+      settingsContainerOrDivider:null,
+      propertiesMode: _PROPERTIES_MODE.none
+    });
+  }
+
+  undo(){
+    if( !this.canUndo() ){
+      return;
+    }
+    this._restoreUndoStackIndex( this._UndoIndex - 1 );
+  }
+
+  redo(){
+    if( !this.canRedo() ){
+      return;
+    }
+    this._restoreUndoStackIndex( this._UndoIndex + 1 );
+  }
+
+  // _setOutlineNoneToTabPanes(){
+  //   const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+  //   const eTabpanes = eRoot.querySelectorAll(".ant-tabs-tabpane");
+  //   for( let i = 0; i < eTabpanes.length; i++ ){
+  //     const eTabpane =  eTabpanes[i];
+  //     eTabpane.style
+  //   }
+  // }
+
+
+  componentDidUpdate(){
+	//this._setOutlineNoneToTabPanes();
+		
+	//const ePaneFile = document.getElementById("paneBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+	//if( ePaneFile && this._latestPaneFileElement && this._latestPaneFileElement !== ePaneFile ){
+		//ePaneFile.value = null;
+	//}
+	//this._latestPaneFileElement = ePaneFile;
+
+	//Always clear file value
+	const eScreenFile = document.getElementById("backgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+	if( eScreenFile ){
+		eScreenFile.value = null;
+	}
+	const ePaneFile = document.getElementById("paneBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+	if( ePaneFile ){
+		ePaneFile.value = null;
+	}
+	const eTabsFile = document.getElementById("tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+	if( eTabsFile ){
+		eTabsFile.value = null;
+	}
+    const eTabFile = document.getElementById("tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+    if( eTabFile ){
+      eTabFile.value = null;
+    }
+  }
+
+  componentDidMount() {
+
+    //const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+
+    this._KeydownFunction = (ev) =>{
+      this._onKeyDown(ev);
+    } ;
+
+    //eRoot.addEventListener("keydown", this._KeydownFunction );  //Dit not work
+    document.body.addEventListener("keydown", this._KeydownFunction );
+
+    //this._setOutlineNoneToTabPanes();
+
+
+  }
+
+  componentWillUnmount() {
+    //const eRoot = document.getElementById("root_EditScreenView_OperatorConsole_Brekeke");
+    //eRoot.removeEventListener("keydown", this._KeydownFunction );
+    document.body.removeEventListener("keydown", this._KeydownFunction );
+  }
+
+  static getEditScreenViewInstance(){
+    return _EDIT_SCREEN_VIEW_INSTANCE;
+  }
+
+  getOperatorConsoleAsParent(){
+    return this._OperatorConsoleAsParent;
+  }
+
+  getEditingScreenGrid(){
+    return this._ScreenData.getEditingScreenGrid();
+  }
+
+  setEditingScreenGrid( editingScreenGrid ){
+    this._ScreenData.setEditingScreenGrid( editingScreenGrid );
+    this.commitEdit();
+  }
+
+  setScreenBackgroundColor = (color) => {
+    this._ScreenData.setScreenBackgroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  setScreenForegroundColor = (color) => {
+    this._ScreenData.setScreenForegroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setPaneBackgroundColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const paneData = currentEditingPane.getEditingPaneData();
+    paneData.setPaneBackgroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setPaneForegroundColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const paneData = currentEditingPane.getEditingPaneData();
+    paneData.setPaneForegroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setTabForegroundColor = (color) => {
+	const currentEditingPane = this.state.settingsContainerOrDivider;
+	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+	const selectedTabData = tabsData.getSelectedTabData();
+    selectedTabData.setTabForegroundColor( color.hex );
+    this.commitEdit();
+  }
+  
+  _setTabBackgroundColor = (color) => {
+	const currentEditingPane = this.state.settingsContainerOrDivider;
+	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+	const selectedTabData = tabsData.getSelectedTabData();
+    selectedTabData.setTabBackgroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setTabsBackgroundColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    tabsData.setTabsBackgroundColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setTabsItemColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    tabsData.setTabsItemColor( color.hex );
+    this.commitEdit();
+  }
+  
+  _setTabsItemHoverColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    tabsData.setTabsItemHoverColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setTabsItemSelectedColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    tabsData.setTabsItemSelectedColor( color.hex );
+    this.commitEdit();
+  }
+
+  _setTabsInkBarColor = (color) => {
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    tabsData.setTabsInkBarColor( color.hex );
+    this.commitEdit();
+  }
+
+  getScreenData(){
+    return this._ScreenData;
+  }
+
+  // setSelectingEditorWidgetDataToState( selectingEditorWidgetData, onSetStateFunc ){
+  //   this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget}, onSetStateFunc );
+  // }
+
+  setSelectingEditorWidgetDataToState( selectingEditorWidgetData ){
+    this.setState({selectingEditorWidgetData:selectingEditorWidgetData,propertiesMode: _PROPERTIES_MODE.widget} );
+  }
+
+  getSelectingEditorWidgetDataFromState(){
+    const widgetData = this.state.selectingEditorWidgetData;
+    return widgetData;
+  }
+
+  //!bad. The onKeyDown event will not occur unless you activate the widget by clicking it twice, so we provide a callback here.
+  _onKeyDown( ev ){
+    const oc = BrekekeOperatorConsole.getStaticInstance();
+    if( oc.state.displayState !== brOcDisplayStates.editingScreen_ver2 ){
+        return;
+    }
+
+    if( (ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'z' || ev.key === 'Z') ){
+      ev.preventDefault();
+      if( ev.shiftKey ){
+        this.redo();
+      }
+      else{
+        this.undo();
+      }
+      return;
+    }
+    if( (ev.ctrlKey || ev.metaKey) && !ev.altKey && (ev.key === 'y' || ev.key === 'Y') ){
+      ev.preventDefault();
+      this.redo();
+      return;
+    }
+
+    const widgetData = this.getSelectingEditorWidgetDataFromState();
+    if( !widgetData ){
+      return;
+    }
+
+    EditorWidget.onSelectingEditorWidgetKeyDownByEditScreenView_static( this, ev, widgetData );
+  }
+
+  getCloneSystemSettingsData(){
+    return this._CloneSystemSettingsData;
+  }
+
+  _abortEditingScreen(){
+    this._OperatorConsoleAsParent.setDisplayState(brOcDisplayStates.showScreen_ver2, undefined, () =>{
+	});
+  }
+
+  _saveEditingScreen(){
+    this._OperatorConsoleAsParent.saveEditingScreen_ver2(this._CloneSystemSettingsData);
+  }
+
+  _openSaveConfirm(){
+    this.setState({saveConfirmOpen:true});
+  }
+
+  _closeSaveConfirm(){
+    this.setState({saveConfirmOpen:false});
+  }
+
+  _confirmSave(){
+    this.setState({saveConfirmOpen:false});
+    this._saveEditingScreen();
+  }
+
+  onMouseDownEditorPaneInSettingsMode( ev ){
+    const eContainerDiv = ev.currentTarget;
+    const containerId = eContainerDiv.getAttribute("data-br-container-id");
+    if( !containerId ){ //drag editor widget
+      return;
+    }
+    const container = EditorPane.getEditorPaneByContainerId( containerId );
+    this.setCurrentEditorPaneToState( container );
+  }
+
+  setCurrentEditorPaneToState( editorPane ){
+    this.setState({settingsContainerOrDivider: editorPane, propertiesMode : _PROPERTIES_MODE.pane } );
+  }
+
+  setTabsListModeToState( editorPaneAsCaller ){
+    this.setState({settingsContainerOrDivider: editorPaneAsCaller, propertiesMode: _PROPERTIES_MODE.tabsList } );
+  }
+
+  removeAllTabsAndDisableTabs( editorPaneAsCaller ){
+    const tabsData = editorPaneAsCaller.getEditingPaneData().getTabsData();
+    tabsData.removeAllTabData();
+    editorPaneAsCaller.setEditorPanezEnableTabs( false );
+    this.commitEdit({settingsContainerOrDivider: editorPaneAsCaller, propertiesMode: _PROPERTIES_MODE.pane } );
+  }
+
+  getCurrentPropertiesModeFromState(){
+    return this.state.propertiesMode;
+  }
+
+  static getEditScreenViewzPropertiesModes(){
+    return _PROPERTIES_MODE;
+  }
+
+
+  onClickByEditorDivider(ev){
+    const eEditorDividerDiv = ev.target;
+    const dividerId = eEditorDividerDiv.getAttribute("data-br-editor-divider-id");
+    const editorDivider = EditorDivider.getEditorDividerByContainerId( dividerId );
+    this.setState({settingsContainerOrDivider: editorDivider, propertiesMode : _PROPERTIES_MODE.divider } );
+  }
+
+
+  _splitVertically() {
+    const parentContainer = this.state.settingsContainerOrDivider;
+    parentContainer.setDivider( BaseDividerData.DIVIDER_DIRECTIONS.vertical );
+    this.setState({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
+  }
+
+  _splitHorizontally() {
+    const parentContainer = this.state.settingsContainerOrDivider;
+    parentContainer.setDivider( BaseDividerData.DIVIDER_DIRECTIONS.horizontal );
+    this.setState({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
+  }
+
+  _removeSplitter(){
+    const editorDivider = this.state.settingsContainerOrDivider;
+    editorDivider.removeEditorDivider( () =>{
+      this.setState({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
+    });
+  }
+
+  onTabClickByEditorPanel( editorPanelAsCaller, tabKey, mouseEvent ){
+    editorPanelAsCaller.setEditorPanezSelectedTabKeyAsString( tabKey );
+    //this.setState({menuMode:_MENU_MODES.tab});
+    this.commitEdit({ settingsContainerOrDivider:editorPanelAsCaller, propertiesMode: _PROPERTIES_MODE.tab  } );
+  }
+
+  _onChangeTabsEnable( value ){
+    // const b = confirm("Are you sure want to change enable/disable tabs?");
+    // if( !b ){
+    //     ev.target.value = this._lastTabsEnableValue;
+    //     return;
+    // }
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    //const b = ev.target.value === "true";
+    const b = value === "true";
+    currentEditingPane.setEditorPanezEnableTabs(b);
+    this.commitEdit();
+  }
+
+  // componentDidMount() {
+  //     if( this.state.settingsContainerOrDivider instanceof EditorPane ){
+  //         const currentEditingPane = this.state.settingsContainerOrDivider;
+  //
+  //         const enableTabs = currentEditingPane.getEditorPanezEnableTabs();
+  //
+  //         const e = document.querySelector('select[name="enableTabs"]');
+  //         e.value = enableTabs.toString();
+  //     }
+  // }
+
+  _onClickAddTab( ev ){
+    const eTabLabel = document.querySelector('input[name="tabLabel"]');
+    const tabLabel = eTabLabel.value.trim();
+    if( tabLabel.length === 0 ){
+      Notification.warning({message: i18n.t('tabLabelIsEmpty')});
+      return;
+    }
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    const insertedTabData = tabsData.insertTab( tabLabel );
+    const tabKeyAsInt = insertedTabData.getTabKeyAsInt();
+    tabsData.setSelectedTabKeyAsInt( tabKeyAsInt );
+
+    this.commitEdit();
+  }
+
+  onDragEditorWidgetTemplateStart(ev){
+    // ev.target.style.cursor = 'grabbing';
+    //ev.dataTransfer.effectAllowed = "copyMove";
+    // ev.preventDefault();
+    ev.dataTransfer.clearData();
+
+    const  widgetTypeId = ev.currentTarget.getAttribute("data-br-widget-type-id");
+    //const e = ev.target.querySelector("[data-br-widget-type-id]");
+    //const widgetTypeId = e.getAttribute("data-br-widget-type-id");
+    ev.dataTransfer.setData('editorWidgetTypeId', widgetTypeId );
+    const itemRect = ev.currentTarget.getBoundingClientRect();
+    const offsetX = ev.clientX - itemRect.left;
+    const offsetY = ev.clientY - itemRect.top;
+    ev.dataTransfer.setData('offsetX', offsetX.toString() );
+    ev.dataTransfer.setData('offsetY', offsetY.toString() );
+
+  }
+
+  _onClickRenameTab( ev ){
+    const eTabLabel = document.querySelector('input[name="tabLabel"]');
+    const tabLabel = eTabLabel.value.trim();
+    if( tabLabel.length === 0 ){
+      Notification.warning({message: i18n.t('tabLabelIsEmpty')});
+      return;
+    }
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    const tabData = tabsData.getSelectedTabData();
+    tabData.setTabLabel( tabLabel );
+    this.commitEdit();
+  }
+
+  onConfirmOkRemoveEditorWidget(  editorWidgetData ){
+    const widgetDatas = editorWidgetData.getWidgetDatasAsParent();
+    const b = widgetDatas.removeWidgetDataByWidgetData(editorWidgetData);
+    if( b !== true ){
+      throw new Error("Remove EditorWidget failed.");
+    }
+    EditorWidget.onRemoveWidgetByEditScreenView_static( this, editorWidgetData );
+
+    this.commitEdit({settingsContainerOrDivider:null, propertiesMode: _PROPERTIES_MODE.none } );
+  }
+
+  _onClickRemoveTab(){
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+    if( tabsData.getTabDataCount() === 1 ){
+      Notification.warning({message: i18n.t('youCanNotRemoveLastTab')});
+      return;
+    }
+
+    tabsData.removeSelectedTabData();
+    this.commitEdit();
+  }
+  
+	_onChangeTabsTitleFontSize( n ){
+		const currentEditingPane = this.state.settingsContainerOrDivider;
+		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+		tabsData.setTabsTitleFontSize(n);
+		this.commitEdit();
+	}
+
+  _getWidgetTemplatesAreaJsx(){
+    const widgetTemplateArray = EditorWidgetTemplateFactory.getStaticEditorWidgetSettingsFactoryInstance().getEditorWidgetTemplateArray();
+
+    return (
+        <div className="brOCWidgetTemplatesArea">
+          {widgetTemplateArray.map( ( widgetTemplate, index ) =>{
+            return widgetTemplate.getRenderJsx( index, this );
+          })}
+        </div>
+    )
+
+  }
+
+  _onChangeBackgroundImageFile( ev ){
+    const file = ev.target.files[0];
+    if( !file){
+      return;
+    }
+
+    if( !file.type || !file.type.toLowerCase().startsWith("image/") ){
+      Notification.warning({message:i18n.t("It_is_not_an_image_file") });
+      return;
+    }
+
+    if( !file.size || file.size === 0 ){
+      Notification.warning({message:i18n.t("File_size_is_missing") });
+      return;
+    }
+
+    if( file.size > BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES  ){
+      Notification.warning({message:i18n.t("Image_file_size_is_too_large_Maximum_MB_Under") + BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES + "MB"});
+      return;
+    }
+
+    const blob = new Blob([file], { type: file.type });
+
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataUrl = fr.result; // base64 data url
+      this._ScreenData.setBackgroundImageBase64DataUrl( dataUrl );
+      this.commitEdit();
+    };
+    fr.onerror = (pe) => {
+      OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
+      return;
+    }
+    fr.readAsDataURL(blob);
+
+  }
+
+  _onChangePaneBackgroundImageFile( ev ){
+    const file = ev.target.files[0];
+    if( !file){
+      return;
+    }
+
+    if( !file.type || !file.type.toLowerCase().startsWith("image/") ){
+      Notification.warning({message:i18n.t("It_is_not_an_image_file") });
+      return;
+    }
+
+    if( !file.size || file.size === 0 ){
+      Notification.warning({message:i18n.t("File_size_is_missing") });
+      return;
+    }
+
+    if( file.size > BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES  ){
+      Notification.warning({message:i18n.t("Image_file_size_is_too_large_Maximum_MB_Under") + BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES + "MB"});
+      return;
+    }
+
+    const blob = new Blob([file], { type: file.type });
+
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataUrl = fr.result; // base64 data url
+      const currentEditingPane = this.state.settingsContainerOrDivider;
+      const paneData = currentEditingPane.getEditingPaneData();
+      paneData.setPaneBackgroundImageBase64DataUrl( dataUrl );
+      this.commitEdit();
+    };
+    fr.onerror = (pe) => {
+      OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
+      return;
+    }
+    fr.readAsDataURL(blob);
+
+  }
+  
+  _onChangeTabBackgroundImageFile( ev ){
+    const file = ev.target.files[0];
+    if( !file){
+      return;
+    }
+
+    if( !file.type || !file.type.toLowerCase().startsWith("image/") ){
+      Notification.warning({message:i18n.t("It_is_not_an_image_file") });
+      return;
+    }
+
+    if( !file.size || file.size === 0 ){
+      Notification.warning({message:i18n.t("File_size_is_missing") });
+      return;
+    }
+
+    if( file.size > BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES  ){
+      Notification.warning({message:i18n.t("Image_file_size_is_too_large_Maximum_MB_Under") + BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES + "MB"});
+      return;
+    }
+
+    const blob = new Blob([file], { type: file.type });
+
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataUrl = fr.result; // base64 data url
+		const currentEditingPane = this.state.settingsContainerOrDivider;
+		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+		const selectedTabData = tabsData.getSelectedTabData();
+      selectedTabData.setTabBackgroundImageBase64DataUrl( dataUrl );
+      this.commitEdit();
+    };
+    fr.onerror = (pe) => {
+      OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
+      return;
+    }
+    fr.readAsDataURL(blob);
+
+  }
+  
+  
+  _onChangeTabsBackgroundImageFile( ev ){
+    const file = ev.target.files[0];
+    if( !file){
+      return;
+    }
+
+    if( !file.type || !file.type.toLowerCase().startsWith("image/") ){
+      Notification.warning({message:i18n.t("It_is_not_an_image_file") });
+      return;
+    }
+
+    if( !file.size || file.size === 0 ){
+      Notification.warning({message:i18n.t("File_size_is_missing") });
+      return;
+    }
+
+    if( file.size > BACKGROUND_IMAGE_FILE_SIZE_LIMIT_BYTES  ){
+      Notification.warning({message:i18n.t("Image_file_size_is_too_large_Maximum_MB_Under") + BACKGROUND_IMAGE_FILE_SIZE_LIMIT_MEGABYTES + "MB"});
+      return;
+    }
+
+    const blob = new Blob([file], { type: file.type });
+
+    const fr = new FileReader();
+    fr.onload = () => {
+      const dataUrl = fr.result; // base64 data url
+		const currentEditingPane = this.state.settingsContainerOrDivider;
+		const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+
+      tabsData.setTabsBackgroundImageBase64DataUrl( dataUrl );
+      this.commitEdit();
+    };
+    fr.onerror = (pe) => {
+      OCUtil.logErrorWithNotification("Failed to read background image blob.", i18n.t("Failed_to_read_file"), pe );
+      return;
+    }
+    fr.readAsDataURL(blob);
+
+  }
+
+  _deleteTabBackgroundImage(){
+	const currentEditingPane = this.state.settingsContainerOrDivider;
+	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+	const selectedTabData = tabsData.getSelectedTabData();
+    selectedTabData.deleteTabBackgroundImageBase64DataUrl();
+    const eInputFile = document.getElementById("tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+    eInputFile.value = null;
+    this.commitEdit();
+  }
+  
+  _deletePaneBackgroundImage(){
+    const currentEditingPane = this.state.settingsContainerOrDivider;
+    const paneData = currentEditingPane.getEditingPaneData();
+    paneData.deletePaneBackgroundImageBase64DataUrl();
+    const eInputFile = document.getElementById("paneBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+    eInputFile.value = null;
+    this.commitEdit();
+  }
+  
+  _deleteTabsBackgroundImage(){
+	const currentEditingPane = this.state.settingsContainerOrDivider;
+	const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+	tabsData.deleteTabsBackgroundImageBase64DataUrl();
+    const eInputFile = document.getElementById("tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+    eInputFile.value = null;
+    this.commitEdit();
+  }
+
+  _deleteBackgroundImage(){
+    this._ScreenData.deleteBackgroundImageBase64DataUrl();
+    const eInputFile = document.getElementById("backgroundImage_File_EditScreenView_OperatorConsole_Brekeke");
+    eInputFile.value = null;
+    this.commitEdit();
+  }
+
+  _getSettingsAreaJsx() {
+    let jsx;
+
+    switch( this.state.propertiesMode ){
+      case _PROPERTIES_MODE.pane:
+      {
+        const currentEditingPane = this.state.settingsContainerOrDivider;
+        const paneData = currentEditingPane.getEditingPaneData();
+        const enableTabs = paneData.getEnableTabs();
+
+        const tabsData = paneData.getTabsData();
+        const selectedTabData = tabsData.getSelectedTabData();
+        jsx = (
+            <div className="editorRightFrameRoot">
+              <div>
+                <div>
+                  {i18n.t("Tabs")}:
+                </div>
+                <div>
+                  <Select name="enableTabs"
+                      //defaultValue={enableTabs.toString()}
+                          onChange={(value) => this._onChangeTabsEnable(value)} value={enableTabs.toString()}>
+                    <Select.Option value={_TABS_SELECT_OPTIONS.disable.toString()}>{i18n.t("Disable")}</Select.Option>
+                    <Select.Option value={_TABS_SELECT_OPTIONS.enable.toString()}>{i18n.t("Enable")}</Select.Option>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Area")}:
+                </div>
+                <div>
+                  <Button icon={<img src={SplitVerticallyIcon} alt=""/>} className="editorRightFrameButton" onClick={() => {
+                    this._splitVertically();
+                  }}>{i18n.t("splitVertically")}
+                  </Button>
+                </div>
+                <div className="defaultButtonMarginTop">
+                  <Button icon={<img src={SplitHorizontallyIcon} alt=""/>} className="editorRightFrameButton" onClick={() => {
+                    this._splitHorizontally();
+                  }}>{i18n.t("splitHorizontally")}
+                  </Button>
+                </div>
+              </div>
+              { !enableTabs ? (
+                  <>
+                <div>
+                  <div className="defaultSectionMargin">
+                    {i18n.t("foreground")}:
+                  </div>
+                  <div>
+                    <Dropdown overlay={<SketchPicker
+                        color={paneData.getPaneForegroundColor()}
+                        onChangeComplete={this._setPaneForegroundColor}
+                    />}>
+                      <div style={{
+                        width: 48,
+                        height: 30,
+                        display: 'inline-block',
+                        border: 'solid 1px #e0e0e0',
+                        background: paneData.getPaneForegroundColor()
+                      }}></div>
+                    </Dropdown>
+                  </div>
+                </div>
+                <div>
+                  <div className="defaultSectionMargin">
+                    {i18n.t("background")}:
+                  </div>
+                  <div>
+                    <Dropdown overlay={<SketchPicker
+                        color={paneData.getPaneBackgroundColor()}
+                        onChangeComplete={this._setPaneBackgroundColor}
+                    />}>
+                      <div style={{
+                        width: 48,
+                        height: 30,
+                        display: 'inline-block',
+                        border: 'solid 1px #e0e0e0',
+                        background: paneData.getPaneBackgroundColor()
+                      }}></div>
+                    </Dropdown>
+                  </div>
+                </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("BackgroundImage")}:
+                </div>
+                <div>
+                  <input type="file" id="paneBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
+                         onChange={(ev) => this._onChangePaneBackgroundImageFile(ev)}/>
+					{ paneData.getPaneBackgroundImageBase64DataUrl() ? ( <Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deletePaneBackgroundImage() }
+                              okText={i18n.t("yes")}
+                              cancelText={i18n.t("no")}
+                  >
+                    <a style={{marginLeft: "0px"}} className="icon_general">
+                      {<FontAwesomeIcon
+                          size="lg"
+                          icon="fa fa-trash"/>}
+                    </a>
+					</Popconfirm> ) : null }
+                </div>
+              </div>
+              </>
+			  ) : null }
+            </div>
+      )
+        ;
+        break;
+      }
+      case _PROPERTIES_MODE.divider: {
+        jsx = (
+            <div className="editorRightFrameRoot">
+              <Popconfirm title={i18n.t("confirmRemoveSplitter")} onConfirm={() => this._removeSplitter()}
+                          okText={i18n.t("yes")}
+                          cancelText={i18n.t("no")}
+              >
+                <Button>{i18n.t("removeSplitter")}</Button>
+              </Popconfirm>
+            </div>
+        );
+        break;
+      }
+      case _PROPERTIES_MODE.tab: {
+        const currentEditingPane = this.state.settingsContainerOrDivider;
+        const tabsData = currentEditingPane.getEditingPaneData().getTabsData();
+        const selectedTabData = tabsData.getSelectedTabData();
+        const tabLabel = selectedTabData.getTabLabel();
+
+        jsx = (
+            <div className="editorRightFrameRoot">
+              <div>
+                <Input type="text" name="tabLabel" defaultValue={tabLabel}/>
+              </div>
+              <div style={{whiteSpace: "nowrap"}}>
+                {/*<Input type="text" name="tabLabel" defaultValue={i18n.t("UntitledTab")} />*/}
+                <Button className="defaultElementMarginTop"
+                        onClick={(ev) => this._onClickAddTab(ev)}>{i18n.t("Add_tab")}</Button>
+                <Button className="defaultButtonMarginLeft"
+                        onClick={(ev) => this._onClickRenameTab(ev)}>{i18n.t("Rename_tab")}</Button>
+              </div>
+              <div className="defaultButtonMarginTop">
+                <Popconfirm title={i18n.t("Are_you_sure_you_want_to_remove_the_tab")}
+                            onConfirm={() => this._onClickRemoveTab()}
+                            okText={i18n.t("yes")}
+                            cancelText={i18n.t("no")}
+                >
+                  <Button>{i18n.t("Remove_tab")}</Button>
+                </Popconfirm>
+              </div>
+              <Divider>{i18n.t("Header")}</Divider>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Item_font_size")}:
+                </div>
+                <div>
+                  <InputNumber min="0" value={tabsData.getTabsTitleFontSize()}
+                               onChange={(n) => this._onChangeTabsTitleFontSize(n)}/>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Item_color")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemColor()}
+                      onChangeComplete={this._setTabsItemColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Item_color_on_hover")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemHoverColor()}
+                      onChangeComplete={this._setTabsItemHoverColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemHoverColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Item_color_on_selected")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsItemSelectedColor()}
+                      onChangeComplete={this._setTabsItemSelectedColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsItemSelectedColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("Item_bar_color")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsInkBarColor()}
+                      onChangeComplete={this._setTabsInkBarColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsInkBarColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("background")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={tabsData.getTabsBackgroundColor()}
+                      onChangeComplete={this._setTabsBackgroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: tabsData.getTabsBackgroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("BackgroundImage")}:
+                </div>
+                <div>
+                  <input type="file" id="tabsBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
+                         onChange={(ev) => this._onChangeTabsBackgroundImageFile(ev)}/>
+                  {tabsData.getTabsBackgroundImageBase64DataUrl() ? (
+                      <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._deleteTabsBackgroundImage()}
+                                  okText={i18n.t("yes")}
+                                  cancelText={i18n.t("no")}
+                      >
+                        <a style={{marginLeft: "0px"}} className="icon_general">
+                          {<FontAwesomeIcon
+                              size="lg"
+                              icon="fa fa-trash"/>}
+                        </a>
+                      </Popconfirm>) : null}
+                </div>
+              </div>
+              <Divider>{i18n.t("Body")}</Divider>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("foreground")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={selectedTabData.getTabForegroundColor()}
+                      onChangeComplete={this._setTabForegroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: selectedTabData.getTabForegroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("background")}:
+                </div>
+                <div>
+                  <Dropdown overlay={<SketchPicker
+                      color={selectedTabData.getTabBackgroundColor()}
+                      onChangeComplete={this._setTabBackgroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: selectedTabData.getTabBackgroundColor()
+                    }}></div>
+                  </Dropdown>
+                </div>
+              </div>
+              <div>
+                <div className="defaultSectionMargin">
+                  {i18n.t("BackgroundImage")}:
+                </div>
+                <div>
+                  <input type="file" id="tabBackgroundImage_File_EditScreenView_OperatorConsole_Brekeke"
+                         onChange={(ev) => this._onChangeTabBackgroundImageFile(ev)}/>
+                  {selectedTabData.getTabBackgroundImageBase64DataUrl() ? (
+                      <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._deleteTabBackgroundImage()}
+                                  okText={i18n.t("yes")}
+                                  cancelText={i18n.t("no")}
+                      >
+                        <a style={{marginLeft: "0px"}} className="icon_general">
+                          {<FontAwesomeIcon
+                              size="lg"
+                              icon="fa fa-trash"/>}
+                        </a>
+                      </Popconfirm>) : null}
+                </div>
+              </div>
+            </div>
+        );
+        break;
+      }
+      case _PROPERTIES_MODE.widget: {
+        const widgetData = this.state.selectingEditorWidgetData;
+        // const mainJsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx( this, widgetData );
+        //
+        // jsx = (
+        //     <div className="editorRightFrameRoot">
+        //       {mainJsx}
+        //     </div>
+        // );
+        jsx = EditorWidgetSettingsFactory.getStaticEditorWidgetSettingsFactoryInstance().getRenderJsx(this, widgetData);
+        break;
+      }
+      case _PROPERTIES_MODE.tabsList: {
+        const currentEditingPane = this.state.settingsContainerOrDivider;
+        jsx = <EditorTabsListPanel editScreenView={this} currentEditingPane={currentEditingPane}/>;
+        break;
+      }
+      default: {
+        jsx = (
+            <div className="editorRightFrameRoot">
+              {i18n.t("Click_on_any_area_or_splitter_or_widget_or_tab_on_the_left")}
+            </div>
+        );
+        break;
+      }
+    }
+    return jsx;
+  }
+
+  render() {
+    const settingsAreaJsx = this._getSettingsAreaJsx();
+    let backgroundImage;
+    const bgImageBase64DataUrl = this._ScreenData.getScreenBackgroundImageBase64DataUrl();
+    if (bgImageBase64DataUrl) {
+      backgroundImage = "url(" + bgImageBase64DataUrl + ")";
+    } else {
+      backgroundImage = null;
+    }
+    return (
+        <>
+         <EditorAutoDialView_ver2/>
+          <SelectIconModal editScreenViewAsParent={this}/>
+          <Modal
+              open={this.state.saveConfirmOpen}
+              title={i18n.t("SaveThisLayoutTitle")}
+              onCancel={() => this._closeSaveConfirm()}
+              maskClosable={false}
+              footer={[
+                <Button key="discard" className="editorSaveConfirmDiscardButton" onClick={() => this._closeSaveConfirm()}>
+                  {i18n.t("discard")}
+                </Button>,
+                <Button key="save" className="editorSaveConfirmSaveButton" onClick={() => this._confirmSave()}>
+                  {i18n.t("save")}
+                </Button>
+              ]}
+          >
+            {i18n.t("SaveThisLayoutText")}
+          </Modal>
+          <div style={{display: "flex", flexFlow: "column", alignItems: "stretch", height: "100%"}}>
+            <div className="editorHeaderBar">
+              <div className="editorHeaderLogo">
+                <img height={28} src={logo}/>
+              </div>
+              {/*<DropDownMenu operatorConsole={this._OperatorConsoleAsParent}></DropDownMenu>*/}
+              <Space className="editorHeaderControls">
+                <label style={{whiteSpace: "nowrap"}}>{i18n.t("grid")}{": "}
+                  <InputNumber value={this.getEditingScreenGrid()}
+                               onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
+                               onStep={(v) => this.setEditingScreenGrid(v)}
+                  />
+                </label>
+                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
+                  {i18n.t("foreground")}{": "}
+                  <Dropdown overlay={<SketchPicker
+                      color={this._ScreenData.getScreenForegroundColor()}
+                      onChangeComplete={this.setScreenForegroundColor}
+                  />}>
+                    <div style={{
+                      width: 48,
+                      height: 30,
+                      display: 'inline-block',
+                      border: 'solid 1px #e0e0e0',
+                      background: this._ScreenData.getScreenForegroundColor()
+                    }}></div>
+                  </Dropdown>
+                </label>
+                <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
+                  {i18n.t("background")}{": "}
+                  <Dropdown overlay={<SketchPicker
+                      color={this._ScreenData.getScreenBackgroundColor()}
+                    onChangeComplete={this.setScreenBackgroundColor}
+                />}>
+                  <div style={{
+                    width: 48,
+                    height: 30,
+                    display: 'inline-block',
+                    border: 'solid 1px #e0e0e0',
+                    background: this._ScreenData.getScreenBackgroundColor()
+                  }}></div>
+                </Dropdown>
+              </label>
+              <label style={{display: 'flex', alignItems: 'center', whiteSpace: 'pre'}}>
+                {i18n.t("BackgroundImage")}{": "}
+                <input type="file" id="backgroundImage_File_EditScreenView_OperatorConsole_Brekeke" onChange={ (ev) => this._onChangeBackgroundImageFile(ev)} />
+              </label>
+              { bgImageBase64DataUrl ? (<Popconfirm title={i18n.t("are_you_sure")} onConfirm={ () => this._deleteBackgroundImage() }
+                          okText={i18n.t("yes")}
+                          cancelText={i18n.t("no")}
+              >
+                <a style={{marginLeft: "0px", marginRight:"4px"}} className="icon_general">
+                  {<FontAwesomeIcon
+                      size="lg"
+                      icon="fa fa-trash"/>}
+                </a>
+              </Popconfirm>) : null }
+            </Space>
+            <div className="editorHeaderActions">
+              <Button className="editorHeaderIconButton" disabled={!this.canUndo()} onClick={() => this.undo()}
+                      title={i18n.t("undo")} icon={<img src={UndoIcon} alt=""/>}/>
+              <Button className="editorHeaderIconButton" disabled={!this.canRedo()} onClick={() => this.redo()}
+                      title={i18n.t("redo")} icon={<img src={RedoIcon} alt=""/>}/>
+              <Popconfirm title={i18n.t("are_you_sure")} onConfirm={() => this._abortEditingScreen()}
+                          okText={i18n.t("yes")}
+                          cancelText={i18n.t("no")}
+              >
+                <Button className="editorHeaderDiscardButton">{i18n.t("discard")}</Button>
+              </Popconfirm>
+              <Button className="editorHeaderSaveButton" htmlType="cancel" onClick={() => this._openSaveConfirm()}>
+                {i18n.t("save")}
+              </Button>
+            </div>
+          </div>
+          <div style={{display: "flex", height: "calc(100% - 56px)"}}>
+            <div style={{width: "240px", overflowY: "auto", zIndex:0}}>
+              {/* left -  widget templates area*/}
+              {this._getWidgetTemplatesAreaJsx()}
+            </div>
+            <div style={{width: "calc(100% - 500px)", overflow: "auto",
+                foregroundColor:this._ScreenData.getScreenForegroundColor(),
+                backgroundColor:this._ScreenData.getScreenBackgroundColor(),
+                backgroundImage:backgroundImage
+              }}
+                 className="ScreenView_general"
+            >
+              <EditorRootPane
+                  key={this._RestoreGeneration}
+                  paneData={this._RootPaneData}
+                  editScreenViewAsParent={this}
+                  className="width100percentAndHeight100percent"/>
+            </div>
+            <div style={{
+              borderLeft: "rgb(224,224,224)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              overflow: "hidden",
+            }} className="editorSettingsArea" >
+              {settingsAreaJsx}
+            </div>
+          </div>
+        </div>
+        </>
+    )
+  }
+
+}

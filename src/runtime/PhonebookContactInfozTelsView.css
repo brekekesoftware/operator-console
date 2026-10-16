@@ -1,0 +1,39 @@
+.brOC .phonebookContactInfozTelsView {
+    position:absolute;
+    right:0;
+    top:var(--headerHeight);
+    border-radius: var(--defaultBorderRadius);
+    margin-top:0;
+    background-color:initial;
+    z-index: 121;
+    max-width:100%;
+	max-height:calc(100vh - 60px);
+	overflow:auto;
+}
+
+.brOC .phonebookContactInfozTelsView > table {
+    background-color: var(--defaultOutsideBgColor);
+    animation-duration: 0.5s;
+    animation-name: phonebookContactInfozTelsViewTableSlideIn;
+}
+
+/*.brOC table.phonebookContactInfozTelsViewInsideTable{*/
+/*    background-color: var(--defaultInsideBgColor);*/
+/*}*/
+
+@keyframes phonebookContactInfozTelsViewTableSlideIn {
+    0% {
+        margin-left:100%;
+        opacity: 0;
+    }
+    100% {
+        margin-left:0%;
+        opacity: 1;
+    }
+}
+
+.brOC th.displayNameTitleTh {
+    background-color: #5C9842;
+    color:#FFFFFF !important;
+    padding-top:var(--defaultItemVSpace) !important;
+}

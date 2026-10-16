@@ -1,0 +1,145 @@
+import React from 'react';
+import EditorWidgetSettings from "./EditorWidgetSettings";
+import LegacyButtonEditorSubWidgetSettingsFactory
+    from "./legacyButtonEditorSubWidgetSettings/LegacyButtonEditorSubWidgetSettingsFactory";
+import {Button, Select} from "antd";
+import i18n from "../../../i18n";
+import LegacyButtonWidgetSubData from "../../../data/widgetData/legacyButtonWidgetSubData/LegacyButtonWidgetSubData";
+import BrekekeOperatorConsole from "../../../index";
+import Popconfirm from "antd/lib/popconfirm";
+
+export default class LegacyButtonEditorWidgetSettings extends EditorWidgetSettings {
+    constructor( props ) {
+        super( props );
+    }
+
+    // componentDidUpdate(){
+    //     super.componentDidUpdate();
+    //     const widgetData = this._getWidgetData();
+    //     if( this._latestWidgetData !== widgetData  ){
+    //
+    //     }
+    //     this._latestWidgetData = widgetData;
+    // }
+
+    _onFormSubtypeSelected( ev1, ev2 ){
+        const selectedSubtypeId = parseInt( ev1 );
+        const widgetData = this._getWidgetData();
+        widgetData.setSubDataBySubtypeId( selectedSubtypeId );
+        this._EditScreenViewAsParent.commitEdit();
+    }
+
+     getEditScreenViewAsParent(){
+        return this._EditScreenViewAsParent;
+    }
+
+    _onChangeTooltipOfButtonWidget( s ){
+        const widgetData = this._getWidgetData();
+
+        const language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
+        widgetData.setTooltipOfButtonWidget( s, language );
+        this._EditScreenViewAsParent.commitEdit();
+    }
+
+    _setTooltipOfButtonWidgetToInitial(){
+		// const s = this._getInitialTooltipOfButtonWidget();
+        const s = null;
+        this._onChangeTooltipOfButtonWidget(s);
+    }
+	
+	_getInitialTooltipOfButtonWidget(){
+        const legacyButtonWidgetData = this._getWidgetData();
+        const legacyButtonWidgetSubData = legacyButtonWidgetData.getSubData();
+        const buttonSubtypeId = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeId();
+
+        const subtypeName = LegacyButtonWidgetSubData.getLegacyButtonWidgetSubtypeName( buttonSubtypeId );
+        const s = i18n.t(`legacy_button_description.${subtypeName}`);
+		
+		return s;
+	}
+
+    //!override
+    _onLoadFromWidgetSettingsTemplate( wst, _load_button_function ){
+        super._onLoadFromWidgetSettingsTemplate( wst, _load_button_function );
+        this._latestLegacyButtonEditorSubWidgetSettings.onLoadFromWidgetSettingsTemplateByLegacyButtonEditorWidgetSettings(this, wst, _load_button_function );
+    }
+
+    //!override
+    componentDidMount(){
+        super.componentDidMount();
+
+        const latestLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestLegacyButtonEditorSubWidgetSettings ? this._latestLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+        const _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestDidUpdateLegacyButtonEditorSubWidgetSettings ? this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+
+        if( latestLegacyButtonEditorSubWidgetSettingszSubWidgetData !== _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData ) {
+            if( this._latestDidUpdateLegacyButtonEditorSubWidgetSettings) {
+                this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.onLegacyButtonEditorSubWidgetSettingsChangedOther();
+            }
+            this._latestDidUpdateLegacyButtonEditorSubWidgetSettings = this._latestLegacyButtonEditorSubWidgetSettings;
+        }
+    }
+
+    //!override
+    componentDidUpdate() {
+        super.componentDidUpdate();
+
+        const latestLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestLegacyButtonEditorSubWidgetSettings ? this._latestLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+        const _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData = this._latestDidUpdateLegacyButtonEditorSubWidgetSettings ? this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.getLegacyButtonEditorSubWidgetData() : null;
+
+        if( latestLegacyButtonEditorSubWidgetSettingszSubWidgetData !== _latestDidUpdateLegacyButtonEditorSubWidgetSettingszSubWidgetData ) {
+            if( this._latestDidUpdateLegacyButtonEditorSubWidgetSettings) {
+                this._latestDidUpdateLegacyButtonEditorSubWidgetSettings.onLegacyButtonEditorSubWidgetSettingsChangedOther();
+            }
+            this._latestDidUpdateLegacyButtonEditorSubWidgetSettings = this._latestLegacyButtonEditorSubWidgetSettings;
+        }
+    }
+
+
+
+    //!override
+    _getRenderMainJsx(){
+        const widgetData = this._getWidgetData();
+        const legacyButtonWidgetData = widgetData;
+        const legacyButtonWidgetSubData = legacyButtonWidgetData.getSubData();
+        const editingWidgetSubtypeName = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeName();
+        const editingWidgetSubtypeId = legacyButtonWidgetSubData.getLegacyButtonWidgetSubTypeId();
+        const legacyButtonEditorSubWidgetSettings = LegacyButtonEditorSubWidgetSettingsFactory.getStaticLegacyButtonEditorSubWidgetSettingsFactoryInstance().newLegacyButtonEditorSubWidgetSettings( this, legacyButtonWidgetSubData ); //!bad  //!overhead
+        this._latestLegacyButtonEditorSubWidgetSettings = legacyButtonEditorSubWidgetSettings;
+        const enSubtype = Object.entries( LegacyButtonWidgetSubData.LEGACY_BUTTON_WIDGET_SUBTYPE_NAMES_MAP );
+
+        const subWidgetSettingsJsx = legacyButtonEditorSubWidgetSettings.getRenderJsx();
+        const sEditingWidgetSubtypeId = editingWidgetSubtypeId.toString();
+
+        const language = BrekekeOperatorConsole.getStaticInstance().getLoggedinLanguage();
+        let sTooltipOfButtonWidget = widgetData.getTooltipOfButtonWidget( language );
+		if( sTooltipOfButtonWidget === undefined || sTooltipOfButtonWidget === null ){
+			//Set builtin
+			sTooltipOfButtonWidget = this._getInitialTooltipOfButtonWidget();
+		}
+
+
+        const jsx = (
+            <div className="brOCWidgetSettingsPanel">
+                <p className="brOCSettingsSectionHeading">{i18n.t("Settings")}</p>
+                {this._renderSelectField("function", sEditingWidgetSubtypeId, (ev1) => this._onFormSubtypeSelected(ev1), (
+                    enSubtype.map(([subtypeId, subtypeName], i) => {
+                        return <Select.Option key={i} value={subtypeId}
+                                              title={i18n.t(`legacy_button_description.${subtypeName}`)}>
+                            {i18n.t(`legacy_button_label.${subtypeName}`)}
+                        </Select.Option>
+                    })
+                ))}
+                {this._renderTextAreaField("Tooltip", sTooltipOfButtonWidget, (e) => this._onChangeTooltipOfButtonWidget(e.target.value), {maxLength: 1000, style: {minHeight: 68}, placeholder: i18n.t("Tooltip"), rows: 3})}
+                <Popconfirm key="submitConfirm" title={i18n.t("are_you_sure")} onConfirm={()=> this._setTooltipOfButtonWidgetToInitial()}
+                            okText={i18n.t("yes")}
+                            cancelText={i18n.t("no")}
+                >
+                    <Button className="brOCSettingsButton">{i18n.t("RevertToInitial")}</Button>
+                </Popconfirm>
+                <p className="brOCSettingsFieldLabel">{i18n.t(`legacy_button_description.${editingWidgetSubtypeName}`)}</p>
+                {subWidgetSettingsJsx}
+            </div>
+        );
+        return jsx;
+    }
+}

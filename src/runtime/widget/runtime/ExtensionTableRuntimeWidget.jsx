@@ -1,0 +1,125 @@
+import React from 'react';
+import RuntimeWidget from "./RuntimeWidget";
+import i18n from "../../../i18n";
+import BrekekeOperatorConsole from "../../../index";
+import Util from "../../../Util";
+
+const EXTENSION_TABLE_TH_HEIGHT = 25;   //25px
+const EXTENSION_TABLE_TD_HEIGHT = 30;   //30px
+
+export default class ExtensionTableRuntimeWidget extends RuntimeWidget{
+
+    constructor( props ) {
+        super( props );
+    }
+
+    //!overload
+    _getRenderMainJsx() {
+        const oc = BrekekeOperatorConsole.getStaticInstance();
+        let extensions =  oc.getExtensions();
+        let extensionsStatus = oc.getExtensionsStatus();
+        if( !extensions ){
+            extensions = [];
+        }
+        if( !extensionsStatus ) {
+            extensionsStatus = {};
+        }
+
+        const widgetData = this.getWidgetData();
+        const outerBorderRadius = ( widgetData.getExtensiontableOuterBorderRadius() || widgetData.getExtensiontableOuterBorderRadius() === 0 ) ? widgetData.getExtensiontableOuterBorderRadius() : 0; //!default
+        const outerBorderThickness = ( widgetData.getExtensiontableOuterBorderThickness() || widgetData.getExtensiontableOuterBorderThickness() === 0 ) ? widgetData.getExtensiontableOuterBorderThickness()  : 0; //!default
+        const outerBorderColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableOuterBorderColor(), "rgb(0,0,0,0)" );
+        const headerFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableHeaderFgColor() , "" );
+        const headerBgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableHeaderBgColor() , "" );
+        const bodyFgColor = Util.getRgbaCSSStringFromAntdColor(  widgetData.getExtensiontableBodyFgColor() , "" );
+        //const bodyActiveRowBgColor = Util.getRgbaCSSStringFromAntdColor( props.extensiontableBodyActiveRowBgColor, "'#B9DFA9'" );   //!default
+        const backgroundColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableBgColor(), "" );
+        const headerRowUnderlineThickness = ( widgetData.getExtensiontableHeaderRowUnderlineThickness() || widgetData.getExtensiontableHeaderRowUnderlineThickness() === 0 ) ? widgetData.getExtensiontableHeaderRowUnderlineThickness() : 0; //!default
+        const headerRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableHeaderRowUnderlineColor() , "#e0e0e0" );   //!default
+        const bodyRowUnderlineThickness = ( widgetData.getExtensiontableBodyRowUnderlineThickness() || widgetData.getExtensiontableBodyRowUnderlineThickness() === 0 ) ? widgetData.getExtensiontableBodyRowUnderlineThickness() : 0; //!default
+        const bodyRowUnderlineColor = Util.getRgbaCSSStringFromAntdColor( widgetData.getExtensiontableBodyRowUnderlineColor() , "#e0e0e0" );   //!default
+        const headerFontSize = widgetData.getExtensiontableHeaderFontSize() ? widgetData.getExtensiontableHeaderFontSize() :  14;
+        const bodyFontSize = widgetData.getExtensiontableBodyFontSize() ? widgetData.getExtensiontableBodyFontSize() :  14;
+
+        let key = 0;
+        return (
+            <div className="brOCExtensiontableWrapper" style={{
+                borderRadius:outerBorderRadius,
+                backgroundColor:backgroundColor,
+                borderStyle : "solid",
+                borderColor : outerBorderColor,
+                borderWidth: outerBorderThickness +  "px"
+            }}>
+            <table className="brOCExtensiontable">
+                <thead>
+                <tr style={{
+                    color:headerFgColor,
+                    backgroundColor:headerBgColor
+                }}>
+                    <th style={{
+                        fontSize:headerFontSize + "px",
+                        textTransform:"uppercase",
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
+                    }}>{i18n.t("ExtensionNumber")}</th>
+                    <th style={{
+                        fontSize:headerFontSize + "px",
+                        textTransform:"uppercase",
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
+                    }}>{i18n.t("name")}</th>
+                    <th style={{
+                        fontSize:headerFontSize + "px",
+                        textTransform:"uppercase",
+                        //height:EXTENSION_TABLE_TH_HEIGHT,
+                        borderBottomStyle : "solid",
+                        borderBottomColor : headerRowUnderlineColor,
+                        borderBottomWidth: headerRowUnderlineThickness +  "px"
+                    }}>{i18n.t("status")}</th>
+                </tr>
+                </thead>
+                <tbody style={{
+                    color:bodyFgColor,
+                    display:"table-row-group"
+                }}>
+                {extensions.map((ext) => (
+                    <tr key={key++}
+                        style={{
+                            color: bodyFgColor
+                        }}
+                    >
+                        <td style={{
+                            fontSize:bodyFontSize + "px",
+                           //height:EXTENSION_TABLE_TD_HEIGHT,
+                            borderBottomStyle : "solid",
+                            borderBottomColor : bodyRowUnderlineColor,
+                            borderBottomWidth: bodyRowUnderlineThickness +  "px"
+                        }}>{ext?.id}</td>
+                        <td style={{
+                            fontSize:bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT
+                            borderBottomStyle : "solid",
+                            borderBottomColor : bodyRowUnderlineColor,
+                            borderBottomWidth: bodyRowUnderlineThickness +  "px"
+                        }}>{ext?.name}</td>
+                        <td style={{
+                            fontSize:bodyFontSize + "px",
+                            //height:EXTENSION_TABLE_TD_HEIGHT,
+                            borderBottomStyle : "solid",
+                            borderBottomColor : bodyRowUnderlineColor,
+                            borderBottomWidth: bodyRowUnderlineThickness +  "px"
+                        }}>{Object.values(extensionsStatus?.[ext?.id]?.callStatus || {}).join(',')}</td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            </div>
+        );
+    }
+
+
+}

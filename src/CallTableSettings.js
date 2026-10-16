@@ -3,7 +3,7 @@ import Util from "./Util";
 import i18n from "./i18n";
 import debounce from "debounce";
 import Form from "antd/lib/form";
-import {Colorpicker} from "antd-colorpicker";
+import {ColorPicker} from "antd";
 import InputNumber from "antd/lib/input-number";
 import {Divider} from "antd";
 
@@ -138,7 +138,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("outerBorderThickness")} name="calltableOuterBorderThickness" rules={[
@@ -153,7 +153,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item label={i18n.t("outerBorderRadius")} name="calltableOuterBorderRadius" rules={[
                     {
@@ -168,7 +168,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("rowUnderlineThickness")} name="calltableHeaderRowUnderlineThickness" rules={[
@@ -183,7 +183,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 {/*<Form.Item label={i18n.t("bgColor")} name={`calltableHeaderBgColor`} rules={[*/}
@@ -199,7 +199,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 <Form.Item label={i18n.t("rowUnderlineThickness")} name="calltableBodyRowUnderlineThickness" rules={[
@@ -214,7 +214,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
 
                 {/*<Form.Item label={i18n.t("bgColor")} name={`calltableBodyBgColor`} rules={[*/}
@@ -229,7 +229,7 @@ export default class CallTableSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <Colorpicker format="rgb" />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
             </Form>
         )

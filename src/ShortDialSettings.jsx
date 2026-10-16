@@ -6,11 +6,9 @@ import i18n from "./i18n";
 export default class ShortDialSettings extends React.Component {
     constructor( props ){
         super(props);
-        this.text = props.text;
     }
 
     render(){
-        //return <div>Hello {this.text}</div>
         return <Form.List name="shortDials">
             {(fields, { add, remove }) => (
                 <>

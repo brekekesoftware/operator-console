@@ -32,7 +32,8 @@ const baseModuleRules = [
   //},
 	{
 	  test: /\.(js|jsx|ts|tsx)$/,
-	  exclude: /node_modules\/(?!react-draggable)/,
+	  // [\\/] so Windows paths match too; ulid ships `?.` which webpack 4 cannot parse
+	  exclude: /node_modules[\\/](?!(react-draggable|ulid)[\\/])/,
 	  use: {
 		loader: "esbuild-loader",
 		options: {

@@ -1,6 +1,6 @@
 import React from "react";
 import "../reset.css"
-import "../runtime/phonebookContactInfozInfoView.css"
+import "../runtime/PhonebookContactInfozInfoView.css"
 import i18n from "../i18n";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import BrekekeOperatorConsole from "../index";

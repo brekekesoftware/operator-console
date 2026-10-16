@@ -1,0 +1,9 @@
+/node_modules/
+
+# webpack output (dist/ also holds hand-placed runtime files, which stay tracked)
+/dist/*.js
+!/dist/DragDropTouch.js
+!/dist/webphone.js
+/dist/*.css
+/dist/*.map
+/dist/editor/

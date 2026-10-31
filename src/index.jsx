@@ -127,6 +127,7 @@ import LegacyButtonWidgetSubData from "./data/widgetData/legacyButtonWidgetSubDa
 import WidgetSettingsTemplates from "./editor/widget/settings/template/WidgetSettingsTemplates";
 import UserSettingsRingtoneFiles from "./UserSettingsRingtoneFiles";
 import NotifyVoicemailsInfo from "./NotifyVoicemailsInfo";
+import OCDebug from "./OCDebug";
 export const brOcDisplayStates = Object.freeze({
     //loading: 0,
     showScreen: 1,
@@ -3153,7 +3154,8 @@ export default class BrekekeOperatorConsole extends React.Component {
 			bPhoneTerminalChanged = false;
 			pt = ptUserSettings;
 		}
-		if( bPhoneTerminalChanged || this._aphone === null ){		
+		if( bPhoneTerminalChanged || this._aphone === null ){
+            OCDebug.log("setOCNote: initializing phone client. terminal=" + pt);
             this._deinitAphoneClient();
             const options = {
                 operatorConsoleAsParent : this
@@ -6865,7 +6867,9 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _onSetSystemSettingsDataDataSuccessAtSetOCNote( screenData_ver2, screens, systemSettingsData, setLastLayoutShortName, shortName, setOCNoteSuccessFunction, setOCNoteFailFunction ){
+        OCDebug.log("setOCNote: system settings applied. loading widget settings templates. layout=" + shortName);
         const widgetSettingsTemplatesOnCommonFunction = ( ) =>{
+            OCDebug.log("setOCNote: loading call history.");
             this.setState( {screens:screens, screenData_ver2:screenData_ver2, systemSettingsData:systemSettingsData }, () =>{
                 //this._BusylightStatusChanger.onBeforeReloadBusylightStatusChanger( );  //!dev
                 this._CallHistory2. loadCallHistory2(
@@ -6895,6 +6899,7 @@ export default class BrekekeOperatorConsole extends React.Component {
     }
 
     _toSetNoteSuccess( setLastLayoutShortName, shortName, setOCNoteSuccessFunction ){
+        OCDebug.log("setOCNote: done. layout=" + shortName);
         this.reloadSystemSettingsExtensionScript();
         //this._BusylightStatusChanger.init();    //!dev
         if (setLastLayoutShortName) {

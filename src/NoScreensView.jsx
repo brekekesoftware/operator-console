@@ -9,6 +9,7 @@ import Spin from "antd/lib/spin";
 import BrekekeOperatorConsole from "./index";
 import ScreenData from "./data/ScreenData";
 import OCUtil from "./OCUtil";
+import OCDebug from "./OCDebug";
 
 const REGEX =  /^[0-9a-zA-Z\-\_\ ]*$/;
 
@@ -294,6 +295,7 @@ export default function NoScreensView( props ){
                     }
                     operatorConsoleAsParent.setOCNote(shortname, oNote, function () {
                             setIsLoading(false);
+                            OCDebug.log("Select layout: layout applied. layout=" + shortname);
                             operatorConsoleAsParent.onSelectOCNoteByShortnameFromNoScreensView(this);
                         },
                         function (e) {
@@ -343,6 +345,7 @@ export default function NoScreensView( props ){
         if( !selectedShortname ){
             return;
         }
+        OCDebug.log("Select layout: confirm. layout=" + selectedShortname);
         selectOCNoteByShortname( selectedShortname );
     };
 

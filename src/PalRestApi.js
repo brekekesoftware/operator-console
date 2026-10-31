@@ -2,6 +2,7 @@ import i18n from "./i18n";
 import {fail} from "mobx/lib/utils/utils";
 import BrekekeOperatorConsole from "./index";
 import MfaUtil from "./MfaUtil";
+import OCDebug from "./OCDebug";
 
 //!ref https://docs.brekeke.com/pbx/pbx-rest-api
 //!ref https://docs.brekeke.com/pbx/pal-rest-api-sample-1
@@ -68,8 +69,11 @@ export default class PalRestApi{
         this._palRestApiBaseUrlPrefix = initPalRestApiBaseUrlPrefix;
         this._initPalRestApiFetchOptions = initPalRestApiFetchOptions;
 
+        const loginStartTime = Date.now();
+        OCDebug.log("PAL REST start: login");
         const fetchPromise = fetch( initPalRestApiBaseUrlPrefix + "login", initPalRestApiFetchOptions );
         fetchPromise.then(  async (response) =>  {
+            OCDebug.log("PAL REST done: login status=" + response.status + " " + (Date.now() - loginStartTime) + "ms");
 			if (!response.ok) {
                 const message = await response.text();
                 if( sDeviceToken && response.status === 401 ){  //MFA(Device token) failed
@@ -414,7 +418,10 @@ export default class PalRestApi{
         }
         const this_ = this;
         let successError;
+        const startTime = Date.now();
+        OCDebug.log("PAL REST start: " + methodName);
         fetch(this._palRestApiBaseUrlPrefix + methodName, fetchOptions ).then( function( response ){
+            OCDebug.log("PAL REST done: " + methodName + " status=" + response.status + " " + (Date.now() - startTime) + "ms");
             if( response.status !== 200 ){
                 if( response.status === 401 &&  enableRelogin === true   ){
                     const reloginOptions = {
@@ -508,7 +515,10 @@ export default class PalRestApi{
         const this_ = this;
         const promise = new Promise( (resolve, reject ) => {
 
+            const startTime = Date.now();
+            OCDebug.log("PAL REST start: " + methodName);
             fetch(this._palRestApiBaseUrlPrefix + methodName, fetchOptions).then( async (response) => {
+                OCDebug.log("PAL REST done: " + methodName + " status=" + response.status + " " + (Date.now() - startTime) + "ms");
                 if (response.status !== 200 ) {
                     if( response.status === 401 && enableRelogin === true ) {
                         const p = this_._reloginAsync({retryCount:RELOGIN_RETRY_COUNT});

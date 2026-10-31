@@ -9,6 +9,7 @@ import {reaction} from "mobx";
 import BrekekeOperatorConsole from "./index";
 import Util from "./Util";
 import ObjectUrlCaches from "./ObjectUrlCaches";
+import OCDebug from "./OCDebug";
 
 class WebphoneInvalidDeviceTokenError extends Error {
   constructor(message) {
@@ -359,6 +360,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
 			if( this_._webrtcclient ){
 				this_._webrtcclient.removeEventListener("sessionStatusChanged", this_._WebrtcclientSessionStatusChangedFunction );
 			}
+            OCDebug.log("Webphone: webrtcclient event received.");
             this_._webrtcclient = webrcclient;
 			this_._webrtcclient.addEventListener("sessionStatusChanged", this_._WebrtcclientSessionStatusChangedFunction );
 
@@ -1129,6 +1131,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
     // }
 
     async _initialize(  onInitSuccessFunction, newUserSettingsCoreData = null ){
+        OCDebug.log("Webphone: _initialize start. waiting for webrtcclient event.");
         window.focus();  //for document.hasFocus() should true.
 
         // prompt for permission if needed

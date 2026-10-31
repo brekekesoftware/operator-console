@@ -306,9 +306,13 @@ export default class WebphonePhoneClient  extends APhoneClient {
         this._webphone = window.Brekeke.Phone.render(eBrOcPhone, args);
 
 		const onInitSuccessFunction = options["onInitSuccessFunction"];
+		const serverstatusWaitTimerId = setTimeout( () => {
+			console.warn("WebphonePhoneClient: pal.notify_serverstatus with status 'active' has not arrived for 15 seconds.");
+		}, 15000 );
 		this.notify_serverstatus = async (e) => {
 			console.log('pal.notify_serverstatus', e);
 			if (e?.status === 'active') {
+				clearTimeout( serverstatusWaitTimerId );
 				await this._initialize( onInitSuccessFunction, newUserSettingsCoreData );
 			}
 			this._OperatorConsoleAsParent.onPalNotifyServerstatusByWebphonePhoneClient(e);
@@ -1154,6 +1158,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
             property_names: ['name'],
         }).then(extensions => {
             const oExtensions = extensions.map(([id,name]) => ({id,name}));
+            let waitCount = 0;
             const intervalId = setInterval( ()=>{
                 if( this._webrtcclient ){
                     clearInterval( intervalId );
@@ -1161,8 +1166,16 @@ export default class WebphonePhoneClient  extends APhoneClient {
 						onInitSuccessFunction( oExtensions );
 					}
                 }
+                else {
+                    waitCount++;
+                    if( waitCount % 10 === 0 ){
+                        console.warn("WebphonePhoneClient: still waiting for the webrtcclient event. waited " + waitCount + " seconds.");
+                    }
+                }
             }, 1000);
-        })
+        }).catch( err => {
+            console.error("WebphonePhoneClient: getExtensions failed in _initialize.", err );
+        });
 
 
         // this._windowFocusEventListener = (ev) =>{
@@ -1180,11 +1193,24 @@ export default class WebphonePhoneClient  extends APhoneClient {
 		const userSettingsCoreData = newUserSettingsCoreData ? newUserSettingsCoreData : oc.getUserSettingsData().getData();
 		const webphone = this._webphone;
 		
-		const [camerasData, microphonesData, speakersData] = await Promise.all([
-		  webphone.getAvailableCameras(),
-		  webphone.getAvailableMicrophones(),
-		  webphone.getAvailableSpeakers(),
-		]);
+		const deviceWaitTimerId = setTimeout( () => {
+			console.warn("WebphonePhoneClient: getAvailableCameras/Microphones/Speakers has not returned for 10 seconds.");
+		}, 10000 );
+		let camerasData, microphonesData, speakersData;
+		try {
+			[camerasData, microphonesData, speakersData] = await Promise.all([
+			  webphone.getAvailableCameras(),
+			  webphone.getAvailableMicrophones(),
+			  webphone.getAvailableSpeakers(),
+			]);
+		}
+		catch( err ){
+			console.error("WebphonePhoneClient: failed to get available devices in _initialize.", err );
+			throw err;
+		}
+		finally {
+			clearTimeout( deviceWaitTimerId );
+		}
 		
 		const camera = userSettingsCoreData["webphone_camera"];
 		let pCamera;

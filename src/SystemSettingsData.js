@@ -98,6 +98,7 @@ export default class SystemSettingsData {
         this._Data.extensionScript = appData.extensionScript;
         this._Data.autoDialRecentDisplayOrder = appData.autoDialRecentDisplayOrder;
 		this._Data.autoDialPhonebookName = appData.autoDialPhonebookName;
+        this._Data.autoDialOneTouchCall = appData.autoDialOneTouchCall;
         this._Data.autoDialTableHeaderFontSize = appData.autoDialTableHeaderFontSize;
         this._Data.autoDialTableBodyFontSize = appData.autoDialTableBodyFontSize;
         this._Data.autoDialSwitchSize = appData.autoDialSwitchSize;

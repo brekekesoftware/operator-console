@@ -1,4 +1,4 @@
-import WidgetInfo from "./WidgetInfo";
+import SystemSettingsInfo from "./SystemSettingsInfo";
 
 export default class OCNoteInfo{
 

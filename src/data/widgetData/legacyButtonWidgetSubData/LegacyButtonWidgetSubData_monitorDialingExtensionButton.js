@@ -43,7 +43,7 @@ export default class LegacyButtonWidgetSubData_monitorDialingExtensionButton ext
         }
 
         if( this._iconName ){
-            o["icon"] = this._iconName;
+            o["iconName"] = this._iconName;
         }
         else{
             delete o["iconName"];

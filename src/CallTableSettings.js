@@ -73,7 +73,7 @@ export default class CallTableSettings extends React.Component {
         //         return i18n.t("header_bgColor_is_not_valid");
         // }
 
-        if( calltableWidget.calltableBodyFgColor && Util.isAntdRgbaProperty( calltableWidget.calltableHeaderFgColor ) !== true ) {
+        if( calltableWidget.calltableBodyFgColor && Util.isAntdRgbaProperty( calltableWidget.calltableBodyFgColor ) !== true ) {
             return i18n.t("body_fgColor_is_not_valid");
         }
 

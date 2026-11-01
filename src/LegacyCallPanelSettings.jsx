@@ -236,7 +236,7 @@ export default class LegacyCallPanelSettings extends React.Component {
                         required: false,
                     }
                 ]}>
-                    <ColorPickershowText allowClear />
+                    <ColorPicker showText allowClear />
                 </Form.Item>
                 <Form.Item key={key++}  label={i18n.t("borderRadius")} name="borderRadius" rules={[
                     {

@@ -86,7 +86,7 @@ export default class LegacyButtonRuntimeSubWidget_oneTouchDialButton extends Leg
                                        const func = function (callInfoAsCaller) {
                                            const removed = currentCallInfo.removeOnHoldFunction(func);
                                            if (Date.now() > timelimit) {
-                                               Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial') + "\r\n" +  e, duration:0 });
+                                               Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial'), duration:0 });
                                                return;
                                            }
                                            oc.setDialingAndMakeCallWithShowCallSelectionModal(number);

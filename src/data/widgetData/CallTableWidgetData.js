@@ -33,7 +33,7 @@ export default class CallTableWidgetData extends WidgetData{
             delete o["calltableBgColor"];
         }
 
-        if( this._calltableOuterBorderThickness || this._calltableOuterBorderThickness !== 0 ){
+        if( this._calltableOuterBorderThickness || this._calltableOuterBorderThickness === 0){
             o["calltableOuterBorderThickness"] = this._calltableOuterBorderThickness;
         }
         else{
@@ -47,14 +47,7 @@ export default class CallTableWidgetData extends WidgetData{
             delete o["calltableOuterBorderColor"];
         }
 
-        if( this._calltableOuterBorderRadius || this._calltableOuterBorderRadius !== 0 ){
-            o["calltableOuterBorderRadius"] = this._calltableOuterBorderRadius;
-        }
-        else{
-            delete o["calltableOuterBorderRadius"];
-        }
-
-        if( this._calltableOuterBorderRadius || this._calltableOuterBorderRadius !== 0 ){
+        if( this._calltableOuterBorderRadius || this._calltableOuterBorderRadius === 0){
             o["calltableOuterBorderRadius"] = this._calltableOuterBorderRadius;
         }
         else{
@@ -75,7 +68,7 @@ export default class CallTableWidgetData extends WidgetData{
             delete o["calltableHeaderBgColor"];
         }
 
-        if( this._calltableHeaderRowUnderlineThickness || this._calltableHeaderRowUnderlineThickness !== 0 ){
+        if( this._calltableHeaderRowUnderlineThickness || this._calltableHeaderRowUnderlineThickness === 0){
             o["calltableHeaderRowUnderlineThickness"] = this._calltableHeaderRowUnderlineThickness;
         }
         else{
@@ -96,7 +89,7 @@ export default class CallTableWidgetData extends WidgetData{
             delete o["calltableBodyFgColor"];
         }
 
-        if( this._calltableBodyRowUnderlineThickness || this._calltableBodyRowUnderlineThickness !== 0 ){
+        if( this._calltableBodyRowUnderlineThickness || this._calltableBodyRowUnderlineThickness === 0){
             o["calltableBodyRowUnderlineThickness"] = this._calltableBodyRowUnderlineThickness;
         }
         else{

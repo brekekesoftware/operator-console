@@ -1088,7 +1088,7 @@ function LegacyOneTouchDialButton({ operatorConsoleAsParent, subtype, icon, labe
                                     const func = function (callInfoAsCaller) {
                                         const removed = currentCallInfo.removeOnHoldFunction(func);
                                         if (Date.now() > timelimit) {
-                                            Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial') + "\r\n" +  e, duration:0 });
+                                            Notification.error({message: i18n.t('failedToHoldCallAtOneTouchDial'), duration:0 });
                                             return;
                                         }
                                         setDialingAndMakeCallWithShowCallSelectionModal(number);
@@ -1868,7 +1868,7 @@ class LegacyButtonSettings extends React.Component {
                         <Input allowClear/>
                     </Form.Item>
                 )}
-                {this.state.widget.subtype === LegacyQuickCallButton.name && (<>
+                {this.state.widget.subtype === "LegacyQuickCallButton" && (<>
                     <Form.Item label="0" name="keypad_zero">
                         <Input allowClear/>
                     </Form.Item>
@@ -2970,7 +2970,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
                 catch(err){
                 }
-                Notification.error({message: onBeginSetSystemSettingsData.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
+                Notification.error({message: i18n.t('failedToSetupSystemSettingsDataData') + "\r\n" +  e, duration:0 });
             }
         );
     }

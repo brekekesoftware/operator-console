@@ -78,7 +78,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "3.0.0.1";
+const VERSION = "3.0.0.2";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -89,7 +89,7 @@ import Campon from "./Campon";
 import SystemSettingsData from "./SystemSettingsData";
 import UserSettingsData, { USER_SETTINGS_DATA_CALL_SELECTION } from "./UserSettingsData";
 import NoScreensView from "./NoScreensView";
-import {Select, Modal, Tabs, Divider, ConfigProvider} from "antd";
+import {Modal, Tabs, Divider, ConfigProvider} from "antd";
 import jaJP from 'antd/locale/ja_JP';
 import enUS from 'antd/locale/en_US';
 import LegacyCallPanelSettings from "./LegacyCallPanelSettings";

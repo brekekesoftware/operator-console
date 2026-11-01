@@ -11,6 +11,9 @@ import Util from "./Util";
 import ObjectUrlCaches from "./ObjectUrlCaches";
 import OCDebug from "./OCDebug";
 
+const WEBRTC_WSS_NOTIFICATION_KEY = "br_oc_webrtc_wss";
+const WEBRTC_WSS_NOTIFY_SECONDS = 20;    //webrtcclient イベントをこの秒数待っても来なければ画面にエラーを出す
+
 class WebphoneInvalidDeviceTokenError extends Error {
   constructor(message) {
     super(message);
@@ -1165,12 +1168,17 @@ export default class WebphonePhoneClient  extends APhoneClient {
             const intervalId = setInterval( ()=>{
                 if( this._webrtcclient ){
                     clearInterval( intervalId );
+                    Notification.destroy( WEBRTC_WSS_NOTIFICATION_KEY );
                     if( onInitSuccessFunction ){
 						onInitSuccessFunction( oExtensions );
 					}
                 }
                 else {
                     waitCount++;
+                    if( waitCount === WEBRTC_WSS_NOTIFY_SECONDS ){
+                        console.error("WebphonePhoneClient: the webrtcclient event has not arrived for " + waitCount + " seconds. The WebRTC(WSS) connection to the PBX is not established.");
+                        Notification.error( { key: WEBRTC_WSS_NOTIFICATION_KEY, message: i18n.t("webrtc_wss_connection_failed"), duration: 0 } );
+                    }
                     if( waitCount % 10 === 0 ){
                         console.warn("WebphonePhoneClient: still waiting for the webrtcclient event. waited " + waitCount + " seconds.");
                     }

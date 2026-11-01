@@ -354,6 +354,7 @@
     "failed_to_save_data_to_pbx": "データをPBXに保存できませんでした。",
     "saved_data_to_pbx_successfully": "データをPBXに保存しました。",
     "failed_to_load_data_from_pbx": "PBXからのデータの読み込みに失敗しました。",
+    "webrtc_wss_connection_failed": "PBXとのWebRTC(WSS)接続を確立できません。PBXのSIP WSSポート設定とネットワークを確認してください。",
 
     "Failed_to_save_data": "データを保存できませんでした。",
     "Saved_data_successfully": "データを保存しました。",

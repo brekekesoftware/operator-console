@@ -355,6 +355,7 @@
     "failed_to_save_data_to_pbx": "Failed to save data to PBX.",
     "saved_data_to_pbx_successfully": "Saved data to PBX successfully.",
     "failed_to_load_data_from_pbx": "Failed to load data from PBX.",
+    "webrtc_wss_connection_failed": "Could not establish the WebRTC (WSS) connection to the PBX. Check the SIP WSS port setting of the PBX and the network.",
 
     "Failed_to_save_data": "Failed to save data.",
     "Saved_data_successfully": "Saved data successfully.",

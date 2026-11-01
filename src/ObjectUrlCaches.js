@@ -47,7 +47,7 @@ class ObjectUrlCache{
 			//this._Parent.onObjectUrlCacheReleased(this);
         }
 		const bSuccess = this._Parent.onObjectUrlCacheReleased(this);
-        return bRelease;
+        return bSuccess;
     }
 
 

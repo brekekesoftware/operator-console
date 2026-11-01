@@ -94,6 +94,7 @@ export default class PalPhoneClient  extends APhoneClient {
 
         await super.initPhoneClient( options );
         const onInitSuccessFunction = options["onInitSuccessFunction"];
+        const onInitFailFunction = options["onInitFailFunction"];
         const this_ = this;
         const initPalWrapperOptions ={
             pbxHost : options.hostname,
@@ -101,7 +102,9 @@ export default class PalPhoneClient  extends APhoneClient {
             secure_login_password : false,  //!important skip loading md5.js
             onInitFailFunction : function( ev ){
                 console.error("Failed to init PalWrapper eventArg=" + ev );
-                //!fixit call onInitFailFunction
+                if( onInitFailFunction ){
+                    onInitFailFunction( ev );
+                }
             },
             onInitSuccessFunction : function(){
 
@@ -167,14 +170,18 @@ export default class PalPhoneClient  extends APhoneClient {
                             function( error ) {
                                 console.error("Faild to getExtensions. error=",error);
                                 pal.close();
-                                //!fixit call oninitFailFunction
+                                if( onInitFailFunction ){
+                                    onInitFailFunction( error );
+                                }
                             }
                         );
                     },
                     function(ev){
                         console.error("Faild to login. eventArg=",ev);
                         pal.close();
-                        //!fixit call oninitFailFunction
+                        if( onInitFailFunction ){
+                            onInitFailFunction( ev );
+                        }
                     }
                 );
                 pal.notify_serverstatus = function( param ){

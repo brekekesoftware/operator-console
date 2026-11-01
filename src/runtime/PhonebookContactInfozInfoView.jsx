@@ -373,7 +373,7 @@ export default class PhonebookContactInfozInfoView extends React.Component {
             }
             let pbItem;
             if( bHidden !== true ) {
-                this._getPhonebookItemByCaption(customItemName);
+                pbItem = this._getPhonebookItemByCaption(customItemName);
             }
             else{
                 pbItem = null;

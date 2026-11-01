@@ -84,6 +84,7 @@ const _onDrop = function( ev, editorPane, tabData, tabId ){
     widgetDatas.addWidgetData( widgetTypeId, widgetRelativePositionX, widgetRelativePositionY, widgetWidth, widgetHeight );
     const widgetIndex = widgetDatas.getWidgetDataCount() - 1;
     const widgetData = widgetDatas.getWidgetDataAt( widgetIndex );
+    editorPane.getEditScreenView().commitEdit();
     editorPane.getEditScreenView().setSelectingEditorWidgetDataToState( widgetData );
 }
 

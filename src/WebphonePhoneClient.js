@@ -180,7 +180,6 @@ export default class WebphonePhoneClient  extends APhoneClient {
 			const bCancel = session.incomingMessage?.method === "CANCEL" && session.sessionStatus === "terminated";
 			if( bCancel ){
 				const callObject = this._getCallObjectFromSessionId( session.sessionId );
-				const displayName = callObject.getDisplayName();
 				let callInfo;
 				if( callObject ){
 					callInfo = this._webphoneCallInfos.getCallInfoFromCallObject( callObject );

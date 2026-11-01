@@ -1,5 +1,6 @@
 import BrekekeOperatorConsole from "./index";
 import OCUtil from "./OCUtil";
+import i18n from "./i18n";
 
 
 export default class NotifyVoicemailsInfo{

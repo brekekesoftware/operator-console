@@ -85,7 +85,12 @@ export default class PaneData {
 
                 const srcDividerData = options.cloneSrcPaneData._dividerData;
                 if (srcDividerData) {
-                    this.setDivider(srcDividerData.getDividerDirection());
+                    // 子ペインは PaneDatas 側が元の番号でクローンし、_setChildPaneTypeAndPaneNumber で登録されるので、ここでは作らない
+                    if (srcDividerData.getDividerDirection() === BaseDividerData.DIVIDER_DIRECTIONS.vertical) {
+                        this._dividerData = new VerticalDividerData(this);
+                    } else {
+                        this._dividerData = new HorizontalDividerData(this);
+                    }
                 } else {
                     this._dividerData = null;
                 }

@@ -230,7 +230,7 @@ export default class UserSettingsRingtoneFiles{
     }
     
     async uploadRingtoneFileAsync( file ){
-        const fileData = this._uploadRingtoneFileAsync( file );
+        const fileData = await this._uploadRingtoneFileAsync( file );
         this._ringtoneFileDataArray = await this._getRingtoneFileDataArray();	//!optimize
 
 		//const userSettings = BrekekeOperatorConsole.getStaticInstance().getUserSettingsData();

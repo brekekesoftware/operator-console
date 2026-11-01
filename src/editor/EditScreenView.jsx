@@ -1128,7 +1128,10 @@ export default class EditScreenView extends React.Component {
               <Space className="editorHeaderControls">
                 <label style={{whiteSpace: "nowrap"}}>{i18n.t("grid")}{": "}
                   <InputNumber value={this.getEditingScreenGrid()}
-                               onPressEnter={(e) => this.setEditingScreenGrid(parseInt(e.target.value))}
+                               onPressEnter={(e) => {
+                                 const grid = parseInt(e.target.value, 10);
+                                 if (!isNaN(grid)) this.setEditingScreenGrid(grid);
+                               }}
                                onStep={(v) => this.setEditingScreenGrid(v)}
                   />
                 </label>

@@ -1,4 +1,5 @@
 import Notification from "antd/lib/notification";
+import i18n from "./i18n";
 import BrekekeOperatorConsole from "./index";
 
 export const USER_SETTINGS_DATA_CALL_SELECTION = {
@@ -188,7 +189,7 @@ export default class UserSettingsData{
 				const removeIndex = removeInfoIndexes[i];
 				infosArray.splice( removeIndex, 1 );
 			}
-			await this.saveUserSettingsData( this.getData(), false );
+			await this.saveUserSettingsData( this.getData(), () =>{}, () =>{}, false );
 		}
 
 		return bSave;

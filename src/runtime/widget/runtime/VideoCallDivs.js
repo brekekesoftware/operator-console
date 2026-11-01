@@ -33,7 +33,7 @@ export default class VideoCallDivs {
         // if( !rootElement ){
         //     rootElement = document.body;
         // }
-        if( !Number.isInteger( divItemAspectRatio ) ){
+        if( !Number.isFinite( divItemAspectRatio ) || divItemAspectRatio <= 0 ){
             divItemAspectRatio = 1.777777777777778;
         }
         //this._RootElement = rootElement;

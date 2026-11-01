@@ -107,8 +107,8 @@ export default function NoScreensView( props ){
     const handleNewLayoutOk = () => {
         newLayoutUseForm.validateFields().then(( values ) => {
             let layoutName = values.layoutName;
-            setNewLayoutName(layoutName);
             layoutName = layoutName.trim();
+            setNewLayoutName(layoutName);
             if (layoutName.length === 0) {
                 Notification.error({key: "validation", message: i18n.t('OnlySpacesAreNotAllowed'), duration: 15});
                 return;

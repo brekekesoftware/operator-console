@@ -62,6 +62,9 @@ export class CallHistory2 {
 
         this._FlushSave = debounce(
             ( palRestApi ) => {
+                if( this._isLoadedEvenOnce !== true ) {
+                    return; //Not loaded yet (or load failed): saving would overwrite existing history on the PBX.
+                }
                 this._save(
                     () =>{
 
@@ -535,6 +538,9 @@ export class CallHistory2 {
     onUpdateCallInfoForCallHistory2( operatorConsoleAsCaller, callInfo, palRestApi ){
         const callInfoUuid = callInfo.getCallInfoUuid();
         const callHistory2CallInfo =  this._CallHistoryCallInfosObject[ callInfoUuid ];
+        if( !callHistory2CallInfo ) {
+            return; //Unregistered after clearCallHistory2 or after the max saved count was exceeded.
+        }
         callHistory2CallInfo.onUpdateCallInfoForCallHistory2CallInfo( this, callInfo );
 //        this._prevSort = null;    //Set dirty
         this._FlushSave( palRestApi );

@@ -2,7 +2,7 @@ import React from "react";
 import Form from "antd/lib/form";
 import Button from 'antd/lib/button';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import {Button, Form, Input, Space} from 'antd';
+import {Input, Space} from 'antd';
 import i18n, { DEFAULT_LOCALE, isValidLocale, loadTranslations } from "./i18n";
 import Popconfirm from 'antd/lib/popconfirm';
 import SystemSettingsForm from "./SystemSettingsForm";

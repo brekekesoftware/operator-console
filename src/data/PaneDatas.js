@@ -85,7 +85,7 @@ export default class PaneDatas{
         }
         const srcPaneType =  srcPaneData.getPaneType();
         let  dstParentPaneData;
-        const srcParentPaneNumber =  srcPaneType.getParentPaneNumber();
+        const srcParentPaneNumber =  srcPaneData.getParentPaneNumber();
         if( srcParentPaneNumber === -1 ) {
             dstParentPaneData = null;
         }

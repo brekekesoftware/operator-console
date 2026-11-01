@@ -84,7 +84,7 @@ export default class LegacyButtonWidgetSubData{
         let currentOptions;
         const oSubData = subDataOptions["legacyButtonWidgetSubDataObject"];
         if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
         }
         else {
             currentOptions = subDataOptions;

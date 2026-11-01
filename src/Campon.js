@@ -205,8 +205,9 @@ export default class Campon{
         const extensionzObjs = Object.values( this._WaitCamponObjects );
         for( let i = 0; i < extensionzObjs.length; i++ ){
             const waitCamponObjects = extensionzObjs[i];
-            for( let k = 0; k < waitCamponObjects.length; k++ ) {
-                const waitCamponObject = waitCamponObjects[k];
+            const snapshot = waitCamponObjects.slice();   // _cancelCampOn -> _removeCampon が元配列を splice するためコピーを回す
+            for( let k = 0; k < snapshot.length; k++ ) {
+                const waitCamponObject = snapshot[k];
                 this._cancelCampOn(waitCamponObject);
             }
         }

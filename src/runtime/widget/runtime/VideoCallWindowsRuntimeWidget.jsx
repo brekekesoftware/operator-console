@@ -93,7 +93,7 @@ export default class VideoCallWindowsRuntimeWidget extends RuntimeWidget {
         if( webphoneCallInfo ){
             let bSame;
             const callObject = webphoneCallInfo.getWebphoneCallObject();
-            const vcst = callObject.videoClientSessionTable;
+            const vcst = callObject.videoClientSessionTable || [];
             //check need update
             if( this._latestCallObject !== callObject ) {
                 bSame = false;

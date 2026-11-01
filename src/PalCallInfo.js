@@ -174,9 +174,10 @@ export default class PalCallInfo extends ACallInfo {
      */
     hangup() {
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
+        const this_ = this;
         phoneClient.hangup(this,
             function (res, obj) {
-                this._isHangupSelf = true;
+                this_._isHangupSelf = true;
             },
             function (err) {
                 console.error("Failed to hangup call. err=", err);

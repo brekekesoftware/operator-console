@@ -78,7 +78,7 @@ const PBX_APP_DATA_NAME = 'operator_console';
 const PBX_APP_DATA_VERSION = '2.1.5';
 //const WIDGET_LEFT_SPACE_FOR_IMPORT_FROM_VER_0_1 = 10;
 //const WIDGET_TOP_SPACE_FOR_IMPORT_FROM_VER_0_1 = 0;
-const VERSION = "3.0.0.2";
+const VERSION = "3.0.0.3";
 
 import { CallHistory } from './CallHistory';
 import LineTableSettings from "./LineTableSettings"
@@ -3433,8 +3433,8 @@ export default class BrekekeOperatorConsole extends React.Component {
                      symbol = '2';
                      break;
                  case 99: //num 3
-                 case 51: //3
-                     symbol = '3';
+                 case 51: //3 (Shift+3 is #)
+                     symbol = e.shiftKey ? '#' : '3';
                      break;
                  case 100: //num 4
                  case 52://4
@@ -3463,9 +3463,6 @@ export default class BrekekeOperatorConsole extends React.Component {
                  case 106:  //num *
                  case 186: //*
                      symbol = '*';
-                     break;
-                 case 51: //#
-                     symbol = '#';
                      break;
                  default:
                      symbol = null;

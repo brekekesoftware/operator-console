@@ -404,7 +404,7 @@ function TransferButton({ callInfo, title,
                 <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
                           id="attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"
                           value="attendedTransferCallWithSwitchCall"
-                          checked={true}/><label
+                          defaultChecked={true}/><label
                     htmlFor="attendedTransferCallWithSwitchCall_selectTransferMethod_LineTableRuntimeWidget_ver2_brOC">{i18n.t("Attended_transfer(Switch_a_call)")}</label>
                 </p>
                 <p><input type="radio" name="selectTransferMethod_LineTableRuntimeWidget_ver2_brOC"

@@ -66,8 +66,8 @@ export default class CallPanelRuntimeWidget extends RuntimeWidget{
         const insideShadow_spread = ( widgetData.getInsideShadow_spread() || widgetData.getInsideShadow_spread() === 0 ) ? widgetData.getInsideShadow_spread() : "";
         const insideShadowColorRgb =  Util.getRgbaCSSStringFromAntdColor( widgetData.getInsideShadow_color() , "rgba(0,0,0,0)" ); //"rgba(48,71,1,1)" //!default
 
-        const sBoxshadowOutside = outsideShadowColorRgb && outsideShadow_horizontalOffset && outsideShadow_verticalOffset && outsideShadow_blur && outsideShadow_spread ? outsideShadowColorRgb + " " + outsideShadow_horizontalOffset + "px " + outsideShadow_verticalOffset + "px " + outsideShadow_blur + "px " + outsideShadow_spread + "px" : "";
-        const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset && insideShadow_verticalOffset && insideShadow_blur && insideShadow_spread ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
+        const sBoxshadowOutside = outsideShadowColorRgb && outsideShadow_horizontalOffset !== "" && outsideShadow_verticalOffset !== "" && outsideShadow_blur !== "" && outsideShadow_spread !== "" ? outsideShadowColorRgb + " " + outsideShadow_horizontalOffset + "px " + outsideShadow_verticalOffset + "px " + outsideShadow_blur + "px " + outsideShadow_spread + "px" : "";
+        const sBoxshadowInside = insideShadowColorRgb &&  insideShadow_horizontalOffset !== "" && insideShadow_verticalOffset !== "" && insideShadow_blur !== "" && insideShadow_spread !== "" ? "inset "+ insideShadowColorRgb + " " + insideShadow_horizontalOffset + "px " + insideShadow_verticalOffset + "px " + insideShadow_blur + "px " + insideShadow_spread + "px" : "";
         const sBoxShadow = sBoxshadowOutside + ( sBoxshadowOutside && sBoxshadowInside ? "," : "" ) + sBoxshadowInside;
 
         const oc = BrekekeOperatorConsole.getStaticInstance();

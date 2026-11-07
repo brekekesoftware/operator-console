@@ -1,3 +1,5 @@
+import Notification from "antd/lib/notification";
+import i18n from "./i18n";
 //!requre uccac.js
 export default  class UccacWrapper{
     constructor( operatorConsoleAsParent ) {
@@ -109,7 +111,13 @@ export default  class UccacWrapper{
 
         let initAsync;
         if( newUcUrl ){
-            this._initUccacWrapper( newUcUrl, onInitSuccessUccacFunction, onInitFailUccacFunction, isUCMinScript  );
+            //UC unreachable must not fail the whole settings; warn and continue without UC.
+            const onInitFailContinue = ( eventArgs ) => {
+                console.error( "Failed to connect to UC. ucUrl=" + newUcUrl, eventArgs );
+                Notification.warning( { message: i18n.t("uc_connection_failed_settings_continue"), duration: 0 } );
+                onInitSuccessUccacFunction();
+            };
+            this._initUccacWrapper( newUcUrl, onInitSuccessUccacFunction, onInitFailContinue, isUCMinScript  );
             initAsync = true;
         }
         else{

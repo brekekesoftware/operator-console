@@ -355,6 +355,7 @@
     "saved_data_to_pbx_successfully": "データをPBXに保存しました。",
     "failed_to_load_data_from_pbx": "PBXからのデータの読み込みに失敗しました。",
     "webrtc_wss_connection_failed": "PBXとのWebRTC(WSS)接続を確立できません。PBXのSIP WSSポート設定とネットワークを確認してください。",
+    "uc_connection_failed_settings_continue": "UCサーバーに接続できません。設定は保存されましたが、UC機能は使えません。UC URLを確認してください。",
 
     "Failed_to_save_data": "データを保存できませんでした。",
     "Saved_data_successfully": "データを保存しました。",

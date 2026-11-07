@@ -333,7 +333,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
               <p><input type="radio" name="selectCallingMethod_RuntimeScreenView_ver2_brOC"
                         id="attendedTransferCall_selectCallingMethod_RuntimeScreenView_ver2_brOC"
                         value="attendedTransferCall"
-                        checked={true}/><label
+                        defaultChecked={true}/><label
                   htmlFor="attendedTransferCall_selectCallingMethod_RuntimeScreenView_ver2_brOC">{i18n.t("Attended_transfer_a_call_to_a_destination")}</label>
               </p>
               <p><input type="radio" name="selectCallingMethod_RuntimeScreenView_ver2_brOC"
@@ -356,7 +356,7 @@ export default class RuntimeScreenView_ver2 extends React.Component{
               <p><input type="radio" name="callSelection_RuntimeScreenView_ver2_brOC"
                         id="voiceCall_callSelection_RuntimeScreenView_ver2_brOC"
                         value="voiceCall"
-                        checked={true}/><label
+                        defaultChecked={true}/><label
                   htmlFor="voiceCall_callSelection_RuntimeScreenView_ver2_brOC">{i18n.t("Voice_call")}</label>
               </p>
               <p><input type="radio" name="callSelection_RuntimeScreenView_ver2_brOC"

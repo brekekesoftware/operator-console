@@ -88,6 +88,7 @@ export default class SystemSettingsData {
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
+        this._Data.camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
         this._Data.shortDials = appData.shortDials;
         this._Data.ringtoneInfos = appData.ringtoneInfos;
         this._Data.ringtoneInfos2 = appData.ringtoneInfos2;
@@ -417,7 +418,7 @@ export default class SystemSettingsData {
         }
         appData.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount ? appData.autoDialMaxDisplayCount : CallHistory.getDefaultMaxDisplayCount();
         appData.autoDialMaxSaveCount = appData.autoDialMaxSaveCount ? appData.autoDialMaxSaveCount : CallHistory.getDefaultMaxSaveCount();
-        appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds();
+        appData.camponTimeoutSeconds = appData.camponTimeoutSeconds ? appData.camponTimeoutSeconds : Campon.getDefaultCamponTimeoutMilliSeconds() / 1000;
         appData.shortDials = appData.shortDials ? appData.shortDials : null;
         appData.ringtoneInfos = appData.ringtoneInfos ? appData.ringtoneInfos : null;
         appData.ringtoneInfos2 = appData.ringtoneInfos2 ? appData.ringtoneInfos2 : null;

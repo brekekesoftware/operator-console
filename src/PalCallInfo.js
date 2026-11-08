@@ -175,11 +175,13 @@ export default class PalCallInfo extends ACallInfo {
     hangup() {
         const phoneClient = this._PalCallInfosAsParent.getPhoneClientAsParent();
         const this_ = this;
+        //Set before the request: the disconnect notify_status can arrive before the response.
+        this._isHangupSelf = true;
         phoneClient.hangup(this,
             function (res, obj) {
-                this_._isHangupSelf = true;
             },
             function (err) {
+                this_._isHangupSelf = false;
                 console.error("Failed to hangup call. err=", err);
                 Notification.error({message: i18n.t('failedToHangupCall') + "\r\n" + err, duration: 0});
             }

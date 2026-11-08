@@ -14,7 +14,7 @@ export default class LegacyButtonWidgetSubData_parkCallButton extends LegacyButt
             this._number = subDataOptions["number"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
             this._number = currentOptions["number"];
         }

@@ -14,7 +14,7 @@ export default class LegacyButtonWidgetSubData_lineButton extends LegacyButtonWi
             this._line = subDataOptions["line"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
             this._line = currentOptions["line"];
         }

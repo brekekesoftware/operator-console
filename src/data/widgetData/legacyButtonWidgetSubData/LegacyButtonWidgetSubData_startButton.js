@@ -13,7 +13,7 @@ export default class LegacyButtonWidgetSubData_startButton extends LegacyButtonW
             this._label = subDataOptions["label"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
         }
         else {

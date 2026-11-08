@@ -13,7 +13,7 @@ export default class LegacyButtonWidgetSubData_keypadButton extends LegacyButton
             this._symbol = subDataOptions["symbol"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._symbol = currentOptions["symbol"];
         }
         else {

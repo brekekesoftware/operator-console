@@ -14,7 +14,7 @@ export default class LegacyButtonWidgetSubData_autoDialButton extends LegacyButt
             this._label = subDataOptions["label"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
         }
         else {

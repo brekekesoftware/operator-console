@@ -25,7 +25,7 @@ export default class LegacyButtonWidgetSubData_quickCallButton extends LegacyBut
             this._keypadSharp = subDataOptions["keypadSharp"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
             this._keypadZero = currentOptions["keypadZero"];
             this._keypadOne = currentOptions["keypadOne"];

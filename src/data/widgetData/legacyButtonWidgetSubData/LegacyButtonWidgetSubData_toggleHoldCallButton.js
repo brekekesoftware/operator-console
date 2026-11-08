@@ -12,7 +12,7 @@ export default class LegacyButtonWidgetSubData_toggleHoldCallButton extends Lega
             currentOptions = subDataOptions;
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
         }
         else {
             currentOptions = subDataOptions;

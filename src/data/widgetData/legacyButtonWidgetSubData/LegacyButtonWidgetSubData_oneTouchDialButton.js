@@ -15,7 +15,7 @@ export default class LegacyButtonWidgetSubData_oneTouchDialButton extends Legacy
             this._onetouchdialMode = subDataOptions["onetouchdialMode"];
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
             this._label = currentOptions["label"];
             this._number = currentOptions["number"];
             this._onetouchdialMode = currentOptions["onetouchdialMode"];

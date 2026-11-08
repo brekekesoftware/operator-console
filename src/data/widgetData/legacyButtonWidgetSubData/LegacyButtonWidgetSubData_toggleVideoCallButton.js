@@ -12,7 +12,7 @@ export default class LegacyButtonWidgetSubData_toggleVideoCallButton extends Leg
             currentOptions = subDataOptions;
         }
         else if( oSubData  ){
-            currentOptions = oSubData["legacyButtonWidgetSubTypeId"];
+            currentOptions = oSubData;
         }
         else {
             currentOptions = subDataOptions;

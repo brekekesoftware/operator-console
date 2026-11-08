@@ -41,7 +41,7 @@ export default class TextWidgetData extends WidgetData {
             delete o["textBgColor"];
         }
 
-        if( this._textBorderRadius || this._textBorderRadius !== 0 ){
+        if( this._textBorderRadius || this._textBorderRadius === 0 ){
             o["textBorderRadius"] = this._textBorderRadius;
         }
         else{

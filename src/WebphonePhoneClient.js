@@ -1184,6 +1184,7 @@ export default class WebphonePhoneClient  extends APhoneClient {
                 }
             }, 1000);
         }).catch( err => {
+            //TODO(P2): 失敗を onInitFailFunction に通知しない(初期化が完了も失敗も通知されず止まる)。_initialize は再接続(notify_serverstatus active)でも走るため、初回と再接続を区別する設計判断が要り保留。PalPhoneClient.js の //!fixit と同件
             console.error("WebphonePhoneClient: getExtensions failed in _initialize.", err );
         });
 

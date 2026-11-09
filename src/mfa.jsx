@@ -367,6 +367,12 @@ export default class Mfa extends React.Component {
 								this._onMfaOk();
 								return;
 							}
+							else{
+								this.setState({isResendCode:false}, () =>{
+									OCUtil.logErrorWithNotification("Failed to PAL rest API(mfa/start)", i18n.t("An_error_occurred_during_processing"));
+								});
+								return;
+							}
 							//!forBug //!testit //!check result["type"] === "url"
 						}
 						

@@ -5996,7 +5996,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 }
                 lineCallInfo.answerCall();
 
-            } else if (lineCallInfo.getIsAnswered) {
+            } else if (lineCallInfo.getIsAnswered()) {
                 const tenant = this.state.loginUser.pbxTenant;
                 const talkerId =  lineCallInfo.getPbxTalkerId();
                 const number = line;

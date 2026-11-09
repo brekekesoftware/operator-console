@@ -5223,6 +5223,7 @@ export default class BrekekeOperatorConsole extends React.Component {
                 hasMissedCall = true;
             } else {
                 const index = this._MissedCallInfoCandidates.indexOf(callInfo);
+                //TODO(P2): index が -1(応答済み着信・発信)でも末尾を消す。ガードを足すと、消した不在着信表示が応答済み/発信の終話で再点灯するため保留(要仕様判断)
                 this._MissedCallInfoCandidates.splice(index, 1);
 
                 for (let i = 0; i < this._MissedCallInfoCandidates.length; i++) {

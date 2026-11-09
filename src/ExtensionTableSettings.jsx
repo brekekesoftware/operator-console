@@ -73,7 +73,7 @@ export default class ExtensionTableSettings extends React.Component {
         //         return i18n.t("header_bgColor_is_not_valid");
         // }
 
-        if( extensiontableWidget.extensiontableBodyFgColor && Util.isAntdRgbaProperty( extensiontableWidget.extensiontableHeaderFgColor ) !== true ) {
+        if( extensiontableWidget.extensiontableBodyFgColor && Util.isAntdRgbaProperty( extensiontableWidget.extensiontableBodyFgColor ) !== true ) {
             return i18n.t("body_fgColor_is_not_valid");
         }
 

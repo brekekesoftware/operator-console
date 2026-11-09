@@ -79,8 +79,9 @@ export default class RingtoneSettings2 extends React.Component {
         const ringtoneInfoArray = fieldsValue["ringtoneInfos2"];
          if( Array.isArray( ringtoneInfoArray ) ){
              for( let i = 0; i < ringtoneInfoArray.length; i++ ){
-                 const ePlayButton = document.getElementById( i + "_play_RingtoneSettings2_brOC");
-                 const eStopButton = document.getElementById( i + "_stop_RingtoneSettings2_brOC");
+                 //Rows without buttons (hidden by render) get detached dummies so the player array stays index-aligned.
+                 const ePlayButton = document.getElementById( i + "_play_RingtoneSettings2_brOC") || document.createElement("span");
+                 const eStopButton = document.getElementById( i + "_stop_RingtoneSettings2_brOC") || document.createElement("span");
 
                  const options = {
                     playElement : ePlayButton,

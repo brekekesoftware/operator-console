@@ -88,6 +88,7 @@ export default class SystemSettingsData {
         //!modify systemSettingsData
         this._Data.autoDialMaxDisplayCount = appData.autoDialMaxDisplayCount;
         this._Data.autoDialMaxSaveCount = appData.autoDialMaxSaveCount;
+        //TODO(P2): camponTimeoutMillis を更新しない(設定画面の秒が LineTable の getCamponTimeoutMillis に効かない)。直すなら下の _formatSystemSettingsAppData の既定値(ms を秒フィールドへ)も / 1000 に直す。片方だけだと桁違いで Campon が即タイムアウトする。保存済みの秒の運用が変わるため保留
         this._Data.camponTimeoutSeconds = appData.camponTimeoutSeconds;
         this._Data.camponTimeoutMillis = appData.camponTimeoutSeconds * 1000;
         this._Data.shortDials = appData.shortDials;

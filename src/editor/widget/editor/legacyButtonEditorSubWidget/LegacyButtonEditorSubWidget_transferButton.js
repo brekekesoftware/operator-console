@@ -33,7 +33,7 @@ export default class LegacyButtonEditorSubWidget_transferButton extends LegacyBu
 
 //            const transferIconJsx = this._getIconJsx();
             let cancelTransferLabel;
-            if( subWidgetData.getLabel() ){
+            if( subWidgetData.getCancelTransferLabel() ){
                 cancelTransferLabel = subWidgetData.getCancelTransferLabel();
             }
             else{

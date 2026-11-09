@@ -46,7 +46,7 @@ export default class LegacyButtonRuntimeSubWidget_transferButton extends LegacyB
             const cancelTransferBorderRadius = Util.isNumber( cancelTransferButtonOuterBorderRadius ) ? cancelTransferButtonOuterBorderRadius + "px" : "";
 
             let cancelTransferLabel;
-            if( subWidgetData.getLabel() ){
+            if( subWidgetData.getCancelTransferLabel() ){
                 cancelTransferLabel = subWidgetData.getCancelTransferLabel();
             }
             else{

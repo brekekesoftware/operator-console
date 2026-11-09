@@ -20,6 +20,7 @@ export default class SystemSettingsData {
     }
 
     getAutoDialMaxDisplayCount() {
+        //TODO(P2): autoDialMaxDisplayCount ではなく autoDialMaxSaveCount を返している。直すと既定で履歴表示が 3000→500 件に減るため保留(要仕様判断)
         return this._Data.autoDialMaxSaveCount;
     }
 

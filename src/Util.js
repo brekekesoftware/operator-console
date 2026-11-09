@@ -176,6 +176,7 @@ export default class Util{
         sRootUrl = Util.removeString( sRootUrl,  location.search );
         const indexOfSlash = sRootUrl.lastIndexOf('/');
         if( indexOfSlash !== -1 ) {
+            //TODO(P2): ホスト名側のドットを見ている(ファイル名側なら lastIndexOf(".") > indexOfSlash)。ドット付きホストでは常に最後の要素を落とす動きで、相対パス解決がそれに乗っている可能性があり保留。localhost では index.html が残る
             const indexOfDot = sRootUrl.lastIndexOf(".", indexOfSlash);
             if (indexOfDot !== -1) {
                 sRootUrl = sRootUrl.substring(0, indexOfSlash  );

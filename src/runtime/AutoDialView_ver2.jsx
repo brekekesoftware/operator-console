@@ -1858,7 +1858,7 @@ export default class AutoDialView_ver2 extends React.Component {
         // const eFromMonth = document.getElementById("brOC_autoDialView_ver2_callInfos_fromMonth");
         // const sFromMonth = eFromMonth.value;
         const sFromMonth = this._callInfosFromMonth;
-        const iFromMonth = AutoDialView_ver2._parseYearForAutoDialViewzCallHistory( sFromMonth );
+        const iFromMonth = AutoDialView_ver2._parseMonthForAutoDialViewzCallHistory( sFromMonth );
 
         // const eFromDay = document.getElementById("brOC_autoDialView_ver2_callInfos_fromDay");
         // const sFromDay = eFromDay.value;

@@ -203,7 +203,7 @@ export default class RuntimeUccacUcClient {
                 borderRadius: props["borderRadius"],
                 backgroundColor: props["backgroundColor"],
                 boxShadow: props["boxShadow"],
-                color: props["backgroundColor"],
+                color: props["color"],
                 padding:6
             }}>{i18n.t("ucChatAgentComponentHasNotBeenInitialized")}</div> );
         }
@@ -214,7 +214,7 @@ export default class RuntimeUccacUcClient {
                     borderRadius: props["borderRadius"],
                     backgroundColor: props["backgroundColor"],
                     boxShadow: props["boxShadow"],
-                    color: props["backgroundColor"]
+                    color: props["color"]
                 }}>
                     <div ref={this._uccacRootElementRef} style={{ display: "flex",  flexWrap: "wrap",  height:"calc(100% - 30px)"}}>
                         <div style={{position: "relative", width: "50%", height: "100%"}}>

@@ -50,6 +50,7 @@ export default class RuntimeUcUserStatuses {
             return;
         }
         ac.ucUiStore.chatClient.removeHandler(this._UcBuddyStatusChangedHandlerObject);
+        //TODO(P2): signedIn/signedOut は ucUiStore.addHandler で登録(74-75行)なのに解除は chatClient.removeHandler で、外れず溜まる。ucUiStore.removeHandler の有無が src 外で未確認のため保留(restart も unuse を通らず登録が重なる)
         if (this._ucSignedInHandlerObject) {
             ac.ucUiStore.chatClient.removeHandler(this._ucSignedInHandlerObject);
             this._ucSignedInHandlerObject = null;

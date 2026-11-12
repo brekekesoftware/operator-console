@@ -430,6 +430,7 @@ export class CallHistory2 {
                 partyNumberMap[ partyNumber ] = ch2FoTInfo;
             }
             else{
+                //TODO(P2): 件数は代表の差し替えに成功した通話だけ加算(最初の1件は無条件)。古い通話・未終了が数えられず回数順がずれる。未終了/転送を数えるかが仕様判断のため保留
                 const bSet = ch2FoTInfo.trySetCallHistory2CallInfo( ch2CallInfo );
                 if( bSet === true ){
                     let hitCount = ch2FoTInfo.getHitCount();
